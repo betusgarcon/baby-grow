@@ -1,0 +1,293 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Change Baby Profile Photo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-secondary-container": "#795b44",
+        "on-primary-container": "#75756e",
+        "on-tertiary": "#ffffff",
+        "secondary-container": "#fed5b9",
+        "on-primary-fixed": "#1b1c17",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "on-error-container": "#93000a",
+        "tertiary-fixed": "#c1edd1",
+        "primary-fixed-dim": "#c8c7bf",
+        "surface-bright": "#fff8f1",
+        "surface-container": "#f4ede5",
+        "secondary": "#765842",
+        "on-surface": "#1e1b17",
+        "inverse-surface": "#33302b",
+        "surface": "#fff8f1",
+        "tertiary-container": "#f7fff7",
+        "tertiary": "#406651",
+        "on-primary": "#ffffff",
+        "surface-container-highest": "#e8e1d9",
+        "background": "#fff8f1",
+        "surface-variant": "#e8e1d9",
+        "on-secondary-fixed-variant": "#5c412c",
+        "on-background": "#1e1b17",
+        "on-secondary-fixed": "#2b1706",
+        "error": "#ba1a1a",
+        "surface-dim": "#e0d9d1",
+        "on-primary-fixed-variant": "#474742",
+        "inverse-on-surface": "#f7f0e8",
+        "outline-variant": "#c8c7be",
+        "on-tertiary-fixed": "#002112",
+        "surface-container-low": "#faf2ea",
+        "primary": "#5f5f59",
+        "inverse-primary": "#c8c7bf",
+        "on-error": "#ffffff",
+        "outline": "#777770",
+        "secondary-fixed": "#ffdcc4",
+        "on-surface-variant": "#474741",
+        "secondary-fixed-dim": "#e6bfa4",
+        "error-container": "#ffdad6",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "on-tertiary-container": "#557d66",
+        "surface-container-high": "#eee7df",
+        "on-secondary": "#ffffff",
+        "primary-container": "#fffdf5",
+        "surface-tint": "#5f5f59",
+        "primary-fixed": "#e4e3db"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "lg": "24px",
+        "gutter-mobile": "12px",
+        "xs": "8px",
+        "sm": "12px",
+        "base": "4px",
+        "md": "16px",
+        "margin-mobile": "20px",
+        "xl": "32px"
+      },
+      "fontFamily": {
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "caption": [
+          "Nunito Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        body {
+            background-color: #fff8f1;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .photo-frame {
+            position: relative;
+            z-index: 1;
+        }
+        .photo-frame::after {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border-radius: 9999px;
+            border: 2px dashed #e8e1d9;
+            z-index: -1;
+            animation: rotate-slow 20s linear infinite;
+        }
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+<!-- Top AppBar (From Shared Components Logic) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-on-surface/5 flex items-center justify-between px-margin-mobile py-sm">
+<button class="text-primary active:scale-95 transition-transform duration-200 hover:opacity-70">
+<span class="material-symbols-outlined text-[28px]">arrow_back</span>
+</button>
+<h1 class="font-display text-headline-md text-primary">Change Photo</h1>
+<button class="text-on-surface-variant active:scale-95 transition-transform duration-200 hover:opacity-70">
+<span class="material-symbols-outlined text-[28px]">more_vert</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-md px-margin-mobile pt-32 pb-12 flex flex-col items-center">
+<!-- Preview Section -->
+<div class="relative mb-xl photo-frame">
+<div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-xl">
+<img alt="Baby Profile Preview" class="w-full h-full object-cover" src="https://www.morganodriscoll.com/hqart2/2442-36_1.jpg">
+</div>
+<!-- Decorative Element -->
+<div class="absolute -bottom-2 -right-2 bg-secondary-container text-on-secondary-container w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+<span class="material-symbols-outlined">edit</span>
+</div>
+</div>
+<div class="w-full space-y-md mt-lg">
+<div class="text-center mb-lg">
+<p class="font-headline-md text-headline-md-mobile text-on-surface mb-xs">Capture a new memory</p>
+<p class="font-body-md text-on-surface-variant">Update the profile picture for your little one's timeline.</p>
+</div>
+<!-- Action Buttons Stack -->
+<div class="grid grid-cols-1 gap-md">
+<!-- Take Photo -->
+<button class="flex items-center justify-between w-full p-lg bg-primary-container border border-outline-variant rounded-lg active:scale-[0.98] transition-all duration-200 hover:bg-surface-container-high group">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined">photo_camera</span>
+</div>
+<div class="text-left">
+<p class="font-headline-md text-on-surface">Take Photo</p>
+<p class="font-caption text-on-surface-variant">Use your camera now</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<!-- Choose from Gallery -->
+<button class="flex items-center justify-between w-full p-lg bg-primary-container border border-outline-variant rounded-lg active:scale-[0.98] transition-all duration-200 hover:bg-surface-container-high group">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined">photo_library</span>
+</div>
+<div class="text-left">
+<p class="font-headline-md text-on-surface">Choose from Gallery</p>
+<p class="font-caption text-on-surface-variant">Select from your library</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+</div>
+<!-- Delete Option (Optional but standard UX) -->
+<div class="pt-lg flex justify-center">
+<button class="flex items-center gap-xs px-lg py-sm text-error font-label-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-md">delete</span>
+                    Remove current photo
+                </button>
+</div>
+</div>
+<!-- Cancel Footer -->
+<div class="mt-auto w-full pt-xl">
+<button class="w-full py-md font-display text-headline-md text-primary bg-surface-container-low rounded-full active:scale-95 transition-transform border border-outline-variant/30">
+                Cancel
+            </button>
+</div>
+</main>
+<!-- Contextual Aesthetic Blobs (Subtle Background) -->
+<div class="fixed -z-10 top-20 -left-20 w-64 h-64 bg-secondary-fixed-dim/20 blur-[100px] rounded-full"></div>
+<div class="fixed -z-10 bottom-20 -right-20 w-80 h-80 bg-tertiary-fixed-dim/20 blur-[100px] rounded-full"></div>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                button.classList.add('opacity-80');
+            });
+            button.addEventListener('touchend', () => {
+                button.classList.remove('opacity-80');
+            });
+        });
+
+        // Suppression of global nav shell as requested for sub-page/transactional task focus
+        // (BottomNavBar is not rendered here to prioritize the focused photo-change task)
+    </script>
+
+
+</body></html>

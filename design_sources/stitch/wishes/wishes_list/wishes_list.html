@@ -1,0 +1,376 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Wishes - Growth &amp; Mindfulness</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "secondary": "#56624e",
+        "secondary-container": "#d9e7ce",
+        "surface-container-lowest": "#ffffff",
+        "inverse-primary": "#b1cbd2",
+        "surface-dim": "#dbdad7",
+        "surface-tint": "#496269",
+        "primary": "#496269",
+        "error": "#ba1a1a",
+        "primary-container": "#8fa9b0",
+        "on-primary-fixed": "#041f24",
+        "on-tertiary-fixed": "#311300",
+        "surface-container-high": "#eae8e5",
+        "tertiary-fixed-dim": "#f8b991",
+        "surface-container-low": "#f5f3f0",
+        "outline-variant": "#c2c7c9",
+        "error-container": "#ffdad6",
+        "primary-fixed-dim": "#b1cbd2",
+        "surface-container-highest": "#e4e2df",
+        "surface-container": "#efeeeb",
+        "on-primary-container": "#253e44",
+        "inverse-on-surface": "#f2f0ed",
+        "on-background": "#1b1c1a",
+        "on-tertiary": "#ffffff",
+        "on-primary": "#ffffff",
+        "on-secondary-container": "#5c6854",
+        "on-surface": "#1b1c1a",
+        "inverse-surface": "#30312f",
+        "background": "#fbf9f6",
+        "on-error-container": "#93000a",
+        "outline": "#72787a",
+        "tertiary": "#835332",
+        "on-error": "#ffffff",
+        "on-surface-variant": "#424849",
+        "tertiary-fixed": "#ffdbc7",
+        "on-secondary-fixed": "#141e0f",
+        "surface-variant": "#e4e2df",
+        "tertiary-container": "#d39872",
+        "secondary-fixed-dim": "#becbb3",
+        "surface": "#fbf9f6",
+        "on-primary-fixed-variant": "#324b51",
+        "secondary-fixed": "#d9e7ce",
+        "on-tertiary-container": "#593012",
+        "primary-fixed": "#cce7ef",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "surface-bright": "#fbf9f6"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "base": "8px",
+        "margin-desktop": "120px",
+        "gutter": "20px",
+        "xl": "64px",
+        "margin-mobile": "20px",
+        "xs": "4px",
+        "sm": "12px",
+        "md": "24px",
+        "lg": "40px"
+      },
+      "fontFamily": {
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); min-height: 100vh; display: flex; flex-direction: column; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ambient-shadow { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04); }
+        .card-hover { transition: all 0.3s ease-in-out; }
+        .card-hover:hover { transform: scale(1.02); box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08); }
+        
+        /* Skeleton Animation */
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .skeleton { position: relative; overflow: hidden; background-color: theme('colors.surface-container-low'); }
+        .skeleton::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform: translateX(-100%); background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0)); animation: shimmer 2s infinite; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen md:pb-0 bg-background overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-16 w-full docked full-width top-0 sticky z-40 transition-shadow ease-in-out duration-300 border-b border-surface-container-highest">
+<div class="flex items-center gap-sm">
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high transition-colors p-1 rounded-full">
+<img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container-high" src="https://lh3.googleusercontent.com/aida/AP1WRLupe7dq33yffzc5j96E5m5xRtxXDut6ryRo0N7JxUqf9Yt-_pO8gWn0qZHZN8iV_pARju5TfY_f657F5G5ZJmJaOOvYjwZ7k6syjWMaFQnXWLzJzLtBEKljSbDPYupvDq0H0i5ROc44PKPeFbGXayqrlbGOufrqML-Wy4okGNZhQnT9Ke0CmBnGVnSDQz-9nHeXOXvnT2nZDg5zc4L4tdzooqgbwP67do-H1IDig6SR6OBdob51ASLv2t0">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">6M</span>
+</div>
+</div>
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary text-center">Wishes</span>
+<div class="flex justify-end items-center">
+<button class="md:hidden w-10 h-10 flex items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto w-full bg-background" style="min-height: calc(100vh - 128px);">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md mb-md">
+<div>
+<h2 class="text-display font-display text-on-background mb-xs">Wishes</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Manage and track your baby's special adventures and milestones.</p>
+</div>
+</div>
+<!-- Bento Grid for Wishes -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md pb-xl">
+<!-- Card 1: Swimming Progress (Bar) -->
+<article class="bg-surface-container-lowest rounded-DEFAULT p-md ambient-shadow card-hover border border-surface-container-highest flex flex-col justify-between h-full">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pool</span>
+</div>
+<div class="flex gap-xs">
+<button aria-label="Delete" class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background mb-xs">Learn to Swim</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Mastering the basics of water safety and movement.</p>
+</div>
+<div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span class="">2 of 4 Strokes</span>
+<span class="">50%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-1/4 border-r border-surface-container-lowest"></div>
+<div class="h-full bg-primary w-1/4"></div>
+<div class="h-full bg-transparent w-1/4 border-l border-outline-variant/30"></div>
+<div class="h-full bg-transparent w-1/4 border-l border-outline-variant/30"></div>
+</div>
+</div>
+</article>
+<!-- Card 2: Museum Visits (Footprints / Dots) -->
+<article class="bg-surface-container-lowest rounded-DEFAULT p-md ambient-shadow card-hover border border-surface-container-highest flex flex-col justify-between h-full">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">museum</span>
+</div>
+<div class="flex gap-xs">
+<button aria-label="Delete" class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background mb-xs">Visit 10 Museums</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Exploring culture, art, and history around the city.</p>
+</div>
+<div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span class="">3 of 10 Museums</span>
+<span class="">30%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[30%]"></div>
+</div>
+</div>
+</article>
+<!-- Card 3: Hiking Trails (Checklist) -->
+<article class="bg-surface-container-lowest rounded-DEFAULT p-md ambient-shadow card-hover border border-surface-container-highest flex flex-col justify-between h-full">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hiking</span>
+</div>
+<div class="flex gap-xs">
+<button aria-label="Delete" class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background mb-xs">Local Trails</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Connecting with nature on weekend mornings.</p>
+</div>
+<div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span class="">1 of 3 Trails</span>
+<span class="">33%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[33%]"></div>
+</div>
+</div>
+</article>
+<!-- Image Card to break the layout -->
+<article class="bg-surface-container-lowest rounded-DEFAULT p-md ambient-shadow card-hover border border-surface-container-highest flex flex-col justify-between h-full">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<div class="flex gap-xs">
+<button aria-label="Delete" class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background mb-xs">100 Books Before K</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Building a lifelong love for reading and stories.</p>
+</div>
+<div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span class="">34 of 100 Books</span>
+<span class="">34%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[34%]"></div>
+</div>
+</div>
+</article>
+<!-- Card 4: New Skeleton Card for aesthetics -->
+<article class="bg-surface-container-lowest rounded-DEFAULT p-md ambient-shadow card-hover border border-surface-container-highest flex flex-col justify-between h-full">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">landscape</span>
+</div>
+<div class="flex gap-xs">
+<button aria-label="Delete" class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background mb-xs">Climbing</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Developing strength and confidence on the wall.</p>
+</div>
+<div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span class="">1 of 5 Levels</span>
+<span class="">20%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-1/5"></div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-lowest md:hidden fixed bottom-0 w-full border-t border-surface-container-high px-margin-mobile pb-safe pt-2 z-50 flex justify-around items-center shadow-lg">
+<a class="flex flex-col items-center gap-xs py-1 text-on-surface-variant/70 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="text-label-sm">Journey</span>
+</a>
+<a class="flex flex-col items-center gap-xs py-1 text-on-surface-variant/70 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-sm">Analysis</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-xs py-1 px-4 bg-secondary-container text-on-secondary-container font-bold rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">auto_awesome</span>
+<span class="text-label-sm">Wishes</span>
+</a>
+<a class="flex flex-col items-center gap-xs py-1 text-on-surface-variant/70 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-sm">Family</span>
+</a>
+</nav>
+
+
+</body></html>

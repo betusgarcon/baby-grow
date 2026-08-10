@@ -1,0 +1,301 @@
+<!DOCTYPE html><html class="light" lang="zh-CN" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>成员加入设置 | Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "error": "#ba1a1a",
+        "surface-container-lowest": "#ffffff",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-tertiary-container": "#593012",
+        "secondary-fixed": "#d9e7ce",
+        "error-container": "#ffdad6",
+        "surface-dim": "#dbdad7",
+        "on-surface": "#1b1c1a",
+        "on-background": "#1b1c1a",
+        "outline-variant": "#c2c7c9",
+        "on-error-container": "#93000a",
+        "on-primary": "#ffffff",
+        "background": "#fbf9f6",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "surface-tint": "#496269",
+        "secondary-container": "#d9e7ce",
+        "secondary": "#56624e",
+        "on-secondary": "#ffffff",
+        "on-primary-container": "#253e44",
+        "primary-container": "#8fa9b0",
+        "tertiary": "#835332",
+        "secondary-fixed-dim": "#becbb3",
+        "on-surface-variant": "#424849",
+        "primary-fixed": "#cce7ef",
+        "surface-variant": "#e4e2df",
+        "on-tertiary": "#ffffff",
+        "surface": "#fbf9f6",
+        "surface-container-highest": "#e4e2df",
+        "on-primary-fixed": "#041f24",
+        "tertiary-fixed-dim": "#f8b991",
+        "on-error": "#ffffff",
+        "inverse-primary": "#b1cbd2",
+        "outline": "#72787a",
+        "inverse-surface": "#30312f",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-container": "#efeeeb",
+        "on-secondary-container": "#5c6854",
+        "tertiary-container": "#d39872",
+        "surface-container-high": "#eae8e5",
+        "primary": "#496269",
+        "surface-bright": "#fbf9f6",
+        "on-primary-fixed-variant": "#324b51",
+        "surface-container-low": "#f5f3f0",
+        "on-tertiary-fixed": "#311300",
+        "on-secondary-fixed": "#141e0f",
+        "inverse-on-surface": "#f2f0ed"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "margin-desktop": "120px",
+        "xs": "4px",
+        "sm": "12px",
+        "gutter": "20px",
+        "base": "8px",
+        "lg": "40px",
+        "xl": "64px",
+        "md": "24px",
+        "margin-mobile": "20px"
+      },
+      "fontFamily": {
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Using the provided Tailwind Configuration -->
+
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom radio styling to match Design System */
+        input[type="radio"]:checked + div {
+            border-color: #496269;
+            background-color: #f5f3f0;
+        }
+        input[type="radio"]:checked + div .radio-circle {
+            background-color: #496269;
+            box-shadow: inset 0 0 0 3px #ffffff;
+        }
+        .fluid-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .fluid-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Top App Bar - Using TopAppBar Logic -->
+<header class="flex items-center justify-between px-margin-mobile h-16 w-full fixed top-0 z-50 bg-surface dark:bg-surface-dim shadow-[0px_30px_30px_rgba(0,0,0,0.04)]">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">成员加入设置</h1>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-full hover:bg-surface-container-highest transition-colors cursor-pointer">
+<span class="font-label-md text-label-md text-on-surface-variant">长辈视角</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]" data-icon="visibility">visibility</span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 mt-20 px-margin-mobile pb-32 max-w-2xl mx-auto w-full">
+<!-- Identity Selection Section -->
+<section class="mt-lg">
+<h2 class="font-label-md text-label-md text-outline mb-sm uppercase tracking-wider">预设亲友身份</h2>
+<div class="bg-surface-container-lowest rounded-lg p-md shadow-[0px_30px_30px_rgba(0,0,0,0.04)]">
+<input class="w-full bg-surface-container-low border-none rounded-DEFAULT px-md py-4 font-body-md text-body-md focus:ring-2 focus:ring-primary placeholder:text-outline-variant transition-all mb-md" placeholder="请填入称呼，如：外公、小姨..." type="text">
+<div class="flex flex-wrap gap-sm">
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">外公</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">外婆</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">爷爷</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">育儿嫂</button>
+</div>
+</div>
+</section>
+<!-- Permissions Section -->
+<section class="mt-lg">
+<h2 class="font-label-md text-label-md text-outline mb-sm uppercase tracking-wider">分配空间权限</h2>
+<div class="flex flex-col gap-md">
+<!-- Option 1: Contributor (Selected by Default) -->
+<label class="relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="permission" type="radio">
+<div class="bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary p-md rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.04)] transition-all flex gap-md items-start">
+<div class="mt-1 radio-circle w-5 h-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex-shrink-0 transition-all flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-body-lg font-bold text-on-surface mb-xs">共享协作者 (Contributor)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                推荐！外公、外婆适用。允许记录宝宝起居、发表成长寄语与点赞，无法管理其他成员。
+                            </p>
+</div>
+</div>
+</label>
+<!-- Option 2: Viewer -->
+<label class="relative cursor-pointer group">
+<input class="peer sr-only" name="permission" type="radio">
+<div class="bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary p-md rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.04)] transition-all flex gap-md items-start">
+<div class="mt-1 radio-circle w-5 h-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex-shrink-0 transition-all flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-body-lg font-bold text-on-surface mb-xs">只读看护者 (Viewer)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                保姆、朋友适用。仅允许查看照片、视频与成长数据，无写入及修改权限，保障私密性。
+                            </p>
+</div>
+</div>
+</label>
+</div>
+</section>
+</main>
+<!-- Bottom Actions - Fixed at bottom -->
+<footer class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background/90 to-transparent z-40">
+<div class="max-w-2xl mx-auto flex gap-md">
+<button class="flex-1 h-12 font-label-md text-label-md font-bold text-on-surface-variant bg-surface-variant rounded-full hover:bg-surface-container-highest transition-all active:scale-95 flex items-center justify-center px-md">
+                取消
+            </button>
+<button class="flex-1 h-12 bg-tertiary text-on-tertiary rounded-full font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 shadow-md group px-md">
+                <span class="font-bold">邀 请&nbsp;</span>
+                <span class="material-symbols-outlined transition-transform group-hover:translate-x-1 text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+            </button>
+</div>
+</footer>
+<!-- Decorative Subtle Shader for background ambience -->
+<div class="fixed inset-0 -z-10 pointer-events-none opacity-20">
+
+</div>
+<script>
+        // Micro-interaction for Selection Chips
+        document.querySelectorAll('button[class*="px-5 py-2"]').forEach(chip => {
+            chip.addEventListener('click', function() {
+                const input = document.querySelector('input[type="text"]');
+                input.value = this.innerText;
+                input.focus();
+                
+                // Visual feedback
+                this.classList.add('scale-90');
+                setTimeout(() => this.classList.remove('scale-90'), 100);
+            });
+        });
+
+        // Simple form transition handling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Trigger any specific animations or logic if needed
+            });
+        });
+    </script>
+
+
+</body></html>

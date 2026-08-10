@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Filter Memories - Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "surface-bright": "#fbf9f6",
+        "tertiary-container": "#d39872",
+        "on-error-container": "#93000a",
+        "secondary-container": "#d9e7ce",
+        "primary-fixed": "#cce7ef",
+        "on-primary": "#ffffff",
+        "surface-container-low": "#f5f3f0",
+        "outline-variant": "#c2c7c9",
+        "on-surface": "#1b1c1a",
+        "surface-dim": "#dbdad7",
+        "surface": "#fbf9f6",
+        "error-container": "#ffdad6",
+        "on-secondary-fixed": "#141e0f",
+        "secondary-fixed-dim": "#becbb3",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-tertiary-container": "#593012",
+        "on-secondary": "#ffffff",
+        "on-surface-variant": "#424849",
+        "tertiary-fixed-dim": "#f8b991",
+        "surface-container": "#efeeeb",
+        "tertiary-fixed": "#ffdbc7",
+        "on-error": "#ffffff",
+        "inverse-primary": "#b1cbd2",
+        "surface-variant": "#e4e2df",
+        "surface-container-lowest": "#ffffff",
+        "error": "#ba1a1a",
+        "background": "#fbf9f6",
+        "on-primary-container": "#253e44",
+        "inverse-on-surface": "#f2f0ed",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "secondary": "#56624e",
+        "on-secondary-container": "#5c6854",
+        "on-tertiary": "#ffffff",
+        "surface-tint": "#496269",
+        "on-background": "#1b1c1a",
+        "on-primary-fixed": "#041f24",
+        "primary": "#496269",
+        "tertiary": "#835332",
+        "inverse-surface": "#30312f",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "surface-container-high": "#eae8e5",
+        "surface-container-highest": "#e4e2df",
+        "secondary-fixed": "#d9e7ce",
+        "primary-container": "#8fa9b0",
+        "outline": "#72787a",
+        "on-primary-fixed-variant": "#324b51",
+        "on-tertiary-fixed": "#311300"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "base": "8px",
+        "xl": "64px",
+        "xs": "4px",
+        "md": "24px",
+        "lg": "40px",
+        "gutter": "20px",
+        "margin-mobile": "20px",
+        "margin-desktop": "120px",
+        "sm": "12px"
+      },
+      "fontFamily": {
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<style>
+        body {
+            background-color: #fbf9f6;
+            color: #1b1c1a;
+            -webkit-font-smoothing: antialiased;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e4e2df;
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .selection-active {
+            transform: scale(0.96);
+            border-color: #496269;
+        }
+        .ritual-badge-gold {
+            background: linear-gradient(135deg, #D4AF37 0%, #F2E3B5 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md shadow-sm flex items-center justify-between px-margin-mobile py-sm">
+<button class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 transition-transform text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Filter Memories</h1>
+<button class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 transition-transform text-on-surface-variant mr-2">
+<span class="material-symbols-outlined">filter_list</span>
+</button><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container active:scale-95 transition-transform cursor-pointer">
+<img alt="Baby profile photo" class="w-full h-full object-cover" data-alt="A soft, high-key portrait of a smiling infant wearing a cream-colored knitted hat, captured with a shallow depth of field. The lighting is warm and natural, reflecting the gentle and nurturing aesthetic of a baby memory app. The overall tone is light and airy, following a soft minimalism style with clean, organic textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpKbpXFXY9rONJ9tdvz5KbhFq3VdMdr4IwNtqWFJH2vhl7XSeD13SqKX0Dz-XVdaIzSKfkU1d1KuzFpC0TQywtuEElZQ1p4L3KsaiSqdzUP7rQvxDVJyxT6m9nhVS_rasIIlETRmNPqLmfkLRx4H0rlOJ0VrA1ftn7aNWcyQFOwl2L-A1rZPXJ5oWIPoMjP4y9gnrRSWHpb7IVeM3fw_4yJOuX1vaDpU9yDJZlv3FgFjtJA9oehHQ28BGW1S2Hnr5nA91cUTNkJDbi"/>
+</div>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-3xl mx-auto">
+<!-- Filter Controls Section -->
+<!-- Results Header -->
+<div class="flex items-center justify-between mb-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Filtered Results</h2>
+<span class="text-label-md text-on-surface-variant">12 items found</span>
+</div>
+<!-- Memories Grid -->
+<div class="grid grid-cols-2 gap-md" id="memories-grid">
+<!-- Memory Card 1 -->
+<div class="memory-card relative group cursor-pointer" onclick="toggleSelection(this)"><div class="relative aspect-square rounded-lg overflow-hidden mb-sm shadow-sm transition-all duration-300 selection-active ring-4 ring-primary/20">
+<img class="w-full h-full object-cover" data-alt="A heart-warming photograph of a baby sitting on a soft cream rug in a sun-drenched nursery. The room is filled with warm, golden hour light, highlighting the textures of organic wooden toys and soft cotton fabrics. The image has a calm, minimalist aesthetic with a focus on gentle growth and domestic serenity, perfectly aligned with the Nurture &amp; Bloom brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt_WIV8elwzHbLMj3nK3Dtu9BDyhX2wCOMaPr9T9ZL_LiW_BA_4BS6TbfROBoRDP1mcMloGI5lPjRUEeuFdoaQs7NtlYek4jiZFP7WqNsyYFCfE7jS2QUY1fIvrVo1tBAZ2YZQhBxSQpZvEOzJv8RBafXs7_K8lo-Z7Ry4kQNLYGxXYFxUZvijIkZWUwWOlGEk-xeQ5R3WNT1tVSbRJI969bpaHjIDuyqGjlTHm4UH30e8UJDmVFk3A4X4slLahNP4rAk1YZ74PTqg"/>
+<div class="selection-indicator absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white bg-primary flex items-center justify-center opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<h4 class="font-label-md text-on-surface truncate">First Steps in Park</h4>
+<p class="text-[12px] text-on-surface-variant">Oct 12, 2023</p>
+<div class="mt-xs inline-block px-sm py-[2px] rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tight">Milestone</div></div>
+<!-- Memory Card 2 -->
+<div class="memory-card relative group cursor-pointer" onclick="toggleSelection(this)"><div class="relative aspect-square rounded-lg overflow-hidden mb-sm shadow-sm transition-all duration-300 selection-active ring-4 ring-primary/20">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a baby's hand grasping a parent's finger, conveying a sense of deep connection and quiet confidence. The background is a soft, out-of-focus beige textile, maintaining the brand's organic and tactile visual language. The lighting is soft and diffused, creating a serene, minimalist atmosphere that celebrates small, precious moments of development." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG0dBnjKaVIM9hwbzHgutz-al_ti8Y8YN51w39c_Rj3T0JLisyhBT1SZlkfvg94ogHtN-ZH5HWaa4CXAS_LHKQWJPd-OwCDJChW0sXGN9xCHHN3sstDnQtrMdJmog_EsM8x8PX3abwDtm6g2o-s8gbuENhbUqhLgQiPQvqgLcftx9pZDRHPBrIeElWXFZmBbM-eJCADf-5h0pn4wqxro0b-2cHZ22j7CvHVYA_KnWqQ0OSu3IyEMR3fzZBX53kOyi7qJlaYi2ixNVL"/>
+<div class="selection-indicator absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white bg-primary flex items-center justify-center opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<h4 class="font-label-md text-on-surface truncate">The Morning Grip</h4>
+<p class="text-[12px] text-on-surface-variant">Oct 10, 2023</p>
+<div class="mt-xs inline-block px-sm py-[2px] rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-tight">Big Smile</div></div>
+<!-- Memory Card 3 -->
+<div class="memory-card relative group cursor-pointer" onclick="toggleSelection(this)">
+<div class="relative aspect-square rounded-lg overflow-hidden mb-sm shadow-sm transition-all duration-300 group-hover:scale-[1.02]">
+<img class="w-full h-full object-cover" data-alt="An artistic, high-angle shot of a baby peacefully sleeping in a minimalist wooden crib with organic linen bedding. The scene is illuminated by gentle, cool daylight coming from a nearby window, creating a tranquil and unhurried mood. The color palette is restricted to soft sands and creams, emphasizing the brand's commitment to reducing cognitive load and providing a sanctuary for memories." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDul3Z3Eoa2ZSouZQ-Aw-St1alC3EZmQV5EWG2sQS7et67WNZ_Wd-SoUrxH9OwKRYcBVCaXmiNCTtmrVeoFIHsCB4GShA0wNCPDmBJeQO8aTDq-CWaW_sVILWuBnMEBWDI1dlto-o8xKOrSdzFSekkmv3Nm6slz1f6YD_lq0K7dRa2BlbnRYRl3ZlS6YMArXM79vWB4EpvA-f0hDkz6NVI_NxpR3Wh_StIb_nuhgUTuCRtJYkmzjMN00MCDYWms_k-Hiz6p7ElKQRSn"/>
+<div class="selection-indicator absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white bg-black/20 flex items-center justify-center opacity-0 transition-opacity">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<h4 class="font-label-md text-on-surface truncate">Nap Time Peace</h4>
+<p class="text-[12px] text-on-surface-variant">Oct 08, 2023</p>
+<div class="mt-xs inline-block px-sm py-[2px] rounded-full bg-surface-container text-on-surface-variant text-[10px] font-bold uppercase tracking-tight">Daily Log</div>
+</div>
+<!-- Memory Card 4 -->
+<div class="memory-card relative group cursor-pointer" onclick="toggleSelection(this)">
+<div class="relative aspect-square rounded-lg overflow-hidden mb-sm shadow-sm transition-all duration-300 group-hover:scale-[1.02]">
+<img class="w-full h-full object-cover" data-alt="A bright and cheerful close-up of a baby's first solid meal, featuring colorful organic vegetable purees on a soft clay-colored silicone plate. The composition is clean and minimalist, focusing on the milestone of eating. The background is a light wood texture, maintaining the organic tactile feel of the Nurture &amp; Bloom design system. The lighting is vibrant and clear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwkGuVp997FipEqOb4NeHwpIcBZmB0DtwEWveLu6Y6L0oZdMNmrw4YPikmRpBP93bDGCvE0kBTasGu7tuxKxy4vvghDLwTQdXY8oMin6Be2HDQhMVnEs4tQ8b_8Ks6RXhJxLH96AHhXdn-r1WDTJGdWTWODhOrIq8nSHY8jIpNlwedXEVLk6lGMHk2nZBujiHwxYxeSBbS0SnksL2KLDqUGqlxIzERZi6EiMbvJ4HcDbWKgA2mIRt5pv38mpM1SNCXV-BCevBhm5P9"/>
+<div class="selection-indicator absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white bg-black/20 flex items-center justify-center opacity-0 transition-opacity">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<h4 class="font-label-md text-on-surface truncate">Carrot Puree Day</h4>
+<p class="text-[12px] text-on-surface-variant">Oct 05, 2023</p>
+<div class="mt-xs inline-block px-sm py-[2px] rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-tight">Food</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Dock -->
+<div class="fixed bottom-margin-mobile left-margin-mobile right-margin-mobile z-[60] transition-all duration-500 ease-out pointer-events-none translate-y-0" id="action-dock">
+<div class="glass-card rounded-full p-2 flex items-center justify-between shadow-lg pointer-events-auto max-w-md mx-auto bg-inverse-surface"><div class="flex items-center gap-xs pl-sm"><div class="ritual-badge-gold w-8 h-8 rounded-full flex items-center justify-center shadow-sm"><span class="text-on-tertiary-fixed font-bold text-label-md" id="selected-count">2</span></div><span class="font-label-md text-inverse-on-surface">Selected</span></div><div class="flex gap-sm pr-1"><button class="flex items-center gap-xs px-sm py-sm rounded-full bg-white/10 text-inverse-on-surface font-label-md hover:bg-white/20 transition-all active:scale-95"><span class="material-symbols-outlined text-[20px]">link</span>Link</button><button class="flex items-center gap-xs px-sm py-sm rounded-full bg-primary text-on-primary font-label-md hover:opacity-90 transition-all active:scale-95 shadow-md"><span class="material-symbols-outlined text-[20px]">photo_library</span>Poster</button></div></div>
+</div>
+<!-- Script for interaction -->
+<script>
+        let selectedItems = new Set();
+        const actionDock = document.getElementById('action-dock');
+        const countDisplay = document.getElementById('selected-count');
+
+        function toggleSelection(element) {
+            const indicator = element.querySelector('.selection-indicator');
+            const imgContainer = element.querySelector('.relative');
+            
+            if (selectedItems.has(element)) {
+                selectedItems.delete(element);
+                indicator.classList.replace('opacity-100', 'opacity-0');
+                indicator.classList.replace('bg-primary', 'bg-black/20');
+                imgContainer.classList.remove('ring-4', 'ring-primary/20', 'selection-active');
+            } else {
+                selectedItems.add(element);
+                indicator.classList.replace('opacity-0', 'opacity-100');
+                indicator.classList.replace('bg-black/20', 'bg-primary');
+                imgContainer.classList.add('ring-4', 'ring-primary/20', 'selection-active');
+            }
+
+            updateDock();
+        }
+
+        function updateDock() {
+            const count = selectedItems.size;
+            countDisplay.innerText = count;
+
+            if (count > 0) {
+                actionDock.classList.remove('translate-y-32');
+                actionDock.classList.add('translate-y-0');
+            } else {
+                actionDock.classList.add('translate-y-32');
+                actionDock.classList.remove('translate-y-0');
+            }
+        }
+
+        // Add some micro-interactions to filter buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Visual ripple or simple scale effect could be added here
+                if (this.classList.contains('bg-surface-container')) {
+                    // Logic to toggle sibling active states if needed
+                }
+            });
+        });
+    </script>
+<!-- Filter Bottom Sheet Overlay -->
+<div class="fixed inset-0 z-[100] hidden" id="filter-bottom-sheet">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+<!-- Sheet Content -->
+<div class="absolute bottom-0 left-0 right-0 bg-surface-bright rounded-t-xl p-margin-mobile shadow-2xl max-w-3xl mx-auto transition-transform duration-500 ease-out">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto mb-lg"></div>
+<div class="space-y-lg mb-xl">
+<!-- Time Range -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-md uppercase tracking-wider">Time Range</h3>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-sm rounded-full bg-secondary-container text-on-secondary-container font-label-md hover:opacity-90 transition-all">All Time</button>
+<button class="px-md py-sm rounded-full bg-surface-container text-on-surface-variant font-label-md hover:bg-surface-container-high transition-all">Last 7 Days</button>
+<button class="px-md py-sm rounded-full bg-surface-container text-on-surface-variant font-label-md hover:bg-surface-container-high transition-all">This Month</button>
+<button class="px-md py-sm rounded-full bg-surface-container text-on-surface-variant font-label-md hover:bg-surface-container-high transition-all flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>Custom Range
+          </button>
+</div>
+</div>
+<!-- Smart Categories -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-md uppercase tracking-wider">Smart Categories</h3>
+<div class="grid grid-cols-2 gap-sm">
+<button class="flex items-center gap-md p-md rounded-lg bg-surface-container-lowest shadow-sm border border-transparent active:border-primary transition-all"><span class="material-symbols-outlined text-tertiary">celebration</span><span class="font-label-md">Milestone</span></button>
+<button class="flex items-center gap-md p-md rounded-lg bg-surface-container-lowest shadow-sm border border-transparent active:border-primary transition-all"><span class="material-symbols-outlined text-primary">restaurant</span><span class="font-label-md">Diet</span></button>
+<button class="flex items-center gap-md p-md rounded-lg bg-surface-container-lowest shadow-sm border border-transparent active:border-primary transition-all"><span class="material-symbols-outlined text-tertiary-container">mood</span><span class="font-label-md">Smiles</span></button>
+<button class="flex items-center gap-md p-md rounded-lg bg-surface-container-lowest shadow-sm border border-transparent active:border-primary transition-all"><span class="material-symbols-outlined text-secondary">park</span><span class="font-label-md">Outdoor</span></button>
+</div>
+</div>
+<!-- Media Type -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-md uppercase tracking-wider">Media Type</h3>
+<div class="flex gap-sm">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="hidden peer" type="checkbox"/>
+<div class="flex items-center justify-center gap-md p-md rounded-lg bg-surface-container peer-checked:bg-primary-container peer-checked:text-on-primary-container transition-all">
+<span class="material-symbols-outlined">perm_media</span><span class="font-label-md">Photos</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="hidden peer" type="checkbox"/>
+<div class="flex items-center justify-center gap-md p-md rounded-lg bg-surface-container peer-checked:bg-primary-container peer-checked:text-on-primary-container transition-all">
+<span class="material-symbols-outlined">edit_note</span><span class="font-label-md">Text</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<div class="flex gap-md">
+<button class="flex-1 py-sm rounded-full bg-secondary-container text-on-secondary-container font-label-md hover:opacity-90 transition-all active:scale-95">Cancel</button>
+<button class="flex-1 py-sm rounded-full bg-primary text-on-primary font-label-md hover:opacity-90 transition-all active:scale-95 shadow-md">Apply Filter</button>
+</div>
+</div>
+</div></body></html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html><html class="light" lang="zh-CN" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Nurture &amp; Bloom - Wishes Empty State</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "tertiary-fixed-dim": "#f8b991",
+        "surface": "#fbf9f6",
+        "primary": "#496269",
+        "error-container": "#ffdad6",
+        "background": "#fbf9f6",
+        "inverse-on-surface": "#f2f0ed",
+        "secondary": "#56624e",
+        "on-error-container": "#93000a",
+        "surface-container-highest": "#e4e2df",
+        "tertiary-container": "#d39872",
+        "outline-variant": "#c2c7c9",
+        "on-error": "#ffffff",
+        "surface-bright": "#fbf9f6",
+        "on-surface": "#1b1c1a",
+        "on-tertiary": "#ffffff",
+        "secondary-fixed": "#d9e7ce",
+        "inverse-surface": "#30312f",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-tint": "#496269",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#eae8e5",
+        "secondary-container": "#d9e7ce",
+        "on-primary-fixed-variant": "#324b51",
+        "primary-fixed": "#cce7ef",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-primary-fixed": "#041f24",
+        "on-primary": "#ffffff",
+        "on-tertiary-fixed": "#311300",
+        "on-secondary-fixed": "#141e0f",
+        "secondary-fixed-dim": "#becbb3",
+        "surface-dim": "#dbdad7",
+        "on-surface-variant": "#424849",
+        "on-primary-container": "#253e44",
+        "error": "#ba1a1a",
+        "tertiary": "#835332",
+        "surface-variant": "#e4e2df",
+        "primary-container": "#8fa9b0",
+        "outline": "#72787a",
+        "surface-container": "#efeeeb",
+        "on-secondary-container": "#5c6854",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "inverse-primary": "#b1cbd2",
+        "on-background": "#1b1c1a",
+        "surface-container-low": "#f5f3f0",
+        "on-tertiary-container": "#593012",
+        "surface-container-lowest": "#ffffff"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "margin-desktop": "120px",
+        "xl": "64px",
+        "md": "24px",
+        "sm": "12px",
+        "gutter": "20px",
+        "lg": "40px",
+        "base": "8px",
+        "margin-mobile": "20px"
+      },
+      "fontFamily": {
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .soft-glow {
+            box-shadow: 0 0 40px rgba(73, 98, 105, 0.08);
+        }
+        .organic-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-soft {
+            animation: pulse-ring 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.2; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+    </style>
+
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top AppBar -->
+<header class="bg-background dark:bg-background grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-16 w-full docked full-width top-0 sticky z-40 transition-shadow ease-in-out duration-300">
+<div class="flex items-center gap-sm">
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high transition-colors p-2 rounded-full">
+<img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVjhO0ymm3m-WiLLjC8TooKJYM38Xdu_WXCiYiUIGZeBHIAkv4AESaZZ18b5jkImuCueDFIhm-AIPCGJTh8sRMXnjfpPF6c7W-aS4_WlewQeOF9iayGU_lx79BNlz9hvE1jTDURLiqW0Yrrgmb7jeCNS_A0-PiQqdAEX6913uHFK3EOs2iYi4DHtfvXb-MUG8rdX6y9us8OAEbfw3dY6VqBmTshsO6KN4by9gBQJJ2uqi1KUW3PNL5NZ6WRehmLnSddgXIY1p-nZuM">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">1Y 2M</span>
+</div>
+</div>
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary text-center">Wishes</span>
+<div></div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-24 pb-32 px-margin-mobile flex flex-col items-center justify-center text-center">
+<!-- Empty State Illustration Container -->
+<div class="relative w-full max-w-[320px] aspect-square flex items-center justify-center mb-lg">
+<!-- Background Decorative Elements -->
+<div class="absolute inset-0 bg-primary/5 rounded-full scale-75 pulse-soft"></div>
+<div class="absolute inset-0 bg-tertiary-fixed-dim/10 rounded-full scale-90 pulse-soft" style="animation-delay: 1s;"></div>
+<!-- Central Visual -->
+<div class="relative organic-float flex flex-col items-center">
+<div class="w-32 h-32 bg-surface-container-highest rounded-full shadow-lg flex items-center justify-center mb-md border-4 border-white">
+<span class="material-symbols-outlined text-tertiary text-6xl filled-icon" data-icon="auto_stories" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</div>
+<!-- Floating Icons -->
+<div class="absolute -top-4 -right-4 bg-white p-3 rounded-full shadow-md animate-bounce" style="animation-duration: 3s;">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="star">star</span>
+</div>
+<div class="absolute -bottom-2 -left-6 bg-white p-2.5 rounded-full shadow-md animate-bounce" style="animation-duration: 4s; animation-delay: 0.5s;">
+<span class="material-symbols-outlined text-tertiary-container text-xl filled-icon" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+</div>
+<!-- Typography & Content -->
+<div class="max-w-[280px] space-y-md">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">No wishes yet.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Start planning your baby's first adventures together! Capture every dream and milestone.
+            </p>
+</div>
+<!-- Prominent CTA -->
+
+<!-- Aesthetic Flourish: Subtle Gradient Background Layer -->
+<div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+<div class="absolute top-[20%] -right-20 w-[400px] h-[400px] rounded-full bg-primary-container/10 blur-[80px]"></div>
+<div class="absolute bottom-[10%] -left-20 w-[300px] h-[300px] rounded-full bg-tertiary-fixed/15 blur-[60px]"></div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="bg-surface-container dark:bg-surface-container md:hidden fixed bottom-0 w-full rounded-t-lg shadow-[0_-4px_30px_rgba(0,0,0,0.04)] shadow-lg left-0 z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container/90 backdrop-blur-md pb-safe"><a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#">
+<span class="material-symbols-outlined mb-1">auto_stories</span>
+<span class="text-label-sm font-label-sm">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#">
+<span class="material-symbols-outlined mb-1">analytics</span>
+<span class="text-label-sm font-label-sm">Analysis</span>
+</a>
+<div class="relative w-16 flex justify-center mb-1">
+<a class="absolute -top-10 flex items-center justify-center w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg hover:bg-primary/90 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl">add</span>
+</a>
+</div>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 duration-200 ease-out w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-label-sm font-label-sm font-bold">Wishes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="text-label-sm font-label-sm">Family</span>
+</a></nav>
+<script>
+        // Micro-interaction for the FAB and Add button
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+
+
+</body></html>

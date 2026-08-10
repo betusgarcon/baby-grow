@@ -1,0 +1,237 @@
+<div className="w-96 pb-32 relative bg-stone-50 inline-flex flex-col justify-start items-start gap-2">
+  <div className="self-stretch px-4 py-3 inline-flex justify-between items-center">
+    <div className="size- flex justify-center items-center gap-3">
+      <div className="size-12 relative rounded-full inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+        <div className="w-12 py-0.5 left-[-0.33px] top-[34px] absolute bg-slate-600/80 flex flex-col justify-center items-center">
+          <div className="text-center justify-center text-white text-[10px] font-normal font-['Nunito_Sans'] leading-[10px]">1Y2M</div>
+        </div>
+      </div>
+      <div className="justify-center text-slate-600 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">Leo</div>
+    </div>
+    <div className="w-5 px-2 pt-2 pb-3.5 rounded-full inline-flex flex-col justify-center items-center">
+      <div className="w-1 h-4 bg-slate-600" />
+    </div>
+  </div>
+  <div className="self-stretch px-4 py-1.5 inline-flex justify-center items-center gap-2">
+    <div data-state="Active" className="w-20 h-10 inline-flex flex-col justify-start items-start gap-2.5">
+      <div className="self-stretch h-10 px-2 py-2 bg-stone-300 rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center gap-1">
+        <div className="w-3.5 h-2 bg-stone-600" />
+        <div className="text-center justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">Grow</div>
+      </div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Sleep</div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-white rounded-full flex justify-center items-center gap-1">
+      <div className="w-3 h-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Diet</div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Mood</div>
+    </div>
+  </div>
+  <div className="size- max-w-96 px-4 flex flex-col justify-start items-start gap-4">
+    <div className="self-stretch p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 flex flex-col justify-start items-start gap-3">
+      <div className="self-stretch inline-flex justify-start items-center gap-2">
+        <div className="size-6 p-2.5 flex justify-between items-center">
+          <div className="size-6 bg-yellow-800" />
+        </div>
+        <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">Ai Growth Narrative</div>
+      </div>
+      <div className="self-stretch flex flex-col justify-start items-start">
+        <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Leo&apos;s height trajectory has been very<br/>steady. Over the past three months, his<br/>height closely aligns with the 75th<br/>percentile curve. This indicates his linear<br/>skeletal development is in a very healthy,<br/>symmetrical normal state, with no signs<br/>of dropping behind or surging<br/>abnormally.</div>
+      </div>
+    </div>
+    <div className="w-80 p-4 bg-white shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-6">
+      <div className="self-stretch inline-flex justify-center items-start gap-2">
+        <div data-state="Inactive" className="flex-1 rounded-xs inline-flex flex-col justify-end items-center gap-1 overflow-hidden">
+          <div className="self-stretch text-center justify-center text-yellow-800 text-xs font-bold font-['Plus_Jakarta_Sans'] uppercase leading-4 tracking-wide">Height</div>
+          <div className="self-stretch h-16 inline-flex justify-center items-baseline gap-1">
+            <div className="text-center justify-center text-yellow-800 text-3xl font-semibold font-['Plus_Jakarta_Sans'] leading-10">82</div>
+            <div className="text-center justify-center text-zinc-500 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">cm</div>
+          </div>
+          <div className="w-16 h-1 rounded-full" />
+        </div>
+        <div data-state="Active" className="flex-1 rounded-xs inline-flex flex-col justify-end items-center gap-1 overflow-hidden">
+          <div className="self-stretch text-center justify-center text-yellow-800 text-xs font-bold font-['Plus_Jakarta_Sans'] uppercase leading-4 tracking-wide">WEIGHT</div>
+          <div className="self-stretch h-16 inline-flex justify-center items-baseline gap-1">
+            <div className="text-center justify-center text-yellow-800 text-3xl font-semibold font-['Plus_Jakarta_Sans'] leading-10">12</div>
+            <div className="text-center justify-center text-zinc-500 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">kg</div>
+          </div>
+          <div className="w-16 h-1 bg-red-400 rounded-full" />
+        </div>
+        <div data-state="Inactive" className="flex-1 rounded-xs inline-flex flex-col justify-end items-center gap-1 overflow-hidden">
+          <div className="self-stretch text-center justify-center text-yellow-800 text-xs font-bold font-['Plus_Jakarta_Sans'] uppercase leading-4 tracking-wide">HEAD CIRC.</div>
+          <div className="self-stretch h-16 inline-flex justify-center items-baseline gap-1">
+            <div className="text-center justify-center text-yellow-800 text-3xl font-semibold font-['Plus_Jakarta_Sans'] leading-10">47.1</div>
+            <div className="text-center justify-center text-zinc-500 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">cm</div>
+          </div>
+          <div className="w-16 h-1 rounded-full" />
+        </div>
+      </div>
+      <div className="self-stretch pt-6 border-t border-stone-200 flex flex-col justify-start items-start gap-2">
+        <div className="w-full max-w-96 p-1 bg-gray-200 rounded-[32px] inline-flex justify-center items-start">
+          <div className="w-24 px-4 py-3.5 rounded-md inline-flex flex-col justify-center items-center">
+            <div className="text-center justify-center text-zinc-700 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5">Last 3M</div>
+          </div>
+          <div className="w-24 px-4 py-3.5 rounded-md inline-flex flex-col justify-center items-center">
+            <div className="text-center justify-center text-zinc-700 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5">Last 6M</div>
+          </div>
+          <div className="w-24 px-4 py-1 bg-white rounded-md shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] inline-flex flex-col justify-center items-center">
+            <div className="text-center justify-center text-stone-900 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5">Since<br/>Birth</div>
+          </div>
+        </div>
+        <div className="self-stretch pt-4 inline-flex justify-between items-end">
+          <div className="justify-center text-zinc-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">Weight (kg)</div>
+          <div className="justify-center text-zinc-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">WHO Boy Standard</div>
+        </div>
+        <div className="self-stretch h-48 pb-2 bg-stone-100 rounded-[32px] outline outline-1 outline-offset-[-1px] outline-stone-200 inline-flex justify-center items-center">
+          <div className="flex-1 self-stretch opacity-20 bg-linear-315 from-stone-200 from 25% via-stone-200/0 via 25% to-stone-200" />
+        </div>
+        <div className="self-stretch p-3 bg-stone-100 rounded-[32px] inline-flex justify-between items-center">
+          <div className="justify-center"><span class="text-zinc-700 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Age: </span><span class="text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">14 mo</span></div>
+          <div className="justify-center"><span class="text-zinc-700 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Value: </span><span class="text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">12 kg</span></div>
+          <div className="size- px-3 py-1 bg-stone-200 rounded-full inline-flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">High (85%~97%)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="w-80 p-4 bg-white shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-6">
+      <div className="self-stretch inline-flex justify-between items-center">
+        <div className="size- inline-flex flex-col justify-start items-start">
+          <div className="justify-center text-stone-900 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">Monthly Diet<br/>Composition</div>
+          <div className="justify-center text-zinc-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">Monthly dietary ratio summary</div>
+        </div>
+        <div className="size- pl-3 pr-5 py-1 bg-red-400/30 rounded-full inline-flex flex-col justify-start items-start">
+          <div className="justify-center text-yellow-800 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">Solids<br/>Exploring</div>
+        </div>
+      </div>
+      <div className="self-stretch inline-flex justify-start items-center gap-4">
+        <div className="size-24 rounded-full outline outline-8 outline-offset-[-8px] outline-red-400 flex justify-center items-center">
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="text-center justify-center text-zinc-700 text-[10px] font-bold font-['Plus_Jakarta_Sans'] leading-4">Solids</div>
+            <div className="text-center justify-center text-stone-900 text-xl font-bold font-['Plus_Jakarta_Sans'] leading-7">45%</div>
+          </div>
+        </div>
+        <div className="flex-1 inline-flex flex-col justify-start items-start gap-3">
+          <div className="self-stretch inline-flex justify-between items-center">
+            <div className="size- flex justify-start items-center gap-2">
+              <div className="size-3 bg-red-400 rounded-full" />
+              <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Formula/Breast</div>
+            </div>
+            <div className="justify-center text-stone-900 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">55%</div>
+          </div>
+          <div className="self-stretch inline-flex justify-between items-center">
+            <div className="size- flex justify-start items-center gap-2">
+              <div className="size-3 bg-stone-300 rounded-full" />
+              <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Meals (Solids)</div>
+            </div>
+            <div className="justify-center text-stone-900 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">30%</div>
+          </div>
+          <div className="self-stretch inline-flex justify-between items-center">
+            <div className="size- flex justify-start items-center gap-2">
+              <div className="size-3 bg-stone-200 rounded-full" />
+              <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Fruit/Snacks</div>
+            </div>
+            <div className="justify-center text-stone-900 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">15%</div>
+          </div>
+        </div>
+      </div>
+      <div className="self-stretch p-4 bg-stone-100 rounded-[32px] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-3">
+        <div className="self-stretch inline-flex justify-between items-center">
+          <div className="size- flex justify-start items-center gap-2">
+            <div className="justify-center text-stone-900 text-base font-normal font-['Liberation_Serif'] leading-6">🌟</div>
+            <div className="justify-center text-stone-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">New Ingredients Tried: 7</div>
+          </div>
+          <div className="justify-center text-stone-600 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">Tolerance Built</div>
+        </div>
+        <div className="self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start">
+          <div className="size- px-3 py-1 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300 flex justify-center items-center">
+            <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Carrot</div>
+          </div>
+          <div className="size- px-3 py-1 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300 flex justify-center items-center">
+            <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5"> Sweet Potato</div>
+          </div>
+          <div className="size- px-3 py-1 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300 flex justify-center items-center">
+            <div className="justify-center text-stone-900 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">Avocado</div>
+          </div>
+          <div className="size- px-3 py-1 bg-gray-200 rounded-full outline outline-1 outline-offset-[-1px] outline-stone-300 inline-flex flex-col justify-center items-center">
+            <div className="text-center justify-center text-zinc-700 text-sm font-normal font-['Plus_Jakarta_Sans'] leading-5">+ More</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="w-80 flex flex-col justify-start items-start gap-4">
+      <div className="self-stretch px-3 inline-flex justify-between items-center">
+        <div className="justify-center text-zinc-700 text-sm font-bold font-['Plus_Jakarta_Sans'] uppercase leading-5 tracking-wide">MILESTONE PROGRESS</div>
+        <div className="justify-center text-stone-600 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-5">5 Unlocked</div>
+      </div>
+      <div className="self-stretch px-2 inline-flex justify-between items-start">
+        <div className="self-stretch inline-flex flex-col justify-start items-center gap-2">
+          <div className="w-16 flex-1 p-0.5 bg-stone-300 rounded-full inline-flex justify-center items-center">
+            <div className="size-6 flex justify-center items-center">
+              <div className="w-4 h-5 bg-stone-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-stone-900 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">First Roll</div>
+        </div>
+        <div className="self-stretch inline-flex flex-col justify-start items-center gap-2">
+          <div className="w-16 flex-1 p-0.5 bg-stone-300 rounded-full inline-flex justify-center items-center">
+            <div className="size-6 flex justify-center items-center">
+              <div className="w-4 h-5 bg-stone-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-zinc-700 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">First Tooth</div>
+        </div>
+        <div className="self-stretch inline-flex flex-col justify-start items-center gap-2">
+          <div className="w-16 flex-1 bg-stone-300 rounded-full inline-flex justify-center items-center">
+            <div className="size-6 flex justify-center items-center">
+              <div className="w-4 h-5 bg-stone-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-zinc-700 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4">First Word</div>
+        </div>
+        <div className="self-stretch inline-flex flex-col justify-center items-center gap-2">
+          <div className="w-16 flex-1 bg-neutral-500 rounded-full inline-flex justify-center items-center">
+            <div className="size-6 flex justify-center items-center">
+              <div className="w-4 h-5 bg-stone-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-zinc-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-4">Walking</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-active-tab="Journey" className="w-96 h-20 px-4 pt-3 pb-6 left-0 top-[1569px] absolute bg-white inline-flex justify-between items-center">
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Journey</div>
+    </div>
+    <div data-active="True" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Active" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-600" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-600 text-xs font-bold font-['Nunito_Sans'] leading-4">Analysis</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Wishes</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Family</div>
+    </div>
+    <div className="size- p-4 left-[169px] top-[-26px] absolute bg-neutral-600 rounded-full shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg flex justify-start items-center gap-2.5">
+      <div className="size-4 bg-white" />
+    </div>
+  </div>
+</div>

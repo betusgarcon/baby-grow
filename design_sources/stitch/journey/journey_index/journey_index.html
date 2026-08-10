@@ -1,0 +1,345 @@
+<!DOCTYPE html><html class="light bg-[#fff8f1]" lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Nunito+Sans:wght@400;600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "tertiary-fixed": "#c1edd1",
+        "on-error-container": "#93000a",
+        "error": "#ba1a1a",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "tertiary-container": "#f7fff7",
+        "primary-container": "#fffdf5",
+        "surface": "#fff8f1",
+        "secondary": "#765842",
+        "on-primary": "#ffffff",
+        "inverse-surface": "#33302b",
+        "secondary-fixed-dim": "#e6bfa4",
+        "primary-fixed-dim": "#c8c7bf",
+        "on-secondary-container": "#795b44",
+        "secondary-fixed": "#ffdcc4",
+        "inverse-on-surface": "#f7f0e8",
+        "surface-bright": "#fff8f1",
+        "outline": "#777770",
+        "surface-container-highest": "#e8e1d9",
+        "on-secondary": "#ffffff",
+        "on-surface-variant": "#474741",
+        "on-primary-fixed-variant": "#474742",
+        "outline-variant": "#c8c7be",
+        "primary": "#5f5f59",
+        "primary-fixed": "#e4e3db",
+        "on-surface": "#1e1b17",
+        "on-primary-fixed": "#1b1c17",
+        "on-secondary-fixed-variant": "#5c412c",
+        "surface-dim": "#e0d9d1",
+        "on-secondary-fixed": "#2b1706",
+        "surface-container": "#f4ede5",
+        "on-background": "#1e1b17",
+        "on-tertiary-container": "#557d66",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "error-container": "#ffdad6",
+        "on-tertiary-fixed": "#002112",
+        "on-tertiary": "#ffffff",
+        "tertiary": "#406651",
+        "surface-variant": "#e8e1d9",
+        "on-error": "#ffffff",
+        "inverse-primary": "#c8c7bf",
+        "surface-container-low": "#faf2ea",
+        "on-primary-container": "#75756e",
+        "surface-tint": "#5f5f59",
+        "surface-container-lowest": "#ffffff",
+        "background": "#fff8f1",
+        "secondary-container": "#fed5b9",
+        "surface-container-high": "#eee7df"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "margin-mobile": "20px",
+        "gutter-mobile": "12px",
+        "xl": "32px",
+        "lg": "24px",
+        "xs": "8px",
+        "sm": "12px",
+        "md": "16px",
+        "base": "4px"
+      },
+      "fontFamily": {
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "caption": [
+          "Nunito Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script></head><body class="antialiased min-h-screen pb-24 md:pb-0 pt-16 flex flex-col bg-[#fff8f1] bg-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl shadow-sm flex justify-center h-16">
+<div class="w-full max-w-7xl px-margin-mobile flex justify-between items-center">
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high transition-colors p-2 rounded-full">
+<img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANXY-bfWcrMRkFjZJYn_RM57OASChxQPyb7BtIO61krUF7T1E0OT8Tp9cIOgPi8ySTGFCKElWa__BE6cqBfVL7hhxIXgFWUtsKF-IT51fQ1A5O4hlE1O5_ZE7YIXbGDuYNgyX6_mnwERJAHQRKpWUkgVRTI1PbGE4ylK8HOATSvpxmPR2nHGUhbkhUccH3Trz7cH87fM_VZVYind9ONwBVuYkbQajdPs14E6rKCtf34ybmDxz_Y3lByP-5hr1IaW1IIQlizPuFG2xN">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">6M</span>
+<span class="text-headline-md font-headline-md font-bold text-secondary hidden md:inline">Journey</span>
+</div>
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary md:hidden">Journey</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_month</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-margin-mobile py-lg md:py-xl flex flex-col gap-xl">
+<!-- Vaccine Reminder -->
+<section class="bg-error-container rounded-xl p-md flex items-start gap-sm border border-error shadow-md relative z-20">
+<div class="text-on-error-container mt-1 shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">vaccines</span>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-label-md font-label-md text-on-error-container font-bold">Upcoming: 6-Month Vaccination</h3>
+<p class="text-caption font-caption text-on-error-container/90 mt-1">Scheduled for Oct 28th.</p>
+</div>
+</section>
+<!-- Weekly Journal Summary -->
+<section class="glass-card rounded-xl p-lg flex flex-col gap-sm relative overflow-hidden group hover:shadow-[0_8px_40px_rgba(95,95,89,0.08)] transition-all duration-300">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-container/30 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-center z-10">
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="text-label-md font-label-md uppercase tracking-wider">Weekly Insight</h2>
+</div>
+<button class="text-tertiary hover:text-tertiary-fixed-dim transition-colors text-label-md font-label-md font-bold underline">More</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant z-10 leading-relaxed">Emma has been sleeping 15% longer during daytime naps this week.</p>
+</section>
+<!-- Milestones Section -->
+<section class="flex flex-col gap-md">
+<div class="flex justify-between items-end px-xs">
+<h2 class="text-headline-md font-headline-md text-on-surface">Recent Milestones</h2>
+<a class="text-label-md font-label-md text-tertiary hover:text-tertiary-fixed-dim transition-colors" href="#">More</a>
+</div>
+<div class="grid grid-cols-3 gap-gutter-mobile overflow-x-auto hide-scrollbar snap-x pb-xs">
+<!-- Milestone Card 1 -->
+<div class="bg-surface-container rounded-lg p-md flex flex-col gap-sm items-center text-center hover:scale-[1.02] transition-transform duration-300 shadow-[0_4px_20px_rgba(118,88,66,0.03)] border border-outline-variant/20 shrink-0 snap-start">
+<div class="w-24 h-24 rounded-xl overflow-hidden mb-xs shadow-sm border border-white shrink-0">
+<img alt="First Smile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGTJWumNhskWivxvx7UwEJ6BHdUUERa1yJWuzDqxa7Z2oRsX8nv4OxdpEJeNuaDHa89WKtJGa9O7OltmgAwPkriXtXFgwjCZLOZ2AivW2y3jxd9I_ffLd7CM23nbib0itvk93I49ms790oPRofGoF7XNWGYCrtu7e19Neg4JKiMSxPTCu2vu6mlnLadn89pgRSUp5zTA3biwGGV3guVhzTNvN6N4cFcN4g6fEk20_zzcBzwqZL6qI9VDbrAE7MyioCfzn98hguPLc5">
+</div>
+<h3 class="text-label-md font-label-md text-on-surface">First Smile</h3>
+<span class="text-caption font-caption text-on-surface-variant/70">2 days ago</span>
+</div>
+<!-- Milestone Card 2 -->
+<div class="bg-tertiary-container/50 rounded-lg p-md flex flex-col gap-sm items-center text-center hover:scale-[1.02] transition-transform duration-300 shadow-[0_4px_20px_rgba(64,102,81,0.03)] border border-tertiary-fixed/30 shrink-0 snap-start">
+<div class="w-24 h-24 rounded-xl overflow-hidden mb-xs shadow-sm border border-white shrink-0">
+<img alt="Grasping" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGTJWumNhskWivxvx7UwEJ6BHdUUERa1yJWuzDqxa7Z2oRsX8nv4OxdpEJeNuaDHa89WKtJGa9O7OltmgAwPkriXtXFgwjCZLOZ2AivW2y3jxd9I_ffLd7CM23nbib0itvk93I49ms790oPRofGoF7XNWGYCrtu7e19Neg4JKiMSxPTCu2vu6mlnLadn89pgRSUp5zTA3biwGGV3guVhzTNvN6N4cFcN4g6fEk20_zzcBzwqZL6qI9VDbrAE7MyioCfzn98hguPLc5">
+</div>
+<h3 class="text-label-md font-label-md text-on-surface">Grasping</h3>
+<span class="text-caption font-caption text-on-surface-variant/70">1 week ago</span>
+</div>
+<!-- Milestone Card 3 -->
+<div class="bg-surface-container rounded-lg p-md flex flex-col gap-sm items-center text-center hover:scale-[1.02] transition-transform duration-300 shadow-[0_4px_20px_rgba(118,88,66,0.03)] border border-outline-variant/20 shrink-0 snap-start">
+<div class="w-24 h-24 aspect-square rounded-xl overflow-hidden mb-xs shadow-sm border border-white shrink-0">
+<img alt="Rolling Over" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLs-it77L9hpb89AtBrBD7cpWsnvJrRhfN8ivVXEdMXo4b7ovpFWU3N9nk8FEmElKHWYp7_XdnR0Y_vHtQIUMcRjMvOKGv9R2WthvZAPRfpagGPQCoCVt7KS61qPHdilFQI0KZa0nA_GoTiIAIhlss6zDnRIJsJ-YCkcmeWJcJduHYqDxa0buuAfrBQCcJcL58IwTNHsEZQPYVS4x4MzmJTUeyuhUP5zzpVy7lTqfUEMdye81gZ3mjyCgRHZ">
+</div>
+<h3 class="text-label-md font-label-md text-on-surface">Rolling Over</h3>
+<span class="text-caption font-caption text-on-surface-variant/70">3 days ago</span>
+</div>
+</div>
+</section>
+<!-- Latest Journey -->
+<section class="flex flex-col gap-md">
+<div class="flex justify-between items-end px-xs">
+<h2 class="text-headline-md font-headline-md text-on-surface">Latest Journey</h2>
+<a class="text-label-md font-label-md text-tertiary hover:text-tertiary-fixed-dim transition-colors" href="#">More</a>
+</div>
+<div class="glass-card rounded-xl p-md md:p-lg relative">
+<div class="absolute left-8 md:left-10 top-lg bottom-lg w-[2px] bg-gradient-to-b from-secondary/20 via-tertiary/20 to-transparent"></div>
+<div class="flex flex-col gap-lg">
+<!-- Log Item 1: Feeding -->
+<div class="flex gap-md relative z-10 group">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary shadow-sm border border-white mt-1 shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+</div>
+<div class="flex-1 bg-white/60 rounded-lg p-md border border-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-body-md font-body-md font-semibold text-on-surface">Feeding</h3>
+<span class="text-caption font-caption text-on-surface-variant">10:30 AM</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant">Formula - 120ml. Seemed very content afterwards.</p>
+</div>
+</div>
+<!-- Log Item 2: Sleep -->
+<div class="flex gap-md relative z-10 group">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-sm border border-white mt-1 shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+</div>
+<div class="flex-1 bg-white/60 rounded-lg p-md border border-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-body-md font-body-md font-semibold text-on-surface">Nap Time</h3>
+<span class="text-caption font-caption text-on-surface-variant">8:15 AM - 9:45 AM</span>
+</div>
+<div class="flex items-center gap-xs mt-xs">
+<span class="px-2 py-1 rounded-full bg-surface text-[10px] font-caption text-outline uppercase tracking-wider">Deep Sleep</span>
+<span class="px-2 py-1 rounded-full bg-surface text-[10px] font-caption text-outline uppercase tracking-wider">1h 30m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Today's Menu -->
+<section class="flex flex-col gap-md">
+<h2 class="text-headline-md font-headline-md text-on-surface px-xs">Today's Menu</h2>
+<div class="flex gap-md overflow-x-auto hide-scrollbar snap-x pb-xs px-margin-mobile md:mx-0 md:px-0">
+<!-- Menu Card 1 -->
+<div class="min-w-[200px] flex-1 bg-tertiary-container/30 rounded-xl p-md border border-tertiary-fixed/30 snap-start shadow-[0_4px_20px_rgba(64,102,81,0.02)] flex flex-col">
+<div class="flex items-center gap-xs text-tertiary mb-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">wb_sunny</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Breakfast</span>
+</div>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface mb-xs">Oatmeal &amp; Banana</h3>
+<p class="text-caption font-caption text-on-surface-variant">Smoothie texture, rich in potassium.</p>
+</div>
+<!-- Menu Card 2 -->
+<div class="min-w-[200px] flex-1 bg-secondary-container/30 rounded-xl p-md border border-secondary-fixed/30 snap-start shadow-[0_4px_20px_rgba(118,88,66,0.02)] flex flex-col">
+<div class="flex items-center gap-xs text-secondary mb-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Lunch</span>
+</div>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface mb-xs">Sweet Potato Mash</h3>
+<p class="text-caption font-caption text-on-surface-variant">Soft and easily digestible.</p>
+</div>
+<!-- Menu Card 3 -->
+<div class="min-w-[200px] flex-1 bg-surface-container rounded-xl p-md border border-outline-variant/20 snap-start shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col">
+<div class="flex items-center gap-xs text-primary mb-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">nights_stay</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Dinner</span>
+</div>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface mb-xs">Apple Puree</h3>
+<p class="text-caption font-caption text-on-surface-variant">Light and sweet for the evening.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex items-center px-2 pb-6 pt-3 bg-surface-container-lowest/90 backdrop-blur-xl rounded-t-lg border-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden pb-8"><!-- Journey (Active) -->
+<a class="flex flex-1 flex-col items-center justify-center gap-xs py-1" href="#">
+  <div class="bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 flex items-center justify-center transition-all">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1, 'wght' 400;">auto_stories</span>
+  </div>
+  <span class="text-caption font-label-md text-secondary">Journey</span>
+</a>
+
+<!-- Analysis -->
+<a class="flex flex-1 flex-col items-center justify-center gap-xs py-1 group" href="#">
+  <div class="rounded-full px-4 py-1 flex items-center justify-center group-hover:bg-surface-container-high transition-all">
+    <span class="material-symbols-outlined text-on-surface-variant/70 group-hover:text-secondary" style="font-variation-settings: 'FILL' 0, 'wght' 400;">analytics</span>
+  </div>
+  <span class="text-caption font-label-md text-on-surface-variant/70 group-hover:text-secondary">Analysis</span>
+</a>
+
+<!-- Central Add Button -->
+<div class="flex flex-1 justify-center items-center pb-2">
+  <a class="flex items-center justify-center w-14 h-14 bg-tertiary text-on-tertiary rounded-full shadow-lg hover:bg-tertiary/90 transition-all active:scale-95" href="#">
+    <span class="material-symbols-outlined text-3xl">add</span>
+  </a>
+</div>
+
+<!-- Wishes -->
+<a class="flex flex-1 flex-col items-center justify-center gap-xs py-1 group" href="#">
+  <div class="rounded-full px-4 py-1 flex items-center justify-center group-hover:bg-surface-container-high transition-all">
+    <span class="material-symbols-outlined text-on-surface-variant/70 group-hover:text-secondary" style="font-variation-settings: 'FILL' 0, 'wght' 400;">auto_awesome</span>
+  </div>
+  <span class="text-caption font-label-md text-on-surface-variant/70 group-hover:text-secondary">Wishes</span>
+</a>
+
+<!-- Family -->
+<a class="flex flex-1 flex-col items-center justify-center gap-xs py-1 group" href="#">
+  <div class="rounded-full px-4 py-1 flex items-center justify-center group-hover:bg-surface-container-high transition-all">
+    <span class="material-symbols-outlined text-on-surface-variant/70 group-hover:text-secondary" style="font-variation-settings: 'FILL' 0, 'wght' 400;">group</span>
+  </div>
+  <span class="text-caption font-label-md text-on-surface-variant/70 group-hover:text-secondary">Family</span>
+</a></nav></body></html>

@@ -1,0 +1,46 @@
+page {
+  background-color: theme('colors.surface');
+  color: theme('colors.on-surface');
+  font-family: theme('fontFamily.plus-jakarta');
+  -webkit-font-smoothing: antialiased;
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass-card {
+  background: rgba(244, 237, 229, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.analysis-card {
+  background: theme('colors.analysis.card-border');
+  border: 1px solid theme('colors.analysis.card-border');
+  box-shadow: theme('boxShadow.card');
+}
+
+.analysis-panel {
+  background: theme('colors.analysis.card-muted-bg');
+  border: 1px solid theme('colors.analysis.card-muted-border');
+}
+
+.font-icons {
+  font-family: theme('fontFamily.icons');
+  font-size: 24px;
+  line-height: 1;
+}
+
+.text-on-secondary-container {
+  color: theme('colors.on-secondary-container');
+}

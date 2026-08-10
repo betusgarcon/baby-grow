@@ -1,0 +1,118 @@
+######################## TopAnalysisBar   ##############################
+
+<div className="w-96 px-4 py-3 inline-flex justify-between items-center">
+  <div className="size- flex justify-center items-center gap-3">
+    <div className="size-12 relative rounded-full inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+      <div className="w-12 py-0.5 left-[-0.33px] top-[34px] absolute bg-slate-600/80 flex flex-col justify-center items-center">
+        <div className="text-center justify-center text-white text-[10px] font-normal font-['Nunito_Sans'] leading-[10px]">1Y2M</div>
+      </div>
+    </div>
+    <div className="justify-center text-slate-600 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">Leo</div>
+  </div>
+  <div className="size- px-2 pt-2 pb-3.5 rounded-full inline-flex flex-col justify-center items-center">
+    <div className="w-1 h-4 bg-slate-600" />
+  </div>
+</div>
+
+
+######################## Analysis-Nav-Tabs ########################
+<div className="size- px-4 py-1.5 inline-flex justify-center items-center gap-2">
+  <div data-state="Active" className="w-20 h-10 inline-flex flex-col justify-start items-start gap-2.5">
+    <div className="self-stretch h-10 px-2 py-2 bg-stone-300 rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center gap-1">
+      <div className="w-3.5 h-2 bg-stone-600" />
+      <div className="text-center justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">Grow</div>
+    </div>
+  </div>
+  <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+    <div className="size-3.5 bg-zinc-700" />
+    <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Sleep</div>
+  </div>
+  <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-white rounded-full flex justify-center items-center gap-1">
+    <div className="w-3 h-3.5 bg-zinc-700" />
+    <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Diet</div>
+  </div>
+  <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+    <div className="size-3.5 bg-zinc-700" />
+    <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Mood</div>
+  </div>
+</div>
+
+
+######################## InsightCardWithTitle  ########################
+
+<div className="w-96 p-6 bg-stone-100 rounded-[48px] outline outline-1 outline-offset-[-1px] outline-stone-300/30 inline-flex flex-col justify-start items-start gap-3">
+  <div className="self-stretch inline-flex justify-start items-center gap-2">
+    <div className="size-4 inline-flex flex-col justify-center items-center">
+      <div className="w-4 flex flex-col justify-start items-start">
+        <div className="w-5 h-4 bg-red-400" />
+      </div>
+    </div>
+    <div className="flex-1 justify-center text-stone-900 text-sm font-bold font-['WenQuanYi_Zen_Hei'] leading-5 tracking-tight">爸妈随手记</div>
+  </div>
+  <div className="self-stretch justify-center text-zinc-700 text-base font-normal font-['PingFang_SC'] leading-6">今天记录了宝宝的心情，宝宝状态平稳。<br/>下午玩耍时比较专注，但到傍晚略显疲<br/>惫，需要安抚。</div>
+</div>
+
+######################## InsightCard  ########################
+<div className="w-80 p-4 bg-stone-100 rounded-2xl outline outline-1 outline-offset-[-1px] outline-stone-200 inline-flex justify-start items-start gap-3">
+  <div className="size-3.5 flex justify-center items-center gap-2.5">
+    <div className="size-3.5 bg-slate-600" />
+  </div>
+  <div className="flex-1 justify-center text-stone-900 text-base font-bold font-['WenQuanYi_Zen_Hei'] leading-6">波动趋势：周四出牙红肿略微影响<br/>食欲，但总摄入量在标准温和线以<br/>上。整体摄水量需稍作追加。</div>
+</div>
+
+######################## SubTabBar  ########################
+<div className="w-96 h-36 relative rounded-[5px] border border-purple-600 overflow-hidden">
+  <div className="w-96 h-10 p-[3px] left-[20px] top-[80px] absolute bg-stone-100 rounded-xl inline-flex justify-center items-center">
+    <div className="flex-1 self-stretch px-3 rounded-lg flex justify-center items-center gap-2">
+      <div data-selected="false" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+        <div className="size-3.5 bg-zinc-700/50" />
+      </div>
+      <div className="text-center justify-center text-zinc-700/50 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Daily Ring</div>
+    </div>
+    <div className="flex-1 self-stretch px-3 bg-stone-300 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2">
+      <div data-selected="true" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+        <div className="size-3.5 bg-stone-600" />
+      </div>
+      <div className="text-center justify-center text-stone-600 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Monthly Evolution</div>
+    </div>
+  </div>
+  <div className="w-96 h-10 p-[3px] left-[20px] top-[20px] absolute bg-stone-100 rounded-xl inline-flex justify-center items-center">
+    <div className="flex-1 self-stretch px-3 bg-stone-300 rounded-lg flex justify-center items-center gap-2">
+      <div data-selected="true" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+        <div className="size-3.5 bg-stone-600" />
+      </div>
+      <div className="text-center justify-center text-stone-600 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Daily Ring</div>
+    </div>
+    <div className="flex-1 self-stretch px-3 bg-stone-100 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2">
+      <div data-selected="false" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+        <div className="size-3.5 bg-zinc-700/50" />
+      </div>
+      <div className="text-center justify-center text-neutral-400 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Monthly Evolution</div>
+    </div>
+  </div>
+</div>
+
+######################## AiInfo  ########################
+<div className="w-80 p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 inline-flex flex-col justify-start items-start gap-3">
+  <div className="self-stretch inline-flex justify-start items-center gap-2">
+    <div className="size-6 p-2.5 flex justify-between items-center">
+      <div className="size-6 bg-yellow-800" />
+    </div>
+    <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">Ai Growth Narrative</div>
+  </div>
+  <div className="self-stretch flex flex-col justify-start items-start">
+    <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Leo&apos;s height trajectory has been very<br/>steady. Over the past three months, his<br/>height closely aligns with the 75th<br/>percentile curve. This indicates his linear<br/>skeletal development is in a very healthy,<br/>symmetrical normal state, with no signs<br/>of dropping behind or surging<br/>abnormally.</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

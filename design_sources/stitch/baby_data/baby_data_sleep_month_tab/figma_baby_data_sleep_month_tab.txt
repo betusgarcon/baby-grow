@@ -1,0 +1,177 @@
+<div className="w-96 h-[1156px] pb-16 bg-stone-50 inline-flex flex-col justify-start items-start gap-2">
+  <div className="self-stretch px-4 py-3 inline-flex justify-between items-center">
+    <div className="size- flex justify-center items-center gap-3">
+      <div className="size-12 relative rounded-full inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+        <div className="w-12 py-0.5 left-[-0.33px] top-[34px] absolute bg-slate-600/80 flex flex-col justify-center items-center">
+          <div className="text-center justify-center text-white text-[10px] font-normal font-['Nunito_Sans'] leading-[10px]">1Y2M</div>
+        </div>
+      </div>
+      <div className="justify-center text-slate-600 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">Leo</div>
+    </div>
+    <div className="size- px-2 pt-2 pb-3.5 rounded-full inline-flex flex-col justify-center items-center">
+      <div className="w-1 h-4 bg-slate-600" />
+    </div>
+  </div>
+  <div className="self-stretch px-4 py-1.5 inline-flex justify-center items-center gap-2">
+    <div data-state="Inactive" className="w-20 inline-flex flex-col justify-start items-start gap-2.5">
+      <div className="self-stretch h-10 px-2 py-2 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center gap-1">
+        <div className="w-3.5 h-2 bg-stone-600" />
+        <div className="text-center justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">Grow</div>
+      </div>
+    </div>
+    <div data-state="Active" className="w-20 h-10 px-2 py-2 bg-stone-300 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Sleep</div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-white rounded-full flex justify-center items-center gap-1">
+      <div className="w-3 h-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Diet</div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Mood</div>
+    </div>
+  </div>
+  <div className="w-full max-w-[768px] max-h-[2615.14px] px-4 py-2 flex flex-col justify-start items-start gap-3">
+    <div data-activetab="Right" className="self-stretch h-10 p-[3px] bg-stone-100 rounded-xl inline-flex justify-center items-center">
+      <div className="flex-1 self-stretch px-3 rounded-lg flex justify-center items-center gap-2">
+        <div data-selected="false" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+          <div className="size-3.5 bg-zinc-700/50" />
+        </div>
+        <div className="text-center justify-center text-zinc-700/50 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Daily Ring</div>
+      </div>
+      <div className="flex-1 self-stretch px-3 bg-stone-300 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex justify-center items-center gap-2">
+        <div data-selected="true" className="size-3.5 p-2.5 flex justify-center items-center gap-2.5">
+          <div className="size-3.5 bg-stone-600" />
+        </div>
+        <div className="text-center justify-center text-stone-600 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5">Monthly Evolution</div>
+      </div>
+    </div>
+    <div className="w-80 p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 flex flex-col justify-start items-start gap-3">
+      <div className="self-stretch inline-flex justify-start items-center gap-2">
+        <div className="size-6 p-2.5 flex justify-between items-center">
+          <div className="size-6 bg-yellow-800" />
+        </div>
+        <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">AI 睡眠整合归因</div>
+      </div>
+      <div className="self-stretch flex flex-col justify-start items-start">
+        <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">对比 1月龄、6月龄 与目前 (12月龄) 的睡眠规 律，Leo 已顺利完成了“睡眠整合”。夜晚整 觉时间由破碎变为规律的 11小时长觉，午睡 也成功缩减并合并为稳定的单次午觉。</div>
+      </div>
+    </div>
+    <div className="w-80 p-4 bg-white rounded-[48px] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-4">
+      <div className="self-stretch inline-flex justify-between items-start">
+        <div className="size- inline-flex flex-col justify-start items-start gap-1">
+          <div className="justify-center text-stone-900 text-2xl font-normal font-['PingFang_SC'] leading-8">24h 昼夜睡眠规律演<br/>变</div>
+          <div className="justify-center text-zinc-500 text-sm font-normal font-['PingFang_SC'] leading-5 tracking-tight">横轴代表一天 24 小时进程</div>
+        </div>
+        <div className="size- pl-3 pr-5 py-1 bg-stone-200 rounded-full inline-flex flex-col justify-start items-start">
+          <div className="justify-center text-zinc-700 text-xs font-normal font-['PingFang_SC'] leading-4 tracking-wide">节律趋于合<br/>流</div>
+        </div>
+      </div>
+      <div className="self-stretch pb-6 flex flex-col justify-start items-start gap-4">
+        <div className="self-stretch px-1 pb-2 border-b border-stone-200 inline-flex justify-between items-start">
+          <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">0h (深夜)</div>
+          <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">6h</div>
+          <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">12h (中午)</div>
+          <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">18h</div>
+          <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">24h</div>
+        </div>
+        <div className="self-stretch flex flex-col justify-start items-start gap-2">
+          <div className="w-80 inline-flex justify-between items-center">
+            <div className="justify-center text-stone-900 text-sm font-semibold font-['WenQuanYi_Zen_Hei'] leading-5 tracking-tight">1个月 (新生期)</div>
+            <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">15.5h / 碎觉频发</div>
+          </div>
+          <div className="self-stretch h-10 inline-flex justify-start items-center">
+            <div className="flex-1 h-10 bg-slate-300/70" />
+            <div className="w-3.5 h-10 bg-gray-200" />
+            <div className="w-8 h-10 bg-slate-300/70" />
+            <div className="w-12 h-10 bg-gray-200" />
+            <div className="w-4 h-10 bg-slate-300/70" />
+            <div className="w-6 h-10 bg-gray-200" />
+            <div className="w-9 h-10 bg-slate-300/70" />
+            <div className="size-10 bg-gray-200" />
+            <div className="w-12 h-10 bg-slate-300/70" />
+          </div>
+        </div>
+        <div className="self-stretch flex flex-col justify-start items-start gap-2">
+          <div className="w-80 inline-flex justify-between items-center">
+            <div className="justify-center text-stone-900 text-sm font-semibold font-['WenQuanYi_Zen_Hei'] leading-5 tracking-tight">6个月 (过渡期)</div>
+            <div className="justify-center text-zinc-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">13.5h / 2次午睡</div>
+          </div>
+          <div className="size- inline-flex justify-start items-center">
+            <div className="w-24 h-10 bg-slate-400/80" />
+            <div className="w-12 h-10 bg-gray-200" />
+            <div className="w-6 h-10 bg-stone-300/90" />
+            <div className="w-9 h-10 bg-gray-200" />
+            <div className="w-8 h-10 bg-stone-300/90" />
+            <div className="w-12 h-10 bg-gray-200" />
+            <div className="w-8 h-10 bg-slate-400/80" />
+          </div>
+        </div>
+        <div className="self-stretch flex flex-col justify-start items-start gap-2">
+          <div className="w-80 inline-flex justify-between items-center">
+            <div className="justify-center text-stone-900 text-sm font-semibold font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">12个月 (当前)</div>
+            <div className="justify-center text-slate-600 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">12h / 单次长夜觉+1午觉</div>
+          </div>
+          <div className="self-stretch inline-flex justify-start items-center">
+            <div className="w-32 h-10 bg-slate-600" />
+            <div className="w-14 h-10 bg-gray-200" />
+            <div className="w-9 h-10 bg-stone-600" />
+            <div className="w-14 h-10 bg-gray-200" />
+            <div className="w-8 h-10 bg-slate-600" />
+          </div>
+        </div>
+      </div>
+      <div className="self-stretch pt-4 border-t border-stone-200 inline-flex justify-center items-start gap-6">
+        <div className="self-stretch flex justify-start items-center gap-2">
+          <div className="size-3 bg-slate-600 rounded-full" />
+          <div className="justify-center text-zinc-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">长夜觉 (Night)</div>
+        </div>
+        <div className="self-stretch flex justify-start items-center gap-2">
+          <div className="size-3 bg-stone-600 rounded-full" />
+          <div className="justify-center text-zinc-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-wide">白日小睡 (Nap)</div>
+        </div>
+      </div>
+    </div>
+    <div className="w-80 p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 flex flex-col justify-start items-start gap-3">
+      <div className="self-stretch inline-flex justify-start items-center gap-2">
+        <div className="size-6 p-2.5 flex justify-between items-center">
+          <div className="w-3.5 h-5 bg-yellow-800" />
+        </div>
+        <div className="flex-1 justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">12个月大动作与睡眠并觉</div>
+      </div>
+      <div className="self-stretch flex flex-col justify-start items-start">
+        <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">12 个月大时，很多宝宝正处于从“两次并一次<br/>午睡”的过渡期，且容易因练习站立或行走的<br/>动作爆发期产生“夜醒”。继续保持睡前仪式<br/>的恒定是当下的核心关键。</div>
+      </div>
+    </div>
+  </div>
+  <div data-active-tab="Journey" className="w-96 h-20 px-4 pt-3 pb-6 relative bg-white inline-flex justify-between items-center">
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Journey</div>
+    </div>
+    <div data-active="True" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Active" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-600" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-600 text-xs font-bold font-['Nunito_Sans'] leading-4">Analysis</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Wishes</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Family</div>
+    </div>
+    <div className="size- p-4 left-[169px] top-[-26px] absolute bg-neutral-600 rounded-full shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg flex justify-start items-center gap-2.5">
+      <div className="size-4 bg-white" />
+    </div>
+  </div>
+</div>

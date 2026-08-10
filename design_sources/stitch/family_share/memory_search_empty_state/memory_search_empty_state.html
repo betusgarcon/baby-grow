@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Filter Memories - Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "primary-container": "#8fa9b0",
+        "on-surface-variant": "#424849",
+        "on-tertiary": "#ffffff",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "tertiary": "#835332",
+        "surface-container-low": "#f5f3f0",
+        "on-error-container": "#93000a",
+        "primary-fixed-dim": "#b1cbd2",
+        "surface-tint": "#496269",
+        "inverse-on-surface": "#f2f0ed",
+        "surface-bright": "#fbf9f6",
+        "secondary-fixed": "#d9e7ce",
+        "outline-variant": "#c2c7c9",
+        "secondary-container": "#d9e7ce",
+        "on-primary-container": "#253e44",
+        "error": "#ba1a1a",
+        "secondary": "#56624e",
+        "surface-container": "#efeeeb",
+        "primary-fixed": "#cce7ef",
+        "outline": "#72787a",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "inverse-surface": "#30312f",
+        "background": "#fbf9f6",
+        "surface-container-lowest": "#ffffff",
+        "on-secondary-container": "#5c6854",
+        "on-tertiary-container": "#593012",
+        "on-tertiary-fixed": "#311300",
+        "on-primary": "#ffffff",
+        "surface-container-high": "#eae8e5",
+        "on-background": "#1b1c1a",
+        "surface-container-highest": "#e4e2df",
+        "secondary-fixed-dim": "#becbb3",
+        "tertiary-container": "#d39872",
+        "on-primary-fixed-variant": "#324b51",
+        "error-container": "#ffdad6",
+        "tertiary-fixed-dim": "#f8b991",
+        "on-secondary": "#ffffff",
+        "on-primary-fixed": "#041f24",
+        "surface-variant": "#e4e2df",
+        "on-secondary-fixed": "#141e0f",
+        "inverse-primary": "#b1cbd2",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-dim": "#dbdad7",
+        "on-error": "#ffffff"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "12px",
+        "margin-mobile": "20px",
+        "lg": "40px",
+        "gutter": "20px",
+        "xl": "64px",
+        "margin-desktop": "120px",
+        "base": "8px",
+        "md": "24px"
+      },
+      "fontFamily": {
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<style>
+        body {
+            background-color: #fbf9f6;
+            color: #1b1c1a;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100dvh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .selection-active {
+            transform: scale(0.96);
+            border-color: #496269;
+        }
+        .ritual-badge-gold {
+            background: linear-gradient(135deg, #D4AF37 0%, #F2E3B5 100%);
+        }
+        #filter-dropdown {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        #filter-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .filter-open #filter-dropdown {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .filter-closed #filter-dropdown {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .filter-open #filter-backdrop {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .filter-closed #filter-backdrop {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden filter-closed">
+<!-- Filter Backdrop -->
+<div class="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[55] opacity-0 pointer-events-none" id="filter-backdrop" onclick="closeFilter()"></div>
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-[70] bg-background/90 backdrop-blur-md shadow-sm flex items-center justify-between px-margin-mobile py-sm">
+<button class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Filter Memories</h1>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 text-on-surface-variant" onclick="toggleFilter()">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<span class="text-label-md font-bold text-primary">6M</span><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container active:scale-95 transition-transform cursor-pointer">
+<img alt="Baby profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpKbpXFXY9rONJ9tdvz5KbhFq3VdMdr4IwNtqWFJH2vhl7XSeD13SqKX0Dz-XVdaIzSKfkU1d1KuzFpC0TQywtuEElZQ1p4L3KsaiSqdzUP7rQvxDVJyxT6m9nhVS_rasIIlETRmNPqLmfkLRx4H0rlOJ0VrA1ftn7aNWcyQFOwl2L-A1rZPXJ5oWIPoMjP4y9gnrRSWHpb7IVeM3fw_4yJOuX1vaDpU9yDJZlv3FgFjtJA9oehHQ28BGW1S2Hnr5nA91cUTNkJDbi"/>
+</div>
+</div>
+</header>
+<!-- Top-Down Filter Dropdown -->
+<div class="fixed top-[64px] left-0 right-0 bg-surface-bright z-[60] shadow-xl border-t border-outline-variant max-h-[85vh] overflow-y-auto" id="filter-dropdown">
+<div class="px-margin-mobile py-lg space-y-lg max-w-3xl mx-auto">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface">Filter</h2>
+<button class="text-primary font-label-md hover:opacity-70 transition-opacity">Reset</button>
+</div>
+<!-- Time Range -->
+<div>
+<h3 class="font-label-sm text-on-surface-variant mb-md uppercase tracking-wider">Time Range</h3>
+<div class="grid grid-cols-3 gap-sm"><button class="py-sm rounded-full bg-primary text-on-primary font-label-md transition-all text-center">All Time</button><button class="py-sm rounded-full bg-surface-container text-on-surface-variant font-label-md hover:bg-surface-container-high transition-all text-center">Last 7 Days</button><button class="py-sm rounded-full bg-surface-container text-on-surface-variant font-label-md hover:bg-surface-container-high transition-all text-center">This Month</button></div>
+</div>
+<!-- Smart Categories (Iconified) -->
+<div>
+<h3 class="font-label-sm text-on-surface-variant mb-md uppercase tracking-wider">Categories</h3>
+<div class="grid grid-cols-4 gap-md"><button class="flex flex-col items-center gap-xs group"><div class="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-sm group-active:scale-95 transition-transform"><span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">stars</span></div><span class="text-label-sm text-on-surface">Milestone</span></button><button class="flex flex-col items-center gap-xs group"><div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-on-surface-variant shadow-sm group-active:scale-95 transition-transform"><span class="material-symbols-outlined text-[28px]">baby_changing_station</span></div><span class="text-label-sm text-on-surface">Diet</span></button><button class="flex flex-col items-center gap-xs group"><div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-on-surface-variant shadow-sm group-active:scale-95 transition-transform"><span class="material-symbols-outlined text-[28px]">sentiment_satisfied</span></div><span class="text-label-sm text-on-surface">Smiles</span></button><button class="flex flex-col items-center gap-xs group"><div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-on-surface-variant shadow-sm group-active:scale-95 transition-transform"><span class="material-symbols-outlined text-[28px]">park</span></div><span class="text-label-sm text-on-surface">Outdoor</span></button></div>
+</div>
+<!-- Media Type (Streamlined) -->
+<div>
+<h3 class="font-label-sm text-on-surface-variant mb-md uppercase tracking-wider">Media Type</h3>
+<div class="flex gap-sm"><label class="flex-1 cursor-pointer"><input checked="" class="hidden peer" type="checkbox"/><div class="flex items-center justify-center gap-xs py-sm px-sm rounded-lg bg-surface-container peer-checked:bg-primary-container peer-checked:text-on-primary-container transition-all"><span class="material-symbols-outlined text-[20px]">photo_library</span><span class="font-label-sm">Media</span></div></label><label class="flex-1 cursor-pointer"><input class="hidden peer" type="checkbox"/><div class="flex items-center justify-center gap-xs py-sm px-sm rounded-lg bg-surface-container peer-checked:bg-primary-container peer-checked:text-on-primary-container transition-all"><span class="material-symbols-outlined text-[20px]">notes</span><span class="font-label-sm">Text</span></div></label></div>
+</div>
+<!-- Action Buttons -->
+<div class="flex gap-md pt-sm border-t border-outline-variant/30"><button class="flex-1 py-md rounded-full bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-all active:scale-95" onclick="closeFilter()">Cancel</button><button class="flex-1 py-md rounded-full bg-primary text-on-primary font-bold text-label-md hover:opacity-90 transition-all active:scale-95 shadow-lg" onclick="closeFilter()">Apply</button></div>
+</div>
+<div class="w-12 h-1 bg-outline-variant/30 rounded-full mx-auto mb-4"></div>
+</div>
+<main class="pt-24 pb-32 px-margin-mobile max-w-3xl mx-auto"><div class="flex flex-col items-center justify-center py-xl text-center space-y-md"><div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center text-primary mb-md"><span class="material-symbols-outlined text-[48px]">search_off</span></div><div class="space-y-xs"><h2 class="font-headline-md text-headline-md text-on-surface">No memories found</h2><p class="text-body-md text-on-surface-variant max-w-xs mx-auto">Try adjusting your filters to find those special moments.</p></div><button class="mt-md px-lg py-sm rounded-full border-2 border-primary text-primary font-label-md hover:bg-primary/5 transition-all" onclick="toggleFilter()">Adjust Filters</button></div></main>
+<!-- Floating Action Dock -->
+<div class="fixed bottom-margin-mobile left-margin-mobile right-margin-mobile z-[50] transition-all duration-500 ease-out pointer-events-none translate-y-32" id="action-dock">
+<div class="glass-card rounded-full p-2 flex items-center justify-between shadow-lg pointer-events-auto max-w-md mx-auto bg-inverse-surface">
+<div class="flex items-center gap-xs pl-sm">
+<div class="ritual-badge-gold w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
+<span class="text-on-tertiary-fixed font-bold text-label-md" id="selected-count">0</span>
+</div>
+<span class="font-label-md text-inverse-on-surface">Selected</span>
+</div>
+<div class="flex gap-sm pr-1">
+<button class="flex items-center gap-xs px-sm py-sm rounded-full bg-white/10 text-inverse-on-surface font-label-md hover:bg-white/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">link</span>Link
+                </button>
+<button class="flex items-center gap-xs px-sm py-sm rounded-full bg-primary text-on-primary font-label-md hover:opacity-90 transition-all active:scale-95 shadow-md">
+<span class="material-symbols-outlined text-[20px]">photo_library</span>Poster
+                </button>
+</div>
+</div>
+</div>
+<script>
+        let selectedItems = new Set();
+        const body = document.body;
+        const actionDock = document.getElementById('action-dock');
+        const countDisplay = document.getElementById('selected-count');
+
+        // Add pre-selected items based on HTML state
+        document.querySelectorAll('.selection-active').forEach(container => {
+            selectedItems.add(container.parentElement);
+        });
+
+        function toggleFilter() {
+            body.classList.toggle('filter-open');
+            body.classList.toggle('filter-closed');
+        }
+
+        function closeFilter() {
+            body.classList.remove('filter-open');
+            body.classList.add('filter-closed');
+        }
+
+        function toggleSelection(element) {
+            const indicator = element.querySelector('.selection-indicator');
+            const imgContainer = element.querySelector('.relative');
+            
+            if (selectedItems.has(element)) {
+                selectedItems.delete(element);
+                indicator.classList.replace('opacity-100', 'opacity-0');
+                indicator.classList.replace('bg-primary', 'bg-black/20');
+                imgContainer.classList.remove('ring-4', 'ring-primary/20', 'selection-active');
+            } else {
+                selectedItems.add(element);
+                indicator.classList.replace('opacity-0', 'opacity-100');
+                indicator.classList.replace('bg-black/20', 'bg-primary');
+                imgContainer.classList.add('ring-4', 'ring-primary/20', 'selection-active');
+            }
+
+            updateDock();
+        }
+
+        function updateDock() {
+            const count = selectedItems.size;
+            countDisplay.innerText = count;
+
+            if (count > 0) {
+                actionDock.classList.remove('translate-y-32');
+                actionDock.classList.add('translate-y-0');
+            } else {
+                actionDock.classList.add('translate-y-32');
+                actionDock.classList.remove('translate-y-0');
+            }
+        }
+    </script>
+</body></html>

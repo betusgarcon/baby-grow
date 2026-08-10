@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wishes - Loading State</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "tertiary-fixed-dim": "#f8b991",
+        "surface": "#fbf9f6",
+        "primary": "#496269",
+        "error-container": "#ffdad6",
+        "background": "#fbf9f6",
+        "inverse-on-surface": "#f2f0ed",
+        "secondary": "#56624e",
+        "on-error-container": "#93000a",
+        "surface-container-highest": "#e4e2df",
+        "tertiary-container": "#d39872",
+        "outline-variant": "#c2c7c9",
+        "on-error": "#ffffff",
+        "surface-bright": "#fbf9f6",
+        "on-surface": "#1b1c1a",
+        "on-tertiary": "#ffffff",
+        "secondary-fixed": "#d9e7ce",
+        "inverse-surface": "#30312f",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-tint": "#496269",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#eae8e5",
+        "secondary-container": "#d9e7ce",
+        "on-primary-fixed-variant": "#324b51",
+        "primary-fixed": "#cce7ef",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-primary-fixed": "#041f24",
+        "on-primary": "#ffffff",
+        "on-tertiary-fixed": "#311300",
+        "on-secondary-fixed": "#141e0f",
+        "secondary-fixed-dim": "#becbb3",
+        "surface-dim": "#dbdad7",
+        "on-surface-variant": "#424849",
+        "on-primary-container": "#253e44",
+        "error": "#ba1a1a",
+        "tertiary": "#835332",
+        "surface-variant": "#e4e2df",
+        "primary-container": "#8fa9b0",
+        "outline": "#72787a",
+        "surface-container": "#efeeeb",
+        "on-secondary-container": "#5c6854",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "inverse-primary": "#b1cbd2",
+        "on-background": "#1b1c1a",
+        "surface-container-low": "#f5f3f0",
+        "on-tertiary-container": "#593012",
+        "surface-container-lowest": "#ffffff"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "margin-desktop": "120px",
+        "xl": "64px",
+        "md": "24px",
+        "sm": "12px",
+        "gutter": "20px",
+        "lg": "40px",
+        "base": "8px",
+        "margin-mobile": "20px"
+      },
+      "fontFamily": {
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .skeleton-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .skeleton-shimmer::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+<!-- Tailwind Configuration -->
+
+</head>
+<body class="bg-surface dark:bg-surface-dim min-h-screen text-on-surface font-body-md text-body-md transition-colors duration-300">
+<!-- TopAppBar -->
+<header class="top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md shadow-sm flex justify-between items-center px-margin-mobile py-sm"><div class="relative w-full flex items-center justify-between h-10 max-w-2xl mx-auto">
+<div class="flex items-center gap-sm">
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high transition-colors p-2 rounded-full">
+<img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AP1WRLupe7dq33yffzc5j96E5m5xRtxXDut6ryRo0N7JxUqf9Yt-_pO8gWn0qZHZN8iV_pARju5TfY_f657F5G5ZJmJaOOvYjwZ7k6syjWMaFQnXWLzJzLtBEKljSbDPYupvDq0H0i5ROc44PKPeFbGXayqrlbGOufrqML-Wy4okGNZhQnT9Ke0CmBnGVnSDQz-9nHeXOXvnT2nZDg5zc4L4tdzooqgbwP67do-H1IDig6SR6OBdob51ASLv2t0"/>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">1Y 2M</span>
+</div>
+</div>
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary text-center absolute left-1/2 -translate-x-1/2">Wishes</span>
+<div class="w-10"></div>
+</div></header>
+<!-- Main Content Canvas -->
+<main class="pb-[100px] px-margin-mobile max-w-2xl mx-auto space-y-lg">
+<!-- Welcome Message Skeleton -->
+<section class="space-y-sm pt-md">
+<div class="h-8 w-3/4 bg-surface-container-highest dark:bg-inverse-surface/30 rounded-lg skeleton-shimmer pulse"></div>
+<div class="h-4 w-1/2 bg-surface-container dark:bg-inverse-surface/20 rounded-lg skeleton-shimmer pulse"></div>
+</section>
+<!-- Wish List Grid (Bento Style) -->
+<div class="grid grid-cols-1 gap-md">
+<!-- Skeleton Card 1 -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-md rounded-lg shadow-[0_4px_30px_rgba(0,0,0,0.04)] border border-outline-variant/20 space-y-md">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full bg-surface-container-highest dark:bg-surface-variant/20 skeleton-shimmer pulse"></div>
+<div class="w-12 h-6 bg-surface-container dark:bg-surface-variant/20 rounded-full pulse"></div>
+</div>
+<div class="space-y-xs">
+<div class="h-6 w-1/3 bg-surface-container-highest dark:bg-surface-variant/30 rounded pulse"></div>
+<div class="h-4 w-full bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+<div class="h-4 w-5/6 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="pt-sm space-y-xs">
+<div class="flex justify-between">
+<div class="h-3 w-16 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+<div class="h-3 w-8 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="h-2 w-full bg-surface-container-highest dark:bg-surface-variant/20 rounded-full overflow-hidden">
+<div class="h-full w-1/3 bg-primary/20 dark:bg-primary-fixed-dim/20 skeleton-shimmer"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 2 -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-md rounded-lg shadow-[0_4px_30px_rgba(0,0,0,0.04)] border border-outline-variant/20 space-y-md">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full bg-surface-container-highest dark:bg-surface-variant/20 skeleton-shimmer pulse"></div>
+<div class="w-12 h-6 bg-surface-container dark:bg-surface-variant/20 rounded-full pulse"></div>
+</div>
+<div class="space-y-xs">
+<div class="h-6 w-1/2 bg-surface-container-highest dark:bg-surface-variant/30 rounded pulse"></div>
+<div class="h-4 w-full bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="pt-sm space-y-xs">
+<div class="flex justify-between">
+<div class="h-3 w-16 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+<div class="h-3 w-8 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="h-2 w-full bg-surface-container-highest dark:bg-surface-variant/20 rounded-full overflow-hidden">
+<div class="h-full w-2/3 bg-primary/20 dark:bg-primary-fixed-dim/20 skeleton-shimmer"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 3 -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-md rounded-lg shadow-[0_4px_30px_rgba(0,0,0,0.04)] border border-outline-variant/20 space-y-md">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full bg-surface-container-highest dark:bg-surface-variant/20 skeleton-shimmer pulse"></div>
+<div class="w-12 h-6 bg-surface-container dark:bg-surface-variant/20 rounded-full pulse"></div>
+</div>
+<div class="space-y-xs">
+<div class="h-6 w-1/4 bg-surface-container-highest dark:bg-surface-variant/30 rounded pulse"></div>
+<div class="h-4 w-full bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+<div class="h-4 w-2/3 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="pt-sm space-y-xs">
+<div class="flex justify-between">
+<div class="h-3 w-16 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+<div class="h-3 w-8 bg-surface-container dark:bg-surface-variant/10 rounded pulse"></div>
+</div>
+<div class="h-2 w-full bg-surface-container-highest dark:bg-surface-variant/20 rounded-full overflow-hidden">
+<div class="h-full w-1/4 bg-primary/20 dark:bg-primary-fixed-dim/20 skeleton-shimmer"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container dark:bg-surface-container md:hidden w-full rounded-t-lg shadow-[0_-4px_30px_rgba(0,0,0,0.04)] shadow-lg left-0 z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container/90 backdrop-blur-md pb-safe"><a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#"><span class="material-symbols-outlined mb-1">auto_stories</span><span class="text-label-sm font-label-sm">Journey</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#"><span class="material-symbols-outlined mb-1">analytics</span><span class="text-label-sm font-label-sm">Analysis</span></a><div class="relative w-16 flex justify-center mb-1"><a class="absolute -top-10 flex items-center justify-center w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg hover:bg-primary/90 transition-colors active:scale-95" href="#"><span class="material-symbols-outlined text-3xl">add</span></a></div><a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 duration-200 ease-out w-16" href="#"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span><span class="text-label-sm font-label-sm font-bold">Wishes</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:text-secondary transition-colors w-16 mb-1" href="#"><span class="material-symbols-outlined mb-1">group</span><span class="text-label-sm font-label-sm">Family</span></a></nav>
+<script>
+        // Micro-interaction for the FAB to simulate a little "heartbeat" loading state
+        const fab = document.querySelector('button.bg-primary');
+        if (fab) {
+            setInterval(() => {
+                fab.classList.add('scale-105');
+                setTimeout(() => fab.classList.remove('scale-105'), 400);
+            }, 3000);
+        }
+
+        // Logic for handling potential dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // Uncomment the next line to enable automatic dark mode detection
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

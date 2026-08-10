@@ -1,0 +1,288 @@
+<!DOCTYPE html><html class="light min-h-screen bg-[#fff8f1]" lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-error-container": "#93000a",
+        "surface-bright": "#fff8f1",
+        "surface-tint": "#5f5f59",
+        "on-error": "#ffffff",
+        "on-secondary-fixed": "#2b1706",
+        "on-primary-fixed-variant": "#474742",
+        "on-tertiary": "#ffffff",
+        "background": "#fff8f1",
+        "surface": "#fff8f1",
+        "tertiary": "#406651",
+        "primary-fixed": "#e4e3db",
+        "on-surface-variant": "#474741",
+        "on-surface": "#1e1b17",
+        "error-container": "#ffdad6",
+        "secondary": "#765842",
+        "surface-container-lowest": "#ffffff",
+        "secondary-container": "#fed5b9",
+        "surface-container-high": "#eee7df",
+        "on-primary": "#ffffff",
+        "surface-container": "#f4ede5",
+        "primary": "#5f5f59",
+        "outline-variant": "#c8c7be",
+        "surface-container-highest": "#e8e1d9",
+        "surface-container-low": "#faf2ea",
+        "on-background": "#1e1b17",
+        "on-secondary-fixed-variant": "#5c412c",
+        "on-tertiary-fixed": "#002112",
+        "surface-dim": "#e0d9d1",
+        "inverse-surface": "#33302b",
+        "tertiary-fixed": "#c1edd1",
+        "secondary-fixed": "#ffdcc4",
+        "on-secondary": "#ffffff",
+        "primary-container": "#fffdf5",
+        "on-secondary-container": "#795b44",
+        "primary-fixed-dim": "#c8c7bf",
+        "outline": "#777770",
+        "inverse-primary": "#c8c7bf",
+        "tertiary-container": "#f7fff7",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "on-tertiary-container": "#557d66",
+        "secondary-fixed-dim": "#e6bfa4",
+        "inverse-on-surface": "#f7f0e8",
+        "on-primary-fixed": "#1b1c17"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "sm": "12px",
+        "margin-mobile": "20px",
+        "base": "4px",
+        "lg": "24px",
+        "xs": "8px",
+        "md": "16px",
+        "xl": "32px",
+        "gutter-mobile": "12px"
+      },
+      "fontFamily": {
+        "caption": [
+          "Nunito Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script></head><body class="bg-surface-bright text-on-surface font-body-md min-h-screen">
+    <!-- TopAppBar -->
+    <header class="fixed top-0 left-0 w-full z-40 flex justify-between items-center px-margin-mobile py-xs backdrop-blur-xl shadow-sm shadow-on-surface/5 bg-surface/90">
+        <div class="flex items-center gap-sm">
+            <img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AP1WRLs-it77L9hpb89AtBrBD7cpWsnvJrRhfN8ivVXEdMXo4b7ovpFWU3N9nk8FEmElKHWYp7_XdnR0Y_vHtQIUMcRjMvOKGv9R2WthvZAPRfpagGPQCoCVt7KS61qPHdilFQI0KZa0nA_GoTiIAIhlss6zDnRIJsJ-YCkcmeWJcJduHYqDxa0buuAfrBQCcJcL58IwTNHsEZQPYVS4x4MzmJTUeyuhUP5zzpVy7lTqfUEMdye81gZ3mjyCgRHZ">
+            <span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">6M</span>
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary pointer-events-auto">Journey</span>
+</div>
+        <button class="w-10 h-10 flex items-center justify-center rounded-full text-primary">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;" data-original-icon="calendar_month">calendar_month</span>
+        </button>
+    </header>
+
+    <main class="pt-24 px-margin-mobile space-y-lg pb-32">
+        <!-- Upcoming Vaccination Banner Skeleton -->
+        <section class="skeleton-shimmer rounded-lg h-28 w-full flex items-center px-lg relative overflow-hidden">
+            <div class="space-y-2 w-full">
+                <div class="h-6 w-1/3 bg-surface-container rounded-full opacity-40"></div>
+                <div class="h-4 w-2/3 bg-surface-container rounded-full opacity-30"></div>
+            </div>
+            <div class="absolute right-[-10px] top-[-10px] opacity-20">
+                <div class="w-32 h-32 rounded-full bg-secondary-container"></div>
+            </div>
+        </section>
+
+        <!-- Weekly Insight Card Skeleton -->
+        <section class="bg-surface-container-low rounded-lg p-lg shadow-sm space-y-md">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full skeleton-shimmer"></div>
+                <div class="h-6 w-24 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+            </div>
+            <div class="space-y-3">
+                <div class="h-4 w-full bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                <div class="h-4 w-full bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                <div class="h-4 w-3/4 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+            </div>
+        </section>
+
+        <!-- Horizontal Milestone Cards Skeleton -->
+        <section class="space-y-md">
+            <div class="flex justify-between items-end">
+                <div class="h-7 w-40 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                <div class="h-4 w-20 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+            </div>
+            <div class="flex gap-md overflow-x-auto pb-4 -mx-margin-mobile px-margin-mobile no-scrollbar">
+                <div class="min-w-[200px] h-48 bg-surface-container-lowest rounded-lg p-md border border-outline-variant/30 flex flex-col justify-between">
+                    <div class="w-12 h-12 rounded-full skeleton-shimmer"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 w-full bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        <div class="h-3 w-2/3 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                    </div>
+                </div>
+                <div class="min-w-[200px] h-48 bg-surface-container-lowest rounded-lg p-md border border-outline-variant/30 flex flex-col justify-between">
+                    <div class="w-12 h-12 rounded-full skeleton-shimmer"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 w-full bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        <div class="h-3 w-2/3 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                    </div>
+                </div>
+                <div class="min-w-[200px] h-48 bg-surface-container-lowest rounded-lg p-md border border-outline-variant/30 flex flex-col justify-between opacity-50">
+                    <div class="w-12 h-12 rounded-full skeleton-shimmer"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 w-full bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        <div class="h-3 w-2/3 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Entries Skeleton -->
+        <section class="space-y-lg pb-10">
+            <div class="h-7 w-32 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+            <div class="space-y-xl relative">
+                <!-- Soft dotted path simulation -->
+                <div class="absolute left-[15px] top-4 bottom-0 w-[2px] bg-outline-variant/20 border-l-2 border-dotted border-outline-variant/30"></div>
+                <!-- Entry 1 -->
+                <div class="flex gap-md relative">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-high skeleton-shimmer z-10 flex-shrink-0 flex items-center justify-center">
+                        <div class="w-4 h-4 rounded-full bg-surface-container"></div>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-4 w-24 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        <div class="bg-surface-container-lowest p-md rounded-lg border border-outline-variant/20 shadow-sm space-y-2">
+                            <div class="h-5 w-3/4 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                            <div class="h-3 w-1/2 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Entry 2 -->
+                <div class="flex gap-md relative">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-high skeleton-shimmer z-10 flex-shrink-0 flex items-center justify-center">
+                        <div class="w-4 h-4 rounded-full bg-surface-container"></div>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-4 w-24 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        <div class="bg-surface-container-lowest p-md rounded-lg border border-outline-variant/20 shadow-sm space-y-2">
+                            <div class="h-5 w-2/3 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                            <div class="h-3 w-1/3 bg-surface-container-high rounded-full skeleton-shimmer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AI Companion Pulse Overlay -->
+    
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-4 pt-2 bg-surface/95 backdrop-blur-xl border-t border-outline-variant/20 shadow-[0_-4px_20px_0_rgba(0,0,0,0.05)]"><a class="flex flex-col items-center justify-center gap-1 flex-1 bg-secondary-container text-on-secondary-container rounded-full py-2 mx-1 transition-transform duration-150 ease-out active:scale-95" href="#">
+  <span class="material-symbols-outlined text-[24px]">auto_stories</span>
+  <span class="font-label-md text-[12px]">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 flex-1 text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#">
+  <span class="material-symbols-outlined">analytics</span>
+  <span class="font-label-md text-[12px]">Analysis</span>
+</a>
+<div class="flex flex-1 justify-center items-center">
+  <button class="w-14 h-14 bg-tertiary text-on-tertiary rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+    <span class="material-symbols-outlined text-3xl">add</span>
+  </button>
+</div>
+<a class="flex flex-col items-center justify-center gap-1 flex-1 text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#">
+  <span class="material-symbols-outlined">auto_awesome</span>
+  <span class="font-label-md text-[12px]">Wishes</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 flex-1 text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#">
+  <span class="material-symbols-outlined">group</span>
+  <span class="font-label-md text-[12px]">Family</span>
+</a></nav></body></html>

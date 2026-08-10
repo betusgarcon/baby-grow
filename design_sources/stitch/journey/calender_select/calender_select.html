@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Nurture &amp; Bloom - Select Date</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-secondary-fixed": "#2b1706",
+        "inverse-surface": "#33302b",
+        "surface-dim": "#e0d9d1",
+        "surface-container-highest": "#e8e1d9",
+        "secondary-fixed-dim": "#e6bfa4",
+        "on-tertiary": "#ffffff",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "tertiary-fixed": "#c1edd1",
+        "on-primary-fixed-variant": "#474742",
+        "primary-fixed-dim": "#c8c7bf",
+        "on-primary-fixed": "#1b1c17",
+        "surface-container-high": "#eee7df",
+        "on-tertiary-container": "#557d66",
+        "secondary": "#765842",
+        "primary": "#5f5f59",
+        "surface-bright": "#fff8f1",
+        "surface": "#fff8f1",
+        "error-container": "#ffdad6",
+        "surface-variant": "#e8e1d9",
+        "on-error-container": "#93000a",
+        "tertiary": "#406651",
+        "background": "#fff8f1",
+        "on-tertiary-fixed": "#002112",
+        "on-secondary-container": "#795b44",
+        "on-surface": "#1e1b17",
+        "secondary-container": "#fed5b9",
+        "error": "#ba1a1a",
+        "surface-tint": "#5f5f59",
+        "surface-container": "#f4ede5",
+        "primary-fixed": "#e4e3db",
+        "on-surface-variant": "#474741",
+        "inverse-primary": "#c8c7bf",
+        "inverse-on-surface": "#f7f0e8",
+        "outline": "#777770",
+        "surface-container-low": "#faf2ea",
+        "tertiary-container": "#f7fff7",
+        "on-primary": "#ffffff",
+        "on-background": "#1e1b17",
+        "on-primary-container": "#75756e",
+        "outline-variant": "#c8c7be",
+        "on-secondary-fixed-variant": "#5c412c",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "secondary-fixed": "#ffdcc4",
+        "on-error": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "primary-container": "#fffdf5"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "sm": "12px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "xs": "8px",
+        "margin-mobile": "20px",
+        "gutter-mobile": "12px",
+        "base": "4px"
+      },
+      "fontFamily": {
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "caption": [
+          "Nunito Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Nunito+Sans:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-morphism {
+      background: rgba(255, 255, 251, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .wheel-gradient {
+      mask-image: linear-gradient(to bottom, transparent, black 40%, black 60%, transparent);
+    }
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.98); }
+    }
+    .animate-pulse-soft {
+      animation: pulse-soft 3s ease-in-out infinite;
+    }
+  </style>
+
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden h-screen w-screen flex items-center justify-center">
+<!-- Background Simulation of Previous Screen -->
+<div class="fixed inset-0 z-0 px-margin-mobile pt-20">
+<div class="flex flex-col gap-lg opacity-40 grayscale-[0.2]">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Monthly Overview</h2>
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+</div>
+<div class="grid grid-cols-7 gap-xs">
+<template x-for="i in 35">
+<div class="h-12 w-full bg-surface-container rounded-lg"></div>
+</template>
+<!-- Mock Content -->
+<div class="col-span-7 mt-lg h-32 bg-secondary-container/30 rounded-xl"></div>
+<div class="col-span-7 h-32 bg-tertiary-container/30 rounded-xl"></div>
+</div>
+</div>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-on-surface/10 backdrop-blur-[6px] z-10 flex items-end md:items-center justify-center">
+<!-- Modal Content -->
+<div class="w-full max-w-md bg-surface-container-lowest glass-morphism rounded-t-lg md:rounded-lg shadow-xl overflow-hidden transform transition-all duration-300 translate-y-0 flex flex-col max-h-[795px]">
+<!-- Header -->
+<div class="flex items-center justify-between px-lg py-md border-b border-outline-variant/30">
+<button aria-label="Close" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Select Date</h1>
+<button class="px-md py-xs font-label-md text-label-md text-secondary border border-secondary/20 rounded-full hover:bg-secondary-fixed transition-colors">
+          Today
+        </button>
+</div>
+<!-- Quick Scroll Pickers -->
+<div class="px-lg py-lg flex gap-md relative">
+<!-- Month Picker -->
+<div class="flex-1 h-32 relative wheel-gradient overflow-hidden">
+<div class="absolute inset-0 flex flex-col items-center gap-sm py-md scrollbar-hide overflow-y-auto snap-y snap-mandatory">
+<div class="snap-center font-body-md text-on-surface-variant py-base">September</div>
+<div class="snap-center font-display text-headline-md text-secondary font-bold py-base">October</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">November</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">December</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">January</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">February</div>
+</div>
+<div class="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-10 border-y border-secondary/10 pointer-events-none"></div>
+</div>
+<!-- Year Picker -->
+<div class="flex-1 h-32 relative wheel-gradient overflow-hidden">
+<div class="absolute inset-0 flex flex-col items-center gap-sm py-md scrollbar-hide overflow-y-auto snap-y snap-mandatory">
+<div class="snap-center font-body-md text-on-surface-variant py-base">2022</div>
+<div class="snap-center font-display text-headline-md text-secondary font-bold py-base">2023</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">2024</div>
+<div class="snap-center font-body-md text-on-surface-variant py-base">2025</div>
+</div>
+<div class="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-10 border-y border-secondary/10 pointer-events-none"></div>
+</div>
+</div>
+<!-- Date Grid Content -->
+<div class="px-lg pb-md">
+<!-- Weekday Labels -->
+<div class="grid grid-cols-7 text-center mb-sm">
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">S</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">M</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">T</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">W</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">T</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">F</div>
+<div class="text-on-surface-variant font-label-md text-label-md opacity-60">S</div>
+</div>
+<!-- Grid of Days -->
+<div class="grid grid-cols-7 gap-gutter-mobile">
+<!-- Previous Month trailing days -->
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">25</button>
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">26</button>
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">27</button>
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">28</button>
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">29</button>
+<button class="h-11 flex items-center justify-center font-body-md text-outline-variant">30</button>
+<!-- Current Month -->
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">1</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">2</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">3</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">4</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">5</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full relative">
+            6
+            <span class="absolute bottom-1.5 w-1 h-1 bg-tertiary rounded-full"></span>
+</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">7</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">8</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">9</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">10</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">11</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">12</button>
+<button class="h-11 flex items-center justify-center font-body-md bg-secondary text-on-secondary rounded-full font-bold shadow-md transform scale-110">13</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">14</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">15</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">16</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">17</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">18</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">19</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">20</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">21</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">22</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">23</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">24</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">25</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">26</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">27</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">28</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">29</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">30</button>
+<button class="h-11 flex items-center justify-center font-body-md text-on-surface hover:bg-surface-container transition-colors rounded-full">31</button>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="p-lg mt-auto bg-surface-container-low/50 backdrop-blur-sm">
+<button class="w-full h-14 bg-primary text-on-primary font-display font-bold text-body-lg rounded-full shadow-lg shadow-primary/20 flex items-center justify-center gap-sm active:scale-95 transition-transform">
+<span>Confirm Selection</span>
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+<!-- AI Companion Bubble (Subtle integration) -->
+<div class="fixed bottom-32 right-6 hidden md:flex items-center gap-sm glass-morphism p-md rounded-xl animate-pulse-soft">
+<div class="w-10 h-10 bg-secondary-fixed rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">Leo's Milestone</span>
+<span class="font-caption text-caption text-on-surface-variant">6 months is a big step!</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Shell Navigation Simulation (Suppressed on this focused task but shown for brand anchor context) -->
+<div class="fixed bottom-0 w-full z-20 px-4 py-3 pb-safe md:hidden opacity-20 pointer-events-none">
+<div class="bg-surface-container-low flex justify-around items-center h-16 rounded-t-lg shadow-sm">
+<div class="flex flex-col items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">home</span></div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">analytics</span></div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">child_care</span></div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">settings</span></div>
+</div>
+</div>
+<script>
+    // Simple micro-interaction for date selection
+    document.querySelectorAll('.grid button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (!this.classList.contains('text-outline-variant')) {
+          document.querySelectorAll('.grid button').forEach(b => {
+            b.classList.remove('bg-secondary', 'text-on-secondary', 'font-bold', 'shadow-md', 'scale-110');
+            if(!b.classList.contains('text-outline-variant')) b.classList.add('text-on-surface');
+          });
+          this.classList.add('bg-secondary', 'text-on-secondary', 'font-bold', 'shadow-md', 'scale-110');
+          this.classList.remove('text-on-surface');
+        }
+      });
+    });
+
+    // Handle wheel scrolling snap feedback (simplified)
+    const wheels = document.querySelectorAll('.scrollbar-hide');
+    wheels.forEach(wheel => {
+      wheel.addEventListener('scroll', () => {
+        // Debounce or use requestAnimationFrame for haptic-like visual feedback if needed
+      });
+    });
+  </script>
+</body></html>

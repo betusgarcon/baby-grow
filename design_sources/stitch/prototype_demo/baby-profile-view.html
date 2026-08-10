@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baby Growth Prototype Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body data-route-id="baby-profile-view">
+  <main class="demo-app">
+    <section class="demo-surface">
+      <iframe id="screen-frame" title="Baby Growth Prototype Screen" loading="eager"></iframe>
+      <div id="frame-loading" class="frame-loading">页面加载中...</div>
+
+      <button id="menu-toggle" class="menu-toggle" type="button">
+        <span class="material-symbols-outlined">widgets</span>
+        <span>演示目录</span>
+      </button>
+
+      <div id="drawer-mask" class="drawer-mask"></div>
+
+      <aside id="demo-drawer" class="demo-drawer" aria-hidden="true">
+        <div class="drawer-header">
+          <div>
+            <p class="eyebrow" id="current-module-label">时光旅程</p>
+            <h2 id="current-title">旅程首页</h2>
+            <p id="current-summary" class="drawer-copy"></p>
+          </div>
+          <button id="drawer-close" class="icon-button" type="button" aria-label="关闭目录">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <section class="drawer-section">
+          <div class="section-row">
+            <div class="section-title">主模块</div>
+            <button id="reset-route" class="text-button" type="button">回首页</button>
+          </div>
+          <div id="module-nav" class="pill-grid"></div>
+        </section>
+
+        <section class="drawer-section">
+          <div class="section-title">推荐流程</div>
+          <div id="flow-list" class="flow-list"></div>
+        </section>
+
+        <section class="drawer-section">
+          <div class="section-title">当前模块页面</div>
+          <div id="screen-list" class="screen-list"></div>
+        </section>
+
+        <section class="drawer-section">
+          <div class="section-title">快捷跳转</div>
+          <div id="quick-actions" class="quick-actions"></div>
+        </section>
+
+        <section class="drawer-section">
+          <div class="section-row">
+            <button id="prev-screen" class="ghost-button" type="button">上一页</button>
+            <button id="next-screen" class="primary-button" type="button">下一页</button>
+          </div>
+          <div id="flow-context" class="flow-context"></div>
+          <div id="stepper" class="stepper"></div>
+          <div class="meta-links">
+            <a id="source-link" href="#" target="_blank" rel="noreferrer">打开源页面</a>
+            <a id="image-link" href="#" target="_blank" rel="noreferrer">查看设计截图</a>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <nav id="app-tabbar" class="app-tabbar"></nav>
+  </main>
+  <script src="./routes.js"></script>
+  <script src="./inline-routes.js"></script>
+  <script src="./app.js"></script>
+ </body>
+</html>

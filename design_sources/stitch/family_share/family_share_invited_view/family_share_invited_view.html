@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Leo's Space Pass - Member Invitation</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "theme": {
+    "extend": {
+      "colors": {
+        "nurture-surface": "#fbf9f6",
+        "nurture-surface-container": "#ffffff",
+        "nurture-accent": "#c39379",
+        "nurture-text-primary": "#1f2937",
+        "nurture-text-secondary": "#6b7280",
+        "nurture-blue": "#e0f2fe",
+        "nurture-blue-text": "#0369a1"
+      },
+      "fontFamily": {
+        "sans": [
+          "Plus Jakarta Sans",
+          "system-ui",
+          "sans-serif"
+        ]
+      },
+      "borderRadius": {
+        "xl-custom": "2rem"
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<!-- Plus Jakarta Sans Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+<style data-purpose="custom-styling">
+    body {
+      background-color: #fbf9f6;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Subtle dot pattern for the card background as seen in image */
+    .bg-pattern-dots {
+      background-image: radial-gradient(#dbdad7 0.5px, transparent 0.5px);
+      background-size: 15px 15px;
+    }
+    /* Decorative dashed circle for the badge */
+    .badge-ring {
+      border: 2px dashed #c39379;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen font-sans text-nurture-text-primary">
+<!-- BEGIN: MainHeader -->
+<header class="w-full max-w-md mx-auto px-6 py-8 flex items-center justify-between" data-purpose="top-navigation">
+<!-- Back Button -->
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-nurture-text-primary">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" fill-rule="evenodd"></path>
+</svg>
+</button>
+<!-- Page Title -->
+<h1 class="text-xl font-bold text-slate-800">长辈受邀界面</h1>
+<!-- View Management Pill -->
+<div class="bg-gray-100 px-3 py-1.5 rounded-full flex items-center space-x-1" data-purpose="management-view-toggle">
+<span class="text-xs font-semibold text-gray-500">管理视角</span>
+<svg class="h-3 w-3 text-gray-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" fill-rule="evenodd"></path>
+</svg>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: ContentContainer -->
+<main class="flex-grow flex flex-col items-center px-6 pb-12 w-full max-w-md mx-auto">
+<!-- BEGIN: SpacePassCard -->
+<section class="w-full bg-white border border-gray-100 rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden flex flex-col items-center text-center" data-purpose="invitation-card">
+<!-- Decorative background pattern -->
+<div class="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div>
+<div class="relative z-10 w-full flex flex-col items-center">
+<!-- Pass Label -->
+<div class="bg-nurture-blue px-6 py-1.5 rounded-full mb-10" data-purpose="badge-label">
+<span class="text-xs font-bold text-nurture-blue-text tracking-widest uppercase">Leo's Space Pass</span>
+</div>
+<!-- Avatar Section with Medal Badge -->
+<div class="relative mb-10" data-purpose="avatar-container">
+<!-- Main Profile Photo -->
+<div class="w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-white">
+<img alt="Leo's Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5bN-XbFNFcWdD11VG_PVN723fWxIYlc3lzaQLGBovlaJD40fEZb9XXbla7ZFf7lqWk-E123irFxMxhh_k07AUnm72Zc2cthjySemnzR3lwqe_5DlyDYcNRUnCafVvF7MAOdn95gO01E6CsTfmVaAdO0q50MlPo9EsbLCxEmSk6raRg1Qezyki7yFzOdQWRL0oXTxfYT0_LTwsLdSyo-gNeiiDGnt8emAHtowvWF1u3CwajRDvTsl073MpNLp1lcpe56VY15YwGwYg"/>
+</div>
+<!-- Medal/Star Overlay Badge -->
+<div class="absolute -top-4 -right-4 w-16 h-16 badge-ring rounded-full flex items-center justify-center bg-transparent">
+<div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+<!-- Using a simple star emoji/icon representation -->
+<span class="text-xl">🎖️</span>
+</div>
+</div>
+</div>
+<!-- Headline & Text -->
+<h2 class="text-2xl font-bold text-slate-800 mb-6">亲爱的一家人，欢迎回家！</h2>
+<p class="text-gray-500 leading-relaxed text-sm mb-12 px-2" data-purpose="invitation-description">
+          您的“协作者”权限口令已被自动感应激活。加入后，您将能在微信里随时查看 Leo 的每日成长。我们开始吧！
+        </p>
+<!-- Inviter Info -->
+<div class="text-gray-400 text-xs font-medium" data-purpose="inviter-footer">
+          邀请人：<span class="text-gray-500">Mom (You)</span>
+</div>
+</div>
+</section>
+<!-- END: SpacePassCard -->
+<!-- BEGIN: StickyFooterAction -->
+<div class="w-full mt-auto pt-8" data-purpose="fixed-footer-button">
+<button class="w-full bg-nurture-accent hover:bg-[#b07d64] transition-colors py-5 rounded-2xl flex items-center justify-center space-x-2 text-white font-bold text-lg shadow-lg shadow-orange-900/10">
+<span>💖</span>
+<span>接受邀请，即刻加入空间</span>
+</button>
+</div>
+<!-- END: StickyFooterAction -->
+</main>
+<!-- END: ContentContainer -->
+</body></html>

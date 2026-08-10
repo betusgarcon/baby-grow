@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nurture &amp; Bloom - Manage Permissions</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "theme": {
+    "extend": {
+      "fontFamily": {
+        "sans": [
+          "Plus Jakarta Sans",
+          "system-ui",
+          "sans-serif"
+        ]
+      },
+      "colors": {
+        "morandi": {
+          "dark": "#2D3E50",
+          "gray": "#F3F4F6",
+          "text-muted": "#7A8B99",
+          "primary": "#5B707A",
+          "accent-bg": "#FFF1E9",
+          "accent-border": "#E9D5C8",
+          "danger-bg": "#FFF5F5",
+          "danger-text": "#E53E3E"
+        }
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<style data-purpose="layout-and-overlays">
+    /* Custom styles for the mobile frame and overlay behavior */
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .mobile-frame {
+      width: 375px;
+      height: 812px;
+      background-color: #E2E8F0;
+      border: 12px solid #2D3E50;
+      border-radius: 48px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Dimmed background for the bottom sheet effect */
+    .bg-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    /* Bottom Sheet Styling */
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      z-index: 20;
+      padding-bottom: 34px; /* Home indicator space */
+      box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      background-color: #E2E8F0;
+      border-radius: 2px;
+      margin: 12px auto 24px;
+    }
+  </style>
+<style data-purpose="component-styles">
+    /* Option card active state */
+    .option-card-active {
+      background-color: #FFF1E9;
+      border: 1px solid #E9D5C8;
+    }
+    .option-card-inactive {
+      background-color: #F8FAFC;
+      border: 1px solid transparent;
+    }
+  </style>
+</head>
+<body class="font-sans">
+<!-- BEGIN: MobileDeviceContainer -->
+<div class="mobile-frame">
+<!-- BEGIN: BackgroundContent (The Family Page) -->
+<!-- This section represents the dimmed background content seen in the reference image -->
+<div class="p-6 h-full flex flex-col gap-8 opacity-50">
+<!-- Header -->
+<header class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-white">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHGH_FgtEbyXxLp2G81l2lmPoBU0duoOpzIyKLzfi7cpQnHE4xUsO9QlnBArOhgZGF2oZdDPWgCbgqkAaiOEixZSlkGUwpWnyJ0NhPxN3XXDG6kZ10mLoeyZqrLnS5UXV3kWtAZYxUBnii-MyCiRSGohef4o6jTL5rVD0_ncj5m_Giad8WpySIRXuGvJG9vqw_NQm4jy59xz4Ok8qh6LrFe2CdA693byzWPseh64dR7PCCWAgas-1yON5jw4eBAeE-Toj6zzQA0WfF"/>
+</div>
+<div>
+<h1 class="text-xl font-bold text-morandi-dark">Family</h1>
+<span class="text-xs bg-gray-200 px-2 py-1 rounded-full text-morandi-text-muted">6mo 12d</span>
+</div>
+</div>
+</header>
+<!-- Family Circle List -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-lg font-bold text-morandi-dark">Family Circle</h2>
+<button class="flex items-center gap-1 text-sm bg-gray-200 px-3 py-1.5 rounded-full text-morandi-dark font-medium">
+<span class="">👤+</span> Invite
+          </button>
+</div>
+<div class="bg-white rounded-3xl p-4 flex flex-col gap-6">
+<!-- Member 1 -->
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-orange-200 flex items-center justify-center text-orange-800 font-bold">M</div>
+<div>
+<p class="font-bold text-morandi-dark text-sm">Mom (You)</p>
+<p class="text-xs text-morandi-text-muted">Admin · Full Access</p>
+</div>
+</div>
+<span class="text-gray-400">⋮</span>
+</div>
+<!-- Member 2 -->
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold">D</div>
+<div>
+<p class="font-bold text-morandi-dark text-sm">Dad</p>
+<p class="text-xs text-morandi-text-muted">Admin · Full Access</p>
+</div>
+</div>
+<span class="text-gray-400">⋮</span>
+</div>
+</div>
+</section>
+</div>
+<!-- END: BackgroundContent -->
+<!-- Dimmer Overlay -->
+<div class="bg-overlay"></div>
+<!-- BEGIN: BottomSheet -->
+<div class="bottom-sheet" data-purpose="permission-settings-sheet">
+<div class="sheet-handle"></div>
+<div class="px-6 pb-2">
+<!-- Title & Subtitle -->
+<h2 class="text-xl font-bold text-morandi-dark mb-1">管理 Mom (You) 的权限</h2>
+<p class="text-sm text-morandi-text-muted mb-6">更改该成员在空间内的数据访问与记录范围</p>
+<!-- BEGIN: OptionsList -->
+<div class="flex flex-col gap-3 mb-8">
+<!-- Admin Option (Selected) -->
+<div class="option-card-active rounded-2xl p-4 flex justify-between items-center" data-purpose="role-option">
+<div class="flex flex-col">
+<span class="text-base font-bold text-morandi-dark">超级管理员 (Admin)</span>
+<span class="text-xs text-morandi-text-muted mt-1">拥有全部记录与所有成员管理权限</span>
+</div>
+<div class="text-orange-700"><span class="material-symbols-outlined">check</span></div>
+</div>
+<!-- Contributor Option -->
+<div class="option-card-inactive rounded-2xl p-4 flex justify-between items-center" data-purpose="role-option">
+<div class="flex flex-col">
+<span class="text-base font-bold text-morandi-dark">共享协作者 (Contributor)</span>
+<span class="text-xs text-morandi-text-muted mt-1">允许上传照片并帮忙记录每日生活起居</span>
+</div>
+</div>
+<!-- Viewer Option -->
+<div class="option-card-inactive rounded-2xl p-4 flex justify-between items-center" data-purpose="role-option">
+<div class="flex flex-col">
+<span class="text-base font-bold text-morandi-dark">只读看护者 (Viewer)</span>
+<span class="text-xs text-morandi-text-muted mt-1">仅可查看成长数据与时间轴，防止误触修改</span>
+</div>
+</div>
+</div>
+<!-- END: OptionsList -->
+<!-- BEGIN: ActionButtons -->
+<div class="flex flex-col gap-4">
+<!-- Confirm Button -->
+<button class="w-full bg-morandi-primary text-white font-bold py-4 rounded-2xl shadow-lg active:scale-[0.98] transition-transform">
+            确认更改
+          </button>
+<!-- Remove Member Action -->
+<button class="w-full bg-error-container text-on-error-container font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2 active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined">heart_broken</span>
+<span>移出该家庭空间</span>
+</button>
+</div>
+<!-- END: ActionButtons -->
+</div>
+</div>
+<!-- END: BottomSheet -->
+</div>
+<!-- END: MobileDeviceContainer -->
+</body></html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Baby Growth Data Space - Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-secondary-fixed": "#141e0f",
+        "on-primary": "#ffffff",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-primary-fixed-variant": "#324b51",
+        "surface-container": "#efeeeb",
+        "error": "#ba1a1a",
+        "surface-container-lowest": "#ffffff",
+        "on-tertiary": "#ffffff",
+        "surface": "#fbf9f6",
+        "on-tertiary-container": "#593012",
+        "on-surface": "#1b1c1a",
+        "surface-dim": "#dbdad7",
+        "inverse-primary": "#b1cbd2",
+        "surface-bright": "#fbf9f6",
+        "outline-variant": "#c2c7c9",
+        "secondary-fixed": "#d9e7ce",
+        "error-container": "#ffdad6",
+        "surface-container-highest": "#e4e2df",
+        "tertiary-fixed-dim": "#f8b991",
+        "surface-container-high": "#eae8e5",
+        "tertiary-container": "#d39872",
+        "on-secondary-container": "#5c6854",
+        "on-primary-container": "#253e44",
+        "on-tertiary-fixed": "#311300",
+        "primary-container": "#8fa9b0",
+        "surface-variant": "#e4e2df",
+        "surface-tint": "#496269",
+        "background": "#fbf9f6",
+        "tertiary": "#835332",
+        "on-surface-variant": "#424849",
+        "primary": "#496269",
+        "secondary-fixed-dim": "#becbb3",
+        "primary-fixed": "#cce7ef",
+        "surface-container-low": "#f5f3f0",
+        "tertiary-fixed": "#ffdbc7",
+        "outline": "#72787a",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "secondary-container": "#d9e7ce",
+        "inverse-surface": "#30312f",
+        "inverse-on-surface": "#f2f0ed",
+        "on-error": "#ffffff",
+        "secondary": "#56624e",
+        "on-error-container": "#93000a",
+        "on-background": "#1b1c1a",
+        "on-primary-fixed": "#041f24",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-secondary": "#ffffff"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "margin-desktop": "120px",
+        "xs": "4px",
+        "base": "8px",
+        "xl": "64px",
+        "lg": "40px",
+        "gutter": "20px",
+        "margin-mobile": "20px",
+        "sm": "12px",
+        "md": "24px"
+      },
+      "fontFamily": {
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        body { background-color: #fbf9f6; color: #1b1c1a; }
+        .ambient-shadow { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-body-md antialiased pb-32">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 bg-background/80 backdrop-blur-md shadow-sm w-full flex items-center justify-between px-margin-mobile py-sm transition-transform duration-300"><div class="flex items-center gap-sm"><div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0"><img alt="Baby profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-3vSbH67fp5T3fp9QDrJzERPXqEnlcP5g118O_PWLPAGmCRckz36sww539DmPjpiMDzsutzRpNn7CunETZ6aXN8991Ovi1NX1CmurvqQ8ZiAWvkutN0Fqpk5xUnUMuPgaGV9h4LPk9GROhL7b_mzhGRmw6CtRylQFB8OYV0oLtJ-ev8IzR-u2PA_ohP9DcsKDLqG7CRt_X5gKV3QcTepgulGJTlYr3GZAQObWe5ILoD1IIwqebQnOp2Y93s7B2pKdrC6idpJFlcXg"><div class="absolute bottom-0 left-0 right-0 bg-primary/80 text-on-primary text-[10px] font-bold text-center py-[2px] leading-none">1Y2M</div></div><div><h1 class="font-headline-md text-headline-md text-primary">Leo</h1><p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Analysis • Updated Just Now</p></div></div></header>
+<main class="px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto max-w-sm space-y-4 mt-2">
+<!-- Category Tabs -->
+<nav class="flex items-center justify-between gap-1 w-full px-margin-mobile pb-2 pt-4"><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-secondary-container text-on-secondary-container text-[13px] font-label-md transition-all active:scale-95 shadow-sm"><span class="material-symbols-outlined text-[18px]">trending_up</span>Growth</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">bedtime</span>Sleep</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">restaurant</span>Diet</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">mood</span>Mood</button></nav>
+<!-- AI Growth Narrative Card -->
+<section class="bg-surface-container-lowest rounded-DEFAULT ambient-shadow border border-surface-container-high p-4 leading-relaxed">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-tertiary">auto_awesome</span>
+<h2 class="font-label-md text-label-md text-tertiary uppercase tracking-wider font-bold">AI Growth Narrative</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                Leo's height trajectory has been very steady. Over the past three months, his height closely aligns with the 75th percentile curve. This indicates his linear skeletal development is in a very healthy, symmetrical normal state, with no signs of dropping behind or surging abnormally.
+            </p>
+</section>
+<!-- Quick Metrics -->
+<section class="bg-surface-container-lowest rounded-DEFAULT ambient-shadow border border-surface-container-high p-4">
+<div class="grid grid-cols-3 mb-6 gap-2">
+<div class="text-center relative">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Height</p>
+<div class="flex items-baseline justify-center gap-1">
+<span class="font-headline-lg text-headline-lg text-primary">82</span>
+<span class="font-label-md text-label-md text-outline">cm</span>
+</div>
+</div>
+<div class="text-center relative after:content-[''] after:absolute after:bottom-[-16px] after:left-1/2 after:-translate-x-1/2 after:w-16 after:h-1 after:bg-tertiary-container after:rounded-full">
+<p class="font-label-sm text-label-sm text-tertiary uppercase mb-1 font-bold">Weight</p>
+<div class="flex items-baseline justify-center gap-1">
+<span class="font-headline-lg text-headline-lg text-tertiary">12</span>
+<span class="font-label-md text-label-md text-outline">kg</span>
+</div>
+</div>
+<div class="text-center relative">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Head Circ.</p>
+<div class="flex items-baseline justify-center gap-1">
+<span class="font-headline-lg text-headline-lg text-primary">47.1</span>
+<span class="font-label-md text-label-md text-outline">cm</span>
+</div>
+</div>
+</div>
+<div class="border-t border-surface-container-high pt-6">
+<!-- Time Range Selector -->
+<div class="flex justify-center bg-surface-container p-1 rounded-lg mb-6 max-w-sm mx-auto w-full">
+<button class="flex-1 py-1 px-4 text-sm font-medium text-on-surface-variant rounded-md hover:bg-surface-container-highest transition-colors">Last 3M</button>
+<button class="flex-1 py-1 px-4 text-sm font-medium text-on-surface-variant rounded-md hover:bg-surface-container-highest transition-colors">Last 6M</button>
+<button class="flex-1 py-1 px-4 text-sm font-medium bg-surface-container-lowest text-on-surface shadow-sm rounded-md transition-colors">Since Birth</button>
+</div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Weight (kg)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">WHO Boy Standard</span>
+</div>
+<!-- Chart Placeholder -->
+<div class="w-full h-48 bg-surface-container-low rounded-lg relative overflow-hidden border border-surface-container-high flex items-center justify-center">
+<div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, #e4e2df 25%, transparent 25%, transparent 75%, #e4e2df 75%, #e4e2df), repeating-linear-gradient(45deg, #e4e2df 25%, #f5f3f0 25%, #f5f3f0 75%, #e4e2df 75%, #e4e2df); background-position: 0 0, 10px 10px; background-size: 20px 20px;"></div>
+<span class="relative font-label-md text-label-md text-on-surface-variant">Chart Visualization</span>
+</div>
+<div class="mt-4 flex items-center justify-between bg-surface-container-low p-3 rounded-lg">
+<div class="flex items-center gap-3 text-sm">
+<span class="text-on-surface-variant">Age: <strong class="text-on-surface">14 mo</strong></span>
+<span class="text-on-surface-variant">Value: <strong class="text-on-surface">12 kg</strong></span>
+</div>
+<span class="bg-surface-variant px-3 py-1 rounded-full text-xs font-bold text-on-surface-variant">High (85%~97%)</span>
+</div>
+</div>
+</section>
+<!-- Dietary Analysis -->
+<section class="bg-surface-container-lowest rounded-DEFAULT ambient-shadow border border-surface-container-high p-4">
+<div class="flex justify-between items-center mb-6 gap-4 gap-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Monthly Diet Composition</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Monthly dietary ratio summary</p>
+</div>
+<span class="bg-tertiary-container/30 text-tertiary text-xs font-bold px-3 py-1 rounded-full">Solids Exploring</span>
+</div>
+<div class="flex items-center mb-6 gap-4 gap-3">
+<!-- Donut Chart Placeholder -->
+<div class="rounded-full border-tertiary-container relative flex items-center justify-center border-l-secondary-container border-b-secondary-container w-24 h-24 border-8">
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-bold">Solids</p>
+<p class="text-xl font-bold text-on-surface">45%</p>
+</div>
+</div>
+<div class="flex-1 space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-tertiary-container"></span><span class="text-sm">Formula/Breast</span></div>
+<span class="font-bold">55%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-secondary-container"></span><span class="text-sm">Meals (Solids)</span></div>
+<span class="font-bold">30%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-surface-variant"></span><span class="text-sm">Fruit/Snacks</span></div>
+<span class="font-bold">15%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-surface-container-high">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="">🌟</span>
+<h4 class="font-label-md text-label-md font-bold text-on-surface">New Ingredients Tried: 7</h4>
+</div>
+<span class="text-xs text-secondary font-bold">Tolerance Built</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-lowest border border-outline-variant px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">Carrot</span>
+<span class="bg-surface-container-lowest border border-outline-variant px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">&nbsp;Sweet Potato</span>
+<span class="bg-surface-container-lowest border border-outline-variant px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">Avocado</span>
+<button class="bg-surface-container border border-dashed border-outline-variant px-3 py-1 rounded-full text-sm text-on-surface-variant">+ More</button>
+</div>
+</div>
+</section>
+<!-- Milestone Progress -->
+<section class="mb-8">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-label-md text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Milestone Progress</h3>
+<span class="text-sm font-bold text-secondary">5 Unlocked</span>
+</div>
+<div class="flex justify-between px-2">
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#F2E3B5] to-[#D4AF37] p-[2px] shadow-sm">
+<div class="w-full h-full bg-surface-container-lowest rounded-full flex items-center justify-center">
+<span class="text-2xl">🦁</span>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface text-center">First Roll</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#E8E8E8] to-[#C0C0C0] p-[2px] shadow-sm opacity-60">
+<div class="w-full h-full bg-surface-container-lowest rounded-full flex items-center justify-center">
+<span class="text-2xl opacity-50">🦷</span>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface-variant text-center">First Tooth</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#EBC8AF] to-[#CD7F32] p-[2px] shadow-sm opacity-60">
+<div class="w-full h-full bg-surface-container-lowest rounded-full flex items-center justify-center">
+<span class="text-2xl opacity-50">🗣️</span>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface-variant text-center">First Word</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-surface-container-high p-[2px] border border-dashed border-outline-variant">
+<div class="w-full h-full rounded-full flex items-center justify-center">
+<span class="text-2xl opacity-30">🚶</span>
+</div>
+</div>
+<span class="text-xs font-medium text-outline text-center">Independent Walking</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container-lowest/95 backdrop-blur-xl border-t border-surface-container-high shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl max-w-sm left-1/2 -translate-x-1/2"><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_stories</span><span class="font-label-sm text-[10px]">Journey</span></a><a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl w-16 py-2 transition-colors active:scale-90 duration-200 shadow-sm" href="#"><span class="material-symbols-outlined mb-1 text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span><span class="font-label-sm text-[10px] font-bold">Analysis</span></a><div class="relative -top-6"><button class="w-14 h-14 rounded-full text-on-tertiary flex items-center justify-center shadow-lg hover:opacity-90 active:scale-95 transition-all border-4 border-surface-container-lowest bg-primary hover:bg-primary/90"><span class="material-symbols-outlined text-3xl">add</span></button></div><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_awesome</span><span class="font-label-sm text-[10px]">Wishes</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">group</span><span class="font-label-sm text-[10px]">Family</span></a></nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

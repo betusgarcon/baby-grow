@@ -1,0 +1,313 @@
+<!DOCTYPE html><html class="light" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-error-container": "#93000a",
+        "surface-container-highest": "#e4e2df",
+        "on-primary": "#ffffff",
+        "surface-container": "#efeeeb",
+        "surface": "#fbf9f6",
+        "on-error": "#ffffff",
+        "secondary-fixed": "#d9e7ce",
+        "tertiary-fixed": "#ffdbc7",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-secondary-container": "#5c6854",
+        "primary-container": "#8fa9b0",
+        "surface-container-lowest": "#ffffff",
+        "outline": "#72787a",
+        "tertiary": "#835332",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "surface-bright": "#fbf9f6",
+        "on-background": "#1b1c1a",
+        "tertiary-fixed-dim": "#f8b991",
+        "secondary-fixed-dim": "#becbb3",
+        "inverse-on-surface": "#f2f0ed",
+        "error-container": "#ffdad6",
+        "outline-variant": "#c2c7c9",
+        "on-tertiary": "#ffffff",
+        "on-secondary": "#ffffff",
+        "tertiary-container": "#d39872",
+        "primary-fixed": "#cce7ef",
+        "surface-container-low": "#f5f3f0",
+        "background": "#fbf9f6",
+        "surface-container-high": "#eae8e5",
+        "inverse-surface": "#30312f",
+        "primary": "#496269",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "inverse-primary": "#b1cbd2",
+        "surface-dim": "#dbdad7",
+        "secondary-container": "#d9e7ce",
+        "on-surface": "#1b1c1a",
+        "on-primary-fixed-variant": "#324b51",
+        "on-primary-container": "#253e44",
+        "on-surface-variant": "#424849",
+        "on-tertiary-container": "#593012",
+        "on-secondary-fixed": "#141e0f",
+        "on-tertiary-fixed": "#311300",
+        "surface-tint": "#496269",
+        "surface-variant": "#e4e2df",
+        "secondary": "#56624e",
+        "error": "#ba1a1a",
+        "on-primary-fixed": "#041f24"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "base": "8px",
+        "xl": "64px",
+        "sm": "12px",
+        "xs": "4px",
+        "margin-mobile": "20px",
+        "lg": "40px",
+        "md": "24px",
+        "margin-desktop": "120px",
+        "gutter": "20px"
+      },
+      "fontFamily": {
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script></head><body class="bg-surface text-on-background min-h-screen flex flex-col relative">
+<!-- Header: Sticky -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 px-margin-mobile h-16 flex items-center justify-between shrink-0">
+<div class="flex-1 flex items-center">
+<button aria-label="Back" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface" data-original-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<div class="flex-none">
+<h1 class="text-on-surface font-headline-md text-headline-md">Memories</h1>
+</div>
+<div class="flex-1 flex items-center justify-end gap-3">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+</div>
+</header>
+<!-- Main Content: Scrollable Grid Area -->
+<main class="flex-1 overflow-y-auto px-4 py-4 pb-32">
+<div class="grid grid-cols-2 gap-x-sm gap-y-md">
+<!-- Card 1: Selected -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="1">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="First Crawl" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4aiboZzliZgH_P60hX4JE5qVicREsIWtGefJAI4OyL9XhjNFwKDyhkDMcXtSUPp8qsA5bygpsva1uGlUVKAf1-H0qcuQpaO8B6e1ROSFDroMlacnW8WNsjFgTian8SndLSLwjw4SJPLIaTctl4w0L16BqVyyDp69i4RmHWSuFHg6gwH2W7I2drLOpHiBg0Nl2D293FL5bHTx2zRKFHFFil8bJ31Ymg3X9pqPHqKxJuSEnB5et1wolSFI39Us9WiiQbPE11SvfzIeo">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-primary border-2 border-white/50">
+<span class="material-symbols-outlined text-white text-[16px] font-bold">check</span>
+</div>
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-wider uppercase">Milestone</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">First Crawl</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 12, 2023</p>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="2">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="First Steps" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpobZFSbYJXerb_16LgX7RIuay6Yo9FYvvmhiOoQl-CTie9iNFl1qUcBgGzAJYScp7syxLsS1kilvnZxGHVGSIHBxT8_ar2ZdTvF9Pe4SEh2jDfR1gmHccj-s70Zwwa5jHIY7dFZXcK2LJhGCcReUSJHY5QKiza-oQvpzs_N03U7pc-K7aKsMP9A9bOOG139lxTC2RleekXDzfl_JVwoH7K0X_J-sfZ03KCJPm79-QVKE77jjwWmCVBuqPdHgBuj8xIR62TTS_LPMu">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold tracking-wider uppercase">Big Moment</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">First Steps</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 14, 2023</p>
+</div>
+</article>
+<!-- Card 3: Selected -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="3">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="Sweet Potato Puree" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-primary border-2 border-white/50">
+<span class="material-symbols-outlined text-white text-[16px] font-bold">check</span>
+</div>
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold tracking-wider uppercase">Foodie</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">Sweet Potato Puree</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 15, 2023</p>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="4">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="Morning Giggles" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbPtCOUcXHQMLgii--ukHc3bR6HhpeaE6ekEZHs2zlwOBUWLKiBj2OrFNcgHP01mi2xFd56l8wMj_VxNHXiCwPd5UXGWGdRFnAdc_qtpA4wvFaeiFBkRqwQ9MUYCeXNg2KTsLY3t8OSYrWHatLPADannQ3r3EdVZwrNVtl4fK6mDEo3OsekMTZ6WUEuCmUB9Wco3oXUx6NP8v7vU209X_68X4cKtOYyIE8pQh06Is7jinmm98O-xZ7oSom7kcrajzKDbKL7echAEPv">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold tracking-wider uppercase">Happy</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">Morning Giggles</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 18, 2023</p>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="5">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="Park Adventure" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCZnCWYR0dbeOXNThCiVaBOX8tKC1fnELMOdMZPchHMVX4ZkhDRIjhJl5L7V1Om8mrd_yZZQbg3m4mc5JcDXurLjKoJmYUZ_XdjapD3H_X4ONPFemnmy4b80rcSQzG4NcX96tWD25hCe7GV1F1YlPLL-p5t_oeFQqv_6NhagG3KgZIJfEvFr8Fc-bKU6qi3AZ8S78OolwPsTKXwsYAvx40HVxGPKeNZyqSkYlzseawBqKPdCqIQV8zutl1IqQfGl_WpKiGo4iPgmJv">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-wider uppercase">Outdoors</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">Park Adventure</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 20, 2023</p>
+</div>
+</article>
+<!-- Card 6 -->
+<article class="flex flex-col gap-sm group active:scale-[0.98] transition-transform cursor-pointer" data-id="6">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden shadow-sm">
+<img alt="Tiny Hands" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbGlxTx78QiDQZcJspIlRf_vowWgZUVuCIqwIWoSHBK9yJgefSyVuaFyiMvhaTvNz4XSFN5T-Etk4W_9EWop912Wf1Vr-BJwelfGCrOx4w3Y7DMpjk0B6jO7HA3Ief2G9RbXqv7bwV188lVxOGwQO0GLpEwEQGpTgFiXVR_t6Cg--vlvuiv7MEaJdyT-rKVTJnQ1u5PIGQA_SwvUVtvSlUG9rMBAFL2oW821LmvkmmY09SNd_BsD80ziZKta60RJ9-PqL_E6xDWBX">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60"></div>
+</div>
+<div class="flex flex-col gap-xs px-1">
+<span class="w-fit px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold tracking-wider uppercase">Details</span>
+<h3 class="font-bold text-label-md text-on-surface truncate">Tiny Hands</h3>
+<p class="text-[12px] text-on-surface-variant/70">Oct 21, 2023</p>
+</div>
+</article>
+</div>
+</main>
+<!-- Floating Selection Bar: Fixed -->
+<div class="fixed bottom-6 inset-x-margin-mobile z-50">
+<div class="bg-[#30312f]/85 backdrop-blur-xl rounded-full px-5 py-3 shadow-2xl flex items-center justify-between border border-white/10">
+<!-- Left: Selected Count -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-label-md shadow-inner">
+<span id="selection-count" class="">2</span>
+</div>
+<span class="text-white font-medium text-label-md">Selected</span>
+</div>
+<!-- Right: Actions -->
+<div class="flex items-center gap-2">
+<button class="h-11 px-4 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-[20px]">link</span>
+<span class="text-label-md font-medium">Link</span>
+</button>
+<button class="h-11 px-5 rounded-full bg-tertiary text-white hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined text-[20px] fill-[1]">photo_library</span>
+<span class="text-label-md font-bold">Poster</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interaction Script -->
+<script>
+        document.querySelectorAll('article').forEach(card => {
+            card.addEventListener('click', () => {
+                const checkmark = card.querySelector('.absolute.top-2.right-2');
+                let overlay = card.querySelector('.absolute.inset-0.bg-primary\\/10');
+                
+                const isSelected = checkmark.classList.contains('bg-primary');
+                
+                if (isSelected) {
+                    // Deselect
+                    checkmark.className = "absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60";
+                    checkmark.innerHTML = "";
+                    if (overlay) overlay.remove();
+                } else {
+                    // Select
+                    checkmark.className = "absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-primary border-2 border-white/50";
+                    checkmark.innerHTML = '<span class="material-symbols-outlined text-white text-[16px] font-bold">check</span>';
+                    
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = "absolute inset-0 bg-primary/10 pointer-events-none";
+                        card.querySelector('.relative').appendChild(overlay);
+                    }
+                }
+                
+                // Update badge count
+                const count = document.querySelectorAll('article</script></body></html>

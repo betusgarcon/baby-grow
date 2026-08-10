@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "lib",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "paths": {
+      // TS5090 leading './'
+      "@/*": ["./src/*"]
+    },
+    // 修复：找不到"sass"的类型定义文件
+    "types": []
+  },
+  "include": ["./src", "./types", "./config"],
+  "compileOnSave": false,
+  // 修复：排除可能导致隐式类型库加载的目录
+  "exclude": ["node_modules"]
+}
+

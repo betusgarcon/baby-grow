@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="zh-CN" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Sleep &amp; Dev - Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "surface-container-low": "#f5f3f0",
+        "outline-variant": "#c2c7c9",
+        "primary-fixed": "#cce7ef",
+        "on-primary": "#ffffff",
+        "secondary-container": "#d9e7ce",
+        "on-error-container": "#93000a",
+        "tertiary-container": "#d39872",
+        "surface-bright": "#fbf9f6",
+        "inverse-primary": "#b1cbd2",
+        "tertiary-fixed": "#ffdbc7",
+        "on-error": "#ffffff",
+        "tertiary-fixed-dim": "#f8b991",
+        "surface-container": "#efeeeb",
+        "on-surface-variant": "#424849",
+        "secondary-fixed-dim": "#becbb3",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-tertiary-container": "#593012",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed": "#141e0f",
+        "surface": "#fbf9f6",
+        "error-container": "#ffdad6",
+        "surface-dim": "#dbdad7",
+        "on-surface": "#1b1c1a",
+        "on-primary-fixed": "#041f24",
+        "on-background": "#1b1c1a",
+        "surface-tint": "#496269",
+        "on-tertiary": "#ffffff",
+        "on-secondary-container": "#5c6854",
+        "secondary": "#56624e",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "on-primary-container": "#253e44",
+        "inverse-on-surface": "#f2f0ed",
+        "background": "#fbf9f6",
+        "surface-variant": "#e4e2df",
+        "surface-container-lowest": "#ffffff",
+        "error": "#ba1a1a",
+        "on-tertiary-fixed": "#311300",
+        "on-primary-fixed-variant": "#324b51",
+        "primary-container": "#8fa9b0",
+        "outline": "#72787a",
+        "surface-container-highest": "#e4e2df",
+        "secondary-fixed": "#d9e7ce",
+        "surface-container-high": "#eae8e5",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "tertiary": "#835332",
+        "inverse-surface": "#30312f",
+        "primary": "#496269"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "md": "24px",
+        "lg": "40px",
+        "gutter": "20px",
+        "margin-mobile": "20px",
+        "margin-desktop": "120px",
+        "sm": "12px",
+        "base": "8px",
+        "xl": "64px"
+      },
+      "fontFamily": {
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        body {
+            background-color: #fbf9f6; /* surface */
+            color: #1b1c1a; /* on-surface */
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-xl">
+<!-- TopAppBar Component -->
+<header class="bg-background/80 backdrop-blur-md shadow-sm w-full top-0 sticky z-50 flex items-center justify-between px-margin-mobile py-sm max-w-[390px] mx-auto left-0 right-0"><div class="flex items-center gap-sm"><div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0 border-2 border-white shadow-sm"><img alt="Baby profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-3vSbH67fp5T3fp9QDrJzERPXqEnlcP5g118O_PWLPAGmCRckz36sww539DmPjpiMDzsutzRpNn7CunETZ6aXN8991Ovi1NX1CmurvqQ8ZiAWvkutN0Fqpk5xUnUMuPgaGV9h4LPk9GROhL7b_mzhGRmw6CtRylQFB8OYV0oLtJ-ev8IzR-u2PA_ohP9DcsKDLqG7CRt_X5gKV3QcTepgulGJTlYr3GZAQObWe5ILoD1IIwqebQnOp2Y93s7B2pKdrC6idpJFlcXg"><div class="absolute bottom-0 left-0 right-0 bg-primary/80 text-on-primary text-[10px] font-bold text-center py-[2px] leading-none">1Y2M</div></div><div><h1 class="font-display text-headline-md text-primary leading-tight">Leo</h1><p class="font-label-sm text-on-surface-variant tracking-wide">Analysis • Updated Just Now</p></div></div></header>
+<main class="max-w-screen-md mx-auto px-margin-mobile flex flex-col gap-4 mt-2">
+<!-- Tab Switcher -->
+<nav class="flex items-center justify-between gap-1 w-full px-margin-mobile pb-2 pt-4"><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">trending_up</span>Growth</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-secondary-container text-on-secondary-container text-[13px] font-label-md transition-all active:scale-95 shadow-sm"><span class="material-symbols-outlined text-[18px]">bedtime</span>Sleep</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">restaurant</span>Diet</button><button class="flex-1 flex items-center justify-center gap-xs px-2 h-10 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-label-md transition-all active:scale-95"><span class="material-symbols-outlined text-[18px]">mood</span>Mood</button></nav><div class="flex bg-surface-container-low p-1.5 rounded-full mx-2" data-purpose="view-toggle">
+<button class="flex-1 flex items-center justify-center gap-2 py-2.5 text-on-surface-variant/50 text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">alarm</span>
+        Daily Ring
+      </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-secondary-container text-on-secondary-container rounded-full text-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[18px]">bar_chart_4_bars</span>
+        Monthly Evolution
+      </button>
+</div>
+<!-- AI Sleep Narrative Card -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.04)] border border-surface-variant relative overflow-hidden p-4">
+<div class="flex items-center gap-2 mb-sm">
+<span class="material-symbols-outlined text-tertiary-container" data-icon="auto_awesome" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="font-headline-md text-headline-md text-primary">AI 睡眠整合归因</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                对比 1月龄、6月龄 与目前 (12月龄) 的睡眠规律，Leo 已顺利完成了“睡眠整合”。夜晚整觉时间由破碎变为规律的 11小时长觉，午睡也成功缩减并合并为稳定的单次午觉。
+            </p>
+</article>
+<!-- Circadian Ring / Evolution Visualization -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.04)] border border-surface-variant p-4">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">24h 昼夜睡眠规律演变</h2>
+<p class="font-label-md text-label-md text-outline">横轴代表一天 24 小时进程</p>
+</div>
+<span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm">节律趋于合流</span>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Header Scale -->
+<div class="flex justify-between font-label-sm text-label-sm text-outline border-b border-surface-variant pb-2 px-1">
+<span class="">0h (深夜)</span>
+<span class="">6h</span>
+<span class="">12h (中午)</span>
+<span class="">18h</span>
+<span class="">24h</span>
+</div>
+<!-- 1 Month -->
+<div class="flex flex-col gap-2 relative">
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">1个月 (新生期)</span>
+<span class="font-label-sm text-label-sm text-outline">15.5h / 碎觉频发</span>
+</div>
+<div class="h-10 bg-surface-container rounded-sm flex overflow-hidden relative">
+<!-- Simulated sleep blocks -->
+<div class="absolute h-full bg-primary-fixed-dim/70 w-[15%] left-0"></div>
+<div class="absolute h-full bg-primary-fixed-dim/70 w-[10%] left-[20%]"></div>
+<div class="absolute h-full bg-primary-fixed-dim/70 w-[8%] left-[45%]"></div>
+<div class="absolute h-full bg-primary-fixed-dim/70 w-[12%] left-[60%]"></div>
+<div class="absolute h-full bg-primary-fixed-dim/70 w-[15%] left-[85%]"></div>
+</div>
+</div>
+<!-- 6 Months -->
+<div class="flex flex-col gap-2 relative">
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">6个月 (过渡期)</span>
+<span class="font-label-sm text-label-sm text-outline">13.5h / 2次午睡</span>
+</div>
+<div class="h-10 bg-surface-container rounded-sm flex overflow-hidden relative">
+<div class="absolute h-full bg-primary-container/80 w-[30%] left-0"></div>
+<div class="absolute h-full bg-secondary-fixed-dim/90 w-[8%] left-[45%]"></div>
+<div class="absolute h-full bg-secondary-fixed-dim/90 w-[10%] left-[65%]"></div>
+<div class="absolute h-full bg-primary-container/80 w-[10%] left-[90%]"></div>
+</div>
+</div>
+<!-- 12 Months -->
+<div class="flex flex-col gap-2 relative">
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">12个月 (当前)</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">12h / 单次长夜觉+1午觉</span>
+</div>
+<div class="h-10 bg-surface-container rounded-sm flex overflow-hidden relative shadow-inner">
+<div class="absolute h-full bg-primary w-[40%] left-0"></div>
+<div class="absolute h-full bg-secondary w-[12%] left-[55%]"></div>
+<div class="absolute h-full bg-primary w-[10%] left-[90%]"></div>
+</div>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex justify-center gap-6 mt-lg pt-4 border-t border-surface-variant">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">长夜觉 (Night)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">白日小睡 (Nap)</span>
+</div>
+</div>
+</section>
+<!-- Expert Tip Card -->
+<aside class="bg-surface-container rounded-xl shadow-sm border border-outline-variant/30 flex flex-col gap-sm p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="lightbulb" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h3 class="font-label-md text-label-md text-on-surface font-bold">12个月大动作与睡眠并觉</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                12 个月大时，很多宝宝正处于从“两次并一次午睡”的过渡期，且容易因练习站立或行走的动作爆发期产生“夜醒”。继续保持睡前仪式的恒定是当下的核心关键。
+            </p>
+</aside>
+</main>
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container-lowest/95 backdrop-blur-xl border-t border-surface-container-high shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl"><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_stories</span><span class="font-label-sm text-[10px]">Journey</span></a><a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl w-16 py-2 transition-colors active:scale-90 duration-200 shadow-sm" href="#"><span class="material-symbols-outlined mb-1 text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span><span class="font-label-sm text-[10px] font-bold">Analysis</span></a><div class="relative -top-6"><button class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:opacity-90 active:scale-95 transition-all border-4 border-surface-container-lowest bg-primary text-on-primary"><span class="material-symbols-outlined text-3xl">add</span></button></div><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_awesome</span><span class="font-label-sm text-[10px]">Wishes</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 duration-200 w-16 py-2 rounded-xl" href="#"><span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">group</span><span class="font-label-sm text-[10px]">Family</span></a></nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

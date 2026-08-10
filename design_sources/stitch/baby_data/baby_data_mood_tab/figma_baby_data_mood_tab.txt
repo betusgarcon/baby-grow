@@ -1,0 +1,286 @@
+<div className="w-96 pb-32 relative bg-stone-50 inline-flex flex-col justify-start items-start gap-2">
+  <div data-active-tab="Journey" className="w-96 h-20 px-4 pt-3 pb-6 left-0 top-[1663px] absolute bg-white inline-flex justify-between items-center">
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Journey</div>
+    </div>
+    <div data-active="True" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Active" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-600" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-600 text-xs font-bold font-['Nunito_Sans'] leading-4">Analysis</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Wishes</div>
+    </div>
+    <div data-active="False" className="size-14 py-1 inline-flex flex-col justify-center items-center gap-1">
+      <div data-state="Default" className="size-6 relative overflow-hidden">
+        <div className="w-5 h-4 left-[2px] top-[3px] absolute bg-neutral-500" />
+      </div>
+      <div className="self-stretch text-center justify-center text-neutral-500 text-xs font-normal font-['Nunito_Sans'] leading-4">Family</div>
+    </div>
+    <div className="size- p-4 left-[169px] top-[-26px] absolute bg-neutral-600 rounded-full shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg flex justify-start items-center gap-2.5">
+      <div className="size-4 bg-white" />
+    </div>
+  </div>
+  <div className="self-stretch px-4 py-3 inline-flex justify-between items-center">
+    <div className="size- flex justify-center items-center gap-3">
+      <div className="size-12 relative rounded-full inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+        <div className="w-12 py-0.5 left-[-0.33px] top-[34px] absolute bg-slate-600/80 flex flex-col justify-center items-center">
+          <div className="text-center justify-center text-white text-[10px] font-normal font-['Nunito_Sans'] leading-[10px]">1Y2M</div>
+        </div>
+      </div>
+      <div className="justify-center text-slate-600 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">Leo</div>
+    </div>
+    <div className="size- px-2 pt-2 pb-3.5 rounded-full inline-flex flex-col justify-center items-center">
+      <div className="w-1 h-4 bg-slate-600" />
+    </div>
+  </div>
+  <div className="self-stretch px-4 py-1.5 inline-flex justify-center items-center gap-2">
+    <div data-state="Inactive" className="w-20 inline-flex flex-col justify-start items-start gap-2.5">
+      <div className="self-stretch h-10 px-2 py-2 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center gap-1">
+        <div className="w-3.5 h-2 bg-stone-600" />
+        <div className="text-center justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">Grow</div>
+      </div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-gray-200 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Sleep</div>
+    </div>
+    <div data-state="Inactive" className="w-20 h-10 px-2 py-2 bg-white rounded-full flex justify-center items-center gap-1">
+      <div className="w-3 h-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Diet</div>
+    </div>
+    <div data-state="Active" className="w-20 h-10 px-2 py-2 bg-stone-300 rounded-full flex justify-center items-center gap-1">
+      <div className="size-3.5 bg-zinc-700" />
+      <div className="text-center justify-center text-zinc-700 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Mood</div>
+    </div>
+  </div>
+  <div className="w-full max-w-[768px] px-4 py-2 flex flex-col justify-start items-start gap-3">
+    <div className="w-80 p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 flex flex-col justify-start items-start gap-3">
+      <div className="self-stretch inline-flex justify-start items-center gap-2">
+        <div className="size-6 p-2.5 flex justify-between items-center">
+          <div className="size-6 bg-yellow-800" />
+        </div>
+        <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">Ai Mood</div>
+      </div>
+      <div className="self-stretch flex flex-col justify-start items-start">
+        <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">Compared to this month&apos;s mood<br/>calendar, we found that Leo experienced<br/>intense &quot;Clingy &amp; Fussy&quot; states between<br/>June 11th - 14th. Cross-referencing<br/>milestone data, this period coincides with<br/>the &quot;Front Tooth Eruption&quot; phase. AI<br/>determines the irritability was primarily<br/>caused by physiological teething pain,<br/>which has now successfully returned to a<br/>stable state.</div>
+      </div>
+    </div>
+    <div className="self-stretch p-6 bg-white rounded-[48px] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-4">
+      <div className="self-stretch inline-flex justify-between items-start">
+        <div className="size- inline-flex flex-col justify-start items-start gap-1">
+          <div className="justify-center text-stone-900 text-2xl font-semibold font-['Plus_Jakarta_Sans'] leading-8">2026/6情绪日历</div>
+          <div className="justify-center text-zinc-500 text-sm font-medium font-['Plus_Jakarta_Sans'] leading-5 tracking-tight">Click to view daily notes and<br/>AI diagnostics</div>
+        </div>
+        <div className="size- pl-3.5 pr-3 py-1.5 bg-stone-200 rounded-full flex justify-start items-center gap-1.5">
+          <div className="text-center justify-center text-zinc-700 text-xs font-medium font-['PingFang_SC'] leading-4 tracking-wide"> 只看身<br/>体不适</div>
+          <div className="size- inline-flex flex-col justify-start items-center">
+            <div className="w-2 h-[4.93px] bg-zinc-700" />
+          </div>
+        </div>
+      </div>
+      <div className="self-stretch inline-flex flex-col justify-start items-start">
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">一</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">二</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">三</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">四</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">五</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">六</div>
+        </div>
+        <div className="self-stretch pb-2 inline-flex flex-col justify-start items-center">
+          <div className="text-center justify-center text-zinc-500 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">日</div>
+        </div>
+        <div className="self-stretch h-9 py-1.5 bg-gray-200 rounded-[32px] inline-flex justify-center items-center">
+          <div className="text-center justify-center text-stone-300 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">30</div>
+        </div>
+        <div className="self-stretch bg-stone-300/30 rounded-[32px] outline outline-1 outline-offset-[-1px] outline-stone-300/50 inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">1</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-red-400 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch py-px bg-gray-200 rounded-[32px] inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">2</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-slate-400 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch bg-red-200/30 rounded-[32px] outline outline-1 outline-offset-[-1px] outline-red-200 inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">3</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-red-700 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch py-px bg-stone-300/30 rounded-[32px] inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-stone-600 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">4</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-red-400 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch py-px bg-gray-200 rounded-[32px] inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">5</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-slate-400 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch py-px bg-gray-200 rounded-[32px] inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">6</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-slate-400 rounded-full" />
+          </div>
+        </div>
+        <div className="self-stretch py-px bg-gray-200 rounded-[32px] inline-flex flex-col justify-center items-center">
+          <div className="size- flex flex-col justify-start items-start">
+            <div className="justify-center text-red-700 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">7</div>
+          </div>
+          <div className="w-1.5 h-2.5 pt-1 flex flex-col justify-start items-start">
+            <div className="size-1.5 bg-slate-400 rounded-full" />
+          </div>
+        </div>
+      </div>
+      <div className="self-stretch pt-4 border-t border-stone-200 inline-flex justify-center items-start gap-4">
+        <div className="self-stretch flex justify-start items-center gap-2">
+          <div className="size-3 bg-stone-300 rounded-full" />
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="size-3.5 bg-stone-600" />
+          </div>
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">开心</div>
+          </div>
+        </div>
+        <div className="self-stretch flex justify-start items-center gap-2">
+          <div className="size-3 bg-red-400 rounded-full" />
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="size-3.5 bg-yellow-800" />
+          </div>
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">黏人烦躁</div>
+          </div>
+        </div>
+        <div className="self-stretch flex justify-start items-center gap-2">
+          <div className="size-3 bg-slate-400 rounded-full" />
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="size-3.5 bg-slate-600" />
+          </div>
+          <div className="size- inline-flex flex-col justify-start items-start">
+            <div className="justify-center text-zinc-700 text-xs font-semibold font-['WenQuanYi_Zen_Hei'] leading-4 tracking-wide">身体不适</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="self-stretch flex flex-col justify-start items-start gap-4">
+      <div className="self-stretch px-1 inline-flex justify-between items-center">
+        <div className="flex-1 flex justify-start items-center gap-2">
+          <div className="w-3.5 h-4 bg-slate-600" />
+          <div className="justify-center text-stone-900 text-2xl font-semibold font-['WenQuanYi_Zen_Hei'] leading-8">6月17日 情绪手账</div>
+        </div>
+        <div className="size- px-3 py-1 bg-red-200 rounded-full flex justify-center items-center gap-1">
+          <div className="size-3.5 bg-yellow-800" />
+          <div className="justify-center text-yellow-900 text-base font-normal font-['WenQuanYi_Zen_Hei'] leading-6">黏人烦躁</div>
+        </div>
+      </div>
+      <div className="self-stretch flex flex-col justify-start items-start gap-4">
+        <div className="w-96 p-6 bg-stone-100 rounded-[48px] outline outline-1 outline-offset-[-1px] outline-stone-300/30 flex flex-col justify-start items-start gap-3">
+          <div className="self-stretch inline-flex justify-start items-center gap-2">
+            <div className="size-4 inline-flex flex-col justify-center items-center">
+              <div className="w-4 flex flex-col justify-start items-start">
+                <div className="w-5 h-4 bg-red-400" />
+              </div>
+            </div>
+            <div className="flex-1 justify-center text-stone-900 text-sm font-bold font-['WenQuanYi_Zen_Hei'] leading-5 tracking-tight">爸妈随手记</div>
+          </div>
+          <div className="self-stretch justify-center text-zinc-700 text-base font-normal font-['PingFang_SC'] leading-6">今天记录了宝宝的心情，宝宝状态平稳。<br/>下午玩耍时比较专注，但到傍晚略显疲<br/>惫，需要安抚。</div>
+        </div>
+        <div className="w-80 p-4 bg-stone-300/30 rounded-[32px] shadow-[0px_4px_30px_0px_rgba(0,0,0,0.04)] outline outline-1 outline-offset-[-1px] outline-stone-300/50 flex flex-col justify-start items-start gap-3">
+          <div className="self-stretch inline-flex justify-start items-center gap-2">
+            <div className="size-6 inline-flex flex-col justify-center items-center">
+              <div className="self-stretch flex flex-col justify-start items-start">
+                <div className="size-5 bg-slate-600" />
+              </div>
+            </div>
+            <div className="justify-center text-yellow-800 text-base font-bold font-['Plus_Jakarta_Sans'] capitalize leading-5 tracking-wide">AI 诊断及建议</div>
+          </div>
+          <div className="self-stretch flex flex-col justify-start items-start">
+            <div className="self-stretch justify-center text-stone-900 text-base font-normal font-['Plus_Jakarta_Sans'] leading-6">随手记中提到宝宝烦躁黏人。分析近期处<br/>于认知跳跃期或微热出牙期，建议多做户<br/>外物理排解，避免过度疲劳。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="self-stretch p-4 bg-white rounded-[48px] outline outline-1 outline-offset-[-1px] outline-stone-200 flex flex-col justify-start items-start gap-4">
+      <div className="self-stretch inline-flex justify-between items-center">
+        <div className="size- flex justify-start items-center gap-2">
+          <div className="size-3.5 bg-slate-600" />
+          <div className="justify-center text-stone-900 text-2xl font-normal font-['PingFang_SC'] leading-8">情绪打卡</div>
+        </div>
+        <div className="size- inline-flex flex-col justify-start items-start">
+          <div className="justify-center text-zinc-500 text-base font-normal font-['PingFang_SC'] leading-6">选择今日心情并轻松录入</div>
+        </div>
+      </div>
+      <div className="self-stretch inline-flex justify-center items-center gap-3">
+        <div className="size- p-4 bg-stone-100 rounded-[32px] outline outline-2 outline-offset-[-2px] outline-black/0 inline-flex flex-col justify-start items-center gap-2">
+          <div className="size-12 bg-stone-300/30 rounded-full inline-flex justify-center items-center">
+            <div className="size- inline-flex flex-col justify-start items-center">
+              <div className="size-6 bg-stone-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-black text-sm font-normal font-['PingFang_SC'] leading-6">开心能量</div>
+        </div>
+        <div className="size- p-4 bg-red-400/10 rounded-[32px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-red-400 inline-flex flex-col justify-start items-center gap-2">
+          <div className="size-12 bg-red-400/20 rounded-full inline-flex justify-center items-center">
+            <div className="size- inline-flex flex-col justify-start items-center">
+              <div className="size-6 bg-yellow-800" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-black text-sm font-normal font-['PingFang_SC'] leading-6">粘人烦躁</div>
+        </div>
+        <div className="size- p-4 bg-stone-100 rounded-[32px] outline outline-2 outline-offset-[-2px] outline-black/0 inline-flex flex-col justify-start items-center gap-2">
+          <div className="size-12 bg-slate-400/20 rounded-full inline-flex justify-center items-center">
+            <div className="size- inline-flex flex-col justify-start items-center">
+              <div className="size-6 bg-slate-600" />
+            </div>
+          </div>
+          <div className="text-center justify-center text-black text-sm font-normal font-['PingFang_SC'] leading-6">身体不适</div>
+        </div>
+      </div>
+      <div className="self-stretch h-36 relative">
+        <div className="w-80 min-h-24 px-4 pt-4 pb-9 left-0 top-[32px] absolute bg-stone-100 rounded-[32px] inline-flex justify-center items-start overflow-hidden">
+          <div className="flex-1 justify-center text-gray-500 text-base font-medium font-['PingFang_SC'] leading-6">写一句宝宝今天的状态，如：&apos;今天抓着<br/>东西就咬，午睡比较短&apos;...</div>
+        </div>
+        <div className="left-[4px] top-[-0.50px] absolute justify-center text-zinc-700 text-base font-medium font-['PingFang_SC'] leading-6">手账心情记录 (选填)</div>
+      </div>
+      <div className="self-stretch py-4 bg-slate-400 rounded-full inline-flex justify-center items-center">
+        <div className="text-center justify-center text-white text-base font-medium font-['PingFang_SC'] leading-6">同步到 AI 情绪日历</div>
+      </div>
+    </div>
+  </div>
+</div>

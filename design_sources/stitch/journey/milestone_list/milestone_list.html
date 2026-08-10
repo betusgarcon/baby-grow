@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html class="light bg-surface" lang="en" style="background-color: #fff8f1;"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "inverse-on-surface": "#f7f0e8",
+        "secondary-container": "#fed5b9",
+        "on-surface-variant": "#474741",
+        "error": "#ba1a1a",
+        "primary-container": "#fffdf5",
+        "tertiary-fixed": "#c1edd1",
+        "on-secondary": "#ffffff",
+        "on-primary-fixed": "#1b1c17",
+        "on-primary-container": "#75756e",
+        "on-primary": "#ffffff",
+        "on-background": "#1e1b17",
+        "surface": "#fff8f1",
+        "secondary-fixed": "#ffdcc4",
+        "outline-variant": "#c8c7be",
+        "surface-tint": "#5f5f59",
+        "on-primary-fixed-variant": "#474742",
+        "on-tertiary-container": "#557d66",
+        "secondary-fixed-dim": "#e6bfa4",
+        "secondary": "#765842",
+        "on-surface": "#1e1b17",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "surface-container": "#f4ede5",
+        "surface-container-low": "#faf2ea",
+        "primary": "#5f5f59",
+        "on-tertiary-fixed": "#002112",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#f7fff7",
+        "surface-container-high": "#eee7df",
+        "on-secondary-fixed": "#2b1706",
+        "surface-variant": "#e8e1d9",
+        "background": "#fff8f1",
+        "on-secondary-container": "#795b44",
+        "surface-dim": "#e0d9d1",
+        "surface-bright": "#fff8f1",
+        "inverse-surface": "#33302b",
+        "primary-fixed-dim": "#c8c7bf",
+        "tertiary": "#406651",
+        "surface-container-highest": "#e8e1d9",
+        "on-error-container": "#93000a",
+        "error-container": "#ffdad6",
+        "primary-fixed": "#e4e3db",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "on-error": "#ffffff",
+        "on-tertiary": "#ffffff",
+        "on-secondary-fixed-variant": "#5c412c",
+        "outline": "#777770",
+        "inverse-primary": "#c8c7bf"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "base": "4px",
+        "sm": "12px",
+        "margin-mobile": "20px",
+        "xs": "8px",
+        "lg": "24px",
+        "md": "16px",
+        "gutter-mobile": "12px",
+        "xl": "32px"
+      },
+      "fontFamily": {
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "caption": [
+          "Nunito Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .active-chip { background-color: #33302b; color: #ffffff; }
+    .glass-effect { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); }
+    .soft-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+  </style>
+</head>
+<body class="min-h-screen bg-surface flex flex-col" style="background-color: #fff8f1;">
+<!-- Header: Fixed positioning within a flex container works well for sticky top bars -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-margin-mobile h-16 bg-surface/80 backdrop-blur-md">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface" data-original-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface">Milestones</h1>
+<div class="relative flex-shrink-0">
+<div class="w-10 h-10 rounded-full border-2 border-secondary-container overflow-hidden">
+<img alt="Baby portrait" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjnO4HdWmkNJPUo_KsmCR-eclkZ2SqhWYLn2uIIQuK_cHirKUxllTogYevByEdBK3YKjGJXrBpYGOSZlOsJEfzJ1mwXRvVIC015kjfckcmZXYPioC1eSKbyGcdppSOczaKQ3RLehC13nW349-ghCE7eiPLj_YuZyCeCcdfqhd23qRgnbqUvJRVNTq3i4EPgUb2OtBXRuxnHVOzKrLD3kPnJNcx0Ktam0m3cOZo_6UpfvzyzbhTcdIkdOwD0jV21GgW5S1VFR9xaJPT"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-secondary text-on-secondary text-[10px] font-bold px-1 rounded-full border border-surface">6M</span>
+</div>
+</header>
+<!-- Main Content: Refactored with Flexbox layout -->
+<main class="flex-grow flex flex-col px-margin-mobile pb-10 space-y-lg">
+<!-- Search Bar -->
+<div class="relative w-full mt-4">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container-low border-none rounded-xl font-body-md text-on-surface focus:ring-2 focus:ring-secondary-container transition-all shadow-sm" placeholder="Search milestones..." type="text"/>
+</div>
+<!-- Filter Chips: Flex row with horizontal scroll -->
+<div class="flex gap-sm overflow-x-auto pb-2 no-scrollbar">
+<button class="whitespace-nowrap px-lg py-2 rounded-full font-label-md active-chip transition-all soft-shadow">All</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full font-label-md bg-surface-container-highest text-on-surface-variant hover:bg-secondary-fixed-dim transition-all">Physical</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full font-label-md bg-surface-container-highest text-on-surface-variant hover:bg-secondary-fixed-dim transition-all">Language</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full font-label-md bg-surface-container-highest text-on-surface-variant hover:bg-secondary-fixed-dim transition-all">Social</button>
+<button class="whitespace-nowrap px-lg py-2 rounded-full font-label-md bg-surface-container-highest text-on-surface-variant hover:bg-secondary-fixed-dim transition-all">Cognitive</button>
+</div>
+<!-- Milestone List: Flex column with grid items -->
+<div class="flex flex-col gap-md">
+<!-- Milestone Card 1 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-lg overflow-hidden soft-shadow border border-surface-variant group milestone-card">
+<div class="relative h-48 overflow-hidden">
+<img alt="First tooth" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBwPmK1xbgKK6C7QAOOudcxFNaAY7Vc4IiiHk6fzc5S36-dW9C6GAttzn7QOmCUaipM3iZXBrKJcPIwxThuO77HGpxHMNLbIUliHZIH7ihPILR3pRhxRcqULg0s_wrUcMXuci2MQoT_vedknfR3JQWT7av99F1Q7lVYZiiVXdszupih1SzHjaITJ_zvSjWXUVAvxG4Egs2PokM7FThj5v7CrTjitzMGz59poI5af7vF7E2MYQdqVfUB1cn5aa9CRP3HzBJ7K5C_mOM"/>
+<div class="absolute top-4 right-4 glass-effect px-3 py-1 rounded-full">
+<span class="font-label-md text-on-surface text-caption">May 14, 2024</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
+</div>
+<div class="p-lg flex flex-col space-y-xs">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-secondary">First Tooth</h2>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+            Leo's first lower incisor finally peeked through today! He's been a bit fussy, but the tooth is white and perfect. A major milestone in his development journey.
+          </p>
+</div>
+</article>
+<!-- Milestone Card 2 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-lg overflow-hidden soft-shadow border border-surface-variant group milestone-card">
+<div class="relative h-48 overflow-hidden">
+<img alt="Rolling over" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-PMvHoduNvDzdLfWqqWuV9HzojXVz_mHmpSMCTzRXJjMWl7wjypGzLqDPplQm8THyfZWsO7WpcQI7mwxIpARwWsbTtIy1Qm0WmMeUYwNCBA8PvV8JvLtrVz-CiyJ8Sr71LJuGOS1-Hfc_R1ZaXK-IAyu9XaW7hzcxcAotTlQacvnIzUKMPb8hlabkFU5v-sBno_KjS6i9R9uIDeot_kMlr5686GQvgDwurs9PoenZaJBDs5O_WMwAUz7Ml503RgykOl6oUNr0ew98"/>
+<div class="absolute top-4 right-4 glass-effect px-3 py-1 rounded-full">
+<span class="font-label-md text-on-surface text-caption">April 22, 2024</span>
+</div>
+</div>
+<div class="p-lg flex flex-col space-y-xs">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-secondary">Rolling Over</h2>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">child_care</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+            Success! After weeks of trying, Leo rolled from back to tummy during morning tummy time. He looked so surprised and proud of himself.
+          </p>
+</div>
+</article>
+<!-- Milestone Card 3 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-lg overflow-hidden soft-shadow border border-surface-variant group milestone-card">
+<div class="relative h-48 overflow-hidden">
+<img alt="Social smile" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBO8LsZwo0rF1OHGadG-0McoazukVFupxfaTz5DMTsZOA1Mn_HaReMz6MxRPppqrpcwwfO8-8WQqgYTZSfN-0G2acZA6n6BwzKqIgzgWV779BJ1mkmOOm4wv7Nvpa8IXevAI_4gLMBdZNU28DB2CHF6uxiM5pfbI2UE3XR0vYEDWu-BjD-KI7VvlNw36myfJvSQeZG2yOwBsY2-wT_ILWW_DX4IdYhTzxAXyyj5xfJ67yOyN9B12wHyqNYBcM58X2gXReOzI6I_ZBs"/>
+<div class="absolute top-4 right-4 glass-effect px-3 py-1 rounded-full">
+<span class="font-label-md text-on-surface text-caption">March 10, 2024</span>
+</div>
+</div>
+<div class="p-lg flex flex-col space-y-xs">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-secondary">Social Smile</h2>
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[18px]" style="font-variation-settings: 'FILL' 1;">mood</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+            The most beautiful sight! Leo gave us his first intentional social smile while playing peek-a-boo today. His whole face lit up with recognition.
+          </p>
+</div>
+</article>
+</div>
+<!-- More Button: Centered using Flexbox -->
+<div class="flex justify-center py-lg mt-auto">
+<button class="bg-secondary-container text-on-secondary-container border border-secondary-fixed-dim rounded-full px-xl py-2 text-label-md font-label-md hover:bg-secondary-fixed transition-colors shadow-sm">more</button>
+</div>
+</main>
+<!-- Interactive Logic -->
+<script>
+    const chips = document.querySelectorAll('.overflow-x-auto button');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => {
+          c.classList.remove('active-chip');
+          c.classList.add('bg-surface-container-highest', 'text-on-surface-variant');
+        });
+        chip.classList.remove('bg-surface-container-highest', 'text-on-surface-variant');
+        chip.classList.add('active-chip');
+      });
+    });
+
+    // Observer for scroll animation
+    const cards = document.querySelectorAll('.milestone-card');
+    const observerOptions = { threshold: 0.1 };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    cards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      observer.observe(card);
+    });
+  </script>
+</body></html>

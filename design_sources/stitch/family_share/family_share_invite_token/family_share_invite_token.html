@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>生成入场凭证 - Nurture &amp; Bloom</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "theme": {
+    "extend": {
+      "colors": {
+        "nurture-surface": "#fbf9f6",
+        "nurture-primary": "#8fa9b0",
+        "nurture-accent": "#e6ba95",
+        "nurture-text": "#4a4a4a",
+        "nurture-muted": "#8c8c8c"
+      },
+      "fontFamily": {
+        "sans": [
+          "Plus Jakarta Sans",
+          "system-ui",
+          "sans-serif"
+        ]
+      },
+      "borderRadius": {
+        "nurture": "2rem"
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<!-- Plus Jakarta Sans Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+<style data-purpose="custom-styling">
+    body {
+      background-color: #f7f9fa;
+      color: #333;
+    }
+    .card-border-gradient {
+      border: 2px dashed #e5e7eb;
+      background-image: radial-gradient(#f1f5f9 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .avatar-ring {
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col items-center">
+<!-- BEGIN: MainHeader -->
+<header class="w-full max-w-md px-6 py-4 flex items-center justify-between bg-transparent" data-purpose="navigation-header">
+<button aria-label="Back" class="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<h1 class="text-lg font-bold text-gray-800">生成入场凭证</h1>
+<div class="flex items-center space-x-1 bg-gray-200/50 px-3 py-1.5 rounded-full" data-purpose="view-badge">
+<span class="text-xs font-medium text-gray-600">长辈视角</span>
+<svg class="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: InvitationCardArea -->
+<main class="flex-grow flex items-center justify-center w-full max-w-md px-6 py-8" data-purpose="main-content">
+<div class="relative w-full aspect-[3/4] bg-white rounded-[3rem] shadow-xl p-8 card-border-gradient flex flex-col items-center text-center overflow-hidden" data-purpose="invitation-card">
+<!-- Contributor Tag -->
+<div class="mt-4 mb-6">
+<span class="bg-[#f2e5da] text-[#c78b61] text-[10px] tracking-widest font-bold px-4 py-1 rounded-full uppercase" data-purpose="contributor-tag">
+          CONTRIBUTOR
+        </span>
+</div>
+<!-- Avatar Section -->
+<div class="relative mb-8">
+<div class="w-32 h-32 rounded-full border-4 border-white overflow-hidden avatar-ring">
+<img alt="Baby Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqYj4IZ0hMrI0rOcBJOMlvH4VNB9_p3KePHF2G-qeERapcTmxzOoRijI_iHHXDzhgdoJHg0L8MM0Su3YbhfBSKLyK2_1ceo5b-0VxlqsyFzM9yAtWZAtwYxKjDqXZx425JKJBmDYTK5yMtw2fs-5Lrbac9RMoBnKS5n2KglMDLzr4FkE6_y1bgp0DKR9eoT33oQCLESlmdaFLDXCPq9EdqgyLh5KAvN1a-XpBeGvlLQ3Q3mkPFbBJ8MBtu7cSwVxdat9WdX5X8UPA8"/>
+</div>
+<!-- Small Icon Overlay -->
+<div class="absolute -top-1 -right-1 w-12 h-12 bg-white rounded-full border-2 border-dashed border-[#e6ba95] p-1 flex items-center justify-center">
+<span class="text-2xl">👶</span>
+</div>
+</div>
+<!-- Welcome Text -->
+<div class="space-y-4 mb-8">
+<h2 class="text-2xl font-bold text-gray-800 leading-tight">
+          亲爱的一家人，入驻时光圈！
+        </h2>
+<p class="text-sm text-gray-400 font-medium leading-relaxed px-4">
+          哈啰！我是 Leo 👶。爸爸妈妈在我的专属时光手账中为您预留了专属席位，快来见证我的成长蜕变吧！
+        </p>
+</div>
+<!-- Divider -->
+<div class="w-full border-t border-dashed border-gray-200 mb-8"></div>
+<!-- Access Code Block -->
+<div class="w-full">
+<div class="bg-gray-50/80 rounded-2xl py-4 px-6 inline-block w-full" data-purpose="code-display">
+<span class="text-2xl font-bold tracking-widest text-[#5a7d85]">LEO-938-201</span>
+</div>
+<p class="mt-3 text-xs text-gray-400">
+          一次性安全钥匙 · 72小时内有效
+        </p>
+</div>
+</div>
+</main>
+<!-- END: InvitationCardArea -->
+<!-- BEGIN: BottomActions -->
+<footer class="w-full max-w-md px-6 pb-10 space-y-4" data-purpose="action-buttons">
+<!-- Primary Button: WeChat Share -->
+<button class="w-full py-4 bg-nurture-primary rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-gray-200 active:scale-[0.98] transition-transform" data-purpose="share-wechat">
+<div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+<div class="w-3 h-3 bg-white rounded-full"></div>
+</div>
+<span class="text-white font-bold text-lg">微信直发时光卡片</span>
+</button>
+<!-- Secondary Button: Copy Code -->
+<button class="w-full py-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center space-x-2 shadow-sm active:bg-gray-50 transition-colors" data-purpose="copy-code">
+<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-gray-700 font-bold">仅复制加密安全口令</span>
+</button>
+</footer>
+<!-- END: BottomActions -->
+</body></html>

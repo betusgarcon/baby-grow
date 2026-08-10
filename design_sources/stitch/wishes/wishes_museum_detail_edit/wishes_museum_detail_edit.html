@@ -1,0 +1,395 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Edit Wish - Nurture &amp; Bloom</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-surface": "#1b1c1a",
+        "on-tertiary": "#ffffff",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-bright": "#fbf9f6",
+        "outline": "#72787a",
+        "error-container": "#ffdad6",
+        "tertiary-container": "#d39872",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed-variant": "#324b51",
+        "on-tertiary-container": "#593012",
+        "inverse-surface": "#30312f",
+        "secondary": "#56624e",
+        "on-secondary-container": "#5c6854",
+        "secondary-container": "#d9e7ce",
+        "secondary-fixed": "#d9e7ce",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#424849",
+        "on-primary-fixed": "#041f24",
+        "secondary-fixed-dim": "#becbb3",
+        "surface-container-highest": "#e4e2df",
+        "surface-container-high": "#eae8e5",
+        "on-secondary-fixed": "#141e0f",
+        "surface-container-low": "#f5f3f0",
+        "primary": "#496269",
+        "primary-fixed-dim": "#b1cbd2",
+        "on-tertiary-fixed": "#311300",
+        "on-primary": "#ffffff",
+        "on-background": "#1b1c1a",
+        "primary-fixed": "#cce7ef",
+        "on-secondary": "#ffffff",
+        "surface-container": "#efeeeb",
+        "inverse-primary": "#b1cbd2",
+        "error": "#ba1a1a",
+        "background": "#fbf9f6",
+        "surface-dim": "#dbdad7",
+        "surface-variant": "#e4e2df",
+        "primary-container": "#8fa9b0",
+        "on-primary-container": "#253e44",
+        "surface-tint": "#496269",
+        "on-error": "#ffffff",
+        "tertiary": "#835332",
+        "on-secondary-fixed-variant": "#3e4a38",
+        "surface": "#fbf9f6",
+        "inverse-on-surface": "#f2f0ed",
+        "tertiary-fixed-dim": "#f8b991",
+        "outline-variant": "#c2c7c9"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "lg": "40px",
+        "xs": "4px",
+        "xl": "64px",
+        "gutter": "20px",
+        "base": "8px",
+        "margin-mobile": "20px",
+        "margin-desktop": "120px",
+        "sm": "12px",
+        "md": "24px"
+      },
+      "fontFamily": {
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .progress-glow {
+            box-shadow: 0 0 15px rgba(73, 98, 105, 0.2);
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, rgba(239,238,235,1) 25%, rgba(245,243,240,1) 50%, rgba(239,238,235,1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+    </style>
+
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<!-- Top App Bar - Edit Mode -->
+<header class="flex items-center justify-between px-margin-mobile h-16 w-full fixed top-0 z-50 bg-surface/80 backdrop-blur-md shadow-sm border-b border-surface-container-high">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200"><span class="material-symbols-outlined">arrow_back</span></button>
+<div class="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
+<h1 class="font-headline-md text-headline-md text-primary font-bold">Wishes</h1>
+</div>
+
+<button class="w-10 h-10 rounded-full overflow-hidden border border-surface-container-high hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200 flex items-center justify-center bg-surface-container-low"><img src="https://www.morganodriscoll.com/hqart2/2442-36_1.jpg" alt="Profile" class="w-full h-full object-cover"></button></header>
+<main class="pt-16 pb-8">
+<!-- Hero Section (Kept) -->
+<section class="relative w-full h-[40vh] md:h-[50vh] overflow-hidden">
+<img alt="Museum Visit" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJWJa6q3-HOmYFsSnWYOdofhWdfid2-7QuQ5p1tjGKbPeJk47TSp6mz7FB_iifxzx2ST56y1rjHorTLT1h2VcSHOba3yCtOhjb9wMDptcHQm-8JmeU9Nto01d1o7QFERcjEorlYpZdy6CZY-19dl1Gmt0qYnShGiempD9N0n1hKVHxGia1rbrlD1wog6pMFCCWKYofuW2Za2JRl94yY8S0sPmatsAuPGgERBi3OzAAtYRBN38439o6Uk7v2uC8Pe7M2Rus4OTq8puA">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 w-full p-margin-mobile md:px-margin-desktop">
+<h2 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Visit 10 Museums</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Exploring culture, art, and history through tiny, curious eyes.</p>
+</div>
+</section>
+<div class="max-w-screen-xl mx-auto px-margin-mobile md:px-margin-desktop space-y-xl">
+<!-- Progress Section (Kept) -->
+<section class="mt-md">
+<div class="flex items-center justify-between mb-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Current Progress</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">30% Completed <span class="text-on-surface-variant font-normal text-body-md">(3 of 10)</span></h3>
+</div>
+</div>
+<div class="w-full h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary progress-glow rounded-full transition-all duration-1000 ease-out" style="width: 30%"></div>
+</div>
+</section>
+<!-- Editable Checklist Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<div class="lg:col-span-7 space-y-md">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md">Museum Checklist</h4>
+</div>
+<div class="space-y-sm" id="checklist-container">
+<!-- Editable Item 1 -->
+<div class="flex items-center gap-md p-md bg-white rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.02)] border border-surface-container group hover:scale-[1.01] transition-transform">
+<button aria-label="Delete item" class="w-10 h-10 flex items-center justify-center rounded-full text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+</button>
+<div class="flex-1">
+<p class="font-body-md text-body-md font-bold text-on-surface">Natural History Museum</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Visited on May 12</p>
+</div>
+<div class="cursor-grab active:cursor-grabbing p-1 text-outline-variant hover:text-outline transition-colors">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+<!-- Editable Item 2 -->
+<div class="flex items-center gap-md p-md bg-white rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.02)] border border-surface-container group hover:scale-[1.01] transition-transform">
+<button aria-label="Delete item" class="w-10 h-10 flex items-center justify-center rounded-full text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+</button>
+<div class="flex-1">
+<p class="font-body-md text-body-md font-bold text-on-surface">Science Center</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Visited on June 4</p>
+</div>
+<div class="cursor-grab active:cursor-grabbing p-1 text-outline-variant hover:text-outline transition-colors">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+<!-- Editable Item 3 -->
+<div class="flex items-center gap-md p-md bg-white rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.02)] border border-surface-container group hover:scale-[1.01] transition-transform">
+<button aria-label="Delete item" class="w-10 h-10 flex items-center justify-center rounded-full text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+</button>
+<div class="flex-1">
+<p class="font-body-md text-body-md font-bold text-on-surface">Art Gallery</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Visited on July 20</p>
+</div>
+<div class="cursor-grab active:cursor-grabbing p-1 text-outline-variant hover:text-outline transition-colors">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+<!-- Editable Item 4 -->
+<div class="flex items-center gap-md p-md bg-white rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.02)] border border-surface-container group hover:scale-[1.01] transition-transform">
+<button aria-label="Delete item" class="w-10 h-10 flex items-center justify-center rounded-full text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+</button>
+<div class="flex-1">
+<p class="font-body-md text-body-md font-bold text-on-surface">Children's Discovery Museum</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Recommended for ages 1-5</p>
+</div>
+<div class="cursor-grab active:cursor-grabbing p-1 text-outline-variant hover:text-outline transition-colors">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+</div>
+<!-- Add Step Input Area (from SCREEN_42) -->
+<div class="pt-md mt-md">
+<div class="flex items-center gap-base bg-surface-container-low rounded-full px-md py-sm border border-transparent focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-outline">add</span>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-md placeholder:text-outline-variant" id="new-item-input" placeholder="Add another museum..." type="text">
+<button class="text-primary hover:text-primary-fixed-dim transition-colors font-label-md px-sm" id="add-item-btn">
+Add
+</button>
+</div>
+<p class="text-center text-outline-variant font-label-sm mt-md">
+Drag items to change their priority in your wish list.
+</p>
+</div><div class="flex gap-sm mt-md">
+<button class="flex-1 py-3 rounded-full border font-label-md hover:bg-surface-container-low transition-colors active:scale-95 bg-secondary-container text-on-secondary-container">
+        Cancel
+    </button>
+<button class="flex-1 py-3 rounded-full bg-primary text-on-primary font-label-md shadow-md hover:opacity-90 transition-opacity active:scale-95">
+        Done
+    </button>
+</div>
+</div>
+<!-- Side Content -->
+<div class="lg:col-span-5 flex flex-col gap-md">
+<!-- Expert Tip Card (Kept) -->
+<div class="p-md bg-tertiary-container/10 rounded-lg border border-tertiary-container/20 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-sm opacity-20">
+<span class="material-symbols-outlined text-[48px] text-tertiary">lightbulb</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-xs mb-xs">
+<span class="material-symbols-outlined text-tertiary">psychology</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">Expert Tip</span>
+</div>
+<p class="font-body-md text-body-md text-on-tertiary-container leading-relaxed">
+Museums are great sensory experiences. Focus on <span class="font-bold">high-contrast exhibits</span> and take plenty of breaks. 15-20 minutes is often enough for a toddler's focus.
+</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<script>
+        // Item removal logic
+        function attachDeleteListener(btn) {
+            btn.addEventListener('click', function() {
+                const row = this.closest('.flex');
+                row.style.opacity = '0';
+                row.style.transform = 'scale(0.95)';
+                setTimeout(() => row.remove(), 200);
+            });
+        }
+
+        document.querySelectorAll('[aria-label="Delete item"]').forEach(attachDeleteListener);
+
+        // Add item logic
+        const addBtn = document.getElementById('add-item-btn');
+        const inputField = document.getElementById('new-item-input');
+        const container = document.getElementById('checklist-container');
+
+        addBtn.addEventListener('click', () => {
+            const val = inputField.value.trim();
+            if (val) {
+                const newRow = document.createElement('div');
+                newRow.className = 'flex items-center gap-md p-md bg-white rounded-lg shadow-[0px_30px_30px_rgba(0,0,0,0.02)] border border-surface-container group hover:scale-[1.01] transition-transform animate-in slide-in-from-bottom-2 duration-300';
+                newRow.innerHTML = `
+                    <button aria-label="Delete item" class="w-10 h-10 flex items-center justify-center rounded-full text-error hover:bg-error-container transition-colors">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+                    </button>
+                    <div class="flex-1">
+                        <p class="font-body-md text-body-md font-bold text-on-surface">${val}</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">New Task</p>
+                    </div>
+                    <div class="cursor-grab active:cursor-grabbing p-1 text-outline-variant hover:text-outline transition-colors">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                `;
+                container.appendChild(newRow);
+                inputField.value = '';
+                attachDeleteListener(newRow.querySelector('[aria-label="Delete item"]'));
+            }
+        });
+
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
+
+        // Sticky Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('bg-surface/95');
+            } else {
+                header.classList.remove('bg-surface/95');
+            }
+        });
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

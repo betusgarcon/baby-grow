@@ -1,0 +1,324 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Journey Dashboard - Gentle Rituals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-error-container": "#93000a",
+        "surface-bright": "#fff8f1",
+        "surface-tint": "#5f5f59",
+        "on-error": "#ffffff",
+        "on-secondary-fixed": "#2b1706",
+        "on-primary-fixed-variant": "#474742",
+        "on-tertiary": "#ffffff",
+        "background": "#fff8f1",
+        "surface": "#fff8f1",
+        "tertiary": "#406651",
+        "primary-fixed": "#e4e3db",
+        "on-surface-variant": "#474741",
+        "on-surface": "#1e1b17",
+        "error-container": "#ffdad6",
+        "secondary": "#765842",
+        "surface-container-lowest": "#ffffff",
+        "secondary-container": "#fed5b9",
+        "surface-variant": "#e8e1d9",
+        "on-primary": "#ffffff",
+        "surface-container-high": "#eee7df",
+        "on-primary-container": "#75756e",
+        "error": "#ba1a1a",
+        "surface-container": "#f4ede5",
+        "primary": "#5f5f59",
+        "outline-variant": "#c8c7be",
+        "surface-container-highest": "#e8e1d9",
+        "surface-container-low": "#faf2ea",
+        "on-background": "#1e1b17",
+        "on-secondary-fixed-variant": "#5c412c",
+        "on-tertiary-fixed": "#002112",
+        "surface-dim": "#e0d9d1",
+        "inverse-surface": "#33302b",
+        "tertiary-fixed": "#c1edd1",
+        "secondary-fixed": "#ffdcc4",
+        "on-secondary": "#ffffff",
+        "primary-container": "#fffdf5",
+        "on-secondary-container": "#795b44",
+        "primary-fixed-dim": "#c8c7bf",
+        "outline": "#777770",
+        "inverse-primary": "#c8c7bf",
+        "tertiary-container": "#f7fff7",
+        "tertiary-fixed-dim": "#a6d0b6",
+        "on-tertiary-fixed-variant": "#284e3a",
+        "on-tertiary-container": "#557d66",
+        "secondary-fixed-dim": "#e6bfa4",
+        "inverse-on-surface": "#f7f0e8",
+        "on-primary-fixed": "#1b1c17"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "sm": "12px",
+        "margin-mobile": "20px",
+        "base": "4px",
+        "lg": "24px",
+        "xs": "8px",
+        "md": "16px",
+        "xl": "32px",
+        "gutter-mobile": "12px"
+      },
+      "fontFamily": {
+        "caption": [
+          "Nunito Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Nunito Sans"
+        ],
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Nunito Sans"
+        ],
+        "body-lg": [
+          "Nunito Sans"
+        ]
+      },
+      "fontSize": {
+        "caption": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-lg-mobile": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "display": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .cloud-shadow {
+            box-shadow: 0 20px 40px -10px rgba(119, 119, 112, 0.08);
+        }
+        .pebble-dot::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background-color: #c8c7be;
+            border-radius: 50%;
+            margin-bottom: 4px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl shadow-sm flex justify-between items-center px-margin-mobile h-16"><div class="flex items-center gap-sm">
+<img alt="Child profile" class="w-10 h-10 rounded-full object-cover shadow-sm ring-2 ring-background" src="https://lh3.googleusercontent.com/aida/AP1WRLs-it77L9hpb89AtBrBD7cpWsnvJrRhfN8ivVXEdMXo4b7ovpFWU3N9nk8FEmElKHWYp7_XdnR0Y_vHtQIUMcRjMvOKGv9R2WthvZAPRfpagGPQCoCVt7KS61qPHdilFQI0KZa0nA_GoTiIAIhlss6zDnRIJsJ-YCkcmeWJcJduHYqDxa0buuAfrBQCcJcL58IwTNHsEZQPYVS4x4MzmJTUeyuhUP5zzpVy7lTqfUEMdye81gZ3mjyCgRHZ">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full">6M</span>
+</div>
+<span class="absolute left-1/2 -translate-x-1/2 text-headline-lg-mobile font-headline-lg-mobile font-bold text-secondary">Journey</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_month</span>
+</button></header>
+<main class="mt-24 px-margin-mobile space-y-lg">
+<!-- Weekly Insight: Welcome State -->
+<section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="glass-card p-md rounded-lg cloud-shadow relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-tertiary-container rounded-full blur-2xl opacity-40"></div>
+<div class="flex items-start gap-md">
+<div class="p-xs bg-tertiary-container text-on-tertiary-container rounded-full">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Weekly Insight</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Welcome to the Journey dashboard! Your first weekly summary will appear here after a few logs.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Milestones: Empty State -->
+<section class="space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md text-secondary">Recent Milestones</h2>
+<button class="text-label-md font-label-md text-primary hover:underline">View Book</button>
+</div>
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant/30 rounded-lg p-xl flex flex-col items-center text-center space-y-md">
+<div class="w-20 h-20 bg-secondary-fixed-dim/20 rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[40px]" data-icon="stars">stars</span>
+</div>
+<div class="space-y-xs">
+<p class="font-headline-md text-headline-md text-on-surface">No milestones yet</p>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[240px]">
+                        Every little wiggle and giggle is a step in their beautiful journey.
+                    </p>
+</div>
+<button class="bg-secondary text-on-secondary px-lg py-sm rounded-full font-label-md text-label-md shadow-md hover:opacity-90 active:scale-95 transition-all">
+                    Record First Milestone
+                </button>
+</div>
+</section>
+<!-- Latest Journey: Timeline Placeholder -->
+<section class="space-y-md">
+<h2 class="font-headline-md text-headline-md text-secondary">Latest Journey</h2>
+<div class="relative pl-xs">
+<!-- Decorative Timeline Path -->
+<div class="absolute left-2.5 top-0 bottom-0 w-px border-l border-dotted border-outline-variant"></div>
+<div class="space-y-lg relative">
+<!-- Placeholder Event 1 -->
+<div class="flex gap-lg items-start opacity-40 grayscale">
+<div class="relative z-10 bg-surface-container-high w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-background"></div>
+<div class="glass-card p-md rounded-lg flex-1">
+<div class="h-4 w-24 bg-outline-variant/30 rounded-full mb-2"></div>
+<div class="h-3 w-full bg-outline-variant/20 rounded-full"></div>
+</div>
+</div>
+<!-- Center empty message -->
+<div class="flex flex-col items-center py-md text-center">
+<p class="font-body-md text-body-md text-on-surface-variant italic">
+                            "No events logged yet"
+                        </p>
+<p class="font-caption text-caption text-outline mt-1">
+                            Tap the <span class="text-primary font-bold">+</span> to start your log
+                        </p>
+</div>
+<!-- Placeholder Event 2 -->
+<div class="flex gap-lg items-start opacity-20 grayscale">
+<div class="relative z-10 bg-surface-container-high w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-background"></div>
+<div class="glass-card p-md rounded-lg flex-1">
+<div class="h-4 w-16 bg-outline-variant/30 rounded-full mb-2"></div>
+<div class="h-3 w-3/4 bg-outline-variant/20 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Today's Menu: Placeholder -->
+<section class="space-y-md">
+<h2 class="font-headline-md text-headline-md text-secondary">Today's Menu</h2>
+<div class="grid grid-cols-2 gap-md">
+<div class="glass-card p-md rounded-lg min-h-[120px] flex flex-col items-center justify-center text-center space-y-xs group hover:bg-white/80 transition-colors cursor-pointer border-dashed border-2 border-outline-variant/20">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" data-icon="restaurant_menu">restaurant_menu</span>
+<p class="font-label-md text-label-md text-on-surface-variant">Plan meals</p>
+</div>
+<div class="glass-card p-md rounded-lg min-h-[120px] flex flex-col items-center justify-center text-center space-y-xs opacity-50">
+<div class="w-10 h-2 bg-surface-container-highest rounded-full"></div>
+<div class="w-16 h-2 bg-surface-container-highest rounded-full"></div>
+</div>
+</div>
+<p class="text-center font-caption text-caption text-outline pt-xs">
+                Plan your baby's meals to see them here.
+            </p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-2 backdrop-blur-xl border-t border-outline-variant/20 bg-surface/90 rounded-t-lg shadow-[0_-4px_20px_0_rgba(0,0,0,0.05)]"><a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-4 py-1.5 active:scale-90 duration-150 ease-out" href="#"><span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span><span class="font-label-md text-label-md mt-0.5">Journey</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="analytics">analytics</span><span class="font-label-md text-label-md mt-0.5">Analysis</span></a><a class="flex flex-col items-center justify-center bg-tertiary text-on-tertiary w-16 h-16 rounded-full shadow-md active:scale-95 transition-all -mt-8 border-4 border-background" href="#"><span class="material-symbols-outlined text-[32px]" data-icon="add">add</span><span class="font-label-md text-label-md sr-only">Record</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span><span class="font-label-md text-label-md mt-0.5">Wishes</span></a><a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high/50 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="group">group</span><span class="font-label-md text-label-md mt-0.5">Family</span></a></nav>
+<!-- Floating Atmosphere Elements (Light micro-interactions) -->
+<div class="fixed inset-0 pointer-events-none z-0" id="bubbles-container"><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 153.414px; height: 153.414px; left: 44.5307%; top: 80.7288%; transform: scale(1.15207);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 122.219px; height: 122.219px; left: 50.0733%; top: 86.0601%; transform: scale(1.24467);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 176.357px; height: 176.357px; left: 40.4758%; top: 11.5448%; transform: scale(0.767146);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 163.468px; height: 163.468px; left: 50.7157%; top: 32.2315%; transform: scale(0.931094);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 124.037px; height: 124.037px; left: 36.9811%; top: 97.2864%; transform: scale(1.05351);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 107.819px; height: 107.819px; left: 36.4511%; top: 83.241%; transform: scale(1.01502);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 188.807px; height: 188.807px; left: 23.8607%; top: 14.5421%; transform: scale(1.22827);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 100.263px; height: 100.263px; left: 86.1837%; top: 19.3865%; transform: scale(1.10279);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 163.681px; height: 163.681px; left: 71.4875%; top: 47.0531%; transform: scale(1.10578);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 172.338px; height: 172.338px; left: 71.0634%; top: 82.4596%; transform: scale(1.17131);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 191.322px; height: 191.322px; left: 69.9143%; top: 70.2194%; transform: scale(1.24238);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 195.812px; height: 195.812px; left: 72.9632%; top: 47.1178%; transform: scale(0.979533);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 134.961px; height: 134.961px; left: 47.1344%; top: 99.7757%; transform: scale(0.854012);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 191.929px; height: 191.929px; left: 9.76645%; top: 1.60069%; transform: scale(1.22193);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 144.172px; height: 144.172px; left: 63.0536%; top: 26.747%; transform: scale(1.09148);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 106.611px; height: 106.611px; left: 19.7981%; top: 82.1243%; transform: scale(1.00674);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 178.892px; height: 178.892px; left: 35.3183%; top: 8.45822%; transform: scale(0.915938);"></div><div class="absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out" style="width: 85.3405px; height: 85.3405px; left: 91.8114%; top: 92.0954%; transform: scale(1.04818);"></div></div>
+<script>
+        // Simple micro-interaction for atmospheric bubbles
+        const container = document.getElementById('bubbles-container');
+        for (let i = 0; i < 6; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'absolute bg-primary-container rounded-full opacity-20 blur-xl transition-all duration-[8000ms] ease-in-out';
+            const size = Math.random() * 150 + 50;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.top = `${Math.random() * 100}%`;
+            container.appendChild(bubble);
+
+            function animateBubble() {
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                bubble.style.transform = `scale(${Math.random() * 0.5 + 0.75})`;
+                setTimeout(animateBubble, 8000 + Math.random() * 2000);
+            }
+            setTimeout(animateBubble, Math.random() * 2000);
+        }
+    </script>
+
+
+
+
+
+
+</body></html>

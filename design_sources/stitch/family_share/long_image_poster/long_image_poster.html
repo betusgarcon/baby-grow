@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "surface-bright": "#fbf9f6",
+        "surface-container-high": "#e5eae5",
+        "primary-container": "#b8c4bb",
+        "surface": "#fbf9f6",
+        "secondary-container": "#d9e7ce",
+        "on-tertiary": "#ffffff",
+        "on-primary": "#ffffff",
+        "tertiary-fixed-dim": "#f8b991",
+        "on-primary-fixed": "#0a2414",
+        "error-container": "#ffdad6",
+        "inverse-surface": "#2f312f",
+        "inverse-primary": "#b1d2bd",
+        "tertiary": "#835332",
+        "primary": "#5a8c71",
+        "surface-container-lowest": "#ffffff",
+        "outline-variant": "#c2c9c5",
+        "on-primary-fixed-variant": "#325141",
+        "on-error-container": "#93000a",
+        "on-tertiary-fixed": "#311300",
+        "on-surface": "#1a1c1b",
+        "secondary-fixed": "#d9e7ce",
+        "tertiary-fixed": "#ffdbc7",
+        "surface-container-highest": "#dfe4e1",
+        "secondary-fixed-dim": "#becbb3",
+        "error": "#ba1a1a",
+        "on-secondary-container": "#546859",
+        "on-tertiary-fixed-variant": "#673c1d",
+        "on-tertiary-container": "#593012",
+        "tertiary-container": "#d39872",
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#edf2ee",
+        "secondary": "#4e6255",
+        "background": "#f8fcf9",
+        "outline": "#727a75",
+        "surface-tint": "#5a8c71",
+        "surface-variant": "#e4e9e6",
+        "surface-dim": "#d7dbd8",
+        "surface-container-low": "#f5f7f5",
+        "primary-fixed-dim": "#b1d2bd",
+        "on-secondary-fixed-variant": "#384a3e",
+        "surface-container": "#efeff0",
+        "on-secondary": "#ffffff",
+        "on-primary-container": "#1d3d2a",
+        "on-surface-variant": "#424945",
+        "on-secondary-fixed": "#0f1e13",
+        "on-background": "#1a1c1b",
+        "primary-fixed": "#ccf0dd"
+      },
+      "borderRadius": {
+        "DEFAULT": "1rem",
+        "lg": "2rem",
+        "xl": "3rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "lg": "40px",
+        "gutter": "20px",
+        "xl": "64px",
+        "margin-desktop": "120px",
+        "base": "8px",
+        "md": "24px",
+        "margin-mobile": "20px",
+        "sm": "12px"
+      },
+      "fontFamily": {
+        "headline-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Plus Jakarta Sans"
+        ],
+        "label-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "display": [
+          "Plus Jakarta Sans"
+        ]
+      },
+      "fontSize": {
+        "headline-lg-mobile": [
+          "28px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "500"
+          }
+        ],
+        "label-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-lg": [
+          "18px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "display": [
+          "48px",
+          {
+            "lineHeight": "56px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ]
+      }
+    }
+  }
+}
+    }catch(_e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<style>
+    body {
+      background-color: #f8fcf9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-effect {
+      background: rgba(248, 252, 249, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .custom-shadow {
+      box-shadow: 0 4px 30px rgba(90, 140, 113, 0.08);
+    }
+    .poster-gradient {
+      background: linear-gradient(180deg, #b8c4bb 0%, #f8fcf9 100%);
+    }
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #5a8c71;
+    }
+    .toggle-checkbox:checked + .toggle-label .toggle-dot {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen text-on-surface">
+<!-- Top Navigation Shell -->
+<header class="sticky top-0 z-50 bg-background/90 backdrop-blur-md flex justify-between items-center w-full px-margin-mobile h-16">
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface hover:bg-surface-variant transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[24px] text-on-surface">arrow_back</span>
+</button>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Poster Preview</h1>
+<div class="flex items-center">
+<button class="flex items-center gap-1.5 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-label-md text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px] text-primary">dashboard_customize</span>
+        Layout
+      </button>
+</div>
+</header>
+<main class="flex-grow px-margin-mobile pt-4 pb-48">
+<!-- Long Image/Poster Preview Section -->
+<div class="relative w-full max-w-md mx-auto rounded-[2rem] overflow-hidden custom-shadow bg-surface-container-lowest border border-outline-variant/30 p-2">
+<div class="poster-gradient rounded-[1.75rem] overflow-hidden flex flex-col items-center pt-10 pb-16">
+<!-- Poster Header Content -->
+<div class="text-center mb-8 px-6">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-white drop-shadow-sm flex items-center justify-center gap-2">
+            Leo 的成长手账 <span class="text-2xl">🧸</span>
+</h2>
+<p class="font-label-sm text-label-sm tracking-widest text-white/80 uppercase mt-2">
+            Genius Track · Memory Capsule
+          </p>
+</div>
+<!-- Content Card 1: Milestone -->
+<div class="w-[90%] bg-white/95 backdrop-blur-sm rounded-[1.5rem] border-2 border-dashed border-primary/20 p-6 shadow-sm">
+<div class="w-full aspect-[4/3] rounded-[1rem] overflow-hidden bg-surface-container mb-4">
+<img class="w-full h-full object-cover grayscale-[0.2] sepia-[0.05]" data-alt="A macro close-up photograph of a bright orange sweet pumpkin puree being served on a minimalist white ceramic spoon. The lighting is soft and natural, emphasizing the smooth, organic texture of the food. The background is a clean, out-of-focus nursery setting with muted sage and cream colors. The mood is warm, nurturing, and perfectly captures a child's milestone moment in a clean light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyZ7A8NIdZ9Qpe6Jj8SKv_7toT_AgE-6PNEDYiixs-nezpaAaJMOv42LLcpz1qO9ykVvs7KYNollfGUeekCFN6yhBNAoV86PQH-vyj90Dok1nFozqR4ODF23ZhthEW8g3rbdvpx-0kQcixGlyuYuy6Jj3HddSld1UhRYpBP5NvT11uv_mgAElBXlE0R6aHA7v__XSzRn8jrhe7CV2R8ey_RoOrYXLBYfhLF9tkt648hl6GRs-aRTXJk5hqtwO4HdCMmN6iQECOAOrg"/>
+</div>
+<div class="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full font-label-sm text-label-sm mb-2">
+<span class="material-symbols-outlined text-[14px]" data-icon="nutrition">nutrition</span>
+            辅食探索记
+          </div>
+<h3 class="font-headline-md text-headline-md text-on-primary-container mb-2">解锁甜南瓜泥</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            吃辅食就像画画，今天干掉了 150g 的甜南瓜泥，脸上、手上、肚兜上全部染成可爱的暖橙色。体重稳定增长在 12kg 黄金线上。
+          </p>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant flex justify-between items-center text-on-surface-variant/60 font-label-sm text-label-sm">
+<span class="">2023.09.24 · 家属记录</span>
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<!-- Decorative Spacer -->
+<div class="my-8 flex flex-col items-center opacity-20">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="expand_more">expand_more</span>
+<span class="material-symbols-outlined text-4xl -mt-4 text-primary" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Content Card 2: Next Preview Peek -->
+<div class="w-[90%] bg-white/60 rounded-t-[1.5rem] border-x-2 border-t-2 border-dashed border-primary/10 h-24 overflow-hidden">
+<div class="px-6 py-4 opacity-40">
+<div class="w-12 h-2 bg-primary/20 rounded-full mb-3"></div>
+<div class="w-full h-4 bg-primary/10 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Style & Settings Control Center -->
+<div class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest rounded-t-[2rem] shadow-[0_-8px_30px_rgba(0,0,0,0.04)] border-t border-outline-variant/20 px-margin-mobile py-6 pb-safe">
+<!-- Style Selection Tabs -->
+<section class="mb-6">
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 px-1">选择画风模板</h4>
+<div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border-2 border-primary text-on-primary-container bg-primary/5 font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-[20px]">auto_stories</span> 温馨手账
+          </button>
+<button class="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border-2 border-transparent bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">menu_book</span> 成长杂志
+          </button>
+<button class="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border-2 border-transparent bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">timeline</span> 极简时光轴
+          </button>
+</div>
+</section>
+<!-- Privacy Protection Toggles -->
+<section class="mb-8">
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 px-1">隐私脱敏保护</h4>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container-low rounded-[1.5rem] p-4 flex justify-between items-center border border-outline-variant/10">
+<div class="flex flex-col"><span class="material-symbols-outlined text-on-surface-variant mb-1 text-[20px]">visibility_off</span>
+<span class="font-label-md text-label-md text-on-surface leading-tight">隐藏生长数据</span>
+<span class="text-[10px] text-on-surface-variant/70 leading-tight">数字转换为可爱足迹</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-checkbox" type="checkbox" value=""/>
+<div class="toggle-label w-11 h-6 bg-surface-variant rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-[2px] top-[2px] bg-white border-outline-variant/30 border h-5 w-5 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+<div class="bg-surface-container-low rounded-[1.5rem] p-4 flex justify-between items-center border border-outline-variant/10">
+<div class="flex flex-col"><span class="material-symbols-outlined text-on-surface-variant mb-1 text-[20px]">face_retouching_natural</span>
+<span class="font-label-md text-label-md text-on-surface leading-tight">智能眼镜贴纸</span>
+<span class="text-[10px] text-on-surface-variant/70 leading-tight">一键防窥保护面部</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only toggle-checkbox" type="checkbox" value=""/>
+<div class="toggle-label w-11 h-6 bg-surface-variant rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-[2px] top-[2px] bg-white border-outline-variant/30 border h-5 w-5 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<div class="flex gap-4">
+<button class="flex-1 flex items-center justify-center gap-2 py-4 bg-surface-container-high rounded-full text-on-surface font-headline-md text-[18px] transition-all active:scale-95 border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+          保存到相册
+        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-4 bg-primary text-on-primary rounded-full font-headline-md text-[18px] shadow-sm transition-all active:scale-95">
+<span class="w-5 h-5 rounded-full bg-white/20 border-2 border-white/40"></span>
+          分享至微信
+        </button>
+</div>
+</div>
+</main>
+<script>
+    // Simple micro-interaction for toggle switches
+    document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        console.log('Privacy toggle updated:', this.checked);
+      });
+    });
+
+    // Horizontal scroll button highlights
+    const styleButtons = document.querySelectorAll('section button');
+    styleButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        styleButtons.forEach(b => {
+          b.classList.remove('border-primary', 'text-on-primary-container', 'bg-primary/5');
+          b.classList.add('border-transparent', 'bg-surface-container', 'text-on-surface-variant');
+        });
+        this.classList.add('border-primary', 'text-on-primary-container', 'bg-primary/5');
+        this.classList.remove('border-transparent', 'bg-surface-container', 'text-on-surface-variant');
+      });
+    });
+  </script>
+</body></html>
