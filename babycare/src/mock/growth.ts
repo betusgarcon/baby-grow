@@ -173,10 +173,10 @@ const monthlyDietLegend: DietLegendItem[] = [
 ]
 
 const milestones: GetGrowthPageResponse['milestones'] = [
-  { label: 'First Roll', unlocked: true },
-  { label: 'First Tooth', unlocked: true },
-  { label: 'First Word', unlocked: true },
-  { label: 'Walking', unlocked: false },
+  { label: 'First Roll', unlocked: true, icon: 'baby-roll' },
+  { label: 'First Tooth', unlocked: true, icon: 'tooth' },
+  { label: 'First Word', unlocked: true, icon: 'baby-speak' },
+  { label: 'Walking', unlocked: false, icon: 'baby-walk' },
 ]
 
 const timeRanges: GetGrowthPageResponse['timeRanges'] = [

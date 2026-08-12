@@ -24,6 +24,7 @@ export interface MoodCheckinOption {
   key: 'happy' | 'clingy' | 'discomfort'
   label: string
   emoji: string
+  icon: string
   activeColor: string
   activeBg: string
   inactiveBg: string

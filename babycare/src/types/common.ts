@@ -52,6 +52,7 @@ export interface TimeRange {
 export interface MilestoneItem {
   label: string
   unlocked: boolean
+  icon: string
 }
 
 /** 图例项 */

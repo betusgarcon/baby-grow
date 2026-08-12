@@ -2,6 +2,7 @@ import { PropsWithChildren, useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Image, ScrollView } from '@tarojs/components'
 import BottomTabBar from '@/components/BottomTabBar'
+import Icon from '@/components/Icon'
 import type {
   AnalysisCategoryKey,
   AnalysisSubtabKey,
@@ -15,33 +16,38 @@ interface AnalysisLayoutProps extends PropsWithChildren {
   profile: BabyProfileSummary
   activeCategory: AnalysisCategoryKey
   activeSubtab?: AnalysisSubtabKey
-  subtabOptions?: Array<{ key: AnalysisSubtabKey; label: string }>
+  subtabOptions?: Array<{ key: AnalysisSubtabKey; label: string; iconActive?: string; iconInactive?: string }>
 }
 
 const categoryConfigs: Array<{
   key: AnalysisCategoryKey
   label: string
   icon: string
+  iconInactive: string
 }> = [
   {
     key: 'growth',
     label: 'Grow',
-    icon: '↗',
+    icon: 'tab-grow-active',
+    iconInactive: 'tab-grow-inactive',
   },
   {
     key: 'sleep',
     label: 'Sleep',
-    icon: '☾',
+    icon: 'tab-sleep-active',
+    iconInactive: 'tab-sleep-inactive',
   },
   {
     key: 'diet',
     label: 'Diet',
-    icon: '⌇',
+    icon: 'tab-diet-active',
+    iconInactive: 'tab-diet-inactive',
   },
   {
     key: 'mood',
     label: 'Mood',
-    icon: '☺',
+    icon: 'tab-mood-active',
+    iconInactive: 'tab-mood-inactive',
   },
 ]
 
@@ -143,7 +149,11 @@ export default function AnalysisLayout({
                 // 主 tab 只负责类目跳转，不直接操心页面内容。
                 onClick={() => navigateToAnalysisPage(category.key)}
               >
-                <Text className="text-sm">{category.icon}</Text>
+                <Icon
+                  name={isActive ? category.icon : category.iconInactive}
+                  className="w-4 h-4"
+                  style={!isActive ? { opacity: 0.5 } : undefined}
+                />
                 <Text className={`text-base leading-6 ${isActive ? 'font-semibold' : 'font-normal'}`}>
                   {category.label}
                 </Text>
@@ -153,8 +163,8 @@ export default function AnalysisLayout({
         </View>
       </View>
 
-      <ScrollView scrollY className="flex-1 h-0" showScrollbar={false} enhanced>
-        <View className="px-4 pt-2 pb-28 flex flex-col gap-2">
+      <ScrollView scrollY className="flex-1 h-0 pb-[140px] box-border" showScrollbar={false} enhanced>
+        <View className="px-4 pt-2 pb-[140px] flex flex-col gap-2">
           {subtabOptions?.length ? (
             // 子 tab 和主 tab 拆开渲染，这样 growth/sleep/diet 这类页面
             // 可以在不影响顶部结构的前提下自由扩展二级切换。

@@ -31,7 +31,7 @@ const dailySleepLogs: DailySleepLog[] = [
     range: '12:30 — 14:00',
     duration: '1h 30m',
     type: 'nap',
-    icon: 'sun',
+    icon: 'nap',
   },
   {
     id: 'afternoon',
@@ -39,7 +39,7 @@ const dailySleepLogs: DailySleepLog[] = [
     range: '16:15 — 17:45',
     duration: '1h 30m',
     type: 'nap',
-    icon: 'sun',
+    icon: 'nap',
   },
 ]
 

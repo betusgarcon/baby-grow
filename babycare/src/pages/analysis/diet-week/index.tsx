@@ -15,8 +15,8 @@ import type { GetWeeklyDietResponse } from '@/types/diet'
 const BABY_ID = 'baby-001'
 
 const dietSubtabs = [
-  { key: 'dietWeek' as const, label: '本周奶量' },
-  { key: 'dietMonth' as const, label: '本月膳食' },
+  { key: 'dietWeek' as const, label: '本周奶量', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'dietMonth' as const, label: '本月膳食', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 export default function AnalysisDietWeekPage() {

@@ -86,5 +86,6 @@ export interface GetGrowthPageResponse {
   milestones: Array<{
     label: string
     unlocked: boolean
+    icon: string
   }>
 }

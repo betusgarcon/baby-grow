@@ -54,6 +54,7 @@ export interface DonutLegendItem {
 export interface MilestoneItem {
   label: string
   unlocked: boolean
+  icon: string
 }
 
 /** 每日睡眠日志项（视图层） */
@@ -83,6 +84,7 @@ export interface MoodCheckinOption {
   key: 'happy' | 'clingy' | 'discomfort'
   label: string
   emoji: string
+  icon: string
   activeColor: string
   activeBg: string
   inactiveBg: string

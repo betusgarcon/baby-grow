@@ -1,6 +1,7 @@
 import { PropsWithChildren, useMemo, useState } from 'react'
 import { Input, Textarea, View, Text } from '@tarojs/components'
 import AnalysisChart from '@/components/AnalysisChart'
+import Icon from '@/components/Icon'
 import BaseAnalysisCard from './BaseAnalysisCard'
 import {
   DailySleepLogItem,
@@ -46,12 +47,12 @@ export function InsightCard({ data }: { data: InsightBlockData }) {
       }}
     >
       <View className="flex items-center gap-2">
-        <Text className="text-sm" style={{ color: analysisColors.titleAccent }}>✦</Text>
+        <Icon name="ai-conclude" className="w-4 h-4" />
         <Text
           className="text-base font-bold leading-5 tracking-wide"
           style={{ color: analysisColors.titleAccent }}
         >
-            {data.title}
+          {data.title}
         </Text>
       </View>
       <Text className="text-base leading-6" style={{ color: analysisColors.textPrimary }}>{data.content}</Text>
@@ -304,7 +305,7 @@ export function IngredientToleranceCard({
     <View className="w-full p-4 bg-[#F4F1EC] rounded-[32px] border border-[#E0DAD2] flex flex-col gap-3">
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
-          <Text className="text-base">🌟</Text>
+          <Icon name="sunny" className="w-5 h-5" />
           <Text className="text-sm font-bold text-[#2E2822]">{title}</Text>
         </View>
         <Text className="text-xs font-bold text-[#6D6A64]">{badge}</Text>
@@ -374,7 +375,7 @@ export function MilestoneProgressCard({ items }: { items: MilestoneItem[] }) {
                 item.unlocked ? 'bg-[#D2DFC4]' : 'bg-[#8C8D88]'
               }`}
             >
-              <Text className={`text-lg ${item.unlocked ? 'text-[#5C6D56]' : 'text-[#5F6857]'}`}>⌁</Text>
+              <Icon name={item.icon} className="w-6 h-6" style={{ opacity: item.unlocked ? 1 : 0.5 }} />
             </View>
             <Text
               className={`text-xs leading-4 text-center ${
@@ -427,7 +428,7 @@ export function NarrativeNote({
   // 这样主次关系会更清楚。
   return (
     <View className="w-full p-4 bg-[#F4F1EC] rounded-[24px] border border-[#E0DAD2] flex items-start gap-3">
-      <Text className="text-[#5C6D76]">▮</Text>
+      <Icon name="insight-summary" className="w-4 h-4 shrink-0" />
       <Text className="flex-1 text-base leading-6 text-[#2E2822]">{text}</Text>
     </View>
   )
@@ -453,7 +454,8 @@ export function CircadianRingCard({
           <Text className="text-[#8C857D] text-sm font-bold uppercase tracking-[0.2em]">TODAY&apos;S CIRCADIAN RING</Text>
           <Text className="block text-base text-[#2E2822] mt-1">24-Hour Rhythm</Text>
         </View>
-        <View className="px-4 py-2 rounded-full" style={{ backgroundColor: analysisColors.pillGreenBg }}>
+        <View className="px-4 py-2 rounded-full flex items-center gap-1.5" style={{ backgroundColor: analysisColors.pillGreenBg }}>
+          <Icon name="polar-guide" className="w-4 h-4" />
           <Text className="text-base whitespace-nowrap" style={{ color: analysisColors.activeText }}>Polar Guide</Text>
         </View>
       </View>
@@ -589,7 +591,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
       title: draft.title || 'Custom Nap',
       range: `${draft.start} — ${draft.end}`,
       duration: formatDuration(draft.start, draft.end),
-      icon: '☼',
+      icon: 'nap',
     }))
 
     setSyncedLogs((current) => [...current, ...newLogs])
@@ -600,7 +602,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
     <View className="w-full flex flex-col gap-3">
       <View className="flex items-center justify-between">
         <View className="flex items-center gap-2">
-          <Text className="text-[#8B5A2B] text-base">▤</Text>
+          <Icon name="daily-sleep-log" className="w-5 h-5" />
           <Text className="text-lg leading-7 text-[#2E2822]">Daily Sleep Log</Text>
         </View>
         <Text className="text-base text-[#8C857D]">{syncedLogs.length} Records</Text>
@@ -610,7 +612,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
         <View key={log.id} className="w-full p-2 bg-[#F4F1EC] rounded-[32px] flex items-center justify-between gap-3">
           <View className="flex items-center gap-2">
             <View className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-              <Text className="text-[#97A8AF] text-lg">{log.icon || '☾'}</Text>
+              <Icon name={log.icon || 'nap'} className="w-5 h-5" />
             </View>
             <View>
               <Text className="block text-base font-semibold text-[#2E2822]">{log.title}</Text>
@@ -625,7 +627,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
               className="w-7 h-7 rounded-full flex items-center justify-center"
               onClick={() => handleRemoveSyncedLog(log.id)}
             >
-              <Text className="text-[#86807A] text-xl leading-none">✕</Text>
+              <Icon name="delete" className="w-5 h-5" />
             </View>
           </View>
         </View>
@@ -633,9 +635,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
 
       <View className="w-full p-6 bg-white rounded-[32px] border-2 border-dashed border-[#D8DDD8] flex flex-col gap-5">
         <View className="flex items-center gap-2" onClick={handleAddDraft}>
-          <View className="w-6 h-6 rounded-full border border-[#7E959F] flex items-center justify-center">
-            <Text className="text-[#64757C] text-sm">＋</Text>
-          </View>
+          <Icon name="add-circle" className="w-5 h-5" />
           <Text className="text-base text-[#2E2822]">Quick Add Log</Text>
         </View>
 
@@ -654,7 +654,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     onClick={() => handleRemoveDraft(draft.id)}
                   >
-                    <Text className="text-[#9B8F86] text-xl leading-none">✕</Text>
+                    <Icon name="delete" className="w-5 h-5" />
                   </View>
                 </View>
 
@@ -667,7 +667,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
                         value={draft.start}
                         onInput={(event) => handleDraftChange(draft.id, 'start', event.detail.value)}
                       />
-                      <Text className="text-[#2E2822]">◔</Text>
+                      <Icon name="time-input" className="w-4 h-4" />
                     </View>
                   </View>
 
@@ -679,7 +679,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
                         value={draft.end}
                         onInput={(event) => handleDraftChange(draft.id, 'end', event.detail.value)}
                       />
-                      <Text className="text-[#2E2822]">◔</Text>
+                      <Icon name="time-input" className="w-4 h-4" />
                     </View>
                   </View>
                 </View>
@@ -979,7 +979,7 @@ export function MoodJournalCard() {
     <View className="w-full flex flex-col gap-4">
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
-          <Text className="text-[#6A7A81]">▮</Text>
+          <Icon name="insight-summary" className="w-5 h-5" />
           <Text className="text-lg leading-8 font-semibold text-[#2E2822]">6月17日 情绪手账</Text>
         </View>
         <View className="px-3 py-1 rounded-full bg-[#F1D7CF]">
@@ -989,7 +989,7 @@ export function MoodJournalCard() {
 
       <BaseAnalysisCard className="flex flex-col gap-3" style={{ backgroundColor: analysisColors.cardMutedBg, border: `1px solid ${analysisColors.cardMutedBorder}` }}>
         <View className="flex items-center gap-2">
-          <Text className="text-[#D29078]">✦</Text>
+          <Icon name="ai-conclude" className="w-4 h-4" />
           <Text className="text-sm font-bold text-[#2E2822]">爸妈随手记</Text>
         </View>
         <Text className="text-base leading-7 text-[#2E2822]">
@@ -1020,7 +1020,7 @@ export function MoodCheckinCard({
     <View className="w-full p-4 bg-white rounded-[32px] border border-[#D8E2DB] flex flex-col gap-4">
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
-          <Text className="text-[#7B95A0] text-lg">✎</Text>
+          <Icon name="more" className="w-5 h-5" />
           <Text className="text-lg leading-8 font-semibold text-[#2E2822]">情绪打卡</Text>
         </View>
         <Text className="text-sm text-[#8C857D]">选择今日心情并轻松录入</Text>
@@ -1049,9 +1049,11 @@ export function MoodCheckinCard({
                 className="w-16 h-16 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.8)' : analysisColors.iconBg }}
               >
-                <Text className="text-[28px]" style={{ color: isActive ? option.activeColor : '#8e867d' }}>
-                  {option.emoji}
-                </Text>
+                <Icon
+                  name={option.icon}
+                  className="w-8 h-8"
+                  style={{ opacity: isActive ? 1 : 0.6 }}
+                />
               </View>
               <Text
                 className="text-sm font-semibold"

@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react'
 import { Text, View } from '@tarojs/components'
+import Icon from '@/components/Icon'
 import { analysisColors } from './analysisTokens'
 
 interface SegmentedTabItem<T extends string> {
   key: T
   label: string
+  iconActive?: string
+  iconInactive?: string
 }
 
 interface SegmentedTabsProps<T extends string> {
@@ -56,14 +59,23 @@ export default function SegmentedTabs<T extends string>({
             {renderItem ? (
               renderItem(item, isActive)
             ) : (
-              <Text
-                className={`${labelClass} text-center font-semibold`}
-                style={{
-                  color: isActive ? analysisColors.activeText : analysisColors.inactiveText,
-                }}
-              >
-                {item.label}
-              </Text>
+              <View className="flex items-center gap-2">
+                {item.iconActive ? (
+                  <Icon
+                    name={isActive ? item.iconActive : item.iconInactive || item.iconActive}
+                    className="w-4 h-4"
+                    style={!isActive ? { opacity: 0.5 } : undefined}
+                  />
+                ) : null}
+                <Text
+                  className={`${labelClass} text-center font-semibold`}
+                  style={{
+                    color: isActive ? analysisColors.activeText : analysisColors.inactiveText,
+                  }}
+                >
+                  {item.label}
+                </Text>
+              </View>
             )}
           </View>
         )

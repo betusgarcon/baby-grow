@@ -13,8 +13,8 @@ import type { GetSleepEvolutionResponse } from '@/types/sleep'
 const BABY_ID = 'baby-001'
 
 const sleepSubtabs = [
-  { key: 'sleepDaily' as const, label: 'Daily Ring' },
-  { key: 'sleepMonthly' as const, label: 'Monthly Evolution' },
+  { key: 'sleepDaily' as const, label: 'Daily Ring', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'sleepMonthly' as const, label: 'Monthly Evolution', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 export default function AnalysisSleepMonthlyPage() {
