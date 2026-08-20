@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: baby-grow-backend
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

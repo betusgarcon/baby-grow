@@ -1,0 +1,5 @@
+# pnpm workspace 包清单
+# 三个应用平铺在仓库根目录（非 apps/ 子目录），与 dailyPawn 命名风格一致
+# Java 后端和 Python AI 服务不是 pnpm 包，不列入
+packages:
+  - babyGrowFrontend

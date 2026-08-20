@@ -1,0 +1,31 @@
+{
+  "name": "baby-grow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "宝宝成长记录 monorepo（前端小程序 + Java 后端 + Python AI 服务）",
+  "scripts": {
+    "dev:weapp": "pnpm --filter @baby-grow/frontend dev:weapp",
+    "build:weapp": "pnpm --filter @baby-grow/frontend build:weapp",
+    "dev:backend": "cd babyGrowBackend && ./mvnw spring-boot:run",
+    "ai:setup": "cd babyGrowAi && python3 -m venv .venv && .venv/bin/pip install -e .",
+    "dev:ai": "babyGrowAi/.venv/bin/python -m uvicorn app.main:app --app-dir babyGrowAi/src --reload --port 8001",
+    "type-check": "pnpm -r type-check",
+    "lint": "pnpm -r lint",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "@tarojs/binding",
+      "@tarojs/cli",
+      "core-js",
+      "core-js-pure",
+      "esbuild",
+      "swiper",
+      "weapp-tailwindcss"
+    ]
+  }
+}

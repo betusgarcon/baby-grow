@@ -1,50 +1,65 @@
-# baby-grow-mini/.gitignore
-
-# Vercel 部署配置（含个人项目 ID）
-.vercel/
-
-# Trae 调试日志
-.dbg/
-
-# 微信小程序私有配置
-**/project.private.config.json
-
-# Dependencies
+# ===== 依赖 =====
 node_modules/
-babycare/node_modules/
-server/node_modules/
 
-# Build output
-babycare/dist/
-babycare/.taro/
-server/dist/
+# ===== 构建产物 / 编译缓存 =====
+dist/
+.temp/
+.rn_temp/
+deploy_versions/
+.swc/
 
-# Environment variables
-.env
-.env.local
-.env.*.local
-*.env
+# ===== Java 后端 =====
+target/
+*.class
+*.jar
+!gradle-wrapper.jar
 
-# IDE
+# ===== Python AI =====
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# ===== 系统 / 编辑器文件 =====
+.DS_Store
+Thumbs.db
 .idea/
 .vscode/
 !.vscode/settings.json
-.DS_Store
 
-# Logs
+# ===== 本地环境变量 =====
+# 裸 .env 是部署时的真实密钥文件，绝不入库
+.env
+.env.local
+.env.*.local
+
+# ===== 日志 =====
 *.log
 npm-debug.log*
-yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Taro / 小程序
-babycare/.temp/
-babycare/.swc/
-babycare/coverage/
+# ===== 微信开发者工具私有配置（含个人偏好，不应共享）=====
+**/project.private.config.json
 
-# Secrets（绝对不能提交）
+# ===== 临时文件 =====
+temp/
+.tmp/
+
+# ===== 本地覆盖文件 =====
+*.local
+
+# ===== Vercel 部署配置（含个人项目 ID）=====
+.vercel/
+
+# ===== Trae 调试日志 =====
+.dbg/
+
+# ===== Secrets（绝对不能提交）=====
 *.pem
 *.key
 secrets/
 
-# Figma MCP Server（第三方 MCP 配置，不纳入版本控制）
+# ===== Figma MCP Server（第三方 MCP 配置，不纳入版本控制）=====
 figma-mcp-free/

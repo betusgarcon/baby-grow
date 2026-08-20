@@ -1,0 +1,16 @@
+# ===== Python =====
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+
+# ===== 环境变量 =====
+.env
+
+# ===== IDE =====
+.idea/
+
+# ===== OS =====
+.DS_Store
