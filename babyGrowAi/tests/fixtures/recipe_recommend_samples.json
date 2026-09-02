@@ -1,0 +1,144 @@
+{
+  "samples": [
+    {
+      "id": "constipation_6m",
+      "baby_age_months": 6,
+      "query": "宝宝便秘了，吃什么好",
+      "allergens": [],
+      "expected_topics": ["膳食纤维", "梨泥", "南瓜", "红薯"]
+    },
+    {
+      "id": "iron_9m",
+      "baby_age_months": 9,
+      "query": "想给宝宝补铁",
+      "allergens": [],
+      "expected_recipes": ["猪肝菠菜粥", "牛肉蔬菜粥", "胡萝卜牛肉泥"]
+    },
+    {
+      "id": "egg_allergy_10m",
+      "baby_age_months": 10,
+      "query": "今天吃什么",
+      "allergens": ["鸡蛋"],
+      "avoid_topics": ["蛋黄", "蒸蛋"]
+    },
+    {
+      "id": "picky_12m",
+      "baby_age_months": 12,
+      "query": "宝宝不爱吃青菜，怎么办",
+      "allergens": [],
+      "expected_topics": ["蔬菜肉丸", "蛋饼", "南瓜"]
+    },
+    {
+      "id": "protein_11m",
+      "baby_age_months": 11,
+      "query": "想补充蛋白质",
+      "allergens": [],
+      "expected_topics": ["鸡肉", "鱼肉", "虾仁", "牛肉"]
+    },
+    {
+      "id": "light_food_8m",
+      "baby_age_months": 8,
+      "query": "想吃点清淡的",
+      "allergens": [],
+      "expected_topics": ["粥", "泥", "蒸"]
+    },
+    {
+      "id": "seafood_allergy_12m",
+      "baby_age_months": 12,
+      "query": "中午吃什么",
+      "allergens": ["虾", "鱼"],
+      "avoid_topics": ["虾", "鱼", "鳕鱼", "三文鱼"]
+    },
+    {
+      "id": "texture_soft_10m",
+      "baby_age_months": 10,
+      "query": "质地软一点的辅食",
+      "allergens": [],
+      "expected_topics": ["粥", "羹", "泥"]
+    },
+    {
+      "id": "constipation_8m",
+      "baby_age_months": 8,
+      "query": "三天没拉屎了，吃点什么",
+      "allergens": [],
+      "expected_topics": ["梨", "南瓜", "红薯", "燕麦"]
+    },
+    {
+      "id": "breakfast_10m",
+      "baby_age_months": 10,
+      "query": "早餐推荐",
+      "allergens": [],
+      "expected_topics": ["粥", "糊", "蛋"]
+    },
+    {
+      "id": "calcium_12m",
+      "baby_age_months": 12,
+      "query": "补钙的辅食",
+      "allergens": [],
+      "expected_topics": ["豆腐", "虾", "紫菜", "蛋"]
+    },
+    {
+      "id": "dinner_18m",
+      "baby_age_months": 18,
+      "query": "晚饭吃什么",
+      "allergens": [],
+      "expected_topics": ["饭", "面", "粥"]
+    },
+    {
+      "id": "meat_aversion_12m",
+      "baby_age_months": 12,
+      "query": "不爱吃肉",
+      "allergens": [],
+      "expected_topics": ["肉丸", "蛋", "豆腐"]
+    },
+    {
+      "id": "cold_recovery_11m",
+      "baby_age_months": 11,
+      "query": "感冒了，吃点什么好消化",
+      "allergens": [],
+      "expected_topics": ["粥", "汤", "清淡"]
+    },
+    {
+      "id": "first_fish_9m",
+      "baby_age_months": 9,
+      "query": "第一次吃鱼推荐什么",
+      "allergens": [],
+      "expected_recipes": ["鳕鱼土豆泥", "鱼肉豆腐羹"]
+    },
+    {
+      "id": "soy_allergy_15m",
+      "baby_age_months": 15,
+      "query": "想吃点豆制品",
+      "allergens": ["大豆"],
+      "avoid_topics": ["豆腐"]
+    },
+    {
+      "id": "wheat_allergy_12m",
+      "baby_age_months": 12,
+      "query": "不含面粉的辅食",
+      "allergens": ["小麦"],
+      "avoid_topics": ["面条", "饺子", "馒头"]
+    },
+    {
+      "id": "weight_gain_12m",
+      "baby_age_months": 12,
+      "query": "想让宝宝长肉",
+      "allergens": [],
+      "expected_topics": ["肉类", "蛋黄", "坚果"]
+    },
+    {
+      "id": "lunchbox_18m",
+      "baby_age_months": 18,
+      "query": "适合带出门的辅食",
+      "allergens": [],
+      "expected_topics": ["馒头", "饼", "饭团"]
+    },
+    {
+      "id": "teething_9m",
+      "baby_age_months": 9,
+      "query": "长牙期吃什么",
+      "allergens": [],
+      "expected_topics": ["磨牙", "软", "凉"]
+    }
+  ]
+}

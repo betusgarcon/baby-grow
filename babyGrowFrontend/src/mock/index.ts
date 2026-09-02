@@ -4,12 +4,13 @@
  */
 
 import { registerMock } from '@/api/request'
+import { aiMockRoutes } from './ai'
 import { babyMockRoutes } from './baby'
-import { growthMockRoutes } from './growth'
-import { sleepMockRoutes } from './sleep'
 import { dietMockRoutes } from './diet'
-import { moodMockRoutes } from './mood'
+import { growthMockRoutes } from './growth'
 import { journeyMockRoutes } from './journey'
+import { moodMockRoutes } from './mood'
+import { sleepMockRoutes } from './sleep'
 
 /**
  * 初始化所有 Mock 路由
@@ -23,6 +24,7 @@ export function initMockRoutes() {
     ...dietMockRoutes,
     ...moodMockRoutes,
     ...journeyMockRoutes,
+    ...aiMockRoutes,
   ]
 
   allRoutes.forEach(({ path, handler }) => {

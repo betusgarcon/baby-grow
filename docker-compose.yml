@@ -1,10 +1,11 @@
-# 本地开发用 MySQL + Redis，供 babyGrowBackend 联调。
-# 生产库不在本文件管理范围内。
+# 本地开发用全栈一键启动：MySQL + Redis + PostgreSQL/pgvector + Java 后端 + Python AI 服务
+# 生产环境不在本文件管理范围内。
 #
 # 用法（仓库根目录）：
-#   pnpm db:up      # 启动
-#   pnpm db:down    # 停止（数据卷保留）
-#   pnpm db:logs    # 看日志
+#   docker compose up -d        # 启动全部服务
+#   docker compose up -d db     # 只启动数据库
+#   docker compose down         # 停止（数据卷保留）
+#   docker compose logs -f      # 看日志
 services:
   mysql:
     image: mysql:8
@@ -39,6 +40,86 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: baby-grow-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: baby_grow_ai
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/init-postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d baby_grow_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  ai-service:
+    build:
+      context: ./babyGrowAi
+      dockerfile: Dockerfile
+    container_name: baby-grow-ai-service
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      # 连接容器内的 PostgreSQL
+      PG_DSN: postgresql://postgres:postgres@postgres:5432/baby_grow_ai
+      # Ollama 默认跑在宿主机，容器内通过 host.docker.internal 访问
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: qwen2.5:7b-instruct-q5_K_M
+      EMBEDDING_MODEL: bge-m3:latest
+      # 关闭热重载，Docker 内不需要
+      UVICORN_RELOAD: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./babyGrowBackend
+      dockerfile: Dockerfile
+    container_name: baby-grow-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # 连接容器内的 AI 服务
+      AI_SERVICE_URL: http://ai-service:8001
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+
 volumes:
   mysql-data:
   redis-data:
+  postgres-data:

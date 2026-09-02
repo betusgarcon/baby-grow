@@ -33,9 +33,12 @@ baby-grow/
 | `pnpm dev:backend` | Java 后端开发（`./mvnw spring-boot:run`） |
 | `pnpm ai:setup` | AI 服务初始化（创建 venv + 安装依赖） |
 | `pnpm dev:ai` | AI 服务开发（uvicorn hot-reload） |
-| `pnpm db:up` | 启动本地数据库（MySQL + Redis） |
+| `pnpm db:up` | 启动本地数据库（MySQL + Redis + PostgreSQL） |
 | `pnpm db:down` | 停止本地数据库 |
 | `pnpm db:logs` | 查看数据库日志 |
+| `pnpm docker:up` | 一键启动全栈 Docker（含 Java 后端 + AI 服务） |
+| `pnpm docker:down` | 停止全栈 Docker |
+| `pnpm docker:logs` | 查看全栈 Docker 日志 |
 
 ## 前端小程序在微信开发者工具中的打开方式
 
@@ -45,5 +48,5 @@ baby-grow/
 
 - **前端**：Taro 3.6 + React 18 + TypeScript + Tailwind CSS + ECharts
 - **后端**：Java 17 + Spring Boot 3.2 + Maven（详见 `docs/backend.md`）
-- **AI 服务**：Python 3.11+ + FastAPI + Ollama（详见 `docs/ai_infra.md`）
-- **工程**：pnpm workspace + Docker Compose（本地 MySQL + Redis）
+- **AI 服务**：Python 3.11+ + FastAPI + Ollama（详见 `docs/ai_infra.md`、`docs/docker-local-deploy.md`）
+- **工程**：pnpm workspace + Docker Compose（本地 MySQL + Redis + PostgreSQL/pgvector）
