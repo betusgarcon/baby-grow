@@ -1,0 +1,326 @@
+{
+  "samples": [
+    {
+      "id": "milestone_and_food",
+      "text": "今天宝宝第一次自己站起来了，中午吃了南瓜泥和米粉",
+      "baby_age_months": 10,
+      "expected": {
+        "milestones": [{"type": "运动", "event": "首次自己站起来", "is_first": true}],
+        "food": [
+          {"name": "南瓜泥", "category": "蔬菜", "is_first": true},
+          {"name": "米粉", "category": "谷物", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "milk_only",
+      "text": "宝宝今天喝了600ml母乳，分三次喝完的",
+      "baby_age_months": 3,
+      "expected": {
+        "milk": [{"type": "母乳", "amount_ml": 600, "period": "全天"}]
+      }
+    },
+    {
+      "id": "sleep_mood",
+      "text": "昨晚睡了10个小时，早上醒来特别开心",
+      "baby_age_months": 6,
+      "expected": {
+        "sleep": [{"duration_min": 600, "quality": "好"}],
+        "mood": [{"mood": "开心", "trigger": null}]
+      }
+    },
+    {
+      "id": "no_info",
+      "text": "今天天气不错，带宝宝去公园走了走",
+      "baby_age_months": 8,
+      "expected": {}
+    },
+    {
+      "id": "first_word",
+      "text": "宝宝第一次叫了爸爸",
+      "baby_age_months": 9,
+      "expected": {
+        "milestones": [{"type": "语言", "event": "首次叫爸爸", "is_first": true}]
+      }
+    },
+    {
+      "id": "first_crawl",
+      "text": "小宝今天会爬了，爬得还挺快",
+      "baby_age_months": 8,
+      "expected": {
+        "milestones": [{"type": "运动", "event": "首次爬行", "is_first": true}]
+      }
+    },
+    {
+      "id": "mixed_meal",
+      "text": "早上喝了180ml配方奶，中午吃了胡萝卜牛肉泥，下午还吃了一点苹果泥",
+      "baby_age_months": 7,
+      "expected": {
+        "milk": [{"type": "配方奶", "amount_ml": 180, "period": "单次"}],
+        "food": [
+          {"name": "胡萝卜牛肉泥", "category": "蔬菜", "is_first": false},
+          {"name": "苹果泥", "category": "水果", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "first_egg",
+      "text": "今天第一次给宝宝尝试蛋黄，吃了小半个，没有过敏",
+      "baby_age_months": 7,
+      "expected": {
+        "food": [{"name": "蛋黄", "category": "蛋类", "is_first": true}]
+      }
+    },
+    {
+      "id": "mood_cranky",
+      "text": "不知道为什么，今天一直哭闹，可能是饿了",
+      "baby_age_months": 5,
+      "expected": {
+        "mood": [{"mood": "哭闹", "trigger": "饥饿"}]
+      }
+    },
+    {
+      "id": "sleep_poor",
+      "text": "夜里醒了三次，一共才睡了7个多小时，质量很差",
+      "baby_age_months": 10,
+      "expected": {
+        "sleep": [{"duration_min": 420, "quality": "差"}]
+      }
+    },
+    {
+      "id": "social_milestone",
+      "text": "宝宝今天看到外婆会主动伸手要抱抱了",
+      "baby_age_months": 8,
+      "expected": {
+        "milestones": [{"type": "社交", "event": "主动伸手要抱", "is_first": true}]
+      }
+    },
+    {
+      "id": "cognitive_milestone",
+      "text": "突然会拍手了，听到儿歌还会跟着摇头",
+      "baby_age_months": 11,
+      "expected": {
+        "milestones": [
+          {"type": "认知", "event": "学会拍手", "is_first": true},
+          {"type": "认知", "event": "听到儿歌会摇头", "is_first": true}
+        ]
+      }
+    },
+    {
+      "id": "formula_milk",
+      "text": "今天总共喝了700毫升配方奶",
+      "baby_age_months": 4,
+      "expected": {
+        "milk": [{"type": "配方奶", "amount_ml": 700, "period": "全天"}]
+      }
+    },
+    {
+      "id": "first_solid",
+      "text": "今天宝宝第一次吃辅食，吃了三勺米粉",
+      "baby_age_months": 6,
+      "expected": {
+        "food": [{"name": "米粉", "category": "谷物", "is_first": true}]
+      }
+    },
+    {
+      "id": "vegetable_only",
+      "text": "喂了西兰花泥和土豆泥，各吃了一半",
+      "baby_age_months": 7,
+      "expected": {
+        "food": [
+          {"name": "西兰花泥", "category": "蔬菜", "is_first": false},
+          {"name": "土豆泥", "category": "蔬菜", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "dialect",
+      "text": "娃儿今朝第一次翻身咯，还吃了点苹果泥",
+      "baby_age_months": 6,
+      "expected": {
+        "milestones": [{"type": "运动", "event": "首次翻身", "is_first": true}],
+        "food": [{"name": "苹果泥", "category": "水果", "is_first": false}]
+      }
+    },
+    {
+      "id": "obscure_food",
+      "text": "中午给他尝了点豆腐，还喂了几口蒸蛋",
+      "baby_age_months": 9,
+      "expected": {
+        "food": [
+          {"name": "豆腐", "category": "豆制品", "is_first": false},
+          {"name": "蒸蛋", "category": "蛋类", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "hidden_milestone",
+      "text": "宝宝今天会把玩具从一只手换到另一只手了",
+      "baby_age_months": 7,
+      "expected": {
+        "milestones": [{"type": "运动", "event": "双手传递玩具", "is_first": true}]
+      }
+    },
+    {
+      "id": "fussy_eating",
+      "text": "今天喂辅食很不配合，吃了两口就扭头",
+      "baby_age_months": 8,
+      "expected": {
+        "mood": [{"mood": "烦躁", "trigger": "辅食"}]
+      }
+    },
+    {
+      "id": "long_nap",
+      "text": "下午睡了两个小时，中间没有醒",
+      "baby_age_months": 9,
+      "expected": {
+        "sleep": [{"duration_min": 120, "quality": "好"}]
+      }
+    },
+    {
+      "id": "first_walk",
+      "text": "扶着沙发走了好几步，是不是快会走了",
+      "baby_age_months": 11,
+      "expected": {
+        "milestones": [{"type": "运动", "event": "扶走", "is_first": true}]
+      }
+    },
+    {
+      "id": "fish_first",
+      "text": "今天第一次吃鳕鱼，蒸熟了压成泥",
+      "baby_age_months": 9,
+      "expected": {
+        "food": [{"name": "鳕鱼", "category": "肉类", "is_first": true}]
+      }
+    },
+    {
+      "id": "multi_milk",
+      "text": "早上母乳150ml，中午配方奶120ml，晚上母乳180ml",
+      "baby_age_months": 6,
+      "expected": {
+        "milk": [
+          {"type": "母乳", "amount_ml": 150, "period": "单次"},
+          {"type": "配方奶", "amount_ml": 120, "period": "单次"},
+          {"type": "母乳", "amount_ml": 180, "period": "单次"}
+        ]
+      }
+    },
+    {
+      "id": "fruit_only",
+      "text": "下午加餐吃了香蕉和牛油果",
+      "baby_age_months": 8,
+      "expected": {
+        "food": [
+          {"name": "香蕉", "category": "水果", "is_first": false},
+          {"name": "牛油果", "category": "水果", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "teething_fussy",
+      "text": "好像要长牙了，今天一直流口水，情绪也不好",
+      "baby_age_months": 6,
+      "expected": {
+        "mood": [{"mood": "烦躁", "trigger": "长牙"}]
+      }
+    },
+    {
+      "id": "first_point",
+      "text": "宝宝会用手指东西了，问他灯在哪也知道看",
+      "baby_age_months": 10,
+      "expected": {
+        "milestones": [
+          {"type": "认知", "event": "会指物", "is_first": true},
+          {"type": "认知", "event": "听懂指令", "is_first": true}
+        ]
+      }
+    },
+    {
+      "id": "meat_first",
+      "text": "今天试了猪肉泥，接受度还不错",
+      "baby_age_months": 7,
+      "expected": {
+        "food": [{"name": "猪肉泥", "category": "肉类", "is_first": true}]
+      }
+    },
+    {
+      "id": "night_waking",
+      "text": "昨晚醒了四次，每次都哭几声才睡",
+      "baby_age_months": 8,
+      "expected": {
+        "sleep": [{"duration_min": null, "quality": "差"}]
+      }
+    },
+    {
+      "id": "respond_name",
+      "text": "叫他名字会回头看了",
+      "baby_age_months": 7,
+      "expected": {
+        "milestones": [{"type": "语言", "event": "回应名字", "is_first": true}]
+      }
+    },
+    {
+      "id": "mixed_milestone_food_milk",
+      "text": "今天第一次叫奶奶，喝了900ml母乳，还吃了胡萝卜泥和蛋黄泥",
+      "baby_age_months": 10,
+      "expected": {
+        "milestones": [{"type": "语言", "event": "首次叫奶奶", "is_first": true}],
+        "food": [
+          {"name": "胡萝卜泥", "category": "蔬菜", "is_first": false},
+          {"name": "蛋黄泥", "category": "蛋类", "is_first": false}
+        ],
+        "milk": [{"type": "母乳", "amount_ml": 900, "period": "全天"}]
+      }
+    },
+    {
+      "id": "bath_fussy",
+      "text": "今天洗澡的时候一直哭，平时挺喜欢水的",
+      "baby_age_months": 9,
+      "expected": {
+        "mood": [{"mood": "哭闹", "trigger": "洗澡"}]
+      }
+    },
+    {
+      "id": "oatmeal_first",
+      "text": "早上第一次吃燕麦糊，加了一点香蕉泥",
+      "baby_age_months": 7,
+      "expected": {
+        "food": [
+          {"name": "燕麦糊", "category": "谷物", "is_first": true},
+          {"name": "香蕉泥", "category": "水果", "is_first": false}
+        ]
+      }
+    },
+    {
+      "id": "first_clap",
+      "text": "会拍手了，看到人还会主动笑",
+      "baby_age_months": 8,
+      "expected": {
+        "milestones": [
+          {"type": "认知", "event": "会拍手", "is_first": true},
+          {"type": "社交", "event": "主动对人笑", "is_first": true}
+        ]
+      }
+    },
+    {
+      "id": "short_nap",
+      "text": "上午只睡了半个小时就醒了，下午补了一个多小时",
+      "baby_age_months": 11,
+      "expected": {
+        "sleep": [
+          {"duration_min": 30, "quality": null},
+          {"duration_min": 60, "quality": null}
+        ]
+      }
+    },
+    {
+      "id": "reject_bottle",
+      "text": "今天不肯吃奶瓶，只吃了120ml",
+      "baby_age_months": 5,
+      "expected": {
+        "milk": [{"type": "母乳/配方奶", "amount_ml": 120, "period": "单次"}],
+        "mood": [{"mood": "烦躁", "trigger": "拒奶"}]
+      }
+    }
+  ]
+}

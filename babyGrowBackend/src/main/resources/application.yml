@@ -5,6 +5,10 @@ spring:
   application:
     name: baby-grow-backend
 
+ai:
+  service:
+    url: http://localhost:8001
+
 management:
   endpoints:
     web:
