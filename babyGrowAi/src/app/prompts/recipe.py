@@ -1,4 +1,12 @@
-"""Prompt for recipe RAG recommendation."""
+"""Prompt for the fixed-pipeline recipe RAG recommendation.
+
+The system prompt instructs the model to output only JSON, constrained by the
+schema in `recipe_rag.py`. This prompt is used by the fixed pipeline; the ReAct
+agent uses `agent/prompts.py` instead.
+
+Lifespan:
+    Stable. May be deprecated if the ReAct agent becomes the only supported path.
+"""
 
 SYSTEM_PROMPT = """你是专业婴幼儿营养师。请根据提供的宝宝画像、规则过滤结果和知识库内容，为宝宝推荐今日辅食。
 只输出JSON，不要解释。不确定时返回 INSUFFICIENT_EVIDENCE。
@@ -49,6 +57,7 @@ def build_recipe_prompt(
     rule_result: dict,
     knowledge_context: str,
 ) -> list[dict[str, str]]:
+    """Build the user message that combines profile, rules, and retrieved context."""
     avoid = ", ".join(rule_result.get("avoid_items", [])) or "无"
     notes = "\n".join(rule_result.get("notes", [])) or "无"
     liked = ", ".join(liked_foods) if liked_foods else "无"

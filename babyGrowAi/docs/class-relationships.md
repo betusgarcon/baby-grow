@@ -17,12 +17,14 @@ flowchart TB
         GATEWAY["🟩 OllamaGateway<br/>services/ollama_gateway.py"]
         EMB["🟩 EmbeddingService<br/>services/embedding.py"]
         RET["🟩 RetrievalService<br/>services/retrieval.py"]
-        RULES["🟩 RuleEngine<br/>services/rules.py"]
+        RULES["🟩 RuleEngine<br/>services/rules.py<br/>(无 DB，纯内存规则)"]
         TOOLS["🟩 ToolExecutor<br/>agent/tools.py"]
+        RAG_FIX["🟩 固定链路服务<br/>rule → retrieve → LLM → JSON"]
+        MOCK["🟩 内存 Mock 模块<br/>get_recent_diet"]
     end
 
     subgraph Model["模型/数据层 (models)"]
-        PYDANTHON["📦 Pydantic Request/Response Schemas"]
+        PYDANTIC["📦 Pydantic Request/Response Schemas"]
         SQL["🗄️ SQLAlchemy ORM Tables"]
     end
 
@@ -41,32 +43,42 @@ flowchart TB
         ING["knowledge/ingest.py"]
     end
 
-    REC -->|调用 recommend(request, use_agent=True) | RAG
+    %% 核心业务链路（已为带括号的文本加上双引号）
+    REC -->|"调用 recommend(request, use_agent=True)"| RAG
     RAG -->|默认走 ReAct| AGENT
-    RAG -->|use_agent=False 走固定链路| RAG_FIX["固定链路: rule→retrieve→LLM→JSON"]
+    RAG -->|use_agent=False| RAG_FIX
+    
     AGENT -->|调用工具| TOOLS
     AGENT -->|请求 LLM| GATEWAY
+    
     TOOLS -->|check_rules| RULES
     TOOLS -->|retrieve_knowledge| RET
-    TOOLS -->|get_recent_diet| MOCK["内存 mock 饮食记录"]
+    TOOLS -->|获取饮食记录| MOCK
+    
     RET -->|向量/相似度检索| DB
     RET -->|embedding| EMB
-    EMB -->|调用 embed| GATEWAY
-    RULES -->|无 DB, 纯内存规则| RULES
-    EXT -->|调用 extract| EXTRACTOR
+    EMB -->|"调用 embed"| GATEWAY
+    
+    EXT -->|"调用 extract"| EXTRACTOR
     EXTRACTOR -->|chat_sync + JSON schema| GATEWAY
+    
+    %% 提示词关联
     EXTRACTOR -->|使用提示| EP
     RAG -->|使用提示| RP
     AGENT -->|使用提示| AP
-    RAG -->|source_refs| PYDANTHON
-    EXTRACTOR -->|返回| PYDANTHON
+    
+    %% 数据返回与持久化
+    RAG -->|source_refs| PYDANTIC
+    EXTRACTOR -->|返回| PYDANTIC
     REC -->|写入审计日志| SQL
     EXT -->|写入审计日志| SQL
+    ING -->|写入| SQL
+
+    %% 配置读取
     CFG -->|所有模块读取| RAG
     CFG -->|读取| GATEWAY
     CFG -->|读取| RET
     CFG -->|读取| EXTRACTOR
-    ING -->|写入| SQL
 ```
 
 ## 类清单与作用速查

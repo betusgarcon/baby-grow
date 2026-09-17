@@ -1,3 +1,5 @@
+"""Unit tests for the recipe rule engine and prompt builder."""
+
 import pytest
 
 from app.models import RecipeRecommendRequest
@@ -6,6 +8,7 @@ from app.services.rules import RuleEngine
 
 
 def test_rule_engine_basic():
+    """Rule engine should return the correct texture and avoid the allergen."""
     engine = RuleEngine()
     result = engine.filter_by_rules(
         baby_age_months=8,
@@ -20,6 +23,7 @@ def test_rule_engine_basic():
 
 
 def test_rule_engine_under_4_months():
+    """Very young babies should trigger a warning and avoid solids."""
     engine = RuleEngine()
     result = engine.filter_by_rules(baby_age_months=3)
     assert len(result["warnings"]) >= 1
@@ -27,6 +31,7 @@ def test_rule_engine_under_4_months():
 
 
 def test_build_recipe_prompt():
+    """The fixed-pipeline prompt should include the baby profile and allergens."""
     request = RecipeRecommendRequest(
         baby_id="test",
         baby_age_months=9,

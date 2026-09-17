@@ -1,4 +1,11 @@
+"""Regression tests for the text extraction task.
+
+Loads `extraction_samples.json`, runs the real `BabyRecordExtractor` against
+each sample, and asserts an overall accuracy of at least 85%.
+"""
+
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -9,15 +16,15 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def load_samples():
+    """Load extraction regression samples."""
     with open(FIXTURES_DIR / "extraction_samples.json", encoding="utf-8") as f:
         return json.load(f)["samples"]
 
 
 def _contains_food(result, food_name: str) -> bool:
+    """Lenient match: look for key Chinese words inside extracted food names."""
     if not result or not result.data:
         return False
-    # Extract key ingredient words from food name (e.g., 胡萝卜牛肉泥 -> 胡萝卜/牛肉)
-    import re
     words = re.findall(r"[一-龥]{2,}", food_name)
     return any(
         any(word in food.name for word in words)
@@ -26,9 +33,9 @@ def _contains_food(result, food_name: str) -> bool:
 
 
 def _contains_milestone(result, event: str) -> bool:
+    """Lenient milestone matching using the expected event and common keywords."""
     if not result or not result.data:
         return False
-    # Use key substrings from expected event for lenient matching
     keywords = [event]
     if "站" in event:
         keywords.append("站")
@@ -53,12 +60,14 @@ def _contains_milestone(result, event: str) -> bool:
 
 
 def _contains_milk(result, amount: int) -> bool:
+    """Check whether the exact milk amount was extracted."""
     if not result or not result.data:
         return False
     return any(milk.amount_ml == amount for milk in result.data.milk)
 
 
 def _contains_sleep_duration(result, duration: int) -> bool:
+    """Check whether the exact sleep duration was extracted."""
     if not result or not result.data:
         return False
     return any(sleep.duration_min == duration for sleep in result.data.sleep)
@@ -66,6 +75,7 @@ def _contains_sleep_duration(result, duration: int) -> bool:
 
 @pytest.mark.asyncio
 async def test_extractor_regression():
+    """Run extraction over all regression samples and assert accuracy >= 85%."""
     samples = load_samples()
     extractor = BabyRecordExtractor()
 
@@ -122,7 +132,7 @@ async def test_extractor_regression():
                     "reason": f"missing sleep duration: {duration}",
                 })
 
-        # Check empty case
+        # Check empty case: when no fields are expected, result must be empty.
         if not expected:
             if result.data and (result.data.milestones or result.data.food or result.data.milk or result.data.sleep or result.data.mood):
                 ok = False

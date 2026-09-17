@@ -5,7 +5,16 @@
 ## 核心能力
 
 1. **文本智能提取**：从家长输入的自然语言中提取里程碑、食物、奶量、睡眠、情绪等结构化信息。
-2. **食谱 RAG 推荐**：基于本地知识库和宝宝画像，推荐辅食/食谱。
+2. **食谱 RAG 推荐**：基于本地知识库和宝宝画像，推荐辅食/食谱。支持固定流水线和 ReAct Agent 两种编排方式。
+
+## 文档索引
+
+| 文档 | 内容 |
+|------|------|
+| `README.md`（本文） | 快速开始、目录结构、接口清单 |
+| [`docs/architecture.md`](docs/architecture.md) | 架构图、数据流、模块职责、代码寿命 |
+| [`docs/api.md`](docs/api.md) | HTTP 接口详细说明 |
+| [`docs/ollama-setup.md`](docs/ollama-setup.md) | Ollama 本地部署与调优 |
 
 ## 环境要求
 
@@ -81,6 +90,14 @@ python -m uvicorn app.main:app --app-dir src --reload --port 8001
 
 访问 http://localhost:8001/docs 查看接口文档。
 
+## 代码寿命
+
+- **稳定**：配置、模型定义、数据库层、规则引擎、网关层
+- **演进中**：ReAct Agent、工具定义、提示词、食谱服务编排
+- **临时/需替换**：`get_recent_diet` mock 数据、固定/Agent 路径的 `source_refs` 相似度占位、固定 `confidence=1.0`
+
+详见 [`docs/architecture.md`](docs/architecture.md#3-模块职责与代码寿命)。
+
 ## 目录结构
 
 ```
@@ -91,7 +108,8 @@ babyGrowAi/
 │   ├── models.py            # Pydantic/SQLAlchemy 模型
 │   ├── db.py                # 数据库连接
 │   ├── extractor.py         # 文本提取服务
-│   ├── recipe_rag.py        # 食谱 RAG 服务
+│   ├── recipe_rag.py        # 食谱 RAG 服务（固定 + Agent 双路径）
+│   ├── agent/               # ReAct Agent 实现
 │   ├── prompts/             # Prompt 模板
 │   ├── services/            # Ollama 网关、Embedding、检索、规则
 │   ├── routers/             # FastAPI 路由
@@ -111,7 +129,7 @@ babyGrowAi/
 | POST | `/api/baby/records/extract` | 文本智能提取 |
 | POST | `/api/baby/recipes/recommend` | 食谱推荐 |
 
-详细接口见 `docs/api.md`。
+详细接口见 [`docs/api.md`](docs/api.md)。
 
 ## 测试
 

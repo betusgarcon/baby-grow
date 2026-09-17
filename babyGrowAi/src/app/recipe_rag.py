@@ -1,3 +1,20 @@
+"""Recipe recommendation service: fixed pipeline + ReAct Agent entry point.
+
+`RecipeRAGService` is the high-level service used by the HTTP router. It
+supports two orchestration strategies:
+
+1. Fixed pipeline (use_agent=False): rule filter → retrieve → prompt → LLM.
+2. ReAct Agent (use_agent=True): LLM decides which tools to call and when to
+   stop, with a max-iteration safety cap.
+
+The default is the Agent path. The fixed pipeline is kept for A/B comparison
+and safe rollback.
+
+Lifespan:
+    Evolving. Once the Agent path is proven stable, the fixed pipeline may be
+    removed or turned into a debug-only endpoint.
+"""
+
 import json
 import logging
 import time
@@ -24,6 +41,8 @@ logger = logging.getLogger(__name__)
 
 
 class RecipeRAGService:
+    """High-level recipe recommendation service."""
+
     def __init__(self, gateway=None, retrieval_service=None, rule_engine=None):
         self.gateway = gateway or get_model_gateway()
         self.retrieval_service = retrieval_service
@@ -31,22 +50,50 @@ class RecipeRAGService:
         settings = get_settings()
         self.model = settings.ollama_model
 
-    async def recommend(self, request: RecipeRecommendRequest) -> RecipeRecommendResponse:
+    async def recommend(
+        self, request: RecipeRecommendRequest, use_agent: bool = True
+    ) -> RecipeRecommendResponse:
+        """Return recipe recommendations for the given request.
+
+        Args:
+            request: The recipe recommendation request, including baby profile,
+                allergens, and the parent's query.
+            use_agent: If True, route to the ReAct agent. Otherwise use the fixed
+                pipeline.
+
+        Returns:
+            A `RecipeRecommendResponse` with status, items, and timing info.
+        """
+        # ReAct agent path: LLM autonomously orchestrates tools via native
+        # function calling. Falls back to the fixed pipeline when use_agent=False,
+        # enabling A/B comparison between the two orchestration strategies.
+        if use_agent:
+            from app.agent.react import get_recipe_agent
+
+            agent = get_recipe_agent()
+            return await agent.recommend(request)
+
         start = time.time()
 
         try:
+            # Step 1: deterministic safety and texture rules.
+            # The LLM should never be trusted to enforce hard safety constraints.
             rule_result = self.rule_engine.filter_by_rules(
                 baby_age_months=request.baby_age_months,
                 allergens=request.allergens,
                 texture_level=request.texture_level,
             )
 
+            # Step 2: lazy init the retrieval service if not injected.
+            # We open a DB session here only when the service is not already
+            # carrying an active session (tests inject one).
             if self.retrieval_service is None:
                 from sqlalchemy.orm import Session
 
                 with Session(bind=get_engine()) as db:
                     self.retrieval_service = RetrievalService(db=db)
 
+            # Step 3: retrieve relevant knowledge chunks.
             retrieved = await self.retrieval_service.retrieve(
                 query=request.query,
                 baby_age_months=request.baby_age_months,
@@ -57,6 +104,7 @@ class RecipeRAGService:
 
             context = "\n\n".join([r["content"] for r in retrieved])
 
+            # Step 4: build the prompt and call the model.
             messages = recipe_prompts.build_recipe_prompt(
                 baby_age_months=request.baby_age_months,
                 query=request.query,
@@ -68,6 +116,7 @@ class RecipeRAGService:
                 knowledge_context=context,
             )
 
+            # Schema enforces the exact JSON shape returned by the LLM.
             schema = {
                 "type": "object",
                 "additionalProperties": False,
@@ -124,6 +173,9 @@ class RecipeRAGService:
 
             elapsed = int((time.time() - start) * 1000)
 
+            # Build source references from retrieved chunks. Similarity is set to 0.0
+            # because the vector score is discarded by RetrievalService; see the
+            # TODO in the architecture doc for improving this.
             source_refs = [
                 SourceRef(
                     document_id=r["document_id"],
@@ -164,8 +216,13 @@ class RecipeRAGService:
             )
 
     async def recommend_stream(self, request: RecipeRecommendRequest) -> StreamingResponse:
-        # Simplified streaming: generate first, then stream content
-        # A more advanced version would stream directly from Ollama.
+        """Return a Server-Sent Events stream of the recommendation text.
+
+        Note:
+            This is a simplified implementation: the full response is generated
+            first, then streamed character by character. A production version
+            should stream directly from the model.
+        """
         result = await self.recommend(request)
         text = result.summary
         if result.items:
@@ -183,10 +240,12 @@ class RecipeRAGService:
         return StreamingResponse(stream(), media_type="text/event-stream")
 
 
+# Singleton instance used by production code and tests.
 _rag_service: Optional[RecipeRAGService] = None
 
 
 def get_recipe_rag_service() -> RecipeRAGService:
+    """Return the shared recipe recommendation service."""
     global _rag_service
     if _rag_service is None:
         _rag_service = RecipeRAGService()

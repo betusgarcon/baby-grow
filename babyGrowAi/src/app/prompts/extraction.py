@@ -1,4 +1,13 @@
-"""Prompts for baby record text extraction."""
+"""Prompts for baby record text extraction.
+
+The system prompt defines how to extract structured baby records from free-form
+parent notes. Few-shot examples are injected into the conversation to improve
+reliability for small local models.
+
+Lifespan:
+    Stable. Prompt wording and examples are tuned regularly, but the structure
+    (system + few-shot + user) is unlikely to change.
+"""
 
 from app.models import ExtractionResult
 
@@ -18,6 +27,8 @@ SYSTEM_PROMPT = """你是宝宝成长记录信息提取助手。从家长描述�
 - is_first 仅在家长明确表达"第一次/首次"或"第一次吃"时才为 true
 - 不要包含空字段"""
 
+# Few-shot examples help the model understand the exact JSON shape expected.
+# Keep them short so they fit within the configured context window.
 FEW_SHOT_EXAMPLES = [
     {
         "role": "user",
@@ -79,6 +90,7 @@ FEW_SHOT_EXAMPLES = [
 
 
 def build_messages(text: str, baby_age_months: int) -> list[dict[str, str]]:
+    """Build the full message list for the extraction task."""
     system = (
         SYSTEM_PROMPT
         + f"\n宝宝当前{baby_age_months}个月。"
@@ -93,4 +105,5 @@ def build_messages(text: str, baby_age_months: int) -> list[dict[str, str]]:
 
 
 def get_extraction_schema() -> dict:
+    """Return the JSON schema that constrains the model output."""
     return ExtractionResult.model_json_schema()

@@ -1,3 +1,13 @@
+"""HTTP router for record extraction.
+
+Exposes `POST /api/baby/records/extract`, which parses free-form parent notes
+into structured baby records and persists an audit log.
+
+Lifespan:
+    Stable. Future changes will likely be limited to adding new record types or
+    async log persistence.
+"""
+
 import logging
 
 from fastapi import APIRouter, HTTPException, status
@@ -12,6 +22,11 @@ logger = logging.getLogger(__name__)
 
 
 def _persist_log(data: ExtractRequest, result: ExtractResponse) -> None:
+    """Persist an audit log for the extraction request.
+
+    Failures are logged but not raised, so extraction can still succeed even
+    if logging is temporarily unavailable.
+    """
     try:
         with Session(bind=get_engine()) as db:
             log = AiDecisionLog(
@@ -33,10 +48,11 @@ def _persist_log(data: ExtractRequest, result: ExtractResponse) -> None:
 
 @router.post("/extract", response_model=ExtractResponse)
 async def extract_text(data: ExtractRequest):
+    """Extract structured records from parent text."""
     extractor = get_extractor()
     result = await extractor.extract(data.text, data.baby_age_months)
 
-    # Persist decision log synchronously; this is acceptable for low concurrency.
+    # Persist decision log synchronously; acceptable for low concurrency.
     _persist_log(data, result)
 
     if result.status != "ok":

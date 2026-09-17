@@ -1,3 +1,10 @@
+"""Regression tests for the RAG retrieval layer.
+
+Loads `recipe_recommend_samples.json`, runs `RetrievalService.retrieve()` for
+each sample, and asserts that retrieved chunks cover expected topics/recipes,
+avoid forbidden topics, and respect the age range.
+"""
+
 import json
 from pathlib import Path
 
@@ -14,22 +21,26 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def load_samples():
+    """Load retrieval regression samples."""
     with open(FIXTURES_DIR / "recipe_recommend_samples.json", encoding="utf-8") as f:
         return json.load(f)["samples"]
 
 
 def _retrieved_contains(retrieved, keywords) -> bool:
+    """Return True if any keyword appears in the retrieved content."""
     content = "\n".join([r["content"] for r in retrieved]).lower()
     return any(k.lower() in content for k in keywords)
 
 
 def _contains_expected_recipes(retrieved, recipe_names) -> bool:
+    """Return True if any expected recipe title appears in the retrieved content."""
     content = "\n".join([r["content"] for r in retrieved]).lower()
     return any(name.lower() in content for name in recipe_names)
 
 
 @pytest.mark.asyncio
 async def test_retrieval_regression():
+    """Run retrieval over all samples and assert accuracy >= 80%."""
     # Reset cached clients to avoid event loop issues between tests
     reset_model_gateway()
     reset_embedding_service()

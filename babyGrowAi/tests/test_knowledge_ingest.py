@@ -1,3 +1,5 @@
+"""Tests for the knowledge base ingestion pipeline."""
+
 from pathlib import Path
 
 import pytest
@@ -8,6 +10,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 
 
 def test_parse_recipe_markdown():
+    """Verify that recipe markdown front matter is parsed correctly."""
     path = DATA_DIR / "recipes" / "001-carrot-puree.md"
     assert path.exists()
     data = _parse_recipe_markdown(path)

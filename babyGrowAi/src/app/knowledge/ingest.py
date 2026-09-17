@@ -1,3 +1,17 @@
+"""Knowledge base ingestion pipeline.
+
+Parses Markdown recipes and guides under `data/`, computes embeddings, and writes
+the results to PostgreSQL (`KnowledgeDocument`, `KnowledgeChunk`, `Recipe`,
+`RecipeIngredient`).
+
+Usage:
+    cd babyGrowAi
+    python -m app.knowledge.ingest
+
+Lifespan:
+    Stable. Will be extended for chunking strategies and incremental updates.
+"""
+
 import argparse
 import logging
 import re
@@ -17,10 +31,12 @@ from app.services.embedding import get_embedding_service
 
 logger = logging.getLogger(__name__)
 
+# Paths relative to this file: babyGrowAi/data/recipes and babyGrowAi/data/guides.
 DATA_DIR = Path(__file__).parent.parent.parent.parent / "data"
 RECIPES_DIR = DATA_DIR / "recipes"
 GUIDES_DIR = DATA_DIR / "guides"
 
+# Normalized texture labels used when parsing recipe front matter.
 TEXTURE_MAP = {
     "泥糊": "泥糊",
     "碎末": "碎末",
@@ -44,11 +60,13 @@ def _parse_recipe_age(age_line: str) -> tuple[int, int]:
     if not match:
         return 0, 60
     min_age = int(match.group(1))
+    # If only one age is given, assume a -month window.
     max_age = int(match.group(2)) if match.group(2) else min_age + 2
     return min_age, max_age
 
 
 def _parse_texture(line: str) -> str:
+    """Return the first matching texture label from the given line."""
     for key in TEXTURE_MAP:
         if key in line:
             return key
@@ -56,6 +74,7 @@ def _parse_texture(line: str) -> str:
 
 
 def _extract_section(text: str, section_name: str) -> str:
+    """Extract a Markdown section like ## 食材 up to the next ## heading."""
     pattern = rf"##\s*{section_name}.*?(?=\n##\s|\Z)"
     match = re.search(pattern, text, re.DOTALL)
     if match:
@@ -64,6 +83,7 @@ def _extract_section(text: str, section_name: str) -> str:
 
 
 def _parse_recipe_markdown(path: Path) -> dict:
+    """Parse a recipe Markdown file into structured metadata and sections."""
     content = path.read_text(encoding="utf-8")
     title = content.split("\n", 1)[0].replace("# ", "").strip()
     age_min, age_max = 0, 60
@@ -71,6 +91,7 @@ def _parse_recipe_markdown(path: Path) -> dict:
     category = ""
     allergen = ""
 
+    # Front matter lines are assumed to be simple "- 键：值" bullets.
     for line in content.splitlines():
         if line.startswith("- 适合月龄："):
             age_min, age_max = _parse_recipe_age(line)
@@ -100,6 +121,7 @@ def _parse_recipe_markdown(path: Path) -> dict:
 
 
 async def _ingest_recipe(session: Session, path: Path, embedding_service) -> None:
+    """Persist a single recipe Markdown file to the database."""
     data = _parse_recipe_markdown(path)
 
     doc = KnowledgeDocument(
@@ -172,6 +194,7 @@ async def _ingest_recipe(session: Session, path: Path, embedding_service) -> Non
 
 
 async def _ingest_guide(session: Session, path: Path, embedding_service) -> None:
+    """Persist a single guide Markdown file to the database as multiple chunks."""
     content = path.read_text(encoding="utf-8")
     title = content.split("\n", 1)[0].replace("# ", "").strip()
 
@@ -185,6 +208,7 @@ async def _ingest_guide(session: Session, path: Path, embedding_service) -> None
     session.add(doc)
     session.flush()
 
+    # Split on level-2 headings to create one chunk per section.
     sections = re.split(r"\n##\s+", content)
     chunk_no = 0
     for section in sections:
@@ -216,6 +240,7 @@ async def _ingest_guide(session: Session, path: Path, embedding_service) -> None
 
 
 async def ingest_all(recipes_dir: Path | None = None, guides_dir: Path | None = None):
+    """Ingest all recipes and guides into the database."""
     init_db()
     embedding_service = get_embedding_service()
 
@@ -233,6 +258,7 @@ async def ingest_all(recipes_dir: Path | None = None, guides_dir: Path | None = 
 
 
 def main():
+    """CLI entry point for the ingestion script."""
     parser = argparse.ArgumentParser(description="Ingest baby growth knowledge base")
     parser.add_argument("--recipes-dir", type=Path, default=None)
     parser.add_argument("--guides-dir", type=Path, default=None)
