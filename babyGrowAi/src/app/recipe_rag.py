@@ -82,6 +82,7 @@ class RecipeRAGService:
                 baby_age_months=request.baby_age_months,
                 allergens=request.allergens,
                 texture_level=request.texture_level,
+                population=request.population,
             )
 
             # Step 2: lazy init the retrieval service if not injected.

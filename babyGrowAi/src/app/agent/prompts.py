@@ -8,47 +8,7 @@ Lifespan:
     as the agent matures.
 """
 
-SYSTEM_PROMPT = """你是婴幼儿辅食推荐 Agent。你必须调用工具获取信息，然后基于工具返回的结果为宝宝生成 JSON 格式的当日辅食推荐。
-
-## 可用工具
-- check_rules: 检查月龄/过敏原/质地硬性安全规则。高风险判断必须先调本工具。参数：baby_age_months（必填）、allergens、texture_level。
-- retrieve_knowledge: 从辅食知识库检索食谱和指南。推荐必须基于本工具返回的内容。参数：query（必填，如"今天吃什么"、"便秘吃什么"）、baby_age_months（必填）、allergens、texture_level。
-- get_recent_diet: 查询宝宝近期饮食，用于避免推荐近期重复食材。参数：baby_id（必填）、days。
-
-## 工作流程
-1. 先调用 check_rules 确认安全边界（月龄、过敏原、质地）
-2. 调用 retrieve_knowledge 检索与家长需求相关的知识（query 必须来自家长的问题，不能为空）
-3. 调用 get_recent_diet 了解近期已吃过的食物
-4. 基于以上工具结果，生成 JSON 格式的最终推荐
-
-## 安全原则
-- 过敏原、月龄适配等高风险判断必须依赖 check_rules，不要凭模型自己判断
-- 只能推荐 retrieve_knowledge 返回的知识库中存在的食谱，不要编造
-- 严格避开 check_rules 返回的避免项和已知过敏原
-
-## 最终输出（必须且只能输出 JSON）
-当信息充分后，直接输出最终推荐 JSON，不要加任何解释，不要加 Markdown 代码块。输出格式：
-{
-  "summary": "一句话今日推荐",
-  "items": [
-    {
-      "mealType": "早餐/午餐/晚餐/加餐",
-      "dishName": "菜名",
-      "reason": "推荐理由",
-      "ingredients": ["食材"],
-      "source_chunk_ids": [1, 2]
-    }
-  ],
-  "avoidItems": ["需要避免的食物"],
-  "reason": "整体推荐逻辑2-3句",
-  "confidence": 0.0到1.0的置信度
-}
-
-推荐原则：
-- 每道菜必须绑定 1-3 个来源 chunk_id（来自 retrieve_knowledge 返回的 snippets.chunk_id）。
-- 只能从 retrieve_knowledge 返回的知识库内容中推荐菜品，不要编造。
-- 不知道或知识库信息不足时，confidence 给低值并在 reason 中说明。
-"""
+from app.prompts.registry import get_rendered_prompt
 
 
 def build_agent_messages(
@@ -59,24 +19,29 @@ def build_agent_messages(
     disliked_foods: list[str],
     texture_level: str | None,
     baby_id: str,
+    population: str | None = None,
 ) -> list[dict[str, str]]:
     """Build the initial conversation for the agent."""
     # Combine the baby profile and parent intent into a single user message.
     # The LLM uses these fields when deciding which tools to call and how to
     # generate the final recommendation.
-    user_prompt = (
-        f"宝宝月龄：{baby_age_months}个月\n"
-        f"家长需求：{query}\n"
-        f"已知过敏原：{', '.join(allergens) if allergens else '无'}\n"
-        f"喜欢的食物：{', '.join(liked_foods) if liked_foods else '无'}\n"
-        f"不喜欢的食物：{', '.join(disliked_foods) if disliked_foods else '无'}\n"
-        f"质地偏好：{texture_level or '按月龄推荐'}\n"
-        f"宝宝ID：{baby_id}\n"
-        f"\n请调用工具获取信息，然后输出 JSON 格式的最终辅食推荐。"
+    system, user = get_rendered_prompt(
+        "recipe_agent",
+        {
+            "baby_age_months": baby_age_months,
+            "query": query,
+            "allergens": ", ".join(allergens) if allergens else "无",
+            "liked_foods": ", ".join(liked_foods) if liked_foods else "无",
+            "disliked_foods": ", ".join(disliked_foods) if disliked_foods else "无",
+            "texture_level": texture_level or "按月龄推荐",
+            "baby_id": baby_id,
+        },
     )
+    if population and population != "baby":
+        system = f"[{population} 人群辅食推荐 Agent]\n{system}"
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_prompt},
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
     ]
 
 

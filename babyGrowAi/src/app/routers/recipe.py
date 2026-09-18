@@ -23,6 +23,7 @@ from app.models import (
     get_engine,
 )
 from app.recipe_rag import get_recipe_rag_service
+from app.services.population_router import PopulationRouter
 from app.telemetry import get_meter
 
 router = APIRouter(prefix="/api/baby/recipes", tags=["recipes"])
@@ -45,6 +46,20 @@ _request_iterations = _meter.create_histogram(
 @router.post("/recommend", response_model=RecipeRecommendResponse)
 async def recommend_recipes(data: RecipeRecommendRequest):
     """Recommend recipes for a baby based on the request profile."""
+    router = PopulationRouter(data.population)
+    if router.is_supported() and router.population != "baby":
+        context = router.get_context()
+        return RecipeRecommendResponse(
+            status="ok",
+            summary=context.message or "",
+            items=[],
+            avoid_items=[],
+            reason=context.message,
+            confidence=1.0,
+            model_name="placeholder",
+            elapsed_ms=0,
+        )
+
     service = get_recipe_rag_service()
     # use_agent defaults True (ReAct path). Pass use_agent=False for the fixed
     # pipeline — exposed for A/B comparison between orchestration strategies.

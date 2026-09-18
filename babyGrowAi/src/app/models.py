@@ -40,6 +40,14 @@ Base = declarative_base()
 # ===========================================================================
 
 
+class PopulationContext(BaseModel):
+    """Describes the population context for a request."""
+
+    population: str
+    placeholder: bool = False
+    message: Optional[str] = None
+
+
 class MilestoneRecord(BaseModel):
     """A developmental milestone reported by the parent."""
 
@@ -97,6 +105,7 @@ class ExtractRequest(BaseModel):
     baby_age_months: int = Field(..., ge=0, le=60)
     text: str = Field(..., min_length=1, max_length=2000)
     source_type: str = Field(default="TEXT", description="输入类型: TEXT/IMAGE/VIDEO")
+    population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
 
 
 class ExtractResponse(BaseModel):
@@ -149,6 +158,7 @@ class RecipeRecommendRequest(BaseModel):
     texture_level: Optional[str] = Field(default=None, description="质地: 泥糊/碎末/软块/颗粒/家常")
     # Orchestration switch: True (default) → ReAct agent; False → fixed pipeline.
     use_agent: bool = Field(default=True, description="是否走 ReAct Agent 链路")
+    population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
 
 
 class RecipeRecommendResponse(BaseModel):

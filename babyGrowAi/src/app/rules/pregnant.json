@@ -1,0 +1,21 @@
+{
+  "population": "pregnant",
+  "rules": [
+    {
+      "key": "avoid_high_mercury_fish",
+      "condition": "population == 'pregnant'",
+      "action": "avoid",
+      "target": ["鲨鱼", "剑鱼", "国王鲭鱼", "金枪鱼大眼"],
+      "priority": 10,
+      "enabled": true
+    },
+    {
+      "key": "ensure_folate_iron",
+      "condition": "population == 'pregnant'",
+      "action": "recommend",
+      "target": ["叶酸", "铁", "深绿叶菜"],
+      "priority": 5,
+      "enabled": true
+    }
+  ]
+}

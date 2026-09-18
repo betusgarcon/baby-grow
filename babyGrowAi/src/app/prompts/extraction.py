@@ -10,22 +10,7 @@ Lifespan:
 """
 
 from app.models import ExtractionResult
-
-SYSTEM_PROMPT = """你是宝宝成长记录信息提取助手。从家长描述中提取里程碑、食物、奶量、睡眠、情绪信息。
-只输出JSON，不要解释。输出最精简的JSON，不要包含空字段。
-
-提取规则：
-1. 里程碑：识别"第一次/首次/会...了"等表达，按语言/运动/社交/认知分类
-2. 食物：提取食物名称，按蔬菜/水果/谷物/蛋类/肉类/豆制品/奶制品分类，判断是否首次食用
-3. 奶量：提取母乳/配方奶的量（ml）和时间段
-4. 睡眠：提取睡眠时长、质量
-5. 情绪：提取情绪状态、触发原因
-6. 没有相关信息时返回空对象 {}
-
-注意：
-- 不要编造没有的信息
-- is_first 仅在家长明确表达"第一次/首次"或"第一次吃"时才为 true
-- 不要包含空字段"""
+from app.prompts.registry import get_rendered_prompt
 
 # Few-shot examples help the model understand the exact JSON shape expected.
 # Keep them short so they fit within the configured context window.
@@ -89,21 +74,21 @@ FEW_SHOT_EXAMPLES = [
 ]
 
 
-def build_messages(text: str, baby_age_months: int) -> list[dict[str, str]]:
+def build_messages(text: str, baby_age_months: int, population: str | None = None) -> list[dict[str, str]]:
     """Build the full message list for the extraction task."""
-    system = (
-        SYSTEM_PROMPT
-        + f"\n宝宝当前{baby_age_months}个月。"
+    system, user = get_rendered_prompt(
+        "extraction",
+        {"baby_age_months": baby_age_months, "text": text},
     )
-    messages: list[dict[str, str]] = [
-        { "role": "system", "content": system},
-    ]
+    if population and population != "baby":
+        system = f"[{population} 人群记录提取]\n{system}"
+    messages: list[dict[str, str]] = [{"role": "system", "content": system}]
     for example in FEW_SHOT_EXAMPLES:
         messages.append(example)
-    messages.append({"role": "user", "content": text})
+    messages.append({"role": "user", "content": user})
     return messages
 
 
 def get_extraction_schema() -> dict:
-    """Return the JSON schema that constrains the model output."""
+    """Return the JSON schema that constrines the model output."""
     return ExtractionResult.model_json_schema()

@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.extractor import get_extractor
 from app.models import AiDecisionLog, ExtractRequest, ExtractResponse, get_engine
+from app.services.population_router import PopulationRouter
 
 router = APIRouter(prefix="/api/baby/records", tags=["records"])
 logger = logging.getLogger(__name__)
@@ -49,8 +50,19 @@ def _persist_log(data: ExtractRequest, result: ExtractResponse) -> None:
 @router.post("/extract", response_model=ExtractResponse)
 async def extract_text(data: ExtractRequest):
     """Extract structured records from parent text."""
+    router = PopulationRouter(data.population)
+    if router.is_supported() and router.population != "baby":
+        return ExtractResponse(
+            status="ok",
+            data=None,
+            raw_text=data.text,
+            confidence=1.0,
+            model_name="placeholder",
+            elapsed_ms=0,
+        )
+
     extractor = get_extractor()
-    result = await extractor.extract(data.text, data.baby_age_months)
+    result = await extractor.extract(data.text, data.baby_age_months, population=data.population)
 
     # Persist decision log synchronously; acceptable for low concurrency.
     _persist_log(data, result)

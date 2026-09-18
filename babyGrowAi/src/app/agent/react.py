@@ -89,6 +89,7 @@ class RecipeAgent:
                 disliked_foods=request.disliked_foods,
                 texture_level=request.texture_level,
                 baby_id=request.baby_id,
+                population=request.population,
             )
 
             try:

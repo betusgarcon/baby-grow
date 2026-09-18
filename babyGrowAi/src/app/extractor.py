@@ -32,12 +32,13 @@ class BabyRecordExtractor:
         settings = get_settings()
         self.model = model or settings.ollama_model
 
-    async def extract(self, text: str, baby_age_months: int) -> ExtractResponse:
+    async def extract(self, text: str, baby_age_months: int, population: str | None = None) -> ExtractResponse:
         """Extract records from `text` for a baby of the given age.
 
         Args:
             text: Parent's free-form note (e.g. "今天第一次翻身，吃了苹果泥").
             baby_age_months: Current age in months, passed to the prompt context.
+            population: Population context for extraction (default baby).
 
         Returns:
             ExtractResponse with status ok/error, structured data, and timing info.
@@ -47,7 +48,7 @@ class BabyRecordExtractor:
             span.set_attribute("text_length", len(text))
 
             start = time.time()
-            messages = extraction_prompts.build_messages(text, baby_age_months)
+            messages = extraction_prompts.build_messages(text, baby_age_months, population=population)
             schema = extraction_prompts.get_extraction_schema()
 
             try:

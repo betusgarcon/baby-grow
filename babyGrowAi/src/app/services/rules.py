@@ -11,6 +11,8 @@ Lifespan:
 
 from typing import Any
 
+from app.services.rule_registry import RuleRegistry
+
 
 class RuleEngine:
     """Hard rules for meal recommendations.
@@ -21,22 +23,27 @@ class RuleEngine:
     # High-risk allergens that should always be flagged, even if the LLM misses them.
     HIGH_RISK_ALLERGENS = {"蜂蜜", "花生", "坚果", "海鲜", "虾", "蟹", "贝类"}
 
+    def __init__(self, registry: RuleRegistry | None = None):
+        self._registry = registry or RuleRegistry()
+
     def filter_by_rules(
         self,
         baby_age_months: int,
         allergens: list[str] | None = None,
         texture_level: str | None = None,
+        population: str | None = None,
     ) -> dict[str, Any]:
-        """Return age, allergen and texture guidance for the given baby profile.
+        """Return age, allergen and texture guidance for the given profile.
 
         Args:
             baby_age_months: Current age in months.
             allergens: Known allergens provided by the parent.
             texture_level: Optional preferred texture override.
+            population: Population context (default baby) used to load extra rules.
 
         Returns:
             A dictionary with age_months, recommended_texture, avoid_items,
-            warnings, and notes.
+            warnings, notes, and population.
         """
         warnings = []
         avoid = []
@@ -84,10 +91,31 @@ class RuleEngine:
             avoid.append(allergen)
             notes.append(f"已知过敏：{allergen}，需排除相关食谱")
 
+        population = (population or "baby").lower()
+        file_rules = self._registry.get_rules(population)
+        for rule in file_rules:
+            if not isinstance(rule, dict):
+                continue
+            if not rule.get("enabled", True):
+                continue
+            # Only apply rules whose simple condition matches the current profile.
+            condition = rule.get("condition", "")
+            if condition == "population == 'pregnant'" and population != "pregnant":
+                continue
+            action = rule.get("action")
+            target = rule.get("target", [])
+            if action == "avoid":
+                for item in target:
+                    avoid.append(item)
+                    notes.append(f"{rule.get('key')}：避免 {item}")
+            elif action == "recommend":
+                notes.append(f"{rule.get('key')}：推荐 {', '.join(target)}")
+
         return {
             "age_months": baby_age_months,
             "recommended_texture": recommended_texture,
             "avoid_items": list(set(avoid)),
             "warnings": warnings,
             "notes": notes,
+            "population": population,
         }
