@@ -117,6 +117,11 @@ class OllamaGateway(BaseModelGateway):
                 elapsed_ms = int((time.time() - start) * 1000)
                 span.set_attribute("ollama.latency_ms", elapsed_ms)
 
+                # Streaming responses are returned as an async iterator; pass
+                # them through without trying to read attributes from the generator.
+                if stream:
+                    return response  # type: ignore[return-value]
+
                 msg = response.message or {}
                 span.set_attribute("ollama.response_has_tool_calls", bool(msg.get("tool_calls")))
                 span.set_attribute("ollama.response_content_length", len(msg.get("content", "")))
