@@ -47,6 +47,8 @@ class RecipeAgent:
         self.max_iterations = max_iterations
         settings = get_settings()
         self.model = settings.ollama_model
+        # Cache retrieved chunk details so the final answer can bind source refs.
+        self._retrieved_chunks: dict[int, dict[str, Any]] = {}
 
     async def recommend(self, request: RecipeRecommendRequest) -> RecipeRecommendResponse:
         """Run the ReAct loop and return a recipe recommendation.
@@ -171,6 +173,9 @@ class RecipeAgent:
                                         "content": result,
                                     }
                                 )
+                                # Register chunk metadata for citation building.
+                                if name == "retrieve_knowledge":
+                                    self._register_retrieved_chunks([{"content": result}])
 
                 # Hit the iteration cap: force a final answer with what we have.
                 logger.warning("Agent hit max_iterations=%d, forcing final answer", self.max_iterations)
@@ -248,6 +253,75 @@ class RecipeAgent:
         """
         retrieved.append({"query": args.get("query", ""), "called": True})
 
+    def _register_retrieved_chunks(self, tool_results: list[dict[str, Any]]) -> None:
+        """Parse chunk identifiers and scores from tool results.
+
+        The `retrieve_knowledge` tool returns JSON with a `snippets` list that
+        includes `chunk_id`, `document_id`, `content`, `metadata`, and `similarity`.
+        We store them keyed by chunk_id so the final answer can bind source refs.
+        """
+        for result in tool_results:
+            content = result.get("content") if isinstance(result, dict) else None
+            if not content:
+                continue
+            try:
+                payload = json.loads(content)
+            except json.JSONDecodeError:
+                continue
+            for snippet in payload.get("snippets", []):
+                chunk_id = snippet.get("chunk_id")
+                if chunk_id is None or chunk_id in self._retrieved_chunks:
+                    continue
+                self._retrieved_chunks[chunk_id] = {
+                    "document_id": snippet.get("document_id", 0),
+                    "content": snippet.get("content", ""),
+                    "metadata": snippet.get("metadata", {}),
+                    "similarity": snippet.get("similarity", 0.0),
+                }
+
+    @staticmethod
+    def _bind_item_to_chunks(
+        item: dict[str, Any],
+        chunks: dict[int, dict[str, Any]],
+        max_refs: int = 2,
+    ) -> list[int]:
+        """Return the most relevant chunk ids for a single recommended item.
+
+        If the model provided valid `source_chunk_ids`, use them. Otherwise fall
+        back to keyword overlap between the item text and each retrieved chunk.
+        """
+        provided = [cid for cid in item.get("source_chunk_ids", []) if cid in chunks]
+        if provided:
+            return provided[:max_refs]
+
+        if not chunks:
+            return []
+
+        text = " ".join(
+            [
+                item.get("dishName", ""),
+                item.get("reason", ""),
+                " ".join(item.get("ingredients", [])),
+            ]
+        ).lower()
+        words = set(text.split())
+        scored: list[tuple[int, float]] = []
+        for chunk_id, chunk in chunks.items():
+            chunk_text = chunk.get("content", "").lower()
+            overlap = len(words & set(chunk_text.split()))
+            if overlap:
+                scored.append((chunk_id, overlap + chunk.get("similarity", 0.0)))
+        # If no keyword overlap, fall back to the highest-similarity chunks.
+        if not scored:
+            scored = [
+                (chunk_id, chunk.get("similarity", 0.0))
+                for chunk_id, chunk in chunks.items()
+            ]
+            scored.sort(key=lambda x: x[1], reverse=True)
+        else:
+            scored.sort(key=lambda x: x[1], reverse=True)
+        return [cid for cid, _ in scored[:max_refs]]
+
     def _parse_final_answer(
         self,
         content: str,
@@ -277,9 +351,45 @@ class RecipeAgent:
                 dish_name=item.get("dishName", ""),
                 reason=item.get("reason"),
                 ingredients=item.get("ingredients", []),
+                source_chunk_ids=item.get("source_chunk_ids", []),
             )
             for item in parsed.get("items", [])
         ]
+
+        # Normalize item -> chunk bindings. If the model omitted source_chunk_ids
+        # or referenced chunks not in our retrieval cache, fall back to overlap.
+        for item in items:
+            bound = self._bind_item_to_chunks(
+                {
+                    "dishName": item.dish_name,
+                    "reason": item.reason or "",
+                    "ingredients": item.ingredients,
+                    "source_chunk_ids": item.source_chunk_ids,
+                },
+                self._retrieved_chunks,
+            )
+            item.source_chunk_ids = bound
+
+        # Build source_refs from chunk ids referenced by the model.
+        source_refs: list[SourceRef] = []
+        seen_chunk_ids = set()
+        for item in items:
+            for chunk_id in item.source_chunk_ids:
+                if chunk_id in seen_chunk_ids:
+                    continue
+                seen_chunk_ids.add(chunk_id)
+                chunk = self._retrieved_chunks.get(chunk_id)
+                if chunk is None:
+                    continue
+                source_refs.append(
+                    SourceRef(
+                        document_id=chunk["document_id"],
+                        chunk_id=chunk_id,
+                        title=chunk.get("metadata", {}).get("doc_type", "recipe"),
+                        content=chunk["content"][:200],
+                        similarity=chunk.get("similarity", 0.0),
+                    )
+                )
 
         return RecipeRecommendResponse(
             status="ok",
@@ -288,7 +398,7 @@ class RecipeAgent:
             avoid_items=parsed.get("avoidItems", []),
             reason=parsed.get("reason"),
             confidence=parsed.get("confidence", 0.0),
-            source_refs=[],  # TODO: Agent path doesn't carry chunk-level refs; see architecture doc.
+            source_refs=source_refs,
             model_name=self.model,
             elapsed_ms=elapsed_ms,
             iterations=iterations,

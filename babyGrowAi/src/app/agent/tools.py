@@ -204,11 +204,16 @@ class ToolExecutor:
             allergens=args.get("allergens", []),
             texture_level=args.get("texture_level"),
         )
-        # Trim content for the LLM context; keep metadata for age/safety filtering.
+        # Trim content for the LLM context; keep identifiers and score so the
+        # agent can cite sources in its final answer.
         snippets = [
             {
+                "chunk_id": r["id"],
+                "document_id": r["document_id"],
                 "content": r["content"][:300],
                 "metadata": r.get("metadata", {}),
+                "similarity": r.get("similarity", 0.0),
+                "rrf_score": r.get("rrf_score", 0.0),
             }
             for r in retrieved
         ]

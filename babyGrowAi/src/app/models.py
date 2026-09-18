@@ -124,6 +124,7 @@ class RecipeItem(BaseModel):
     reason: Optional[str] = None
     ingredients: list[str] = Field(default_factory=list)
     instructions: Optional[str] = None
+    source_chunk_ids: list[int] = Field(default_factory=list, description="来源 chunk_id 列表")
 
 
 class SourceRef(BaseModel):

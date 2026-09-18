@@ -30,13 +30,25 @@ SYSTEM_PROMPT = """你是婴幼儿辅食推荐 Agent。你必须调用工具获�
 当信息充分后，直接输出最终推荐 JSON，不要加任何解释，不要加 Markdown 代码块。输出格式：
 {
   "summary": "一句话今日推荐",
-  "items": [{"mealType": "早餐/午餐/晚餐/加餐", "dishName": "菜名", "reason": "推荐理由", "ingredients": ["食材"]}],
+  "items": [
+    {
+      "mealType": "早餐/午餐/晚餐/加餐",
+      "dishName": "菜名",
+      "reason": "推荐理由",
+      "ingredients": ["食材"],
+      "source_chunk_ids": [1, 2]
+    }
+  ],
   "avoidItems": ["需要避免的食物"],
   "reason": "整体推荐逻辑2-3句",
   "confidence": 0.0到1.0的置信度
 }
 
-不确定或知识库信息不足时，confidence 给低值并在 reason 中说明。"""
+推荐原则：
+- 每道菜必须绑定 1-3 个来源 chunk_id（来自 retrieve_knowledge 返回的 snippets.chunk_id）。
+- 只能从 retrieve_knowledge 返回的知识库内容中推荐菜品，不要编造。
+- 不知道或知识库信息不足时，confidence 给低值并在 reason 中说明。
+"""
 
 
 def build_agent_messages(
