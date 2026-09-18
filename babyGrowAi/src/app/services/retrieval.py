@@ -19,6 +19,14 @@ from app.services.embedding import get_embedding_service
 logger = logging.getLogger(__name__)
 
 
+def _cosine_similarity_from_distance(distance: float) -> float:
+    """Convert pgvector cosine_distance to cosine similarity.
+
+    pgvector returns cosine_distance = 1 - cosine_similarity.
+    """
+    return max(0.0, 1.0 - distance)
+
+
 class RetrievalService:
     """Retrieve relevant knowledge chunks for a given baby profile and query."""
 
@@ -91,11 +99,16 @@ class RetrievalService:
             if excluded:
                 continue
 
+            # Compute cosine similarity for downstream citations.
+            distance = float(chunk.embedding.cosine_distance(query_vector)) if chunk.embedding is not None else 0.0
+            similarity = _cosine_similarity_from_distance(distance)
+
             results.append({
                 "id": chunk.id,
                 "document_id": chunk.document_id,
                 "content": chunk.content,
                 "metadata": meta,
+                "similarity": similarity,
             })
 
             if len(results) >= top_k:

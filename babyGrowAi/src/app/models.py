@@ -256,6 +256,31 @@ class AiDecisionLog(Base):
     decision_type = Column(String(32), nullable=True)
     raw_response_json = Column(JSON, nullable=True)
     elapsed_ms = Column(Integer, nullable=True)
+    trace_id = Column(String(64), nullable=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class LlmCallLog(Base):
+    """Per-LLM-call telemetry log for cost, latency, and observability.
+
+    Records every chat/embed/tokenizer call to any model provider so the team
+    can track spend, latency, and usage by model/task over time.
+    """
+
+    __tablename__ = "llm_call_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    request_id = Column(String(64), nullable=True, index=True)
+    trace_id = Column(String(64), nullable=True, index=True)
+    provider = Column(String(32), nullable=False)
+    model = Column(String(64), nullable=False)
+    task_type = Column(String(32), nullable=True)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
+    latency_ms = Column(Integer, nullable=True)
+    cost_usd = Column(String(32), nullable=True)
+    status = Column(String(16), default="ok")
+    error = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 

@@ -8,6 +8,7 @@ Lifespan:
 """
 
 import logging
+import os
 
 from fastapi import FastAPI
 
@@ -15,11 +16,18 @@ from app.config import get_settings
 from app.models import init_db
 from app.routers import extract, recipe
 from app.services.ollama_gateway import get_model_gateway
+from app.telemetry import SERVICE_NAME, init_telemetry
 
 logger = logging.getLogger(__name__)
 
 # FastAPI application instance. Routers are registered below.
 app = FastAPI(title="baby-grow-ai", version="0.1.0")
+
+# OpenTelemetry auto-instrumentation for FastAPI. This must happen before
+# routers handle real traffic, but after app creation.
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+FastAPIInstrumentor.instrument_app(app)
 
 app.include_router(extract.router)
 app.include_router(recipe.router)
@@ -39,10 +47,13 @@ async def health():
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize logging, database and report Ollama status on startup."""
+    """Initialize logging, database, telemetry and report Ollama status on startup."""
     settings = get_settings()
     logging.basicConfig(level=settings.log_level.upper())
     logger.info("Starting baby-grow-ai service")
+
+    init_telemetry(service_name=SERVICE_NAME, otlp_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"))
+
     try:
         init_db()
         logger.info("Database initialized")

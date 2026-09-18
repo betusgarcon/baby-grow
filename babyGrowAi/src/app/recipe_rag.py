@@ -182,7 +182,7 @@ class RecipeRAGService:
                     chunk_id=r["id"],
                     title=str(r["metadata"].get("doc_type", "recipe")),
                     content=r["content"][:200],
-                    similarity=0.0,
+                    similarity=r.get("similarity", 0.0),
                 )
                 for r in retrieved
             ]

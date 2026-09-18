@@ -17,8 +17,10 @@ from app.config import get_settings
 from app.models import ExtractionResult, ExtractResponse
 from app.prompts import extraction as extraction_prompts
 from app.services.ollama_gateway import get_model_gateway
+from app.telemetry import get_tracer
 
 logger = logging.getLogger(__name__)
+tracer = get_tracer("baby_record_extractor")
 
 
 class BabyRecordExtractor:
@@ -40,40 +42,44 @@ class BabyRecordExtractor:
         Returns:
             ExtractResponse with status ok/error, structured data, and timing info.
         """
-        start = time.time()
-        messages = extraction_prompts.build_messages(text, baby_age_months)
-        schema = extraction_prompts.get_extraction_schema()
+        with tracer.start_as_current_span("extractor.extract") as span:
+            span.set_attribute("baby_age_months", baby_age_months)
+            span.set_attribute("text_length", len(text))
 
-        try:
-            # First attempt with configured temperature.
-            response = await self._call_with_retry(messages, schema)
-            content = self._extract_content(response)
-            if not content:
-                return self._error_response("Empty model response", start)
+            start = time.time()
+            messages = extraction_prompts.build_messages(text, baby_age_months)
+            schema = extraction_prompts.get_extraction_schema()
 
             try:
-                result = ExtractionResult.model_validate_json(content)
-            except Exception as exc:
-                # JSON validation can fail when the model misses fields or
-                # outputs extra keys. Retry once with temperature=0.0 to make
-                # the model more deterministic.
-                logger.warning("JSON validation failed, retrying: %s", exc)
-                response = await self._call_with_retry(messages, schema, temperature=0.0)
+                # First attempt with configured temperature.
+                response = await self._call_with_retry(messages, schema)
                 content = self._extract_content(response)
-                result = ExtractionResult.model_validate_json(content)
+                if not content:
+                    return self._error_response("Empty model response", start)
 
-            elapsed = int((time.time() - start) * 1000)
-            return ExtractResponse(
-                status="ok",
-                data=result,
-                raw_text=text,
-                confidence=1.0,  # TODO: compute a real confidence score
-                model_name=self.model,
-                elapsed_ms=elapsed,
-            )
-        except Exception as exc:
-            logger.exception("Extraction failed")
-            return self._error_response(str(exc), start, raw_text=text)
+                try:
+                    result = ExtractionResult.model_validate_json(content)
+                except Exception as exc:
+                    # JSON validation can fail when the model misses fields or
+                    # outputs extra keys. Retry once with temperature=0.0 to make
+                    # the model more deterministic.
+                    logger.warning("JSON validation failed, retrying: %s", exc)
+                    response = await self._call_with_retry(messages, schema, temperature=0.0)
+                    content = self._extract_content(response)
+                    result = ExtractionResult.model_validate_json(content)
+
+                elapsed = int((time.time() - start) * 1000)
+                return ExtractResponse(
+                    status="ok",
+                    data=result,
+                    raw_text=text,
+                    confidence=1.0,  # TODO: compute a real confidence score
+                    model_name=self.model,
+                    elapsed_ms=elapsed,
+                )
+            except Exception as exc:
+                logger.exception("Extraction failed")
+                return self._error_response(str(exc), start, raw_text=text)
 
     async def _call_with_retry(
         self,
@@ -83,7 +89,7 @@ class BabyRecordExtractor:
     ) -> dict[str, Any]:
         """Call Ollama with the given messages and JSON schema, retrying once."""
         options = {"temperature": temperature if temperature is not None else get_settings().ai_temperature}
-        last_error = None
+        last_error: Exception | None = None
         for attempt in range(2):
             try:
                 return await self.gateway.chat_sync(

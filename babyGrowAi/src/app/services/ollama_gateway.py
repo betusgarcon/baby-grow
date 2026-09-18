@@ -19,6 +19,10 @@ import ollama
 from pydantic import BaseModel
 
 from app.config import get_settings
+from app.telemetry import get_tracer
+
+
+tracer = get_tracer("ollama_gateway")
 
 
 class BaseModelGateway(ABC):
@@ -101,7 +105,26 @@ class OllamaGateway(BaseModelGateway):
         if tools:
             kwargs["tools"] = tools
 
-        return await self.client.chat(**kwargs)
+        with tracer.start_as_current_span("ollama.chat") as span:
+            span.set_attribute("ollama.model", self.model)
+            span.set_attribute("ollama.tool_count", len(tools) if tools else 0)
+            span.set_attribute("ollama.message_count", len(messages))
+            span.set_attribute("ollama.stream", stream)
+
+            try:
+                start = time.time()
+                response = self.client.chat(**kwargs)
+                elapsed_ms = int((time.time() - start) * 1000)
+                span.set_attribute("ollama.latency_ms", elapsed_ms)
+
+                msg = response.get("message", {})
+                span.set_attribute("ollama.response_has_tool_calls", bool(msg.get("tool_calls")))
+                span.set_attribute("ollama.response_content_length", len(msg.get("content", "")))
+                return response
+            except Exception as exc:
+                span.set_attribute("error", True)
+                span.set_attribute("error.message", str(exc))
+                raise
 
     async def chat_sync(
         self,
@@ -113,7 +136,7 @@ class OllamaGateway(BaseModelGateway):
         """Convenience wrapper for non-streaming chat with one retry."""
         # Retry once with exponential back-off to tolerate transient Ollama
         # connection hiccups without failing the whole request.
-        last_error = None
+        last_error: Exception | None = None
         for attempt in range(2):
             try:
                 response = await self.chat(
@@ -141,9 +164,20 @@ class OllamaGateway(BaseModelGateway):
         settings = get_settings()
         model = settings.embedding_model
         results = []
-        for text in texts:
-            response = await self.client.embeddings(model=model, prompt=text)
-            results.append(response["embedding"])
+        with tracer.start_as_current_span("ollama.embed") as span:
+            span.set_attribute("ollama.embedding_model", model)
+            span.set_attribute("ollama.text_count", len(texts))
+            try:
+                start = time.time()
+                for text in texts:
+                    response = await self.client.embeddings(model=model, prompt=text)
+                    results.append(response["embedding"])
+                span.set_attribute("ollama.latency_ms", int((time.time() - start) * 1000))
+                span.set_attribute("ollama.vector_count", len(results))
+            except Exception as exc:
+                span.set_attribute("error", True)
+                span.set_attribute("error.message", str(exc))
+                raise
         return results
 
     async def health(self) -> bool:
