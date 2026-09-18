@@ -111,16 +111,16 @@ class OllamaGateway(BaseModelGateway):
             span.set_attribute("ollama.message_count", len(messages))
             span.set_attribute("ollama.stream", stream)
 
+            start = time.time()
             try:
-                start = time.time()
-                response = self.client.chat(**kwargs)
+                response = await self.client.chat(**kwargs)
                 elapsed_ms = int((time.time() - start) * 1000)
                 span.set_attribute("ollama.latency_ms", elapsed_ms)
 
-                msg = response.get("message", {})
+                msg = response.message or {}
                 span.set_attribute("ollama.response_has_tool_calls", bool(msg.get("tool_calls")))
                 span.set_attribute("ollama.response_content_length", len(msg.get("content", "")))
-                return response
+                return response.model_dump() if hasattr(response, "model_dump") else dict(response)
             except Exception as exc:
                 span.set_attribute("error", True)
                 span.set_attribute("error.message", str(exc))

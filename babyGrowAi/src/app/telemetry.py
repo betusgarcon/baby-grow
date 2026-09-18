@@ -51,17 +51,20 @@ def init_telemetry(service_name: str = SERVICE_NAME, otlp_endpoint: str | None =
             BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint))
         )
     else:
-        tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+        tracer_provider.add_span_processor(
+            BatchSpanProcessor(ConsoleSpanExporter(out=open(os.devnull, "w")))
+        )
     trace.set_tracer_provider(tracer_provider)
 
     # Metrics
     if endpoint:
         # OTLP metrics exporter is available but console is enough for local dev.
         # Use console to avoid requiring a metrics backend for the interview demo.
-        reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
+        reader = PeriodicExportingMetricReader(ConsoleMetricExporter(out=open(os.devnull, "w")))
     else:
-        reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
-    metrics.set_meter_provider(MeterProvider(resource=resource, metric_readers=[reader]))
+        reader = PeriodicExportingMetricReader(ConsoleMetricExporter(out=open(os.devnull, "w")))
+    provider = MeterProvider(resource=resource, metric_readers=[reader])
+    metrics.set_meter_provider(provider)
 
     global _meter
     _meter = metrics.get_meter(service_name)

@@ -17,6 +17,7 @@ import logging
 import re
 from pathlib import Path
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.db import db_session
@@ -120,6 +121,22 @@ def _parse_recipe_markdown(path: Path) -> dict:
     }
 
 
+def _build_tsvector(content: str) -> str:
+    """Return a space-separated list of normalized Chinese/English tokens.
+
+    PostgreSQL's built-in `to_tsvector('chinese', ...)` requires the zhparser
+    extension, which is not always available. As a robust fallback we tokenize
+    manually into a space-separated string so `to_tsvector('simple', text)`
+    produces usable terms. This keeps full-text search working without extra
+    database extensions.
+    """
+    # Keep CJK characters and alphanumeric words; drop punctuation/numbers-only.
+    tokens = re.findall(r"[一-鿿]+", content)
+    words = [w for w in re.findall(r"[a-zA-Z]+", content) if len(w) > 1]
+    tokens.extend(words)
+    return " ".join(tokens)
+
+
 async def _ingest_recipe(session: Session, path: Path, embedding_service) -> None:
     """Persist a single recipe Markdown file to the database."""
     data = _parse_recipe_markdown(path)
@@ -188,6 +205,7 @@ async def _ingest_recipe(session: Session, path: Path, embedding_service) -> Non
             "source": str(path),
         },
         embedding=vector,
+        search_vector=text("to_tsvector('simple', :txt)").bindparams(txt=_build_tsvector(chunk_text)),
     )
     session.add(chunk)
     logger.info("Ingested recipe: %s", data["title"])
@@ -232,6 +250,7 @@ async def _ingest_guide(session: Session, path: Path, embedding_service) -> None
                 "source": str(path),
             },
             embedding=vector,
+            search_vector=text("to_tsvector('simple', :txt)").bindparams(txt=_build_tsvector(chunk_text)),
         )
         session.add(chunk)
         chunk_no += 1

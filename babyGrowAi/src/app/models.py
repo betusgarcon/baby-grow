@@ -18,7 +18,17 @@ from typing import Any, Optional
 
 from pgvector.sqlalchemy import Vector
 from pydantic import BaseModel, Field
-from sqlalchemy import JSON, Column, DateTime, Integer, String, Text, create_engine, text
+from sqlalchemy import (
+    JSON,
+    Column,
+    DateTime,
+    Integer,
+    String,
+    Text,
+    create_engine,
+    text,
+)
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.config import get_settings
@@ -193,6 +203,7 @@ class KnowledgeChunk(Base):
     content = Column(Text, nullable=False)
     chunk_metadata = Column(JSON, default=dict)
     embedding = Column(Vector(1024), nullable=True)
+    search_vector = Column(TSVECTOR, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
