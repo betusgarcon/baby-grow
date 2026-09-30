@@ -63,7 +63,7 @@ class Settings(BaseSettings):
     )
     # MySQL DSN is reserved for the Java backend; not used by the AI service directly.
     mysql_dsn: str = Field(
-        default="mysql+pymysql://babygrow:babygrow-dev@localhost:3306/baby_grow",
+        default="mysql+pymysql://<user>:<password>@localhost:3306/baby_grow",
         alias="MYSQL_DSN",
     )
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")

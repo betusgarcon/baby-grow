@@ -88,7 +88,7 @@ Ollama 本地模型成本记为 0；OpenAI 按官方价目表计费。
 RoutingConfig(
     providers=[
         ProviderConfig(provider="ollama", model="qwen2.5:7b-instruct-q5_K_M", enabled=True),
-        ProviderConfig(provider="openai", model="gpt-4o-mini", api_key="...", enabled=True),
+        ProviderConfig(provider="openai", model="gpt-4o-mini", api_key="<your_api_key>", enabled=True),
     ],
     rules=[
         RoutingRule(
