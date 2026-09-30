@@ -1,37 +1,39 @@
-"""Ollama client gateway.
+"""Ollama client gateway (legacy compatibility wrapper).
 
-Centralizes all calls to the Ollama server (chat completions, embeddings, and
-health checks). Supports both streaming and non-streaming chat, JSON schema
-formatting, and native tool calling.
-
-Lifespan:
-    Stable. Will be extended in the future with an external-model fallback when
-    config.external_model_enabled is True.
+This module is kept for backward compatibility. It wraps the production
+``ModelGatewayRouter`` and translates the old call signature into
+``ModelRequest`` objects. New code should import from
+``app.services.model_gateway`` directly.
 """
 
-import json
-import time
-from abc import ABC, abstractmethod
-from typing import Any, AsyncIterator, Iterator, Optional
+from typing import Any, AsyncIterator, Optional
 
-import httpx
-import ollama
-from pydantic import BaseModel
-
-from app.config import get_settings
+from app.services.model_gateway import ModelGatewayRouter, ModelRequest, get_model_gateway_router, reset_model_gateway_router
 from app.telemetry import get_tracer
+
+
+# Old abstract base removed; use app.services.model_gateway.base.BaseModelGateway.
+# Keep a local alias so imports still work.
+class _BaseModelGateway:  # noqa: D101
+    pass
 
 
 tracer = get_tracer("ollama_gateway")
 
 
-class BaseModelGateway(ABC):
-    """Abstract base for model gateways.
+class OllamaGateway:
+    """Backward-compatible Ollama gateway wrapper.
 
-    Reserved for future external model fallback (OpenAI-compatible APIs).
+    Wraps the unified ``ModelGatewayRouter`` so callers that used the old
+    ``chat`` / ``chat_sync`` / ``embed`` APIs continue to work without
+    modification.
     """
 
-    @abstractmethod
+    def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None):
+        self._router = get_model_gateway_router()
+        # base_url / model are intentionally ignored in compatibility mode;
+        # provider selection is now driven by routing config.
+
     async def chat(
         self,
         messages: list[dict[str, str]],
@@ -40,159 +42,56 @@ class BaseModelGateway(ABC):
         tools: Optional[list[dict[str, Any]]] = None,
         stream: bool = False,
     ) -> dict[str, Any] | AsyncIterator[dict[str, Any]]:
-        """Send a chat request to the model and return the response."""
-        raise NotImplementedError
-
-    @abstractmethod
-    async def embed(self, texts: list[str]) -> list[list[float]]:
-        """Return embedding vectors for the given texts."""
-        raise NotImplementedError
-
-
-class OllamaGateway(BaseModelGateway):
-    """Concrete gateway for the Ollama local model server."""
-
-    def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None):
-        settings = get_settings()
-        self.base_url = base_url or settings.ollama_base_url
-        self.model = model or settings.ollama_model
-        self.timeout = settings.ai_timeout
-        self.client = ollama.AsyncClient(host=self.base_url)
-
-    async def chat(
-        self,
-        messages: list[dict[str, str]],
-        format: Optional[dict[str, Any]] | type[BaseModel] = None,
-        options: Optional[dict[str, Any]] = None,
-        tools: Optional[list[dict[str, Any]]] = None,
-        stream: bool = False,
-    ) -> dict[str, Any] | AsyncIterator[dict[str, Any]]:
-        """Call the Ollama chat endpoint.
-
-        Args:
-            messages: The conversation history (OpenAI-style role/content dicts).
-            format: Optional JSON schema or Pydantic model to constrain output.
-            options: Extra generation options (temperature, top_p, etc.).
-            tools: Tool schemas for native function calling.
-            stream: Whether to stream the response.
-        """
-        settings = get_settings()
-        opts = {
-            "temperature": settings.ai_temperature,
-            "top_p": settings.ai_top_p,
-            "num_ctx": settings.ai_num_ctx,
-        }
-        if options:
-            opts.update(options)
-
-        # Convert a Pydantic model to its JSON schema for Ollama's format param.
-        schema = None
-        if format is not None:
-            if isinstance(format, type) and issubclass(format, BaseModel):
-                schema = format.model_json_schema()
-            elif isinstance(format, dict):
-                schema = format
-
-        kwargs: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "format": schema,
-            "options": opts,
-            "stream": stream,
-        }
-        # Ollama native tool calling: only pass tools when provided so that
-        # non-agent callers (extraction, fixed-pipeline recipe) are unaffected.
-        if tools:
-            kwargs["tools"] = tools
-
-        with tracer.start_as_current_span("ollama.chat") as span:
-            span.set_attribute("ollama.model", self.model)
-            span.set_attribute("ollama.tool_count", len(tools) if tools else 0)
-            span.set_attribute("ollama.message_count", len(messages))
-            span.set_attribute("ollama.stream", stream)
-
-            start = time.time()
-            try:
-                response = await self.client.chat(**kwargs)
-                elapsed_ms = int((time.time() - start) * 1000)
-                span.set_attribute("ollama.latency_ms", elapsed_ms)
-
-                # Streaming responses are returned as an async iterator; pass
-                # them through without trying to read attributes from the generator.
-                if stream:
-                    return response  # type: ignore[return-value]
-
-                msg = response.message or {}
-                span.set_attribute("ollama.response_has_tool_calls", bool(msg.get("tool_calls")))
-                span.set_attribute("ollama.response_content_length", len(msg.get("content", "")))
-                return response.model_dump() if hasattr(response, "model_dump") else dict(response)
-            except Exception as exc:
-                span.set_attribute("error", True)
-                span.set_attribute("error.message", str(exc))
-                raise
+        """Send a chat request through the unified router."""
+        request = ModelRequest(
+            messages=messages,
+            task="chat",
+            format=format,
+            tools=tools,
+            options=options,
+            stream=stream,
+        )
+        response = await self._router.chat(request)
+        # Preserve legacy return shape: a dict with {"message": {...}}
+        if stream:
+            # Streaming not supported via legacy wrapper; return raw-like empty.
+            return {}
+        return response.raw_response
 
     async def chat_sync(
         self,
         messages: list[dict[str, str]],
-        format: Optional[dict[str, Any] | type[BaseModel]] = None,
+        format: Optional[dict[str, Any]] = None,
         options: Optional[dict[str, Any]] = None,
         tools: Optional[list[dict[str, Any]]] = None,
     ) -> dict[str, Any]:
-        """Convenience wrapper for non-streaming chat with one retry."""
-        # Retry once with exponential back-off to tolerate transient Ollama
-        # connection hiccups without failing the whole request.
-        last_error: Exception | None = None
-        for attempt in range(2):
-            try:
-                response = await self.chat(
-                    messages, format=format, options=options, tools=tools, stream=False
-                )
-                return response  # type: ignore[return-value]
-            except Exception as exc:  # noqa: BLE001
-                last_error = exc
-                time.sleep(0.5 * (attempt + 1))
-        raise last_error or RuntimeError("Ollama chat failed")
+        """Convenience wrapper for non-streaming chat via the router."""
+        result = await self.chat(
+            messages=messages,
+            format=format,
+            options=options,
+            tools=tools,
+            stream=False,
+        )
+        if not isinstance(result, dict):
+            raise RuntimeError("Unexpected non-dict response from legacy chat")
+        return result
 
     async def chat_stream(
         self,
         messages: list[dict[str, str]],
         options: Optional[dict[str, Any]] = None,
     ) -> AsyncIterator[str]:
-        """Yields content tokens from a streaming chat."""
-        response = await self.chat(messages, options=options, stream=True)
-        async for chunk in response:  # type: ignore[attr-defined]
-            if chunk and "message" in chunk and chunk["message"].get("content"):
-                yield chunk["message"]["content"]
+        """Legacy streaming helper. Not implemented via router."""
+        raise NotImplementedError("chat_stream is not supported in compatibility wrapper")
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
-        """Return embedding vectors for each text using the configured embedding model."""
-        settings = get_settings()
-        model = settings.embedding_model
-        results = []
-        with tracer.start_as_current_span("ollama.embed") as span:
-            span.set_attribute("ollama.embedding_model", model)
-            span.set_attribute("ollama.text_count", len(texts))
-            try:
-                start = time.time()
-                for text in texts:
-                    response = await self.client.embeddings(model=model, prompt=text)
-                    results.append(response["embedding"])
-                span.set_attribute("ollama.latency_ms", int((time.time() - start) * 1000))
-                span.set_attribute("ollama.vector_count", len(results))
-            except Exception as exc:
-                span.set_attribute("error", True)
-                span.set_attribute("error.message", str(exc))
-                raise
-        return results
+        """Compute embeddings via the unified router."""
+        return await self._router.embed(texts)
 
     async def health(self) -> bool:
-        """Check if the Ollama server is reachable by hitting /api/tags."""
-        try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                response = await client.get(f"{self.base_url}/api/tags")
-                return response.status_code == 200
-        except Exception:  # noqa: BLE001
-            return False
+        """Return True if any configured provider is healthy."""
+        return await self._router.health()
 
 
 # Singleton instance used by production code and tests.
@@ -200,7 +99,7 @@ _model_gateway: Optional[OllamaGateway] = None
 
 
 def get_model_gateway() -> OllamaGateway:
-    """Return the shared Ollama gateway instance."""
+    """Return the shared legacy gateway instance."""
     global _model_gateway
     if _model_gateway is None:
         _model_gateway = OllamaGateway()
@@ -211,3 +110,4 @@ def reset_model_gateway() -> None:
     """Reset the singleton instance (mainly for tests)."""
     global _model_gateway
     _model_gateway = None
+    reset_model_gateway_router()

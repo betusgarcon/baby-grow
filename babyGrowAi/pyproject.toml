@@ -25,6 +25,7 @@ dependencies = [
     "opentelemetry-instrumentation-sqlalchemy>=0.43b0",
     "opentelemetry-instrumentation-httpx>=0.43b0",
     "opentelemetry-exporter-otlp>=1.22.0",
+    "openai>=1.0.0",
 ]
 
 [project.optional-dependencies]
