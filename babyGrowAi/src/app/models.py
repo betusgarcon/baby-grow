@@ -187,13 +187,27 @@ class RecipeRecommendResponse(BaseModel):
 
 
 class KnowledgeDocument(Base):
-    """Metadata for a raw document in the knowledge base (recipe or guide)."""
+    """One source file in the knowledge base -- the unit of provenance, not of search.
+
+    Every converted Markdown file gets one row here (a whole standard, or one
+    chapter of a book), holding the full text. Retrieval never returns these
+    rows; they exist so a chunk can be traced back to the document it came from.
+
+    `KnowledgeDocument` -> `KnowledgeChunk` is one-to-many. There is
+    deliberately no foreign key and no cascade: the knowledge base is a
+    rebuildable batch artifact, not transactional business data, so deletes
+    drop chunks first and the document second, by hand -- see
+    `ingest_guidelines._ingest_document`.
+    """
 
     __tablename__ = "knowledge_documents"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     doc_type = Column(String(32), nullable=False, index=True)
     title = Column(String(255), nullable=False)
+    # Business key and the basis of idempotent ingestion: a path relative to
+    # data/, e.g. guidelines/cuiyutao_natural_parenting/01-01-....md.
+    # Re-running deletes previous rows by this value before inserting.
     source = Column(String(128), nullable=True)
     language = Column(String(16), default="zh")
     content = Column(Text, nullable=False)
@@ -204,7 +218,17 @@ class KnowledgeDocument(Base):
 
 
 class KnowledgeChunk(Base):
-    """A searchable chunk of a knowledge document with an embedding vector."""
+    """One searchable slice of a document -- the unit retrieval actually hits.
+
+    Why slice at all: embed a whole chapter and its vector averages out every
+    topic in it, matching nothing well. At a few hundred characters a chunk
+    carries one idea, retrieves sharply, and still fits several of them into
+    the model's context for citation.
+
+    `content` carries a breadcrumb prefix (part > chapter > section) so a slice
+    read out of context still says what it belongs to. `chunk_metadata` holds
+    the structured fields the retrieval filter needs.
+    """
 
     __tablename__ = "knowledge_chunks"
 
@@ -213,7 +237,14 @@ class KnowledgeChunk(Base):
     chunk_no = Column(Integer, default=0)
     content = Column(Text, nullable=False)
     chunk_metadata = Column(JSON, default=dict)
+    # 1024 is fixed by the embedding model, bge-m3 (bert.embedding_length =
+    # 1024). It is not a tunable: pointing EMBEDDING_MODEL at a different
+    # dimension makes every insert fail on a dimension mismatch, and requires
+    # changing this column and re-embedding the whole corpus.
     embedding = Column(Vector(1024), nullable=True)
+    # Full-text column, fed the space-joined per-character tokens built by
+    # `_build_tsvector`, because Postgres has no Chinese tokenizer for
+    # to_tsvector('simple', ...).
     search_vector = Column(TSVECTOR, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

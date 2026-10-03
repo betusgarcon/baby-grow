@@ -23,6 +23,22 @@ from app.services.retrieval_rrf import reciprocal_rank_fusion
 logger = logging.getLogger(__name__)
 
 
+# A query names the population it is answering for, using the caller's coarse
+# vocabulary ("baby", "postpartum"), while a source declares who it was written
+# for in more precise terms ("infant", "toddler", "lactating"). Both sides are
+# mapped onto these slots so 婴幼儿辅食添加营养指南 still answers a "baby" query
+# without a 产褥期 source leaking into one.
+POPULATION_SLOTS: dict[str, set[str]] = {
+    "baby": {"baby", "infant", "toddler", "preschool", "child"},
+    "postpartum": {"postpartum", "lactating"},
+}
+
+
+def _population_slot(name: str) -> set[str]:
+    """Return every declared population that a query for `name` should match."""
+    return POPULATION_SLOTS.get(name, {name})
+
+
 def _cosine_similarity_from_distance(distance: float) -> float:
     """Convert pgvector cosine_distance to cosine similarity.
 
@@ -60,14 +76,24 @@ class RetrievalService:
         baby_age_months: int,
         allergens: list[str] | None,
         texture_level: str | None,
+        population: str | None = None,
     ) -> bool:
-        """Return True if the chunk passes age, texture, and allergen filters."""
+        """Return True if the chunk passes age, population, texture, and allergen filters."""
         meta = chunk.chunk_metadata or {}
         age_min = int(meta.get("age_min_month", 0) or 0)
         age_max = int(meta.get("age_max_month", 60) or 60)
 
         if not (age_min <= baby_age_months <= age_max):
             return False
+
+        # A guideline chunk declares who it was written for. Recipe and guide
+        # chunks predate this field and stay unfiltered.
+        populations = meta.get("population")
+        if population and populations:
+            if isinstance(populations, str):
+                populations = [populations]
+            if not _population_slot(population).intersection(populations):
+                return False
 
         if texture_level and meta.get("texture_level") and meta.get("texture_level") != texture_level:
             return False
@@ -85,6 +111,7 @@ class RetrievalService:
         allergens: list[str] | None = None,
         texture_level: str | None = None,
         top_k: int | None = None,
+        population: str | None = "baby",
     ) -> list[dict[str, Any]]:
         """Return the top-k knowledge chunks matching the query and baby profile.
 
@@ -92,7 +119,7 @@ class RetrievalService:
         1. Vector search (cosine similarity) over embeddings.
         2. Full-text search (BM25-like) over tsvector.
         3. RRF fusion of the two ranked lists.
-        4. Post-filter by age, texture, and allergens, then return top_k.
+        4. Post-filter by age, population, texture, and allergens, then return top_k.
 
         Args:
             query: Free-text query from the parent (e.g. "便秘").
@@ -100,6 +127,9 @@ class RetrievalService:
             allergens: Any chunk mentioning these strings is excluded.
             texture_level: Optional texture preference filter.
             top_k: Number of results to return (default from settings).
+            population: Who the answer is for (e.g. "baby", "postpartum").
+                Chunks declaring a population exclude queries for anyone else;
+                chunks that declare none are unaffected.
         """
         top_k = top_k or get_settings().rag_top_k
 
@@ -170,7 +200,7 @@ class RetrievalService:
             if chunk is None:
                 continue
 
-            if not self._filter_chunk(chunk, baby_age_months, allergens, texture_level):
+            if not self._filter_chunk(chunk, baby_age_months, allergens, texture_level, population):
                 continue
 
             meta = chunk.chunk_metadata or {}
