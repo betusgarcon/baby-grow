@@ -160,7 +160,10 @@ def check_database(report: Report, expected: dict[str, int]) -> list[dict]:
             """
         )
     ).all()
-    counts = {row[0].replace("guidelines/", ""): row[1] for row in rows}
+    # Strip the leading directory only. `str.replace` would also eat the
+    # "guidelines/" inside a slug like `zhongguo_dietary_guidelines/`, which
+    # made every file of that book look un-ingested.
+    counts = {row[0].removeprefix("guidelines/"): row[1] for row in rows}
 
     missing = [src for src in expected if src not in counts]
     report.check("db.every_file_ingested", not missing, ", ".join(missing[:5]) or f"{len(counts)} source(s) present")
