@@ -7,13 +7,12 @@ import BottomTabBar from '@/components/BottomTabBar'
 import EmptyState from '@/components/EmptyState'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import RecordSheet from '@/components/RecordSheet'
-import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
 import type { SectionState } from '@/types/common'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
 import WishCard from './components/WishCard'
-import { wishes as initialWishes, wishesEmptyCopy, wishesIntro, type Wish } from './wishesData'
+import { wishes as initialWishes, wishesEmptyCopy, type Wish } from './wishesData'
 
 export default function WishesListPage() {
   const [wishes, setWishes] = useState<Wish[]>([])
@@ -69,22 +68,11 @@ export default function WishesListPage() {
               </Text>
             </>
           }
-          right={
-            <View
-              className="w-9 h-9 flex items-center justify-center"
-              onClick={() => Taro.showToast({ title: '更多操作待开发', icon: 'none' })}
-            >
-              <Icon name="more-vert" className="w-5 h-5" />
-            </View>
-          }
         />
       }
     >
       <View className="flex flex-col gap-4">
-        <View className="flex flex-col gap-2 pt-2">
-          <Text className="text-4xl font-bold text-on-surface">Wishes</Text>
-          <Text className="text-base text-on-surface-variant">{wishesIntro}</Text>
-        </View>
+        {/* 标题与说明已由顶部导航栏承担，这里不再重复一遍 */}
 
         {state === 'loading' ? <LoadingSkeleton blocks={3} blockHeight={180} /> : null}
 

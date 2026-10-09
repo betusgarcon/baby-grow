@@ -27,21 +27,7 @@ export default function JourneyVaccinePage() {
 
   return (
     <PageContainer
-      header={
-        <PageHeader
-          showBack
-          titleAlign="start"
-          title="Event Details"
-          right={
-            <View
-              className="w-9 h-9 flex items-center justify-center"
-              onClick={() => notImplemented('分享')}
-            >
-              <Icon name="event-share" className="w-5 h-5" />
-            </View>
-          }
-        />
-      }
+      header={<PageHeader showBack title="Event Details" />}
     >
       <View className="flex flex-col gap-4">
         <View className="w-full box-border p-6 rounded-3xl bg-surface-container flex flex-col items-center gap-3">

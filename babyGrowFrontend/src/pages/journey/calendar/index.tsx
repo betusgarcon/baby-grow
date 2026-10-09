@@ -50,13 +50,7 @@ export default function JourneyCalendarPage() {
   return (
     <PageContainer
       background="bg-surface-container-lowest"
-      header={
-        <PageHeader
-          showBack
-          title="Journey"
-          right={<Icon name="calendar" className="w-5 h-5" style={{ opacity: 0.3 }} />}
-        />
-      }
+      header={<PageHeader showBack title="日历" />}
     >
       <View className="flex flex-col gap-6">
         {/* 月份控件：左右箭头各换一个月，中间文字点开年月选择器。

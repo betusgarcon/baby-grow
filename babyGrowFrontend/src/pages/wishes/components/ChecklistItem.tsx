@@ -24,12 +24,13 @@ export default function ChecklistItem({
         </View>
       ) : null}
 
-      {/* 已完成的圆底承载白色对勾，未完成的只是一个描边空圈 */}
+      {/* 已完成的圆底承载白色对勾，未完成的只是一个描边空圈。
+          编辑态同样允许勾选：否则勾第一个就会进入编辑态，之后再也勾不了第二个 */}
       <View
         className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center box-border ${
           item.done ? 'bg-wish-active' : 'border-2 border-outline-variant'
         }`}
-        onClick={editing ? undefined : onToggle}
+        onClick={onToggle}
       >
         {item.done ? <Icon name="check-light" className="w-3.5 h-3.5" /> : null}
       </View>

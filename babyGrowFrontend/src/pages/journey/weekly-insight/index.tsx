@@ -37,10 +37,13 @@ export default function JourneyWeeklyInsightPage() {
     <PageContainer
       background="bg-surface-container-lowest"
       header={
-        <PageHeader showBack title="Weekly Insights" subtitle={data.rangeLabel} />
+        <PageHeader showBack title="Weekly Insights" />
       }
     >
       <View className="flex flex-col gap-6">
+        {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色 */}
+        <Text className="text-2xl font-bold text-secondary">{data.rangeLabel}</Text>
+
         <View className="flex gap-3">
           {data.metrics.map((metric) => (
             <MetricCard key={metric.key} metric={metric} />

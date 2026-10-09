@@ -16,7 +16,11 @@ export default function WishCounterDetailPage() {
   const router = useRouter()
   const wish = findWish(router.params.wish)
 
-  const [current, setCurrent] = useState(wish?.counter?.current ?? 0)
+  const initial = wish?.counter?.current ?? 0
+
+  const [current, setCurrent] = useState(initial)
+  /** 上次保存的值，Cancel 用它还原 */
+  const [savedCurrent, setSavedCurrent] = useState(initial)
   const [mode, setMode] = useState<'view' | 'edit'>(
     router.params.mode === 'edit' ? 'edit' : 'view',
   )
@@ -39,7 +43,23 @@ export default function WishCounterDetailPage() {
   const progress = target > 0 ? Math.min(current / target, 1) : 0
 
   const step = (delta: number) => {
+    // 加减号只是暂存改动，必须先进编辑态把保存/取消露出来，
+    // 否则点一下就直接生效，用户没有确认的机会
+    if (mode !== 'edit') setMode('edit')
+
     setCurrent((previous) => Math.min(Math.max(previous + delta, 0), target))
+  }
+
+  const cancelEdit = () => {
+    setCurrent(savedCurrent)
+    setMode('view')
+  }
+
+  const saveEdit = () => {
+    // 后端未实现，先落本地提示
+    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
+    setSavedCurrent(current)
+    setMode('view')
   }
 
   return (
@@ -125,15 +145,15 @@ export default function WishCounterDetailPage() {
         {wish.expertTip ? <ExpertTipCard tip={wish.expertTip} /> : null}
 
         {mode === 'edit' ? (
-          <PrimaryButton
-            block
-            onClick={() => {
-              Taro.showToast({ title: '已保存（本地）', icon: 'none' })
-              setMode('view')
-            }}
-          >
-            Save Changes
-          </PrimaryButton>
+          <>
+            <PrimaryButton block onClick={saveEdit}>
+              Save Changes
+            </PrimaryButton>
+
+            <View className="py-3 flex items-center justify-center" onClick={cancelEdit}>
+              <Text className="text-base font-semibold text-on-surface-variant">Cancel</Text>
+            </View>
+          </>
         ) : null}
       </View>
     </PageContainer>

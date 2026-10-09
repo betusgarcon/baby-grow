@@ -67,8 +67,6 @@ export const wishProgress = (wish: Wish) =>
 export const wishProgressLabel = (wish: Wish) =>
   `${wishDoneCount(wish)} of ${wish.goal} ${wish.unitLabel}`
 
-export const wishesIntro = 'Manage and track your baby\'s special adventures and milestones.'
-
 export const wishesEmptyCopy = {
   title: 'No wishes yet.',
   description:

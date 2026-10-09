@@ -25,6 +25,8 @@ export default function WishChecklistDetailPage() {
   )
   const [items, setItems] = useState<WishChecklistItem[]>(wish?.checklist ?? [])
   const [draft, setDraft] = useState<{ title: string; note: string } | null>(null)
+  /** 进入编辑态时的快照，Cancel 用它还原 */
+  const [snapshot, setSnapshot] = useState<WishChecklistItem[] | null>(null)
 
   const isEditing = mode === 'edit'
 
@@ -53,7 +55,31 @@ export default function WishChecklistDetailPage() {
   const doneCount = items.filter((item) => item.done).length
   const progress = wish.goal > 0 ? Math.min(doneCount / wish.goal, 1) : 0
 
+  const enterEdit = () => {
+    setSnapshot(items)
+    setMode('edit')
+  }
+
+  const cancelEdit = () => {
+    if (snapshot) setItems(snapshot)
+    setSnapshot(null)
+    setDraft(null)
+    setMode('view')
+  }
+
+  const saveEdit = () => {
+    // 后端未实现，先落本地提示
+    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
+    setSnapshot(null)
+    setDraft(null)
+    setMode('view')
+  }
+
   const toggleItem = (id: string) => {
+    // 查看态下勾选也算一次改动，要先进编辑态让保存/取消出来，
+    // 否则勾完就「自动保存」了，用户没有反悔的机会
+    if (!isEditing) enterEdit()
+
     setItems((previous) =>
       previous.map((item) => (item.id === id ? { ...item, done: !item.done } : item)),
     )
@@ -153,10 +179,7 @@ export default function WishChecklistDetailPage() {
 
             <View
               className="py-2 px-4 rounded-full bg-tertiary-fixed flex items-center gap-2"
-              onClick={() => {
-                setMode(isEditing ? 'view' : 'edit')
-                setDraft(null)
-              }}
+              onClick={() => (isEditing ? saveEdit() : enterEdit())}
             >
               <Icon name="edit-muted" className="w-3.5 h-3.5" />
               <Text className="text-sm font-semibold text-on-tertiary-container">
@@ -196,8 +219,9 @@ export default function WishChecklistDetailPage() {
             <>
               {draft ? (
                 <View className="w-full box-border p-4 rounded-3xl border border-outline-variant flex flex-col gap-3">
+                  {/* 输入框给足高度，否则 hint 文字会被上下裁掉 */}
                   <Input
-                    className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                    className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
                     placeholder="名称，如 City Aquarium"
                     placeholderClass="text-on-surface-variant"
                     value={draft.title}
@@ -209,7 +233,7 @@ export default function WishChecklistDetailPage() {
                     }
                   />
                   <Input
-                    className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                    className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
                     placeholder="补充说明，可留空"
                     placeholderClass="text-on-surface-variant"
                     value={draft.note}
@@ -249,6 +273,25 @@ export default function WishChecklistDetailPage() {
             </>
           ) : null}
         </View>
+
+        {/* 编辑态下的改动都要在这里二次确认，勾选、增删、拖拽排序都算 */}
+        {isEditing ? (
+          <View className="flex items-center gap-3">
+            <View
+              className="flex-1 py-3 rounded-full bg-tertiary-fixed flex items-center justify-center"
+              onClick={cancelEdit}
+            >
+              <Text className="text-base font-semibold text-on-tertiary-container">Cancel</Text>
+            </View>
+
+            <View
+              className="flex-1 py-3 rounded-full bg-primary flex items-center justify-center"
+              onClick={saveEdit}
+            >
+              <Text className="text-base font-semibold text-[#ffffff]">Done</Text>
+            </View>
+          </View>
+        ) : null}
 
         {wish.expertTip ? <ExpertTipCard tip={wish.expertTip} /> : null}
       </View>
