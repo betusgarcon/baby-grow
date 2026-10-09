@@ -5,6 +5,7 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateBack, navigateToRoute } from '@/utils/routes'
+import { addPendingMember } from '@/store'
 import { inviteePresets, inviteRoleOptions, type FamilyRole } from '@/store/family'
 
 export default function FamilyInvitePage() {
@@ -12,12 +13,16 @@ export default function FamilyInvitePage() {
   const [role, setRole] = useState<FamilyRole>('viewer')
 
   const sendInvite = () => {
-    if (!nickname.trim()) {
+    const name = nickname.trim()
+
+    if (!name) {
       Taro.showToast({ title: '请先填写称呼', icon: 'none' })
       return
     }
 
-    // 生成入场凭证是下一步，称呼与角色带过去由那页展示
+    // 先把受邀人作为「待接受」写进成员列表，再进凭证页——
+    // 否则走完邀请流程回到首页，成员还是原来那几个，看不出邀请发生过
+    addPendingMember(name, role)
     navigateToRoute('family-invite-token')
   }
 

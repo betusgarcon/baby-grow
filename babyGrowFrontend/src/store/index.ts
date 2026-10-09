@@ -16,5 +16,7 @@ export {
   removeWish,
   setWishChecklist,
   setWishCounter,
+  updateVaccine,
+  removeVaccine,
 } from './appStore'
 export type { AppState, ProfileState } from './appStore'

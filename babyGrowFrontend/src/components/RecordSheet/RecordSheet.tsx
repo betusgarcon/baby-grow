@@ -29,7 +29,9 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState<string | null>(null)
   const [inputType, setInputType] = useState<RecordInputType>('text')
+  const [recording, setRecording] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const recorder = useRef<ReturnType<typeof Taro.getRecorderManager> | null>(null)
 
   // 关闭后重置，下次打开是干净的录入态
   useEffect(() => {
@@ -70,6 +72,36 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
     timer.current = setTimeout(() => setStage('result'), ANALYZING_MS)
   }
 
+  /**
+   * 语音录入用小程序原生录音。
+   * 录音本身是真的；转文字要等后端，所以停下来先往正文里放一个占位标记，
+   * 而不是假装已经识别出了内容。
+   */
+  const toggleVoice = () => {
+    if (!recorder.current) {
+      recorder.current = Taro.getRecorderManager()
+
+      recorder.current.onStop(() => {
+        setRecording(false)
+        setText((previous) => (previous ? `${previous}\n[语音记录]` : '[语音记录]'))
+        Taro.showToast({ title: '已录音，转文字待后端', icon: 'none' })
+      })
+
+      recorder.current.onError(() => {
+        setRecording(false)
+        Taro.showToast({ title: '录音失败，请检查麦克风权限', icon: 'none' })
+      })
+    }
+
+    if (recording) {
+      recorder.current.stop()
+      return
+    }
+
+    recorder.current.start({ duration: 60000, format: 'mp3' })
+    setRecording(true)
+  }
+
   const save = () => {
     const recognition = resolveRecognition(inputType)
 
@@ -105,7 +137,8 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
               photo={photo}
               onTextChange={setText}
               onPickPhoto={pickPhoto}
-              onVoice={() => Taro.showToast({ title: '语音录入待开发', icon: 'none' })}
+              onVoice={toggleVoice}
+              recording={recording}
               onAnalyze={analyze}
               onClose={onClose}
             />

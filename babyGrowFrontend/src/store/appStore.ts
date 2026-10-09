@@ -10,6 +10,7 @@ import {
 } from './profile'
 import { familyMembers, roleLabelOf, type FamilyMember, type FamilyRole } from './family'
 import { wishes as initialWishes, type Wish, type WishChecklistItem } from './wishes'
+import { vaccineDetail, type VaccineDetail } from './vaccine'
 
 /**
  * 应用级状态。
@@ -33,6 +34,8 @@ export interface AppState {
   profile: ProfileState
   members: FamilyMember[]
   wishes: Wish[]
+  /** 疫苗/事件详情。null 表示这条记录已被删除 */
+  vaccine: VaccineDetail | null
 }
 
 export const appStore = createStore<AppState>({
@@ -45,6 +48,7 @@ export const appStore = createStore<AppState>({
   },
   members: familyMembers,
   wishes: initialWishes,
+  vaccine: vaccineDetail,
 })
 
 export const useAppState = () => useStoreState(appStore)
@@ -171,4 +175,16 @@ export const setWishCounter = (wishId: string, current: number) => {
       wish.id === wishId && wish.counter ? { ...wish, counter: { ...wish.counter, current } } : wish,
     ),
   }))
+}
+
+/* ---------------------------------------------------------------- 事件详情 */
+
+export const updateVaccine = (patch: Partial<VaccineDetail>) => {
+  appStore.set((previous) =>
+    previous.vaccine ? { ...previous, vaccine: { ...previous.vaccine, ...patch } } : previous,
+  )
+}
+
+export const removeVaccine = () => {
+  appStore.set((previous) => ({ ...previous, vaccine: null }))
 }

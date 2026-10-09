@@ -5,6 +5,8 @@ import { recordSheetCopy } from './recordData'
 interface RecordInputViewProps {
   text: string
   photo: string | null
+  /** 正在录音。按钮据此变成红色并提示「点击结束」 */
+  recording?: boolean
   onTextChange: (value: string) => void
   onPickPhoto: () => void
   onVoice: () => void
@@ -15,6 +17,7 @@ interface RecordInputViewProps {
 export default function RecordInputView({
   text,
   photo,
+  recording = false,
   onTextChange,
   onPickPhoto,
   onVoice,
@@ -54,8 +57,14 @@ export default function RecordInputView({
         ) : null}
 
         <View className="self-end flex items-center gap-3">
+          {recording ? (
+            <Text className="text-caption text-error">录音中，点击结束</Text>
+          ) : null}
+
           <View
-            className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center"
+            className={`w-11 h-11 rounded-full flex items-center justify-center ${
+              recording ? 'bg-error animate-pulse' : 'bg-surface-container'
+            }`}
             onClick={onVoice}
           >
             <Icon name="mic" className="w-5 h-5" />
