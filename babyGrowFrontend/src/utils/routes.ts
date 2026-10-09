@@ -57,6 +57,12 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'journey-list': '/pages/journey/list/index',
   'journey-calendar': '/pages/journey/calendar/index',
   'journey-vaccine': '/pages/journey/vaccine/index',
+  // 宝宝档案的查看 / 基础信息编辑 / 偏好管理是同一页的三种模式，
+  // 靠 query 进入，不重复实现三份。
+  'baby-profile-view': '/pages/baby-profile/index',
+  'baby-profile-edit': '/pages/baby-profile/index?mode=edit',
+  'baby-profile-preferences': '/pages/baby-profile/index?mode=preferences',
+  'baby-profile-photo': '/pages/baby-profile/photo/index',
   'data-growth': '/pages/analysis/growth/index',
   'data-sleep-day': '/pages/analysis/sleep-daily/index',
   'data-sleep-month': '/pages/analysis/sleep-monthly/index',

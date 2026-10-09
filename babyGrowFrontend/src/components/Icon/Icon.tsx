@@ -87,6 +87,22 @@ import eventNotesIcon from '@/assets/icons/event_notes_icon.svg'
 import eventAttachmentIcon from '@/assets/icons/event_attachment_icon.svg'
 import eventEditIcon from '@/assets/icons/event_edit_icon.svg'
 import eventDeleteIcon from '@/assets/icons/event_delete_icon.svg'
+import removeCircleIcon from '@/assets/icons/remove_circle_icon.svg'
+
+// 宝宝档案页图标（原先散在 figma_demo/images 下，随页面正式化一并归位）
+import editIcon from '@/assets/icons/icon-edit.svg'
+import pencilMutedIcon from '@/assets/icons/pencil_muted_icon.svg'
+import moreVertIcon from '@/assets/icons/icon-more.svg'
+import menuIcon from '@/assets/icons/icon-menu.svg'
+import profileAgeIcon from '@/assets/icons/icon-age.svg'
+import profileGenderIcon from '@/assets/icons/icon-gender.svg'
+import profileConstellationIcon from '@/assets/icons/icon-constellation.svg'
+import profileLionIcon from '@/assets/icons/icon-little-lion.svg'
+import profileToyIcon from '@/assets/icons/icon-favorite-toy.svg'
+import profileSleepIcon from '@/assets/icons/icon-sleep-routine.svg'
+import photoCameraIcon from '@/assets/icons/icon-camera.svg'
+import photoGalleryIcon from '@/assets/icons/icon-gallery.svg'
+import photoEditIcon from '@/assets/icons/icon-edit-photo.svg'
 
 // 2. 建立名称与 SVG 资源的映射字典 (兼容全选中/未选中状态)
 const iconMap: Record<string, string> = {
@@ -181,6 +197,22 @@ const iconMap: Record<string, string> = {
   'event-attachment': eventAttachmentIcon,
   'event-edit': eventEditIcon,
   'event-delete': eventDeleteIcon,
+  'remove-circle': removeCircleIcon,
+
+  // 宝宝档案页图标
+  'edit': editIcon,
+  'edit-muted': pencilMutedIcon,
+  'more-vert': moreVertIcon,
+  'menu': menuIcon,
+  'profile-age': profileAgeIcon,
+  'profile-gender': profileGenderIcon,
+  'profile-constellation': profileConstellationIcon,
+  'profile-lion': profileLionIcon,
+  'profile-toy': profileToyIcon,
+  'profile-sleep': profileSleepIcon,
+  'photo-camera': photoCameraIcon,
+  'photo-gallery': photoGalleryIcon,
+  'photo-edit': photoEditIcon,
 }
 
 interface IconProps {

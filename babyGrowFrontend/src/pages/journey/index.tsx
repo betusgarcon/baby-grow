@@ -128,7 +128,10 @@ export default function Journey() {
             paddingRight: `${navInfo.capsuleRight}px` 
           }}
         >
-          <View className="flex items-center gap-2">
+          <View
+            className="flex items-center gap-2"
+            onClick={() => navigateToRoute('baby-profile-view')}
+          >
             <Image 
               className="w-10 h-10 rounded-full shadow-sm object-cover" 
               src={babyJourneyImg}
