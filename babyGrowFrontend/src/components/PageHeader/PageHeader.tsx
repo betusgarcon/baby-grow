@@ -70,14 +70,22 @@ export default function PageHeader({
           </>
         ) : (
           <>
-            <View className="flex-1 flex items-center gap-3 min-w-0">
-              {showBack ? backButton : null}
-              {leading}
-              {title ? (
-                <Text className="text-2xl font-semibold text-on-surface truncate">{title}</Text>
-              ) : null}
-            </View>
-            {right}
+            {showBack ? backButton : null}
+            {leading ? <View className="shrink-0 flex items-center gap-2">{leading}</View> : null}
+
+            {title ? (
+              <Text
+                className={`flex-1 min-w-0 truncate text-2xl font-semibold text-on-surface ${
+                  titleAlign === 'center' ? 'text-center' : ''
+                }`}
+              >
+                {title}
+              </Text>
+            ) : (
+              <View className="flex-1" />
+            )}
+
+            {right ? <View className="shrink-0 flex items-center">{right}</View> : null}
           </>
         )}
       </View>

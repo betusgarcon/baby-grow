@@ -59,7 +59,7 @@ export default function PageContainer({
 
       <ScrollView scrollY className="flex-1 h-0 box-border" showScrollbar={false} enhanced>
         <View
-          className={`px-margin-mobile ${contentClassName}`}
+          className={`block px-margin-mobile ${contentClassName}`}
           style={{ paddingBottom: `${paddingBottom}px` }}
         >
           {children}

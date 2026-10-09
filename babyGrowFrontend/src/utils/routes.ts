@@ -42,6 +42,10 @@ export type RouteId =
   | 'wishes-museum'
   | 'wishes-number'
   | 'wishes-swim'
+  // 原型跳转图里只给了博物馆/游泳/读书三种详情，但设计稿的清单有五个心愿。
+  // 徒步与攀岩同样是勾选式，复用同一个详情页，只是数据不同。
+  | 'wishes-trails'
+  | 'wishes-climbing'
   // Family 家庭分享
   | 'family-home'
   | 'family-members'
@@ -64,6 +68,14 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'baby-profile-edit': '/pages/baby-profile/index?mode=edit',
   'baby-profile-preferences': '/pages/baby-profile/index?mode=preferences',
   'baby-profile-photo': '/pages/baby-profile/photo/index',
+  // 心愿清单：勾选式详情（博物馆/游泳/徒步/攀岩）共用一个页面，靠 wish 参数区分；
+  // 计数式详情（读书）版式不同，单独一页。
+  'wishes-list': '/pages/wishes/index',
+  'wishes-museum': '/pages/wishes/detail/index?wish=museum',
+  'wishes-swim': '/pages/wishes/detail/index?wish=swim',
+  'wishes-trails': '/pages/wishes/detail/index?wish=trails',
+  'wishes-climbing': '/pages/wishes/detail/index?wish=climbing',
+  'wishes-number': '/pages/wishes/counter/index?wish=books',
   'data-growth': '/pages/analysis/growth/index',
   'data-sleep-day': '/pages/analysis/sleep-daily/index',
   'data-sleep-month': '/pages/analysis/sleep-monthly/index',

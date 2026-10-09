@@ -93,6 +93,16 @@ import metricHeightIcon from '@/assets/icons/metric_height_icon.svg'
 import trendUpIcon from '@/assets/icons/trend_up_icon.svg'
 import sparkleLightIcon from '@/assets/icons/sparkle_light_icon.svg'
 
+// 心愿清单页图标
+import wishSwimIcon from '@/assets/icons/wish_swim_icon.svg'
+import wishMuseumIcon from '@/assets/icons/wish_museum_icon.svg'
+import wishTerrainIcon from '@/assets/icons/wish_terrain_icon.svg'
+import wishBookIcon from '@/assets/icons/wish_book_icon.svg'
+import checkLightIcon from '@/assets/icons/check_light_icon.svg'
+import expertTipIcon from '@/assets/icons/expert_tip_icon.svg'
+import dragHandleIcon from '@/assets/icons/drag_handle_icon.svg'
+import minusCircleIcon from '@/assets/icons/minus_circle_icon.svg'
+
 // 宝宝档案页图标（原先散在 figma_demo/images 下，随页面正式化一并归位）
 import editIcon from '@/assets/icons/icon-edit.svg'
 import pencilMutedIcon from '@/assets/icons/pencil_muted_icon.svg'
@@ -206,6 +216,16 @@ const iconMap: Record<string, string> = {
   'metric-height': metricHeightIcon,
   'trend-up': trendUpIcon,
   'sparkle-light': sparkleLightIcon,
+
+  // 心愿清单页图标
+  'wish-swim': wishSwimIcon,
+  'wish-museum': wishMuseumIcon,
+  'wish-terrain': wishTerrainIcon,
+  'wish-book': wishBookIcon,
+  'check-light': checkLightIcon,
+  'expert-tip': expertTipIcon,
+  'drag-handle': dragHandleIcon,
+  'minus-circle': minusCircleIcon,
 
   // 宝宝档案页图标
   'edit': editIcon,

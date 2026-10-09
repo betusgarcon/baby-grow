@@ -53,6 +53,17 @@ module.exports = {
         background: '#fff8f1',
         'secondary-container': '#fed5b9',
         'surface-container-high': '#eee7df',
+        // 心愿清单各卡片的图标圆底配色。五种心愿各有识别色，
+        // 按 analysis.* 的先例收成一组命名空间，页面里不写死色值。
+        wish: {
+          swim: '#9DB4BC',
+          museum: '#D08F6A',
+          trails: '#CFE0BC',
+          books: '#8AA0A8',
+          climbing: '#D9925C',
+          // 勾选项的圆底：比 swim 更深的青灰，承载白色对勾
+          active: '#4E6A72',
+        },
         analysis: {
           'text-primary': '#2E2822',
           'text-secondary': '#6F6760',
