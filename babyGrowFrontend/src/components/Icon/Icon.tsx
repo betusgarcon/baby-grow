@@ -103,6 +103,13 @@ import expertTipIcon from '@/assets/icons/expert_tip_icon.svg'
 import dragHandleIcon from '@/assets/icons/drag_handle_icon.svg'
 import minusCircleIcon from '@/assets/icons/minus_circle_icon.svg'
 
+// 记录弹层图标
+import closeIcon from '@/assets/icons/close_icon.svg'
+import micIcon from '@/assets/icons/mic_icon.svg'
+import checkCircleIcon from '@/assets/icons/check_circle_icon.svg'
+import saveTimelineIcon from '@/assets/icons/save_timeline_icon.svg'
+import pencilTealIcon from '@/assets/icons/pencil_teal_icon.svg'
+
 // 宝宝档案页图标（原先散在 figma_demo/images 下，随页面正式化一并归位）
 import editIcon from '@/assets/icons/icon-edit.svg'
 import pencilMutedIcon from '@/assets/icons/pencil_muted_icon.svg'
@@ -216,6 +223,11 @@ const iconMap: Record<string, string> = {
   'metric-height': metricHeightIcon,
   'trend-up': trendUpIcon,
   'sparkle-light': sparkleLightIcon,
+  'close': closeIcon,
+  'mic': micIcon,
+  'check-circle': checkCircleIcon,
+  'save-timeline': saveTimelineIcon,
+  'pencil-teal': pencilTealIcon,
 
   // 心愿清单页图标
   'wish-swim': wishSwimIcon,

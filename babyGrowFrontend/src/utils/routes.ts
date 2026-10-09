@@ -15,7 +15,7 @@ import Taro from '@tarojs/taro'
  *   journey-calendar-select / wishes-museum-edit / wishes-number-edit / family-invite-token）：
  *   它们是同一个页面的状态变体，由页面内部的状态模型渲染，不单独占路由。
  * - 记录流程（record-center / record-text / record-photo / record-photo-text / record-text-ai）：
- *   Figma 里是一组弹层（分组 922:555），以浮层组件实现，见 openRecordSheet。
+ *   Figma 里是一组弹层（分组 922:555），以浮层组件实现，见 components/RecordSheet。
  */
 export type RouteId =
   // Journey 时光旅程
@@ -84,7 +84,7 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'data-mood': '/pages/analysis/mood/index',
 }
 
-/** 底部 TabBar 的四个常规 tab 落点。中间加号按钮走 openRecordSheet。 */
+/** 底部 TabBar 的四个常规 tab 落点。中间加号按钮不经过这里，由 BottomTabBar 自己打开记录弹层。 */
 export const tabRouteMap: Record<string, RouteId> = {
   journey: 'journey-home',
   analysis: 'data-growth',
@@ -119,11 +119,6 @@ export const switchTabRoute = (id: RouteId) => {
   }
 
   Taro.redirectTo({ url })
-}
-
-/** 打开记录弹层（Figma 分组 922:555）。批次 3 实现。 */
-export const openRecordSheet = () => {
-  Taro.showToast({ title: '记录入口待开发', icon: 'none' })
 }
 
 /** 返回上一页。栈内无上一页时（如从 tab 直达）退到旅程首页。 */

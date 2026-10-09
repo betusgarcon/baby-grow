@@ -6,9 +6,10 @@ import PageHeader from '@/components/PageHeader'
 import BottomTabBar from '@/components/BottomTabBar'
 import EmptyState from '@/components/EmptyState'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
+import RecordSheet from '@/components/RecordSheet'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
-import { navigateToRoute, openRecordSheet } from '@/utils/routes'
+import { navigateToRoute } from '@/utils/routes'
 import type { SectionState } from '@/types/common'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
 import WishCard from './components/WishCard'
@@ -17,6 +18,7 @@ import { wishes as initialWishes, wishesEmptyCopy, wishesIntro, type Wish } from
 export default function WishesListPage() {
   const [wishes, setWishes] = useState<Wish[]>([])
   const [state, setState] = useState<SectionState>('loading')
+  const [recordOpen, setRecordOpen] = useState(false)
 
   useEffect(() => {
     // 后端未实现，用一次短延时顶替接口请求，好让加载态是真实可达的状态
@@ -105,10 +107,17 @@ export default function WishesListPage() {
             title={wishesEmptyCopy.title}
             description={wishesEmptyCopy.description}
             actionText="去记录一条"
-            onAction={openRecordSheet}
+            onAction={() => setRecordOpen(true)}
           />
         ) : null}
       </View>
+
+      {/* 记录弹层由页面自己持有；接上后会回调刷新列表 */}
+      <RecordSheet
+        visible={recordOpen}
+        onClose={() => setRecordOpen(false)}
+        onSaved={() => setRecordOpen(false)}
+      />
     </PageContainer>
   )
 }
