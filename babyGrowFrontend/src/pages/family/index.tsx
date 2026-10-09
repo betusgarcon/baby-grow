@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import BottomTabBar from '@/components/BottomTabBar'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
@@ -11,12 +12,16 @@ import babyAvatar from '@/assets/images/baby-journey-img.png'
 import highlightImage from '@/assets/images/first-smile-img.png'
 import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
-import { useAppState, setMemberRole, removeMember } from '@/store'
+import { useAppState, loadMembers, setMemberRole, removeMember } from '@/store'
 import { babyAgeLabel, shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
   // 成员来自 store：改权限、移出成员在离开页面后依然生效
-  const { members } = useAppState()
+  const { members, status } = useAppState()
+
+  useEffect(() => {
+    loadMembers()
+  }, [])
 
   /** 正在设置权限的成员；为 null 时弹层不显示 */
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
@@ -76,15 +81,17 @@ export default function FamilyHomePage() {
           </View>
         </View>
 
-        <View className="w-full box-border px-4 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col">
-          {members.map((member, index) => (
-            <View key={member.id} className="flex flex-col">
-              {index > 0 ? <View className="w-full h-px bg-analysis-divider" /> : null}
+        <AsyncSection status={status.members} onRetry={loadMembers} skeletonBlocks={1} skeletonHeight={240}>
+          <View className="w-full box-border px-4 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col">
+            {members.map((member, index) => (
+              <View key={member.id} className="flex flex-col">
+                {index > 0 ? <View className="w-full h-px bg-analysis-divider" /> : null}
 
-              <MemberRow member={member} onMore={() => openPermission(member)} />
-            </View>
-          ))}
-        </View>
+                <MemberRow member={member} onMore={() => openPermission(member)} />
+              </View>
+            ))}
+          </View>
+        </AsyncSection>
 
         <View className="flex items-center justify-between">
           <Text className="text-xl font-bold text-on-surface">What to Share?</Text>

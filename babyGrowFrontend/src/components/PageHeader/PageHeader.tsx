@@ -16,6 +16,8 @@ interface PageHeaderProps {
    * 这套样式原先只写死在分析模块里，现在收敛到这里供全站复用。
    */
   profile?: { avatar: string; ageLabel: string }
+  /** 点头像的去向。多数页面是进宝宝画像 */
+  onProfilePress?: () => void
   /**
    * 标题对齐。默认居中；个别页面需要紧挨返回键的左对齐标题时才传 start。
    */
@@ -36,6 +38,7 @@ export default function PageHeader({
   title,
   showBack = false,
   profile,
+  onProfilePress,
   titleAlign = 'center',
   subtitle,
   leading,
@@ -52,7 +55,9 @@ export default function PageHeader({
   )
 
   const profileAvatar = profile ? (
-    <ProfileAvatar avatar={profile.avatar} ageLabel={profile.ageLabel} />
+    <View onClick={onProfilePress}>
+      <ProfileAvatar avatar={profile.avatar} ageLabel={profile.ageLabel} />
+    </View>
   ) : null
 
   return (

@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import BottomTabBar from '@/components/BottomTabBar'
 import Icon from '@/components/Icon'
@@ -7,37 +7,23 @@ import WeeklyInsight from './components/WeeklyInsight'
 import MilestoneCard from './components/MilestoneCard'
 import JourneyLog from './components/JourneyLog'
 import MenuCard from './components/MenuCard'
-import Taro from '@tarojs/taro'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
 import { relativeLabelOf } from '@/store/timeline'
-import { milestoneList } from './milestones/milestoneData'
+import { useAppState, loadTimeline, loadMilestones } from '@/store'
+import PageHeader from '@/components/PageHeader'
+import EmptyState from '@/components/EmptyState'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
+import RecordSheet from '@/components/RecordSheet'
 import firstSmileImg from '@/assets/images/first-smile-img.png'
 import babyJourneyImg from '@/assets/images/baby-journey-img.png'
 
-const mockJourneyLogs = [
-  {
-    id: 1,
-    type: 'feeding',
-    title: 'Feeding',
-    time: '10:30 AM',
-    description: 'Formula - 120ml. Seemed very content afterwards.',
-    icon: 'fork_knife',
-    bgColor: 'bg-stone-100',
-    iconColor: 'text-stone-600',
-  },
-  {
-    id: 2,
-    type: 'sleep',
-    title: 'Nap Time',
-    time: '8:15 AM - 9:45 AM',
-    description: '',
-    icon: 'moon',
-    bgColor: 'bg-orange-100',
-    iconColor: 'text-orange-700',
-    tags: ['Deep Sleep', '1h 30m'],
-  },
-]
+/** 时间线条目的类型 → 首页 JourneyLog 用的图标 */
+const LOG_ICON: Record<string, string> = {
+  memory: 'calendar',
+  feeding: 'fork_knife',
+  sleep: 'moon',
+}
 
 const mockMenus = [
   {
@@ -67,71 +53,35 @@ const mockMenus = [
 ]
 
 export default function Journey() {
-  const [navInfo, setNavInfo] = useState({
-    statusBarHeight: 44,
-    navBarHeight: 44,
-    totalHeight: 88,
-    capsuleRight: 96
-  })
+  // Latest Journey 与 Recent Milestones 都读 store，首页不再另写一套数据
+  const { timeline, milestones, status } = useAppState()
+  const [recordOpen, setRecordOpen] = useState(false)
 
   useEffect(() => {
-    try {
-      const sysInfo = Taro.getSystemInfoSync()
-      const menuButton = Taro.getMenuButtonBoundingClientRect()
-      
-      const statusBarHeight = sysInfo.statusBarHeight || 44
-      const navBarHeight = (menuButton.top - statusBarHeight) * 2 + menuButton.height
-      
-      setNavInfo({
-        statusBarHeight,
-        navBarHeight,
-        totalHeight: statusBarHeight + navBarHeight,
-        capsuleRight: sysInfo.windowWidth - menuButton.left + 16 
-      })
-    } catch (error) {
-      console.error('获取系统顶部高度失败', error)
-    }
+    loadTimeline()
+    loadMilestones()
   }, [])
+
+  const recentLogs = timeline.slice(0, 2)
 
   return (
     // 1. 根容器：锁死屏幕 100% 高度 + overflow-hidden，彻底禁止整页回弹和滚动
     <View className="w-screen h-screen bg-white overflow-hidden flex flex-col relative">
       
-      {/* 2. 顶部 Header：不需要 fixed，作为 Flex 顶层自然不参与滚动 */}
-      <View 
-        className="w-full bg-orange-50/80 backdrop-blur-md shadow-sm shrink-0 z-20 box-border"
-        style={{ paddingTop: `${navInfo.statusBarHeight}px` }}
-      >
-        <View 
-          className="w-full px-5 flex justify-between items-center relative box-border"
-          style={{ 
-            height: `${navInfo.navBarHeight}px`,
-            paddingRight: `${navInfo.capsuleRight}px` 
-          }}
-        >
+      {/* 2. 顶部 Header：改走公共 PageHeader，不再自己量一遍系统信息 */}
+      <PageHeader
+        title="Journey"
+        profile={{ avatar: babyJourneyImg, ageLabel: '6M' }}
+        onProfilePress={() => navigateToRoute('baby-profile-view')}
+        right={
           <View
-            className="flex items-center gap-2"
-            onClick={() => navigateToRoute('baby-profile-view')}
-          >
-            <Image 
-              className="w-10 h-10 rounded-full shadow-sm object-cover" 
-              src={babyJourneyImg}
-            />
-            <Text className="px-2 py-0.5 bg-orange-200 rounded-full text-stone-600 text-base font-bold">6M</Text>
-          </View>
-          
-          <Text className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-stone-600 text-xl font-bold">
-            Journey
-          </Text>
-
-          <View
-            className="flex items-center justify-center p-2 text-stone-600"
+            className="w-9 h-9 flex items-center justify-center text-stone-600"
             onClick={() => navigateToRoute('journey-calendar')}
           >
             <Icon name="calendar" className="w-5 h-5" />
           </View>
-        </View>
-      </View>
+        }
+      />
 
       {/* 3. 中间可滚动区域：ScrollView 撑满剩余高度 (flex-1 h-0) */}
       <ScrollView 
@@ -170,7 +120,7 @@ export default function Journey() {
             </View>
             <View className="w-full flex justify-between items-center gap-3">
               {/* 用里程碑页的同一份数据，避免首页与里程碑页各写一套对不上 */}
-              {milestoneList.slice(0, 3).map((milestone) => (
+              {milestones.slice(0, 3).map((milestone) => (
                 <MilestoneCard
                   key={milestone.id}
                   title={milestone.title}
@@ -192,14 +142,35 @@ export default function Journey() {
                 More
               </Text>
             </View>
-            <View className="bg-stone-50/80 rounded-[24px] p-4 flex flex-col gap-4">
-              {mockJourneyLogs.map((log) => (
-                <JourneyLog 
-                  key={log.id}
-                  {...log}
+            {recentLogs.length > 0 ? (
+              <View className="bg-stone-50/80 rounded-[24px] p-4 flex flex-col gap-4">
+                {recentLogs.map((entry) => (
+                  <JourneyLog
+                    key={entry.id}
+                    title={entry.title}
+                    time={entry.time}
+                    description={entry.description}
+                    icon={LOG_ICON[entry.type]}
+                    bgColor="bg-stone-100"
+                    iconColor="text-stone-600"
+                    tags={[entry.badge]}
+                  />
+                ))}
+              </View>
+            ) : status.timeline === 'ready' ? (
+              // 首次使用还没有任何记录时的空态
+              <View className="bg-stone-50/80 rounded-[24px]">
+                <EmptyState
+                  icon="star"
+                  title="还没有成长记录"
+                  description="记录下今天的第一件小事，时间线就会从这里铺开。"
+                  actionText="去记录一条"
+                  onAction={() => setRecordOpen(true)}
                 />
-              ))}
-            </View>
+              </View>
+            ) : (
+              <LoadingSkeleton blocks={1} blockHeight={96} />
+            )}
           </View>
 
           {/* Today's Menu */}
@@ -222,6 +193,12 @@ export default function Journey() {
         <BottomTabBar activeKey="journey" onTabChange={handleBottomTabNavigation} />
       </View>
 
+      {/* 空态的「去记录一条」要能真的拉起记录弹层，所以首页自己持有一个 */}
+      <RecordSheet
+        visible={recordOpen}
+        onClose={() => setRecordOpen(false)}
+        onSaved={() => setRecordOpen(false)}
+      />
     </View>
   )
 }

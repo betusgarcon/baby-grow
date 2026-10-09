@@ -1,15 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { View, Text, Picker } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
+import { useAppState, loadCalendarEvents } from '@/store'
 import CalendarGrid from './components/CalendarGrid'
 import HighlightCard from './components/HighlightCard'
 import {
   buildMonthGrid,
-  calendarEvents,
   eventsForDate,
   formatDayHeading,
   formatMonthLabel,
@@ -27,7 +28,13 @@ const INITIAL_DATE = toIsoDate(INITIAL_YEAR, INITIAL_MONTH, TODAY.getDate())
 export default function JourneyCalendarPage() {
   const [year, setYear] = useState(INITIAL_YEAR)
   const [month, setMonth] = useState(INITIAL_MONTH)
+  // 事件来自 store：与首页的成长记录同一数据源
+  const { calendarEvents, status } = useAppState()
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE)
+
+  useEffect(() => {
+    loadCalendarEvents()
+  }, [])
 
   const cells = useMemo(
     () => buildMonthGrid(year, month, selectedDate, calendarEvents),
@@ -54,6 +61,7 @@ export default function JourneyCalendarPage() {
       background="bg-surface-container-lowest"
       header={<PageHeader showBack title="日历" />}
     >
+      <AsyncSection status={status.calendar} onRetry={loadCalendarEvents} skeletonBlocks={2} skeletonHeight={200}>
       <View className="flex flex-col gap-6">
         {/* 月份控件：左右箭头各换一个月，中间文字点开年月选择器。
             箭头不能放进 Picker 内部，否则点箭头会连带把选择器一起弹出来。 */}
@@ -113,6 +121,7 @@ export default function JourneyCalendarPage() {
           )}
         </View>
       </View>
+      </AsyncSection>
     </PageContainer>
   )
 }

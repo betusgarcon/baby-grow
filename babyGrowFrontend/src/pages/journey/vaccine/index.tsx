@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Taro, { useShareAppMessage } from '@tarojs/taro'
 import { View, Text, Image, Input, Button } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateBack, navigateToRoute } from '@/utils/routes'
-import { useAppState, updateVaccine, removeVaccine } from '@/store'
+import { useAppState, loadVaccine, updateVaccine, removeVaccine } from '@/store'
 import type { VaccineDetail } from '@/store/vaccine'
 import EventInfoRow from './components/EventInfoRow'
 import EventSectionCard from './components/EventSectionCard'
@@ -25,15 +26,30 @@ const EDIT_FIELDS: Array<{ key: EditableKey; label: string }> = [
 ]
 
 export default function JourneyVaccinePage() {
-  const { vaccine: detail } = useAppState()
+  const { vaccine: detail, status } = useAppState()
 
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState<Partial<VaccineDetail>>({})
+
+  useEffect(() => {
+    loadVaccine()
+  }, [])
 
   useShareAppMessage(() => ({
     title: detail?.title ?? 'Event Details',
     path: '/pages/journey/vaccine/index',
   }))
+
+  // 还没加载完（或加载失败）时先给骨架屏 / 重试，不要误报成「记录已删除」
+  if (status.vaccine !== 'ready') {
+    return (
+      <PageContainer header={<PageHeader showBack title="Event Details" />}>
+        <AsyncSection status={status.vaccine} onRetry={loadVaccine} skeletonBlocks={3} skeletonHeight={120}>
+          <View />
+        </AsyncSection>
+      </PageContainer>
+    )
+  }
 
   // 记录被删除后停在这里没有意义，给空态和回退入口
   if (!detail) {

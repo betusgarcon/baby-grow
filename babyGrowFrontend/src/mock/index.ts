@@ -11,6 +11,15 @@ import { growthMockRoutes } from './growth'
 import { journeyMockRoutes } from './journey'
 import { moodMockRoutes } from './mood'
 import { sleepMockRoutes } from './sleep'
+import { timelineMockRoutes } from './timeline'
+import { familyMockRoutes } from './family'
+import { wishesMockRoutes } from './wishes'
+import { profileMockRoutes } from './profile'
+import { vaccineMockRoutes } from './vaccine'
+import { milestonesMockRoutes } from './milestones'
+import { calendarMockRoutes } from './calendar'
+import { weeklyInsightMockRoutes } from './weeklyInsight'
+import { memoriesMockRoutes } from './memories'
 
 /**
  * 初始化所有 Mock 路由
@@ -25,6 +34,15 @@ export function initMockRoutes() {
     ...moodMockRoutes,
     ...journeyMockRoutes,
     ...aiMockRoutes,
+    ...timelineMockRoutes,
+    ...familyMockRoutes,
+    ...wishesMockRoutes,
+    ...profileMockRoutes,
+    ...vaccineMockRoutes,
+    ...milestonesMockRoutes,
+    ...calendarMockRoutes,
+    ...weeklyInsightMockRoutes,
+    ...memoriesMockRoutes,
   ]
 
   allRoutes.forEach(({ path, handler }) => {

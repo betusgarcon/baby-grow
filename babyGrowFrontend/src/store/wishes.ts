@@ -1,5 +1,3 @@
-import type { RouteId } from '@/utils/routes'
-
 /**
  * 心愿清单的视图数据。
  *
@@ -43,8 +41,8 @@ export interface Wish {
   unitLabel: string
   /** 勾选式详情里清单区的小标题，如 Museum Checklist */
   checklistTitle?: string
-  /** 点击卡片去向 */
-  route: RouteId
+  /** 点击卡片去向。存具体页面路径而不是路由 id，新建的心愿也能动态生成 */
+  path: string
   kind: WishKind
   /** 详情 hero 上的小标签，如 Growth Wish */
   badge?: string
@@ -84,7 +82,7 @@ export const wishes: Wish[] = [
     goal: 4,
     unitLabel: 'Strokes',
     checklistTitle: 'Swimming Checklist',
-    route: 'wishes-swim',
+    path: '/pages/wishes/detail/index?wish=swim',
     kind: 'checklist',
     checklist: [
       { id: 'freestyle', title: 'Freestyle', note: 'Achieved 2 days ago', done: true },
@@ -105,7 +103,7 @@ export const wishes: Wish[] = [
     goal: 10,
     unitLabel: 'Museums',
     checklistTitle: 'Museum Checklist',
-    route: 'wishes-museum',
+    path: '/pages/wishes/detail/index?wish=museum',
     kind: 'checklist',
     checklist: [
       { id: 'natural-history', title: 'Natural History Museum', note: 'Visited on May 12', done: true },
@@ -137,7 +135,7 @@ export const wishes: Wish[] = [
     goal: 3,
     unitLabel: 'Trails',
     checklistTitle: 'Trail Checklist',
-    route: 'wishes-trails',
+    path: '/pages/wishes/detail/index?wish=trails',
     kind: 'checklist',
     checklist: [
       { id: 'riverside', title: 'Riverside Loop', note: 'Walked on May 30', done: true },
@@ -156,7 +154,7 @@ export const wishes: Wish[] = [
     detailSubtitle: 'Building a lifelong love for reading and stories.',
     goal: 100,
     unitLabel: 'Books',
-    route: 'wishes-number',
+    path: '/pages/wishes/counter/index?wish=books',
     kind: 'counter',
     badge: 'Growth Wish',
     counter: { current: 34, target: 100, unit: 'Book' },
@@ -173,7 +171,7 @@ export const wishes: Wish[] = [
     goal: 5,
     unitLabel: 'Levels',
     checklistTitle: 'Climbing Checklist',
-    route: 'wishes-climbing',
+    path: '/pages/wishes/detail/index?wish=climbing',
     kind: 'checklist',
     checklist: [
       { id: 'level-1', title: 'Level 1 · Low Wall', note: 'Cleared on June 18', done: true },

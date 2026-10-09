@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
 import { View, Text, Input, MovableArea, MovableView } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
@@ -10,7 +11,7 @@ import { moveItem, useReorderSlot } from '@/hooks/useReorderSlot'
 import ProgressBar from '../components/ProgressBar'
 import ChecklistItem from '../components/ChecklistItem'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishChecklist } from '@/store'
+import { useAppState, setWishChecklist, loadWishes } from '@/store'
 import type { WishChecklistItem } from '@/store/wishes'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
@@ -19,9 +20,13 @@ const ITEM_GAP = 12
 export default function WishChecklistDetailPage() {
   const router = useRouter()
   // 心愿来自 store：勾选、增删、排序离开页面后依然生效
-  const { wishes } = useAppState()
+  const { wishes, status } = useAppState()
   const wish = wishes.find((item) => item.id === router.params.wish)
   const items = wish?.checklist ?? []
+
+  useEffect(() => {
+    loadWishes()
+  }, [])
 
   const [mode, setMode] = useState<'view' | 'edit'>(
     router.params.mode === 'edit' ? 'edit' : 'view',
@@ -52,17 +57,20 @@ export default function WishChecklistDetailPage() {
     isManaging,
   )
 
-  // hooks 必须先于任何提前 return 调用，所以找不到心愿的判断放在这之后
+  // hooks 必须先于任何提前 return 调用，所以「找不到心愿」的判断放在这之后
   if (!wish) {
     return (
       <PageContainer header={<PageHeader showBack title="Wishes" />}>
-        <EmptyState
-          icon="star"
-          title="找不到这个心愿"
-          description="链接里的心愿可能已被删除。"
-          actionText="回到心愿清单"
-          onAction={() => navigateToRoute('wishes-list')}
-        />
+        {/* 可能还在加载、可能加载失败、也可能真的不存在，交给 AsyncSection 区分 */}
+        <AsyncSection status={status.wishes} onRetry={loadWishes}>
+          <EmptyState
+            icon="star"
+            title="找不到这个心愿"
+            description="链接里的心愿可能已被删除。"
+            actionText="回到心愿清单"
+            onAction={() => navigateToRoute('wishes-list')}
+          />
+        </AsyncSection>
       </PageContainer>
     )
   }

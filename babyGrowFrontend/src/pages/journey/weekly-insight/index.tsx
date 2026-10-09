@@ -3,19 +3,22 @@ import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro'
 import { View, Text, Button } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import Icon from '@/components/Icon'
+import { useAppState, loadWeeklyInsight } from '@/store'
 import MetricCard from './components/MetricCard'
 import SleepConsistencyCard from './components/SleepConsistencyCard'
 import HighlightCard from './components/HighlightCard'
-import { weeklyInsight } from './weeklyInsightData'
 
 export default function JourneyWeeklyInsightPage() {
-  const data = weeklyInsight
+  const { weeklyInsight: data, status } = useAppState()
 
   // 右上角菜单里同时放出「发送给朋友」和「分享到朋友圈」。
   // 当前 Taro 版本的 showShareMenu 类型里没有 menus 字段，但小程序基础库支持，
   // 所以先落到变量上再断言，绕开对象字面量的多余属性检查。
   useEffect(() => {
+    loadWeeklyInsight()
+
     const shareMenuOptions = {
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
@@ -25,12 +28,12 @@ export default function JourneyWeeklyInsightPage() {
   }, [])
 
   useShareAppMessage(() => ({
-    title: `Leo 的每周小记 · ${data.rangeLabel}`,
+    title: `Leo 的每周小记 · ${data?.rangeLabel ?? ''}`,
     path: '/pages/journey/weekly-insight/index',
   }))
 
   useShareTimeline(() => ({
-    title: `Leo 的每周小记 · ${data.rangeLabel}`,
+    title: `Leo 的每周小记 · ${data?.rangeLabel ?? ''}`,
   }))
 
   return (
@@ -40,6 +43,8 @@ export default function JourneyWeeklyInsightPage() {
         <PageHeader showBack title="Weekly Insights" />
       }
     >
+      <AsyncSection status={status.weeklyInsight} onRetry={loadWeeklyInsight} skeletonBlocks={3} skeletonHeight={140}>
+      {data ? (
       <View className="flex flex-col gap-6">
         {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色 */}
         <Text className="text-2xl font-bold text-secondary">{data.rangeLabel}</Text>
@@ -93,6 +98,8 @@ export default function JourneyWeeklyInsightPage() {
           <Icon name="event-share" className="w-5 h-5" />
         </Button>
       </View>
+      ) : null}
+      </AsyncSection>
     </PageContainer>
   )
 }

@@ -1,21 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import PrimaryButton from '@/components/PrimaryButton'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishCounter } from '@/store'
+import { useAppState, setWishCounter, loadWishes } from '@/store'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
   // 心愿来自 store：加减之后离开页面再回来依然是加减后的数字
-  const { wishes } = useAppState()
+  const { wishes, status } = useAppState()
   const wish = wishes.find((item) => item.id === router.params.wish)
+
+  useEffect(() => {
+    loadWishes()
+  }, [])
 
   const [mode, setMode] = useState<'view' | 'edit'>(
     router.params.mode === 'edit' ? 'edit' : 'view',
@@ -26,13 +31,16 @@ export default function WishCounterDetailPage() {
   if (!wish || !wish.counter) {
     return (
       <PageContainer header={<PageHeader showBack title="Wishes" />}>
-        <EmptyState
-          icon="star"
-          title="找不到这个心愿"
-          description="链接里的心愿可能已被删除。"
-          actionText="回到心愿清单"
-          onAction={() => navigateToRoute('wishes-list')}
-        />
+        {/* 可能还在加载、可能加载失败、也可能真的不存在 */}
+        <AsyncSection status={status.wishes} onRetry={loadWishes}>
+          <EmptyState
+            icon="star"
+            title="找不到这个心愿"
+            description="链接里的心愿可能已被删除。"
+            actionText="回到心愿清单"
+            onAction={() => navigateToRoute('wishes-list')}
+          />
+        </AsyncSection>
       </PageContainer>
     )
   }

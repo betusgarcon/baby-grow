@@ -8,7 +8,8 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProfileInfoCard from './components/ProfileInfoCard'
 import PreferenceCard from './components/PreferenceCard'
-import { useAppState, setProfileInfoValue, setProfilePreferences, restoreProfile } from '@/store'
+import { useAppState, loadProfile, setProfileInfoValue, setProfilePreferences, restoreProfile } from '@/store'
+import AsyncSection from '@/components/AsyncSection'
 import type { ProfileState } from '@/store'
 import {
   babyProfile,
@@ -40,8 +41,12 @@ export default function BabyProfilePage() {
   )
 
   // 画像来自 store：改动在离开页面后依然生效
-  const { profile } = useAppState()
+  const { profile, status } = useAppState()
   const { name, birthday, info, preferences } = profile
+
+  useEffect(() => {
+    loadProfile()
+  }, [])
 
   /** 进入编辑前存一份快照，Cancel 用它回滚 */
   const [profileSnapshot, setProfileSnapshot] = useState<ProfileState | null>(null)
@@ -160,7 +165,8 @@ export default function BabyProfilePage() {
 
   return (
     <PageContainer header={<PageHeader showBack title="宝宝画像" />}>
-      <View className="flex flex-col gap-4">
+      <AsyncSection status={status.profile} onRetry={loadProfile} skeletonBlocks={4} skeletonHeight={96}>
+        <View className="flex flex-col gap-4">
         <View className="flex flex-col items-center gap-3">
           {/* 编辑按钮叠在头像右下角。局部图标覆盖是项目允许用 absolute 的场景之一 */}
           <View className="relative w-28 h-28">
@@ -308,7 +314,8 @@ export default function BabyProfilePage() {
             </View>
           </View>
         ) : null}
-      </View>
+        </View>
+      </AsyncSection>
     </PageContainer>
   )
 }

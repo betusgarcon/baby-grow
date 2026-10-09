@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
@@ -8,7 +8,8 @@ import Icon from '@/components/Icon'
 import type { SectionState } from '@/types/common'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
-import { useAppState } from '@/store'
+import { useAppState, loadTimeline } from '@/store'
+import AsyncSection from '@/components/AsyncSection'
 import { defaultMonth, groupTimelineByDate, type EventFilterKey } from '@/store/timeline'
 
 const PAGE_BACKGROUND = 'bg-surface-container-lowest'
@@ -25,7 +26,11 @@ export default function JourneyListPage() {
   const [activeFilter, setActiveFilter] = useState<EventFilterKey>('all')
 
   // 时间线来自 store：记录弹层保存的新条目会立刻出现在这里
-  const { timeline } = useAppState()
+  const { timeline, status } = useAppState()
+
+  useEffect(() => {
+    loadTimeline()
+  }, [])
 
   const visibleGroups = useMemo(() => {
     const filtered =
@@ -52,6 +57,12 @@ export default function JourneyListPage() {
           onFilterChange={setActiveFilter}
         />
 
+        <AsyncSection
+          status={status.timeline}
+          onRetry={loadTimeline}
+          skeletonBlocks={2}
+          skeletonHeight={160}
+        >
         {state === 'content' ? (
           <View className="relative flex flex-col">
             {/* 时间线竖线。这是项目允许用 absolute 的场景之一（连线），
@@ -99,6 +110,7 @@ export default function JourneyListPage() {
             </View>
           </View>
         ) : null}
+        </AsyncSection>
       </View>
     </PageContainer>
   )

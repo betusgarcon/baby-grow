@@ -1,47 +1,46 @@
 import { useEffect, useMemo, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
+import { View, Text, Input } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
-import LoadingSkeleton from '@/components/LoadingSkeleton'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
-import type { SectionState } from '@/types/common'
+import { useAppState, loadMemories } from '@/store'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
-import {
-  TONE_CLASS,
-  defaultFilters,
-  memoryItems,
-  type FilterKey,
-  type MemoryItem,
-} from './memoriesData'
+import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './memoriesData'
 
 export default function FamilyMemoriesPage() {
-  const [state, setState] = useState<SectionState>('loading')
+  // 记忆来自 store，加载状态也由它给
+  const { memories, status } = useAppState()
   const [selected, setSelected] = useState<string[]>([])
   /** 已生效的筛选条件；草稿在面板里改，Apply 才落到这里 */
   const [filters, setFilters] = useState<Record<FilterKey, string>>(defaultFilters)
   const [draftFilters, setDraftFilters] = useState<Record<FilterKey, string>>(defaultFilters)
   const [filterOpen, setFilterOpen] = useState(false)
+  /** 关键词搜索。此前入口是个放大镜、但页面上只有筛选、没有文本输入 */
+  const [keyword, setKeyword] = useState('')
 
   useEffect(() => {
-    // 后端未实现，用短延时顶替接口请求，让加载态是真实可达的状态
-    const timer = setTimeout(() => setState('content'), 400)
-
-    return () => clearTimeout(timer)
+    loadMemories()
   }, [])
 
-  const visibleItems = useMemo(
-    () =>
-      memoryItems.filter((item) => {
-        if (filters.category && !item.tags.includes(filters.category)) return false
-        if (filters.media && item.media !== filters.media) return false
+  const visibleItems = useMemo(() => {
+    const query = keyword.trim().toLowerCase()
 
-        return true
-      }),
-    [filters],
-  )
+    return memories.filter((item) => {
+      if (filters.category && !item.tags.includes(filters.category)) return false
+      if (filters.media && item.media !== filters.media) return false
+
+      if (query) {
+        const haystack = `${item.title} ${item.category} ${item.tags.join(' ')}`.toLowerCase()
+        if (!haystack.includes(query)) return false
+      }
+
+      return true
+    })
+  }, [memories, filters, keyword])
 
   const toggleSelect = (id: string) => {
     setSelected((previous) =>
@@ -136,15 +135,23 @@ export default function FamilyMemoriesPage() {
       }
     >
       <View className="flex flex-col gap-4">
-        {state === 'loading' ? <LoadingSkeleton blocks={2} blockHeight={200} /> : null}
+        <View className="w-full box-border h-11 px-4 rounded-full bg-surface-container flex items-center gap-2">
+          <Icon name="search" className="w-4 h-4 shrink-0" />
+          <Input
+            className="flex-1 text-base text-on-surface"
+            value={keyword}
+            placeholder="搜索记忆标题或分类…"
+            placeholderClass="text-on-surface-variant"
+            onInput={(event) => setKeyword(event.detail.value)}
+          />
+        </View>
 
-        {state === 'content' && visibleItems.length > 0 ? (
+        <AsyncSection status={status.memories} onRetry={loadMemories} skeletonBlocks={2} skeletonHeight={200}>
+        {visibleItems.length > 0 ? (
           <View className="w-full flex flex-wrap justify-between gap-y-5">
             {visibleItems.map(renderCard)}
           </View>
-        ) : null}
-
-        {state === 'content' && visibleItems.length === 0 ? (
+        ) : (
           <EmptyState
             icon="search"
             title="No memories found"
@@ -155,7 +162,8 @@ export default function FamilyMemoriesPage() {
               setFilterOpen(true)
             }}
           />
-        ) : null}
+        )}
+        </AsyncSection>
       </View>
 
       {filterOpen ? (
