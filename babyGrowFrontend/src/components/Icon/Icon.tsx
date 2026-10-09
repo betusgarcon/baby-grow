@@ -71,6 +71,11 @@ import milestoneSpeakIcon from '@/assets/icons/milestone_speak_icon.svg'
 import milestoneSleepIcon from '@/assets/icons/milestone_sleep_icon.svg'
 import milestoneFoodIcon from '@/assets/icons/milestone_solid_food_icon.svg'
 
+// 时间线标记图标（按记录类型着色，配对应容器色圆底）
+import timelineMemoryIcon from '@/assets/icons/timeline_memory_icon.svg'
+import timelineFeedingIcon from '@/assets/icons/timeline_feeding_icon.svg'
+import timelineSleepIcon from '@/assets/icons/timeline_sleep_icon.svg'
+
 // 2. 建立名称与 SVG 资源的映射字典 (兼容全选中/未选中状态)
 const iconMap: Record<string, string> = {
   // TabBar 图标
@@ -147,6 +152,11 @@ const iconMap: Record<string, string> = {
   'milestone-speak': milestoneSpeakIcon,
   'milestone-sleep': milestoneSleepIcon,
   'milestone-food': milestoneFoodIcon,
+
+  // 时间线标记图标
+  'timeline-memory': timelineMemoryIcon,
+  'timeline-feeding': timelineFeedingIcon,
+  'timeline-sleep': timelineSleepIcon,
 }
 
 interface IconProps {
