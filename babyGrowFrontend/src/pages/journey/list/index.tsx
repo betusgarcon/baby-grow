@@ -8,7 +8,8 @@ import Icon from '@/components/Icon'
 import type { SectionState } from '@/types/common'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
-import { defaultMonth, journeyTimeline, type EventFilterKey } from './journeyListData'
+import { useAppState } from '@/store'
+import { defaultMonth, groupTimelineByDate, type EventFilterKey } from '@/store/timeline'
 
 const PAGE_BACKGROUND = 'bg-surface-container-lowest'
 
@@ -23,16 +24,17 @@ export default function JourneyListPage() {
   const [month, setMonth] = useState(defaultMonth)
   const [activeFilter, setActiveFilter] = useState<EventFilterKey>('all')
 
-  const visibleGroups = useMemo(() => {
-    if (activeFilter === 'all') return journeyTimeline
+  // 时间线来自 store：记录弹层保存的新条目会立刻出现在这里
+  const { timeline } = useAppState()
 
-    return journeyTimeline
-      .map((group) => ({
-        ...group,
-        entries: group.entries.filter((entry) => entry.filterKey === activeFilter),
-      }))
-      .filter((group) => group.entries.length > 0)
-  }, [activeFilter])
+  const visibleGroups = useMemo(() => {
+    const filtered =
+      activeFilter === 'all'
+        ? timeline
+        : timeline.filter((entry) => entry.filterKey === activeFilter)
+
+    return groupTimelineByDate(filtered)
+  }, [timeline, activeFilter])
 
   // 空态由数据条件驱动：筛选后没有记录时是真实的空结果，不是少渲染一点。
   const state: SectionState = visibleGroups.length > 0 ? 'content' : 'empty'
@@ -61,7 +63,7 @@ export default function JourneyListPage() {
 
             <View className="relative flex flex-col">
               {visibleGroups.map((group) => (
-                <View key={group.id} className="flex flex-col">
+                <View key={group.date} className="flex flex-col">
                   <View className="py-2 flex flex-col">
                     <View className="self-start py-2 px-4 rounded-full bg-surface-container-high border border-outline-variant">
                       <Text className="text-caption text-on-surface-variant">{group.label}</Text>

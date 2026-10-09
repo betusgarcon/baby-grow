@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { JourneyEntry, JourneyEntryType } from '../journeyListData'
+import type { JourneyEntry, JourneyEntryType } from '@/store/timeline'
 
 /** 标记圆底与角标的配色，按记录类型区分；都走 token，不写死色值 */
 const TYPE_STYLE: Record<JourneyEntryType, { icon: string; markerClass: string; badgeClass: string }> = {

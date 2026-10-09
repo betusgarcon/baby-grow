@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import { saveRecordToTimeline } from '@/store'
 import RecordInputView from './RecordInputView'
 import RecordResultView from './RecordResultView'
 import {
@@ -70,7 +71,17 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
   }
 
   const save = () => {
-    Taro.showToast({ title: '已保存到时间线（本地）', icon: 'none' })
+    const recognition = resolveRecognition(inputType)
+
+    // 真正写进时间线，而不是只弹一句「已保存」——保存完在旅程时间线上看得到
+    saveRecordToTimeline({
+      title: recognition.title,
+      summary: recognition.summary,
+      text,
+      photo,
+    })
+
+    Taro.showToast({ title: '已保存到时间线', icon: 'none' })
     onSaved?.(inputType)
     onClose()
   }

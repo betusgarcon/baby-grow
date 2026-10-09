@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Picker } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { eventFilters, monthOptions, type EventFilterKey } from '../journeyListData'
+import { eventFilters, monthOptions, type EventFilterKey } from '@/store/timeline'
 
 interface EventFilterCardProps {
   month: string
