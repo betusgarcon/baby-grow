@@ -157,11 +157,13 @@ export default function Journey() {
         showScrollbar={false}
       >
         <View className="w-full px-5 py-6 flex flex-col gap-8 pb-40">
-          <VaccineReminder
-            icon="injection"
-            title="Upcoming: 6-Month Vaccination" 
-            date="Scheduled for Oct 28th." 
-          />
+          <View onClick={() => navigateToRoute('journey-vaccine')}>
+            <VaccineReminder
+              icon="injection"
+              title="Upcoming: 6-Month Vaccination"
+              date="Scheduled for Oct 28th."
+            />
+          </View>
 
           <WeeklyInsight
             icon="star"

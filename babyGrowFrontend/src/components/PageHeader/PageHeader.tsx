@@ -5,10 +5,15 @@ import { navigateBack } from '@/utils/routes'
 import { useNavBarMetrics } from './useNavBarMetrics'
 
 interface PageHeaderProps {
-  /** 居中标题。传了 showBack 时按三等分布局自动居中，不需要绝对定位 */
+  /** 标题。showBack 且 titleAlign 为 center 时按三等分布局自动居中，不需要绝对定位 */
   title?: string
   /** 显示返回键，走 navigateBack（栈内无上一页时退回旅程首页） */
   showBack?: boolean
+  /**
+   * 标题对齐。旅程各页是居中标题，事件详情页是紧挨返回键的左对齐标题，
+   * 设计稿里两种都存在，所以做成选项而不是二选一。
+   */
+  titleAlign?: 'center' | 'start'
   /** 左侧自定义内容，用于首页那类「头像 + 宝宝名」的头部 */
   leading?: ReactNode
   /** 右侧操作区，会自动让开微信胶囊 */
@@ -22,12 +27,19 @@ interface PageHeaderProps {
 export default function PageHeader({
   title,
   showBack = false,
+  titleAlign = 'center',
   leading,
   right,
   below,
   translucent = false,
 }: PageHeaderProps) {
   const { statusBarHeight, navBarHeight, capsuleRight } = useNavBarMetrics()
+
+  const backButton = (
+    <View className="w-9 h-9 -ml-2 shrink-0 flex items-center justify-center" onClick={navigateBack}>
+      <Icon name="back" className="w-5 h-5" />
+    </View>
+  )
 
   return (
     <View
@@ -41,14 +53,10 @@ export default function PageHeader({
         className="w-full px-5 flex items-center box-border"
         style={{ height: `${navBarHeight}px`, paddingRight: `${capsuleRight}px` }}
       >
-        {showBack ? (
+        {showBack && titleAlign === 'center' ? (
           // 左右两个等宽槽位保证标题真正居中，避免用 absolute 摆标题
           <>
-            <View className="w-16 flex items-center">
-              <View className="w-9 h-9 -ml-2 flex items-center justify-center" onClick={navigateBack}>
-                <Icon name="back" className="w-5 h-5" />
-              </View>
-            </View>
+            <View className="w-16 flex items-center">{backButton}</View>
             <Text className="flex-1 text-center text-headline-md font-bold text-secondary truncate">
               {title}
             </Text>
@@ -57,11 +65,10 @@ export default function PageHeader({
         ) : (
           <>
             <View className="flex-1 flex items-center gap-3 min-w-0">
+              {showBack ? backButton : null}
               {leading}
               {title ? (
-                <Text className="text-2xl font-semibold text-on-surface truncate">
-                  {title}
-                </Text>
+                <Text className="text-2xl font-semibold text-on-surface truncate">{title}</Text>
               ) : null}
             </View>
             {right}

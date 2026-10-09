@@ -77,6 +77,17 @@ import timelineMemoryIcon from '@/assets/icons/timeline_memory_icon.svg'
 import timelineFeedingIcon from '@/assets/icons/timeline_feeding_icon.svg'
 import timelineSleepIcon from '@/assets/icons/timeline_sleep_icon.svg'
 
+// 事件详情页图标
+import eventShareIcon from '@/assets/icons/event_share_icon.svg'
+import eventLocationIcon from '@/assets/icons/event_location_icon.svg'
+import eventPersonIcon from '@/assets/icons/event_person_icon.svg'
+import eventMedicalIcon from '@/assets/icons/event_medical_icon.svg'
+import eventRepeatIcon from '@/assets/icons/event_repeat_icon.svg'
+import eventNotesIcon from '@/assets/icons/event_notes_icon.svg'
+import eventAttachmentIcon from '@/assets/icons/event_attachment_icon.svg'
+import eventEditIcon from '@/assets/icons/event_edit_icon.svg'
+import eventDeleteIcon from '@/assets/icons/event_delete_icon.svg'
+
 // 2. 建立名称与 SVG 资源的映射字典 (兼容全选中/未选中状态)
 const iconMap: Record<string, string> = {
   // TabBar 图标
@@ -159,6 +170,17 @@ const iconMap: Record<string, string> = {
   'timeline-memory': timelineMemoryIcon,
   'timeline-feeding': timelineFeedingIcon,
   'timeline-sleep': timelineSleepIcon,
+
+  // 事件详情页图标
+  'event-share': eventShareIcon,
+  'event-location': eventLocationIcon,
+  'event-person': eventPersonIcon,
+  'event-medical': eventMedicalIcon,
+  'event-repeat': eventRepeatIcon,
+  'event-notes': eventNotesIcon,
+  'event-attachment': eventAttachmentIcon,
+  'event-edit': eventEditIcon,
+  'event-delete': eventDeleteIcon,
 }
 
 interface IconProps {
