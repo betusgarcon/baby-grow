@@ -77,15 +77,34 @@ export const currentTimeLabel = () => {
 
 const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
-/** 分组标题：今天 / 昨天 / 具体日期 */
-export const formatDayLabel = (isoDate: string) => {
+const diffDaysFromToday = (isoDate: string) => {
   const [year, month, day] = isoDate.split('-').map(Number)
   const target = startOfDay(new Date(year, month - 1, day))
-  const diffDays = Math.round((startOfDay(new Date()).getTime() - target.getTime()) / 86400000)
-  const formatted = `${MONTH_LABELS[month - 1]} ${day}`
 
-  if (diffDays === 0) return `Today • ${formatted}`
-  if (diffDays === 1) return `Yesterday • ${formatted}`
+  return Math.round((startOfDay(new Date()).getTime() - target.getTime()) / 86400000)
+}
+
+/** 「几天前」这种口语化标签，首页的 Recent Milestones 用 */
+export const relativeLabelOf = (isoDate: string) => {
+  const days = diffDaysFromToday(isoDate)
+
+  if (days <= 0) return 'Today'
+  if (days === 1) return 'Yesterday'
+  if (days < 7) return `${days} days ago`
+  if (days < 14) return '1 week ago'
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
+
+  return `${Math.floor(days / 30)} months ago`
+}
+
+/** 分组标题：今天 / 昨天 / 具体日期 */
+export const formatDayLabel = (isoDate: string) => {
+  const [, month, day] = isoDate.split('-').map(Number)
+  const formatted = `${MONTH_LABELS[month - 1]} ${day}`
+  const days = diffDaysFromToday(isoDate)
+
+  if (days === 0) return `Today • ${formatted}`
+  if (days === 1) return `Yesterday • ${formatted}`
 
   return formatted
 }
@@ -103,10 +122,16 @@ export const groupTimelineByDate = (entries: JourneyEntry[]): TimelineGroup[] =>
     .map(([date, list]) => ({ date, label: formatDayLabel(date), entries: list }))
 }
 
-/** 月份切换的可选项。接入接口后改为按月拉取 */
-export const monthOptions = ['October 2023', 'September 2023', 'August 2023', 'July 2023']
+/** 月份切换的可选项：从当月往前推 4 个月。接入接口后改为按实际记录区间生成 */
+export const monthOptions = Array.from({ length: 4 }, (_, index) => {
+  const date = new Date()
 
-export const defaultMonth = 'October 2023'
+  date.setMonth(date.getMonth() - index)
+
+  return `${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`
+})
+
+export const defaultMonth = monthOptions[0]
 
 /** 初始时间线。记录弹层保存的新条目会追加到这个数组后面 */
 export const initialTimeline: JourneyEntry[] = [

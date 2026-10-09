@@ -10,29 +10,10 @@ import MenuCard from './components/MenuCard'
 import Taro from '@tarojs/taro'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
+import { relativeLabelOf } from '@/store/timeline'
+import { milestoneList } from './milestones/milestoneData'
 import firstSmileImg from '@/assets/images/first-smile-img.png'
 import babyJourneyImg from '@/assets/images/baby-journey-img.png'
-
-const mockMilestones = [
-  {
-    id: 1,
-    title: 'First Smile',
-    date: '2 days ago',
-    image: firstSmileImg,
-  },
-  {
-    id: 2,
-    title: 'Grasping',
-    date: '1 week ago',
-    image: firstSmileImg,
-  },
-  {
-    id: 3,
-    title: 'Rolling Over',
-    date: '3 days ago',
-    image: firstSmileImg,
-  },
-]
 
 const mockJourneyLogs = [
   {
@@ -172,7 +153,7 @@ export default function Journey() {
             <WeeklyInsight
               icon="star"
               title="WEEKLY INSIGHT"
-              content="Emma has been sleeping 15% longer during daytime naps this week."
+              content="Leo 这周白天小睡的时长比上周多了 15%。"
             />
           </View>
 
@@ -188,12 +169,13 @@ export default function Journey() {
               </Text>
             </View>
             <View className="w-full flex justify-between items-center gap-3">
-              {mockMilestones.map((milestone) => (
-                <MilestoneCard 
+              {/* 用里程碑页的同一份数据，避免首页与里程碑页各写一套对不上 */}
+              {milestoneList.slice(0, 3).map((milestone) => (
+                <MilestoneCard
                   key={milestone.id}
                   title={milestone.title}
-                  date={milestone.date}
-                  image={milestone.image}
+                  date={relativeLabelOf(milestone.date)}
+                  image={firstSmileImg}
                 />
               ))}
             </View>

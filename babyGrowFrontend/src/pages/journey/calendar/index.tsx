@@ -18,9 +18,11 @@ import {
   yearOptions,
 } from './calendarData'
 
-const INITIAL_YEAR = 2023
-const INITIAL_MONTH = 10
-const INITIAL_DATE = '2023-10-10'
+/** 默认落在当月今天。记录事件的日期也是相对今天生成的，两边才对得上 */
+const TODAY = new Date()
+const INITIAL_YEAR = TODAY.getFullYear()
+const INITIAL_MONTH = TODAY.getMonth() + 1
+const INITIAL_DATE = toIsoDate(INITIAL_YEAR, INITIAL_MONTH, TODAY.getDate())
 
 export default function JourneyCalendarPage() {
   const [year, setYear] = useState(INITIAL_YEAR)

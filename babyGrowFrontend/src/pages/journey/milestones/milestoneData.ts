@@ -5,6 +5,8 @@
  * 页面只依赖下面的类型，不依赖数据来源。
  */
 
+import { daysAgo } from '@/store/timeline'
+
 /** 卡片档位，决定图标圆底与右上角光晕的渐变配色 */
 export type MilestoneTier = 'gold' | 'silver' | 'bronze'
 
@@ -51,7 +53,7 @@ export const milestoneList: Milestone[] = [
     id: 'first-steps',
     title: 'First Steps',
     description: 'Three unassisted steps across the living room rug. Pure joy and a lot of giggles.',
-    date: '2023-10-12',
+    date: daysAgo(2),
     icon: 'milestone-walk',
     tier: 'gold',
     tags: [
@@ -63,7 +65,7 @@ export const milestoneList: Milestone[] = [
     id: 'first-word',
     title: 'First Word',
     description: 'Said "Mama" while pointing at the cat. We\'ll take it as a win!',
-    date: '2023-09-05',
+    date: daysAgo(9),
     icon: 'milestone-speak',
     tier: 'silver',
     tags: [
@@ -75,7 +77,7 @@ export const milestoneList: Milestone[] = [
     id: 'slept-through-night',
     title: 'Slept Through The Night',
     description: 'A full 8 hours of uninterrupted sleep. A milestone for baby and parents alike.',
-    date: '2023-08-20',
+    date: daysAgo(21),
     icon: 'milestone-sleep',
     tier: 'gold',
     tags: [
@@ -87,7 +89,7 @@ export const milestoneList: Milestone[] = [
     id: 'first-solid-food',
     title: 'First Solid Food',
     description: 'Tried mashed sweet potatoes. Mostly ended up on the bib, but seemed to enjoy the taste.',
-    date: '2023-07-10',
+    date: daysAgo(45),
     icon: 'milestone-food',
     tier: 'bronze',
     tags: [

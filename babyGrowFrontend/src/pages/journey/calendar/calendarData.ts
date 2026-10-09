@@ -1,4 +1,5 @@
 import type { RouteId } from '@/utils/routes'
+import { daysAgo } from '@/store/timeline'
 
 /**
  * 日历页的视图数据。
@@ -118,7 +119,7 @@ export const eventsForDate = (events: CalendarEvent[], isoDate: string) =>
 export const calendarEvents: CalendarEvent[] = [
   {
     id: 'vaccine-hepb-oct10',
-    date: '2023-10-10',
+    date: daysAgo(0),
     title: 'Vaccine: HepB',
     subtitle: '10:30 AM • Clinic Visit',
     tone: 'vaccine',
@@ -126,7 +127,7 @@ export const calendarEvents: CalendarEvent[] = [
   },
   {
     id: 'milestone-first-smile-oct10',
-    date: '2023-10-10',
+    date: daysAgo(0),
     title: 'First Smile!',
     subtitle: 'Recorded by Sarah',
     tone: 'milestone',
@@ -134,7 +135,7 @@ export const calendarEvents: CalendarEvent[] = [
   },
   {
     id: 'milestone-first-word-oct02',
-    date: '2023-10-02',
+    date: daysAgo(3),
     title: 'First Word',
     subtitle: 'Recorded by Sarah',
     tone: 'milestone',
@@ -142,7 +143,7 @@ export const calendarEvents: CalendarEvent[] = [
   },
   {
     id: 'vaccine-flu-oct03',
-    date: '2023-10-03',
+    date: daysAgo(3),
     title: 'Flu Shot',
     subtitle: '02:00 PM • Clinic Visit',
     tone: 'vaccine',
@@ -150,7 +151,7 @@ export const calendarEvents: CalendarEvent[] = [
   },
   {
     id: 'milestone-roll-over-oct03',
-    date: '2023-10-03',
+    date: daysAgo(3),
     title: 'Rolling Over',
     subtitle: 'Recorded by Leo',
     tone: 'milestone',
@@ -158,7 +159,7 @@ export const calendarEvents: CalendarEvent[] = [
   },
   {
     id: 'milestone-slept-through-oct09',
-    date: '2023-10-09',
+    date: daysAgo(6),
     title: 'Slept Through The Night',
     subtitle: 'Recorded by Sarah',
     tone: 'milestone',
