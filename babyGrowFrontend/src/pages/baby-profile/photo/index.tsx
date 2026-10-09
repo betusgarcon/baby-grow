@@ -41,7 +41,7 @@ export default function BabyProfilePhotoPage() {
       header={<PageHeader showBack title="修改头像" />}
     >
       <View className="flex flex-col gap-6">
-        <View className="pt-6 flex items-center justify-center">
+        <View className="pt-2 flex items-center justify-center">
           {/* 虚线外圈表示头像可更换；编辑按钮叠在右下角 */}
           <View className="relative w-44 h-44 flex items-center justify-center">
             <View className="absolute inset-0 rounded-full border border-dashed border-outline" />

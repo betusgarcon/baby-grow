@@ -54,7 +54,13 @@ export default function PageHeader({
     >
       <View
         className="w-full px-5 flex items-center box-border"
-        style={{ height: `${navBarHeight}px`, paddingRight: `${capsuleRight}px` }}
+        style={{
+          height: `${navBarHeight}px`,
+          // 只有右侧真有内容时才给微信胶囊让位。
+          // 无条件留白会把整行压窄，居中标题跟着偏左——这正是之前几个页面
+          // 标题看着没居中的原因。
+          paddingRight: right ? `${capsuleRight}px` : undefined,
+        }}
       >
         {showBack && titleAlign === 'center' ? (
           // 左右两个等宽槽位保证标题真正居中，避免用 absolute 摆标题

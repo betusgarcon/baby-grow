@@ -162,9 +162,9 @@ export default function BabyProfilePage() {
   )
 
   return (
-    <PageContainer header={<PageHeader showBack title="宝宝信息" />}>
+    <PageContainer header={<PageHeader showBack title="宝宝画像" />}>
       <View className="flex flex-col gap-4">
-        <View className="pt-4 flex flex-col items-center gap-3">
+        <View className="flex flex-col items-center gap-3">
           {/* 编辑按钮叠在头像右下角。局部图标覆盖是项目允许用 absolute 的场景之一 */}
           <View className="relative w-28 h-28">
             <View className="w-28 h-28 rounded-full border-4 border-surface-container-lowest overflow-hidden bg-surface-container">
@@ -254,8 +254,9 @@ export default function BabyProfilePage() {
           {isManagingPreferences ? (
             draft ? (
               <View className="w-full box-border p-4 rounded-3xl border border-outline-variant flex flex-col gap-3">
+                {/* 输入框给足高度，否则 hint 文字会被上下裁掉 */}
                 <Input
-                  className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                  className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
                   placeholder="偏好名称，如 Bath Time"
                   placeholderClass="text-on-surface-variant"
                   value={draft.label}
@@ -264,7 +265,7 @@ export default function BabyProfilePage() {
                   }
                 />
                 <Input
-                  className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                  className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
                   placeholder="补充说明，可留空"
                   placeholderClass="text-on-surface-variant"
                   value={draft.value}

@@ -113,12 +113,6 @@ export default function JourneyCalendarPage() {
               icon="calendar"
               title="Nothing on this day"
               description="No vaccines or milestones were recorded for the selected date."
-              actionText="Back to Oct 10"
-              onAction={() => {
-                setYear(INITIAL_YEAR)
-                setMonth(INITIAL_MONTH)
-                setSelectedDate(INITIAL_DATE)
-              }}
             />
           )}
         </View>

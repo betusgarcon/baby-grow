@@ -58,8 +58,10 @@ export default function PageContainer({
       {header}
 
       <ScrollView scrollY className="flex-1 h-0 box-border" showScrollbar={false} enhanced>
+        {/* 统一在这里留出与头部的间距。头部是紧贴内容区的，页面各补一次
+            容易漏也容易重复，所以收敛到容器这一层。 */}
         <View
-          className={`px-margin-mobile ${contentClassName}`}
+          className={`px-margin-mobile pt-4 ${contentClassName}`}
           style={{ paddingBottom: `${paddingBottom}px` }}
         >
           {children}

@@ -1,9 +1,9 @@
-import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { useEffect } from 'react'
+import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro'
+import { View, Text, Button } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 import MetricCard from './components/MetricCard'
 import SleepConsistencyCard from './components/SleepConsistencyCard'
 import HighlightCard from './components/HighlightCard'
@@ -12,20 +12,32 @@ import { weeklyInsight } from './weeklyInsightData'
 export default function JourneyWeeklyInsightPage() {
   const data = weeklyInsight
 
+  // 右上角菜单里同时放出「发送给朋友」和「分享到朋友圈」。
+  // 当前 Taro 版本的 showShareMenu 类型里没有 menus 字段，但小程序基础库支持，
+  // 所以先落到变量上再断言，绕开对象字面量的多余属性检查。
+  useEffect(() => {
+    const shareMenuOptions = {
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    }
+
+    Taro.showShareMenu(shareMenuOptions as Parameters<typeof Taro.showShareMenu>[0])
+  }, [])
+
+  useShareAppMessage(() => ({
+    title: `Leo 的每周小记 · ${data.rangeLabel}`,
+    path: '/pages/journey/weekly-insight/index',
+  }))
+
+  useShareTimeline(() => ({
+    title: `Leo 的每周小记 · ${data.rangeLabel}`,
+  }))
+
   return (
     <PageContainer
       background="bg-surface-container-lowest"
       header={
-        <PageHeader
-          showBack
-          title="Weekly Insights"
-          subtitle={data.rangeLabel}
-          right={
-            <View className="w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center">
-              <Image src={babyAvatar} className="w-9 h-9 rounded-full" mode="aspectFill" />
-            </View>
-          }
-        />
+        <PageHeader showBack title="Weekly Insights" subtitle={data.rangeLabel} />
       }
     >
       <View className="flex flex-col gap-6">
@@ -69,13 +81,14 @@ export default function JourneyWeeklyInsightPage() {
           <Text className="relative text-base text-on-surface-variant">{data.advice.content}</Text>
         </View>
 
-        <View
-          className="w-full box-border py-4 px-6 rounded-lg bg-primary flex items-center justify-center gap-2"
-          onClick={() => Taro.showToast({ title: '分享待开发', icon: 'none' })}
+        {/* 必须用 openType="share"，普通 onClick 调不起小程序的分享面板 */}
+        <Button
+          openType="share"
+          className="share-button w-full box-border py-4 px-6 rounded-lg bg-primary flex items-center justify-center gap-2"
         >
           <Text className="text-xl font-semibold text-[#ffffff]">Share Report</Text>
           <Icon name="event-share" className="w-5 h-5" />
-        </View>
+        </Button>
       </View>
     </PageContainer>
   )
