@@ -140,7 +140,10 @@ export default function Journey() {
             Journey
           </Text>
 
-          <View className="flex items-center justify-center p-2 text-stone-600">
+          <View
+            className="flex items-center justify-center p-2 text-stone-600"
+            onClick={() => navigateToRoute('journey-calendar')}
+          >
             <Icon name="calendar" className="w-5 h-5" />
           </View>
         </View>

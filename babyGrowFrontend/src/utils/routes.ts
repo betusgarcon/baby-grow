@@ -55,6 +55,7 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'journey-home': '/pages/journey/index',
   'journey-milestones': '/pages/journey/milestones/index',
   'journey-list': '/pages/journey/list/index',
+  'journey-calendar': '/pages/journey/calendar/index',
   'data-growth': '/pages/analysis/growth/index',
   'data-sleep-day': '/pages/analysis/sleep-daily/index',
   'data-sleep-month': '/pages/analysis/sleep-monthly/index',

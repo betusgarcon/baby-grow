@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/journey/index',
     'pages/journey/milestones/index',
     'pages/journey/list/index',
+    'pages/journey/calendar/index',
     'pages/analysis/growth/index',
     'pages/analysis/sleep-daily/index',
     'pages/analysis/sleep-monthly/index',

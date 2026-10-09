@@ -64,6 +64,7 @@ import backIcon from '@/assets/icons/back_icon.svg'
 import chevronRightIcon from '@/assets/icons/chevron_right_icon.svg'
 import chevronDownIcon from '@/assets/icons/chevron_down_icon.svg'
 import heartIcon from '@/assets/icons/heart_icon.svg'
+import calendarVaccineIcon from '@/assets/icons/calendar_vaccine_icon.svg'
 
 // 里程碑卡片图标（白字形，配彩色圆形底）
 import milestoneWalkIcon from '@/assets/icons/milestone_walk_icon.svg'
@@ -146,6 +147,7 @@ const iconMap: Record<string, string> = {
   'chevron-right': chevronRightIcon,
   'chevron-down': chevronDownIcon,
   'heart': heartIcon,
+  'calendar-vaccine': calendarVaccineIcon,
 
   // 里程碑卡片图标
   'milestone-walk': milestoneWalkIcon,
