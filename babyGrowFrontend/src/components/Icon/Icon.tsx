@@ -92,6 +92,12 @@ import metricWeightIcon from '@/assets/icons/metric_weight_icon.svg'
 import metricHeightIcon from '@/assets/icons/metric_height_icon.svg'
 import trendUpIcon from '@/assets/icons/trend_up_icon.svg'
 import sparkleLightIcon from '@/assets/icons/sparkle_light_icon.svg'
+import memberInviteIcon from '@/assets/icons/member_invite_icon.svg'
+import searchIcon from '@/assets/icons/search_icon.svg'
+import linkIcon from '@/assets/icons/link_icon.svg'
+import checkAccentIcon from '@/assets/icons/check_accent_icon.svg'
+import eyeIcon from '@/assets/icons/eye_icon.svg'
+import filterIcon from '@/assets/icons/filter_icon.svg'
 
 // 心愿清单页图标
 import wishSwimIcon from '@/assets/icons/wish_swim_icon.svg'
@@ -223,6 +229,12 @@ const iconMap: Record<string, string> = {
   'metric-height': metricHeightIcon,
   'trend-up': trendUpIcon,
   'sparkle-light': sparkleLightIcon,
+  'member-invite': memberInviteIcon,
+  'search': searchIcon,
+  'link': linkIcon,
+  'check-accent': checkAccentIcon,
+  'eye': eyeIcon,
+  'filter': filterIcon,
   'close': closeIcon,
   'mic': micIcon,
   'check-circle': checkCircleIcon,

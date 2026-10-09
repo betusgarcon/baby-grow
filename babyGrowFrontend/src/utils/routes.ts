@@ -12,7 +12,7 @@ import Taro from '@tarojs/taro'
  * 注意两类原型条目不是路由，因此不进这个表：
  * - 状态条目（journey-loading / journey-empty / wishes-loading / wishes-empty /
  *   family-search-empty / family-search-loading / family-filter / family-filtered-results /
- *   journey-calendar-select / wishes-museum-edit / wishes-number-edit / family-invite-token）：
+ *   journey-calendar-select / wishes-museum-edit / wishes-number-edit）：
  *   它们是同一个页面的状态变体，由页面内部的状态模型渲染，不单独占路由。
  * - 记录流程（record-center / record-text / record-photo / record-photo-text / record-text-ai）：
  *   Figma 里是一组弹层（分组 922:555），以浮层组件实现，见 components/RecordSheet。
@@ -50,6 +50,7 @@ export type RouteId =
   | 'family-home'
   | 'family-members'
   | 'family-invite'
+  | 'family-invite-token'
   | 'family-invited-view'
   | 'family-search-results'
   | 'family-poster'
@@ -76,6 +77,15 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'wishes-trails': '/pages/wishes/detail/index?wish=trails',
   'wishes-climbing': '/pages/wishes/detail/index?wish=climbing',
   'wishes-number': '/pages/wishes/counter/index?wish=books',
+  'family-home': '/pages/family/index',
+  // 成员权限设置是压在家庭首页上的底部弹层，不是独立页面，
+  // 所以这里回到首页由 ⋮ 打开；保留这个 id 只是不破坏原型的跳转图。
+  'family-members': '/pages/family/index',
+  'family-invite': '/pages/family/invite/index',
+  'family-invite-token': '/pages/family/invite/token/index',
+  'family-invited-view': '/pages/family/invited/index',
+  'family-search-results': '/pages/family/memories/index',
+  'family-poster': '/pages/family/poster/index',
   'data-growth': '/pages/analysis/growth/index',
   'data-sleep-day': '/pages/analysis/sleep-daily/index',
   'data-sleep-month': '/pages/analysis/sleep-monthly/index',

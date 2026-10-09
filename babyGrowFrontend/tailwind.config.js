@@ -64,6 +64,16 @@ module.exports = {
           // 勾选项的圆底：比 swim 更深的青灰，承载白色对勾
           active: '#4E6A72',
         },
+        // 家庭成员头像配色。三个成员各用一种醒目色，既推不出现有语义色，
+        // 又会在首页 / 成员管理 / 邀请流程里重复出现，按 analysis / wish 的先例
+        // 收成命名空间，页面里不写死色值。
+        family: {
+          clay: '#c98d6b',
+          sage: '#a8bfa8',
+          lilac: '#c9b6e4',
+          // 长图海报的底色，是这一模块独有的品牌绿
+          poster: '#c9d4bd',
+        },
         analysis: {
           'text-primary': '#2E2822',
           'text-secondary': '#6F6760',
