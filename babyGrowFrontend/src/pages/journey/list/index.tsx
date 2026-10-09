@@ -97,15 +97,18 @@ export default function JourneyListPage() {
           />
         )}
 
-        <View className="py-4 flex items-center justify-center">
-          <View
-            className="h-11 px-6 rounded-full border border-tertiary flex items-center gap-2"
-            onClick={() => Taro.showToast({ title: '已加载全部记录', icon: 'none' })}
-          >
-            <Icon name="chevron-down" className="w-3 h-2" />
-            <Text className="text-base text-tertiary">more</Text>
+        {/* 空态下没有「更多」可加载，按钮跟着一起收起来 */}
+        {state === 'content' ? (
+          <View className="py-4 flex items-center justify-center">
+            <View
+              className="h-11 px-6 rounded-full border border-tertiary flex items-center gap-2"
+              onClick={() => Taro.showToast({ title: '已加载全部记录', icon: 'none' })}
+            >
+              <Icon name="chevron-down" className="w-3 h-2" />
+              <Text className="text-base text-tertiary">more</Text>
+            </View>
           </View>
-        </View>
+        ) : null}
       </View>
     </PageContainer>
   )

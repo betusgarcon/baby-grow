@@ -88,6 +88,10 @@ import eventAttachmentIcon from '@/assets/icons/event_attachment_icon.svg'
 import eventEditIcon from '@/assets/icons/event_edit_icon.svg'
 import eventDeleteIcon from '@/assets/icons/event_delete_icon.svg'
 import removeCircleIcon from '@/assets/icons/remove_circle_icon.svg'
+import metricWeightIcon from '@/assets/icons/metric_weight_icon.svg'
+import metricHeightIcon from '@/assets/icons/metric_height_icon.svg'
+import trendUpIcon from '@/assets/icons/trend_up_icon.svg'
+import sparkleLightIcon from '@/assets/icons/sparkle_light_icon.svg'
 
 // 宝宝档案页图标（原先散在 figma_demo/images 下，随页面正式化一并归位）
 import editIcon from '@/assets/icons/icon-edit.svg'
@@ -198,6 +202,10 @@ const iconMap: Record<string, string> = {
   'event-edit': eventEditIcon,
   'event-delete': eventDeleteIcon,
   'remove-circle': removeCircleIcon,
+  'metric-weight': metricWeightIcon,
+  'metric-height': metricHeightIcon,
+  'trend-up': trendUpIcon,
+  'sparkle-light': sparkleLightIcon,
 
   // 宝宝档案页图标
   'edit': editIcon,

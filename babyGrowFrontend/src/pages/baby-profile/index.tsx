@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
-import { View, Text, Image, Input } from '@tarojs/components'
+import { View, Text, Image, Input, MovableArea, MovableView } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import PrimaryButton from '@/components/PrimaryButton'
@@ -8,7 +8,16 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProfileInfoCard from './components/ProfileInfoCard'
 import PreferenceCard from './components/PreferenceCard'
-import { babyProfile, preferenceTemplates, type ProfileInfoItem, type ProfilePreference } from './babyProfileData'
+import {
+  babyProfile,
+  computeAgeLabel,
+  defaultBirthday,
+  newPreferenceIcon,
+  todayIsoDate,
+  type ProfileInfoKey,
+  type ProfileInfoItem,
+  type ProfilePreference,
+} from './babyProfileData'
 
 /**
  * 查看 / 编辑基础信息 / 偏好管理 共用一页。
@@ -21,6 +30,9 @@ type ProfileMode = 'view' | 'edit' | 'preferences'
 const isProfileMode = (value: string | undefined): value is ProfileMode =>
   value === 'view' || value === 'edit' || value === 'preferences'
 
+/** 偏好卡片的间距，与 tailwind 的 gap-3 对齐；拖拽换位按实测行高计算 */
+const PREFERENCE_GAP = 12
+
 export default function BabyProfilePage() {
   const router = useRouter()
   const [mode, setMode] = useState<ProfileMode>(
@@ -30,60 +42,127 @@ export default function BabyProfilePage() {
   const [name, setName] = useState(babyProfile.name)
   const [info, setInfo] = useState<ProfileInfoItem[]>(babyProfile.info)
   const [preferences, setPreferences] = useState<ProfilePreference[]>(babyProfile.preferences)
+  const [birthday, setBirthday] = useState(defaultBirthday)
+
+  /** 长按某一行后就只让那一行进入编辑，不必整页变成编辑态 */
+  const [editingKey, setEditingKey] = useState<ProfileInfoKey | null>(null)
+
+  /** 新增偏好走手动输入，草稿为 null 时表单不显示 */
+  const [draft, setDraft] = useState<{ label: string; value: string } | null>(null)
+
+  /** 拖拽换位需要真实像素，行高只能实测，rem 与 movable 的 y 单位对不上 */
+  const [slotHeight, setSlotHeight] = useState(0)
+  const dragY = useRef<number | null>(null)
 
   const isEditing = mode !== 'view'
+  const isManagingPreferences = mode === 'preferences'
 
-  const updateInfoValue = (key: ProfileInfoItem['key'], value: string) => {
-    setInfo((previous) => previous.map((item) => (item.key === key ? { ...item, value } : item)))
+  useEffect(() => {
+    if (!isManagingPreferences) {
+      setSlotHeight(0)
+      return
+    }
+
+    const timer = setTimeout(() => {
+      Taro.createSelectorQuery()
+        .select('#preference-probe')
+        .boundingClientRect((rect) => {
+          const measured = rect as { height?: number } | null
+
+          if (measured?.height) setSlotHeight(measured.height + PREFERENCE_GAP)
+        })
+        .exec()
+    }, 60)
+
+    return () => clearTimeout(timer)
+  }, [isManagingPreferences])
+
+  const ageLabel = useMemo(() => computeAgeLabel(birthday), [birthday])
+
+  const selectInfoValue = (key: ProfileInfoKey, value: string) => {
+    if (key === 'age') {
+      setBirthday(value)
+      setInfo((previous) =>
+        previous.map((item) => (item.key === 'age' ? { ...item, value: computeAgeLabel(value) } : item)),
+      )
+    } else {
+      setInfo((previous) => previous.map((item) => (item.key === key ? { ...item, value } : item)))
+    }
+
+    setEditingKey(null)
   }
 
   const removePreference = (id: string) => {
     setPreferences((previous) => previous.filter((item) => item.id !== id))
   }
 
-  const addPreference = () => {
-    const next = preferenceTemplates.find(
-      (template) => !preferences.some((item) => item.id === template.id),
-    )
+  const commitDraft = () => {
+    const label = draft?.label.trim()
+    const value = draft?.value.trim()
 
-    if (!next) {
-      Taro.showToast({ title: '没有更多可添加的偏好了', icon: 'none' })
+    if (!label) {
+      Taro.showToast({ title: '请填写偏好名称', icon: 'none' })
       return
     }
 
-    setPreferences((previous) => [...previous, next])
+    setPreferences((previous) => [
+      ...previous,
+      { id: `custom-${Date.now()}`, icon: newPreferenceIcon, label, value: value ?? '' },
+    ])
+    setDraft(null)
+  }
+
+  const handleDrop = (fromIndex: number) => () => {
+    const droppedY = dragY.current
+    dragY.current = null
+
+    if (!slotHeight || droppedY === null) return
+
+    const target = Math.min(
+      Math.max(Math.round(droppedY / slotHeight), 0),
+      preferences.length - 1,
+    )
+
+    if (target === fromIndex) return
+
+    setPreferences((previous) => {
+      const next = [...previous]
+      const [moved] = next.splice(fromIndex, 1)
+
+      next.splice(target, 0, moved)
+
+      return next
+    })
   }
 
   const save = () => {
-    // 后端未实现，先回退到查看态并把改动留在本页 state 里
     Taro.showToast({ title: '已保存（本地）', icon: 'none' })
     setMode('view')
+    setEditingKey(null)
   }
 
   const cancel = () => {
     setName(babyProfile.name)
     setInfo(babyProfile.info)
     setPreferences(babyProfile.preferences)
+    setBirthday(defaultBirthday)
+    setEditingKey(null)
+    setDraft(null)
     setMode('view')
   }
 
+  const renderPreference = (preference: ProfilePreference, probe: boolean) => (
+    <View id={probe ? 'preference-probe' : undefined}>
+      <PreferenceCard
+        preference={preference}
+        editable={isManagingPreferences}
+        onRemove={() => removePreference(preference.id)}
+      />
+    </View>
+  )
+
   return (
-    <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Baby Profile"
-          right={
-            <View
-              className="w-9 h-9 flex items-center justify-center"
-              onClick={() => Taro.showToast({ title: '更多操作待开发', icon: 'none' })}
-            >
-              <Icon name="more-vert" className="w-5 h-5" />
-            </View>
-          }
-        />
-      }
-    >
+    <PageContainer header={<PageHeader showBack title="宝宝信息" />}>
       <View className="flex flex-col gap-4">
         <View className="pt-4 flex flex-col items-center gap-3">
           {/* 编辑按钮叠在头像右下角。局部图标覆盖是项目允许用 absolute 的场景之一 */}
@@ -100,18 +179,7 @@ export default function BabyProfilePage() {
             </View>
           </View>
 
-          {mode === 'edit' ? (
-            <View className="w-full box-border px-4 py-2 rounded-full bg-surface-container-lowest flex items-center gap-2">
-              <Input
-                className="flex-1 text-2xl font-bold text-on-surface text-center"
-                value={name}
-                onInput={(event) => setName(event.detail.value)}
-              />
-              <Icon name="edit-muted" className="w-4 h-4" />
-            </View>
-          ) : (
-            <Text className="text-2xl font-bold text-on-surface">{name}</Text>
-          )}
+          <Text className="text-2xl font-bold text-on-surface">{name}</Text>
 
           <View className="py-1 px-3 rounded-full bg-secondary-container flex items-center gap-1">
             <Icon name="profile-lion" className="w-4 h-4" />
@@ -125,11 +193,20 @@ export default function BabyProfilePage() {
           {info.map((item) => (
             <ProfileInfoCard
               key={item.key}
-              item={item}
-              editing={mode === 'edit'}
-              onValueChange={(value) => updateInfoValue(item.key, value)}
+              item={item.key === 'age' ? { ...item, value: ageLabel } : item}
+              editing={mode === 'edit' || editingKey === item.key}
+              birthday={birthday}
+              maxDate={todayIsoDate()}
+              onSelect={(value) => selectInfoValue(item.key, value)}
+              onLongPress={() => setEditingKey(item.key)}
             />
           ))}
+
+          {mode === 'view' && editingKey === null ? (
+            <Text className="px-1 text-caption text-on-surface-variant">
+              长按任意一项可单独修改
+            </Text>
+          ) : null}
         </View>
 
         <View className="flex flex-col gap-3">
@@ -137,29 +214,88 @@ export default function BabyProfilePage() {
             <Text className="text-xl font-semibold text-on-surface">Preferences</Text>
             <Text
               className="text-sm font-semibold text-on-surface-variant"
-              onClick={() => (mode === 'preferences' ? cancel() : setMode('preferences'))}
+              onClick={() => (isManagingPreferences ? cancel() : setMode('preferences'))}
             >
-              {mode === 'preferences' ? 'Done' : 'Edit All'}
+              {isManagingPreferences ? 'Done' : 'Edit All'}
             </Text>
           </View>
 
-          {preferences.map((preference) => (
-            <PreferenceCard
-              key={preference.id}
-              preference={preference}
-              editable={mode === 'preferences'}
-              onRemove={() => removePreference(preference.id)}
-            />
-          ))}
-
-          {mode === 'preferences' ? (
-            <View
-              className="w-full box-border py-4 rounded-full border border-dashed border-outline flex items-center justify-center gap-2"
-              onClick={addPreference}
+          {isManagingPreferences && slotHeight > 0 ? (
+            <MovableArea
+              className="relative w-full"
+              style={{ height: `${preferences.length * slotHeight}px` }}
             >
-              <Icon name="add-circle" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-on-surface-variant">Add Preference</Text>
+              {preferences.map((preference, index) => (
+                <MovableView
+                  key={preference.id}
+                  direction="vertical"
+                  y={index * slotHeight}
+                  className="absolute left-0 w-full"
+                  style={{ height: `${slotHeight}px` }}
+                  onChange={(event) => {
+                    dragY.current = event.detail.y
+                  }}
+                  onTouchEnd={handleDrop(index)}
+                >
+                  <View className="pb-3">{renderPreference(preference, false)}</View>
+                </MovableView>
+              ))}
+            </MovableArea>
+          ) : (
+            <View className="flex flex-col gap-3">
+              {preferences.map((preference, index) => (
+                <View key={preference.id}>
+                  {renderPreference(preference, isManagingPreferences && index === 0)}
+                </View>
+              ))}
             </View>
+          )}
+
+          {isManagingPreferences ? (
+            draft ? (
+              <View className="w-full box-border p-4 rounded-3xl border border-outline-variant flex flex-col gap-3">
+                <Input
+                  className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                  placeholder="偏好名称，如 Bath Time"
+                  placeholderClass="text-on-surface-variant"
+                  value={draft.label}
+                  onInput={(event) =>
+                    setDraft((previous) => ({ label: event.detail.value, value: previous?.value ?? '' }))
+                  }
+                />
+                <Input
+                  className="w-full box-border px-3 py-2 rounded-full bg-surface-container"
+                  placeholder="补充说明，可留空"
+                  placeholderClass="text-on-surface-variant"
+                  value={draft.value}
+                  onInput={(event) =>
+                    setDraft((previous) => ({ label: previous?.label ?? '', value: event.detail.value }))
+                  }
+                />
+
+                <View className="flex items-center justify-end gap-4">
+                  <Text
+                    className="text-base font-semibold text-on-surface-variant"
+                    onClick={() => setDraft(null)}
+                  >
+                    取消
+                  </Text>
+                  <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
+                    添加
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View
+                className="w-full box-border py-4 rounded-full border border-dashed border-outline flex items-center justify-center gap-2"
+                onClick={() => setDraft({ label: '', value: '' })}
+              >
+                <Icon name="add-circle" className="w-5 h-5" />
+                <Text className="text-base font-semibold text-on-surface-variant">
+                  Add Preference
+                </Text>
+              </View>
+            )
           ) : null}
         </View>
 

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
@@ -7,49 +8,37 @@ import { navigateBack } from '@/utils/routes'
 import { babyProfile } from '../babyProfileData'
 
 export default function BabyProfilePhotoPage() {
-  /**
-   * 选图走小程序原生能力，这一步是真的；
-   * 上传与保存等后端未实现，所以选完之后只给提示。
-   */
+  // 选中的本地图片路径。上传与持久化待后端，这里先在本页显示出来。
+  const [photo, setPhoto] = useState<string | null>(null)
+
   const pickImage = (source: 'camera' | 'album') => {
     Taro.chooseImage({
       count: 1,
       sourceType: [source],
-      success: () => Taro.showToast({ title: '已选择照片（上传待开发）', icon: 'none' }),
+      success: (result) => {
+        const picked = result.tempFilePaths?.[0]
+
+        if (picked) setPhoto(picked)
+      },
       fail: () => undefined,
     })
   }
 
   const confirmRemove = async () => {
     const result = await Taro.showModal({
-      title: 'Remove current photo?',
+      title: '移除当前头像？',
       content: '移除后将回退到默认头像。',
       confirmText: '移除',
       confirmColor: '#ba1a1a',
       cancelText: '取消',
     })
 
-    if (result.confirm) {
-      Taro.showToast({ title: '已移除（本地）', icon: 'none' })
-    }
+    if (result.confirm) setPhoto(null)
   }
 
   return (
     <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Change Photo"
-          right={
-            <View
-              className="w-9 h-9 flex items-center justify-center"
-              onClick={() => Taro.showToast({ title: '更多操作待开发', icon: 'none' })}
-            >
-              <Icon name="more-vert" className="w-5 h-5" />
-            </View>
-          }
-        />
-      }
+      header={<PageHeader showBack title="修改头像" />}
     >
       <View className="flex flex-col gap-6">
         <View className="pt-6 flex items-center justify-center">
@@ -58,7 +47,11 @@ export default function BabyProfilePhotoPage() {
             <View className="absolute inset-0 rounded-full border border-dashed border-outline" />
 
             <View className="w-36 h-36 rounded-full border-4 border-surface-container-lowest overflow-hidden bg-surface-container">
-              <Image src={babyProfile.avatar} className="w-full h-full" mode="aspectFill" />
+              <Image
+                src={photo ?? babyProfile.avatar}
+                className="w-full h-full"
+                mode="aspectFill"
+              />
             </View>
 
             <View

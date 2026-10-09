@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { View, Text } from '@tarojs/components'
+import { View, Text, Picker } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
@@ -13,7 +13,9 @@ import {
   eventsForDate,
   formatDayHeading,
   formatMonthLabel,
+  monthLabels,
   toIsoDate,
+  yearOptions,
 } from './calendarData'
 
 const INITIAL_YEAR = 2023
@@ -32,15 +34,17 @@ export default function JourneyCalendarPage() {
 
   const dayEvents = useMemo(() => eventsForDate(calendarEvents, selectedDate), [selectedDate])
 
-  const shiftMonth = (delta: number) => {
-    const next = new Date(year, month - 1 + delta, 1)
-    const nextYear = next.getFullYear()
-    const nextMonth = next.getMonth() + 1
-
+  /** 切到指定年月，并把选中日期落到该月 1 号，避免停在当月不存在的日期上 */
+  const applyMonth = (nextYear: number, nextMonth: number) => {
     setYear(nextYear)
     setMonth(nextMonth)
-    // 换月后把选中日期落到该月 1 号，避免停在一个不存在的日期上
     setSelectedDate(toIsoDate(nextYear, nextMonth, 1))
+  }
+
+  const shiftMonth = (delta: number) => {
+    const next = new Date(year, month - 1 + delta, 1)
+
+    applyMonth(next.getFullYear(), next.getMonth() + 1)
   }
 
   return (
@@ -55,14 +59,31 @@ export default function JourneyCalendarPage() {
       }
     >
       <View className="flex flex-col gap-6">
-        <View className="w-full box-border py-4 px-6 rounded-full bg-surface-container-low border border-outline-variant flex items-center justify-between">
-          <View className="p-2 active:opacity-60" onClick={() => shiftMonth(-1)}>
+        {/* 月份控件：左右箭头各换一个月，中间文字点开年月选择器。
+            箭头不能放进 Picker 内部，否则点箭头会连带把选择器一起弹出来。 */}
+        <View className="w-full box-border h-14 px-4 rounded-full bg-surface-container-low border border-outline-variant flex items-center justify-between">
+          <View className="w-9 h-9 flex items-center justify-center" onClick={() => shiftMonth(-1)}>
             <Icon name="chevron-right" className="w-2 h-3" style={{ transform: 'rotate(180deg)' }} />
           </View>
 
-          <Text className="text-xl font-semibold text-on-surface">{formatMonthLabel(year, month)}</Text>
+          <Picker
+            mode="multiSelector"
+            range={[monthLabels, yearOptions]}
+            value={[month - 1, Math.max(yearOptions.indexOf(String(year)), 0)]}
+            onChange={(event) => {
+              const [monthIndex, yearIndex] = event.detail.value
 
-          <View className="p-2 active:opacity-60" onClick={() => shiftMonth(1)}>
+              applyMonth(Number(yearOptions[yearIndex]), monthIndex + 1)
+            }}
+          >
+            <View className="flex-1 h-full flex items-center justify-center">
+              <Text className="text-lg font-semibold text-on-surface">
+                {formatMonthLabel(year, month)}
+              </Text>
+            </View>
+          </Picker>
+
+          <View className="w-9 h-9 flex items-center justify-center" onClick={() => shiftMonth(1)}>
             <Icon name="chevron-right" className="w-2 h-3" />
           </View>
         </View>

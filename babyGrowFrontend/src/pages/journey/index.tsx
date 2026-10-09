@@ -168,11 +168,13 @@ export default function Journey() {
             />
           </View>
 
-          <WeeklyInsight
-            icon="star"
-            title="WEEKLY INSIGHT"
-            content="Emma has been sleeping 15% longer during daytime naps this week."
-          />
+          <View onClick={() => navigateToRoute('journey-weekly-insight')}>
+            <WeeklyInsight
+              icon="star"
+              title="WEEKLY INSIGHT"
+              content="Emma has been sleeping 15% longer during daytime naps this week."
+            />
+          </View>
 
           {/* Recent Milestones */}
           <View className="w-full flex flex-col gap-4">

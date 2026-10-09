@@ -5,6 +5,7 @@ export default defineAppConfig({
     'pages/journey/list/index',
     'pages/journey/calendar/index',
     'pages/journey/vaccine/index',
+    'pages/journey/weekly-insight/index',
     'pages/baby-profile/index',
     'pages/baby-profile/photo/index',
     'pages/analysis/growth/index',

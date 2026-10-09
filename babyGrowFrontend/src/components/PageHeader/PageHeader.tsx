@@ -14,6 +14,8 @@ interface PageHeaderProps {
    * 设计稿里两种都存在，所以做成选项而不是二选一。
    */
   titleAlign?: 'center' | 'start'
+  /** 标题下的小字，如每周小记的日期区间 */
+  subtitle?: string
   /** 左侧自定义内容，用于首页那类「头像 + 宝宝名」的头部 */
   leading?: ReactNode
   /** 右侧操作区，会自动让开微信胶囊 */
@@ -28,6 +30,7 @@ export default function PageHeader({
   title,
   showBack = false,
   titleAlign = 'center',
+  subtitle,
   leading,
   right,
   below,
@@ -57,9 +60,12 @@ export default function PageHeader({
           // 左右两个等宽槽位保证标题真正居中，避免用 absolute 摆标题
           <>
             <View className="w-16 flex items-center">{backButton}</View>
-            <Text className="flex-1 text-center text-headline-md font-bold text-secondary truncate">
-              {title}
-            </Text>
+            <View className="flex-1 flex flex-col items-center">
+              <Text className="text-headline-md font-bold text-secondary truncate">{title}</Text>
+              {subtitle ? (
+                <Text className="text-caption text-on-surface-variant">{subtitle}</Text>
+              ) : null}
+            </View>
             <View className="w-16 flex items-center justify-end">{right}</View>
           </>
         ) : (

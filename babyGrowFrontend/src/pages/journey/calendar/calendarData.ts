@@ -51,6 +51,10 @@ const TONE_DOT_CLASS: Record<CalendarEventTone, string> = {
   milestone: 'bg-tertiary',
 }
 
+/** 年月选择器用到的候选项。年份范围接入接口后改为按实际记录区间生成 */
+export const monthLabels = MONTH_LABELS
+export const yearOptions = ['2021', '2022', '2023', '2024', '2025']
+
 const pad = (value: number) => String(value).padStart(2, '0')
 
 export const toIsoDate = (year: number, month: number, day: number) =>
