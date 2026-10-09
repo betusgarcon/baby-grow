@@ -44,3 +44,8 @@ page {
 .text-on-secondary-container {
   color: theme('colors.on-secondary-container');
 }
+
+/* 小程序的 button 自带一圈 ::after 边框，用作分享按钮时要抹掉才不会多一条线 */
+.share-button::after {
+  border: none;
+}

@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import type { SectionState } from '@/types/common'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
 import { defaultMonth, journeyTimeline, type EventFilterKey } from './journeyListData'
@@ -41,18 +40,7 @@ export default function JourneyListPage() {
   return (
     <PageContainer
       background={PAGE_BACKGROUND}
-      header={
-        <PageHeader
-          showBack
-          title="Journey"
-          right={
-            // 设计稿这里放的是照护者头像，项目里只有宝宝头像资源，暂用它占位。
-            <View className="w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center">
-              <Image src={babyAvatar} className="w-9 h-9 rounded-full" mode="aspectFill" />
-            </View>
-          }
-        />
-      }
+      header={<PageHeader showBack title="Journey" />}
     >
       <View className="flex flex-col gap-4">
         <EventFilterCard

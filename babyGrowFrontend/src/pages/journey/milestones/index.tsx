@@ -73,27 +73,15 @@ export default function JourneyMilestonesPage() {
       }
     >
       <View className="flex flex-col gap-xl">
-        <View className="flex flex-col gap-sm">
-          <View className="flex items-center gap-sm">
-            <Icon name="star" className="w-6 h-6" />
-            <Text className="text-display font-bold text-on-surface">Milestones</Text>
-          </View>
-
-          <Text className="text-body-md text-on-surface-variant">
-            A gentle collection of beautiful firsts and major leaps in your little one's journey.
-          </Text>
-
-          <View className="pt-sm">
-            <MilestoneFilterCard
-              month={month}
-              year={year}
-              keyword={keyword}
-              onMonthChange={setMonth}
-              onYearChange={setYear}
-              onKeywordChange={setKeyword}
-            />
-          </View>
-        </View>
+        {/* 标题与说明已由顶部导航栏承担，这里不再重复一遍 */}
+        <MilestoneFilterCard
+          month={month}
+          year={year}
+          keyword={keyword}
+          onMonthChange={setMonth}
+          onYearChange={setYear}
+          onKeywordChange={setKeyword}
+        />
 
         <View className="flex flex-col gap-lg">
           {state === 'content' ? (
