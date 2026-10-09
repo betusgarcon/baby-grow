@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import RecordSheet from '@/components/RecordSheet'
 
 interface BottomTabBarProps {
   activeKey: string
@@ -18,6 +20,9 @@ const rightTabs = [
 ]
 
 export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarProps) {
+  /** 记录弹层由 TabBar 自己持有：加号长在这里，各页面不必各接一次 */
+  const [recordOpen, setRecordOpen] = useState(false)
+
   // 渲染单个 Tab Item
   const renderTab = (tab: { key: string; label: string }) => {
     const isActive = activeKey === tab.key
@@ -38,30 +43,35 @@ export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarPro
   }
 
   return (
-    // 2. 外层使用 fixed 定位吸底，并使用 pb-[env(safe-area-inset-bottom)] 适配 iPhone 底部安全区
-    <View className="w-full fixed bottom-0 left-0 z-50 bg-white border-t border-stone-100 pb-[env(safe-area-inset-bottom)]">
-      
-      {/* 3. 内容展示容器：固定 64px (h-16)，左右两侧使用 gap-8 隔开 */}
-      <View className="w-full h-16 px-6 flex justify-between items-center relative">
-        
-        {/* 左侧 2 个菜单 */}
-        <View className="flex items-center gap-8">
-          {leftTabs.map(renderTab)}
-        </View>
+    <>
+      {/* 2. 外层使用 fixed 定位吸底，并使用 pb-[env(safe-area-inset-bottom)] 适配 iPhone 底部安全区 */}
+      <View className="w-full fixed bottom-0 left-0 z-50 bg-white border-t border-stone-100 pb-[env(safe-area-inset-bottom)]">
 
-        {/* 右侧 2 个菜单 */}
-        <View className="flex items-center gap-8">
-          {rightTabs.map(renderTab)}
-        </View>
+        {/* 3. 内容展示容器：固定 64px (h-16)，左右两侧使用 gap-8 隔开 */}
+        <View className="w-full h-16 px-6 flex justify-between items-center relative">
 
-        {/* 中间悬浮加号按钮：使用明确的 w-12 h-12 宽高，避免 padding 挤压变形 */}
-        <View
-          className="absolute left-1/2 -translate-x-1/2 -top-5 w-12 h-12 bg-[#406651] rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"
-          onClick={() => onTabChange('add')}
-        >
-          <Icon name="record" className="w-6 h-6" />
+          {/* 左侧 2 个菜单 */}
+          <View className="flex items-center gap-8">
+            {leftTabs.map(renderTab)}
+          </View>
+
+          {/* 右侧 2 个菜单 */}
+          <View className="flex items-center gap-8">
+            {rightTabs.map(renderTab)}
+          </View>
+
+          {/* 中间悬浮加号按钮：使用明确的 w-12 h-12 宽高，避免 padding 挤压变形 */}
+          <View
+            className="absolute left-1/2 -translate-x-1/2 -top-5 w-12 h-12 bg-[#406651] rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+            onClick={() => setRecordOpen(true)}
+          >
+            <Icon name="record" className="w-6 h-6" />
+          </View>
         </View>
       </View>
-    </View>
+
+      {/* 挂在 TabBar 之外，避免被 fixed 父级的层叠上下文限制住 */}
+      <RecordSheet visible={recordOpen} onClose={() => setRecordOpen(false)} />
+    </>
   )
 }

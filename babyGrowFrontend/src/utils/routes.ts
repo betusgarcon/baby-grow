@@ -109,11 +109,6 @@ export const switchTabRoute = (id: RouteId) => {
   Taro.redirectTo({ url })
 }
 
-/** 打开记录弹层（Figma 分组 922:555）。批次 3 实现。 */
-export const openRecordSheet = () => {
-  Taro.showToast({ title: '记录入口待开发', icon: 'none' })
-}
-
 /** 返回上一页。栈内无上一页时（如从 tab 直达）退到旅程首页。 */
 export const navigateBack = () => {
   const pages = Taro.getCurrentPages()

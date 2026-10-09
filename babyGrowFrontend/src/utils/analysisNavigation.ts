@@ -2,7 +2,6 @@ import Taro from '@tarojs/taro'
 import type { AnalysisCategoryKey, AnalysisSubtabKey } from '@/types/analysis'
 import {
   navigateToRoute,
-  openRecordSheet,
   switchTabRoute,
   tabRouteMap,
   type RouteId,
@@ -29,14 +28,10 @@ export const navigateToAnalysisPage = (key: AnalysisCategoryKey | AnalysisSubtab
 
 /**
  * 底部 TabBar 的点击处理。
- * 四个常规 tab 走路由替换，中间加号按钮打开记录弹层。
+ * 四个常规 tab 走路由替换；中间加号按钮不经过这里——记录弹层由
+ * BottomTabBar 自己持有并打开，所以不会以 'add' 回调上来。
  */
 export const handleBottomTabNavigation = (key: string) => {
-  if (key === 'add') {
-    openRecordSheet()
-    return
-  }
-
   const routeId = tabRouteMap[key]
 
   if (!routeId) {
