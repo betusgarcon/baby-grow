@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { familyRoleOptions, type FamilyMember, type FamilyRole } from '../familyData'
+import { familyRoleOptions, type FamilyMember, type FamilyRole } from '@/store/family'
 
 interface MemberPermissionSheetProps {
   member: FamilyMember

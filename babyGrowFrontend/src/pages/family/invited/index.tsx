@@ -5,7 +5,7 @@ import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
-import { invitedView } from '../familyData'
+import { invitedView } from '@/store/family'
 export default function FamilyInvitedViewPage() {
   const accept = () => {
     // 后端未实现，先给提示并回到家庭首页

@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { FamilyMember } from '../familyData'
+import type { FamilyMember } from '@/store/family'
 
 interface MemberRowProps {
   member: FamilyMember

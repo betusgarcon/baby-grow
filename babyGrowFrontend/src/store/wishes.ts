@@ -187,8 +187,6 @@ export const wishes: Wish[] = [
   },
 ]
 
-export const findWish = (id: string | undefined) => wishes.find((wish) => wish.id === id)
-
 /**
  * Expert Tip 里用 ** 包裹的部分要加重显示。
  * 拆成片段交给页面渲染，避免把文案写成一堆嵌套节点。

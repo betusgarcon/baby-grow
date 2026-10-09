@@ -9,20 +9,19 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { findWish } from '../wishesData'
+import { useAppState, setWishCounter } from '@/store'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
-  const wish = findWish(router.params.wish)
+  // 心愿来自 store：加减之后离开页面再回来依然是加减后的数字
+  const { wishes } = useAppState()
+  const wish = wishes.find((item) => item.id === router.params.wish)
 
-  const initial = wish?.counter?.current ?? 0
-
-  const [current, setCurrent] = useState(initial)
-  /** 上次保存的值，Cancel 用它还原 */
-  const [savedCurrent, setSavedCurrent] = useState(initial)
   const [mode, setMode] = useState<'view' | 'edit'>(
     router.params.mode === 'edit' ? 'edit' : 'view',
   )
+  /** 上次保存的值，Cancel 用它还原 */
+  const [savedCurrent, setSavedCurrent] = useState<number | null>(null)
 
   if (!wish || !wish.counter) {
     return (
@@ -38,26 +37,33 @@ export default function WishCounterDetailPage() {
     )
   }
 
-  const { target, unit } = wish.counter
+  const { current, target, unit } = wish.counter
   const progress = target > 0 ? Math.min(current / target, 1) : 0
+
+  const writeCurrent = (next: number) => setWishCounter(wish.id, next)
 
   const step = (delta: number) => {
     // 加减号只是暂存改动，必须先进编辑态把保存/取消露出来，
     // 否则点一下就直接生效，用户没有确认的机会
-    if (mode !== 'edit') setMode('edit')
+    if (mode !== 'edit') {
+      setSavedCurrent(current)
+      setMode('edit')
+    }
 
-    setCurrent((previous) => Math.min(Math.max(previous + delta, 0), target))
+    writeCurrent(Math.min(Math.max(current + delta, 0), target))
   }
 
   const cancelEdit = () => {
-    setCurrent(savedCurrent)
+    if (savedCurrent !== null) writeCurrent(savedCurrent)
+
+    setSavedCurrent(null)
     setMode('view')
   }
 
   const saveEdit = () => {
-    // 后端未实现，先落本地提示
-    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
-    setSavedCurrent(current)
+    // 改动已随每次加减写进 store，这里只需要退出编辑态
+    Taro.showToast({ title: '已保存', icon: 'none' })
+    setSavedCurrent(null)
     setMode('view')
   }
 

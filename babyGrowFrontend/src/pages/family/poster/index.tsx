@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
-import { posterContent, posterTemplates, privacyToggles } from '../familyData'
+import { posterContent, posterTemplates, privacyToggles } from '@/store/family'
 
 export default function FamilyPosterPage() {
   const [template, setTemplate] = useState(posterTemplates[0].key)

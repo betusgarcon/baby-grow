@@ -9,26 +9,28 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import RecordSheet from '@/components/RecordSheet'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
+import { useAppState, removeWish } from '@/store'
 import type { SectionState } from '@/types/common'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
 import WishCard from './components/WishCard'
-import { wishes as initialWishes, wishesEmptyCopy, type Wish } from './wishesData'
+import { wishesEmptyCopy, type Wish } from '@/store/wishes'
 
 export default function WishesListPage() {
-  const [wishes, setWishes] = useState<Wish[]>([])
-  const [state, setState] = useState<SectionState>('loading')
+  // 心愿来自 store：删掉之后离开页面再回来依然是删掉的状态
+  const { wishes } = useAppState()
+  const [loaded, setLoaded] = useState(false)
   const [recordOpen, setRecordOpen] = useState(false)
 
   useEffect(() => {
     // 后端未实现，用一次短延时顶替接口请求，好让加载态是真实可达的状态
     // 而不是永远走不到的死分支。接入 API 后换成真实请求即可。
-    const timer = setTimeout(() => {
-      setWishes(initialWishes)
-      setState(initialWishes.length > 0 ? 'content' : 'empty')
-    }, 400)
+    const timer = setTimeout(() => setLoaded(true), 400)
 
     return () => clearTimeout(timer)
   }, [])
+
+  // 空态由数据条件驱动：删光了就是真的空
+  const state: SectionState = !loaded ? 'loading' : wishes.length > 0 ? 'content' : 'empty'
 
   const confirmRemove = async (wish: Wish) => {
     const result = await Taro.showModal({
@@ -41,13 +43,7 @@ export default function WishesListPage() {
 
     if (!result.confirm) return
 
-    setWishes((previous) => {
-      const next = previous.filter((item) => item.id !== wish.id)
-
-      setState(next.length > 0 ? 'content' : 'empty')
-
-      return next
-    })
+    removeWish(wish.id)
   }
 
   return (

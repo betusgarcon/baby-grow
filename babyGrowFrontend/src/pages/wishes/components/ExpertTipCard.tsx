@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { splitEmphasis } from '../wishesData'
+import { splitEmphasis } from '@/store/wishes'
 
 /**
  * Expert Tip 卡片，勾选式与计数式详情页共用。

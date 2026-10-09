@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { WishChecklistItem } from '../wishesData'
+import type { WishChecklistItem } from '@/store/wishes'
 
 interface ChecklistItemProps {
   item: WishChecklistItem

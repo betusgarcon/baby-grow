@@ -10,19 +10,22 @@ import { moveItem, useReorderSlot } from '@/hooks/useReorderSlot'
 import ProgressBar from '../components/ProgressBar'
 import ChecklistItem from '../components/ChecklistItem'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { findWish, type WishChecklistItem } from '../wishesData'
+import { useAppState, setWishChecklist } from '@/store'
+import type { WishChecklistItem } from '@/store/wishes'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
 const ITEM_GAP = 12
 
 export default function WishChecklistDetailPage() {
   const router = useRouter()
-  const wish = findWish(router.params.wish)
+  // 心愿来自 store：勾选、增删、排序离开页面后依然生效
+  const { wishes } = useAppState()
+  const wish = wishes.find((item) => item.id === router.params.wish)
+  const items = wish?.checklist ?? []
 
   const [mode, setMode] = useState<'view' | 'edit'>(
     router.params.mode === 'edit' ? 'edit' : 'view',
   )
-  const [items, setItems] = useState<WishChecklistItem[]>(wish?.checklist ?? [])
   const [draft, setDraft] = useState<{ title: string; note: string } | null>(null)
   /**
    * 两种状态要分开：
@@ -36,6 +39,11 @@ export default function WishChecklistDetailPage() {
   const [snapshot, setSnapshot] = useState<WishChecklistItem[] | null>(null)
 
   const isManaging = mode === 'edit'
+
+  /** 所有清单改动都经过这里写回 store */
+  const writeItems = (next: WishChecklistItem[]) => {
+    if (wish) setWishChecklist(wish.id, next)
+  }
 
   const { slotHeight, onDragChange, resolveTarget } = useReorderSlot(
     items.length,
@@ -74,7 +82,7 @@ export default function WishChecklistDetailPage() {
   }
 
   const cancelEdit = () => {
-    if (snapshot) setItems(snapshot)
+    if (snapshot) writeItems(snapshot)
     setSnapshot(null)
     setDraft(null)
     setDirty(false)
@@ -82,8 +90,8 @@ export default function WishChecklistDetailPage() {
   }
 
   const saveEdit = () => {
-    // 后端未实现，先落本地提示
-    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
+    // 改动已随每次操作写进 store，这里只需要退出编辑态
+    Taro.showToast({ title: '已保存', icon: 'none' })
     setSnapshot(null)
     setDraft(null)
     setDirty(false)
@@ -93,13 +101,11 @@ export default function WishChecklistDetailPage() {
   const toggleItem = (id: string) => {
     beginChange()
 
-    setItems((previous) =>
-      previous.map((item) => (item.id === id ? { ...item, done: !item.done } : item)),
-    )
+    writeItems(items.map((item) => (item.id === id ? { ...item, done: !item.done } : item)))
   }
 
   const removeItem = (id: string) => {
-    setItems((previous) => previous.filter((item) => item.id !== id))
+    writeItems(items.filter((item) => item.id !== id))
   }
 
   const commitDraft = () => {
@@ -110,8 +116,8 @@ export default function WishChecklistDetailPage() {
       return
     }
 
-    setItems((previous) => [
-      ...previous,
+    writeItems([
+      ...items,
       { id: `custom-${Date.now()}`, title, note: draft?.note.trim() ?? '', done: false },
     ])
     setDraft(null)
@@ -122,7 +128,7 @@ export default function WishChecklistDetailPage() {
 
     if (target === null) return
 
-    setItems((previous) => moveItem(previous, fromIndex, target))
+    writeItems(moveItem(items, fromIndex, target))
   }
 
   const renderItem = (item: WishChecklistItem, probe: boolean) => (

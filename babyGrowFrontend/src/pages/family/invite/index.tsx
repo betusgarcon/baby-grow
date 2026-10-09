@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateBack, navigateToRoute } from '@/utils/routes'
-import { inviteePresets, inviteRoleOptions, type FamilyRole } from '../familyData'
+import { inviteePresets, inviteRoleOptions, type FamilyRole } from '@/store/family'
 
 export default function FamilyInvitePage() {
   const [nickname, setNickname] = useState('')

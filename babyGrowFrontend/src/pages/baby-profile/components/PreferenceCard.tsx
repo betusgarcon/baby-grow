@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { ProfilePreference } from '../babyProfileData'
+import type { ProfilePreference } from '@/store/profile'
 
 interface PreferenceCardProps {
   preference: ProfilePreference

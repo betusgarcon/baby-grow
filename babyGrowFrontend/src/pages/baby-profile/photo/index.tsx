@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateBack } from '@/utils/routes'
-import { babyProfile } from '../babyProfileData'
+import { babyProfile } from '@/store/profile'
 
 export default function BabyProfilePhotoPage() {
   // 选中的本地图片路径。上传与持久化待后端，这里先在本页显示出来。

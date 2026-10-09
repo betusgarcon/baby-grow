@@ -8,16 +8,16 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProfileInfoCard from './components/ProfileInfoCard'
 import PreferenceCard from './components/PreferenceCard'
+import { useAppState, setProfileInfoValue, setProfilePreferences, restoreProfile } from '@/store'
+import type { ProfileState } from '@/store'
 import {
   babyProfile,
   computeAgeLabel,
-  defaultBirthday,
   newPreferenceIcon,
   todayIsoDate,
   type ProfileInfoKey,
-  type ProfileInfoItem,
   type ProfilePreference,
-} from './babyProfileData'
+} from '@/store/profile'
 
 /**
  * 查看 / 编辑基础信息 / 偏好管理 共用一页。
@@ -39,10 +39,12 @@ export default function BabyProfilePage() {
     isProfileMode(router.params.mode) ? router.params.mode : 'view',
   )
 
-  const [name, setName] = useState(babyProfile.name)
-  const [info, setInfo] = useState<ProfileInfoItem[]>(babyProfile.info)
-  const [preferences, setPreferences] = useState<ProfilePreference[]>(babyProfile.preferences)
-  const [birthday, setBirthday] = useState(defaultBirthday)
+  // 画像来自 store：改动在离开页面后依然生效
+  const { profile } = useAppState()
+  const { name, birthday, info, preferences } = profile
+
+  /** 进入编辑前存一份快照，Cancel 用它回滚 */
+  const [profileSnapshot, setProfileSnapshot] = useState<ProfileState | null>(null)
 
   /** 长按某一行后就只让那一行进入编辑，不必整页变成编辑态 */
   const [editingKey, setEditingKey] = useState<ProfileInfoKey | null>(null)
@@ -80,20 +82,12 @@ export default function BabyProfilePage() {
   const ageLabel = useMemo(() => computeAgeLabel(birthday), [birthday])
 
   const selectInfoValue = (key: ProfileInfoKey, value: string) => {
-    if (key === 'age') {
-      setBirthday(value)
-      setInfo((previous) =>
-        previous.map((item) => (item.key === 'age' ? { ...item, value: computeAgeLabel(value) } : item)),
-      )
-    } else {
-      setInfo((previous) => previous.map((item) => (item.key === key ? { ...item, value } : item)))
-    }
-
+    setProfileInfoValue(key, value)
     setEditingKey(null)
   }
 
   const removePreference = (id: string) => {
-    setPreferences((previous) => previous.filter((item) => item.id !== id))
+    setProfilePreferences(preferences.filter((item) => item.id !== id))
   }
 
   const commitDraft = () => {
@@ -105,8 +99,8 @@ export default function BabyProfilePage() {
       return
     }
 
-    setPreferences((previous) => [
-      ...previous,
+    setProfilePreferences([
+      ...preferences,
       { id: `custom-${Date.now()}`, icon: newPreferenceIcon, label, value: value ?? '' },
     ])
     setDraft(null)
@@ -125,27 +119,30 @@ export default function BabyProfilePage() {
 
     if (target === fromIndex) return
 
-    setPreferences((previous) => {
-      const next = [...previous]
-      const [moved] = next.splice(fromIndex, 1)
+    const next = [...preferences]
+    const [moved] = next.splice(fromIndex, 1)
 
-      next.splice(target, 0, moved)
+    next.splice(target, 0, moved)
+    setProfilePreferences(next)
+  }
 
-      return next
-    })
+  /** 进入编辑或偏好管理前先存快照，Cancel 才有东西可回滚 */
+  const beginEditing = (nextMode: ProfileMode) => {
+    if (!profileSnapshot) setProfileSnapshot(profile)
+    setMode(nextMode)
   }
 
   const save = () => {
-    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
+    Taro.showToast({ title: '已保存', icon: 'none' })
+    setProfileSnapshot(null)
     setMode('view')
     setEditingKey(null)
   }
 
   const cancel = () => {
-    setName(babyProfile.name)
-    setInfo(babyProfile.info)
-    setPreferences(babyProfile.preferences)
-    setBirthday(defaultBirthday)
+    if (profileSnapshot) restoreProfile(profileSnapshot)
+
+    setProfileSnapshot(null)
     setEditingKey(null)
     setDraft(null)
     setMode('view')
@@ -214,7 +211,7 @@ export default function BabyProfilePage() {
             <Text className="text-xl font-semibold text-on-surface">Preferences</Text>
             <Text
               className="text-sm font-semibold text-on-surface-variant"
-              onClick={() => (isManagingPreferences ? cancel() : setMode('preferences'))}
+              onClick={() => (isManagingPreferences ? cancel() : beginEditing('preferences'))}
             >
               {isManagingPreferences ? 'Done' : 'Edit All'}
             </Text>

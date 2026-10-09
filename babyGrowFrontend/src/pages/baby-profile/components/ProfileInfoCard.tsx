@@ -1,6 +1,6 @@
 import { View, Text, Picker } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { ProfileInfoItem } from '../babyProfileData'
+import type { ProfileInfoItem } from '@/store/profile'
 
 interface ProfileInfoCardProps {
   item: ProfileInfoItem

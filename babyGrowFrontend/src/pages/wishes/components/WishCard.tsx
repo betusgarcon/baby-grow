@@ -1,7 +1,7 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
 import ProgressBar from './ProgressBar'
-import { wishProgress, wishProgressLabel, type Wish } from '../wishesData'
+import { wishProgress, wishProgressLabel, type Wish } from '@/store/wishes'
 
 interface WishCardProps {
   wish: Wish

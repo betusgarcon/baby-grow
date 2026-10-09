@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
-import { inviteToken } from '../../familyData'
+import { inviteToken } from '@/store/family'
 
 export default function FamilyInviteTokenPage() {
   useEffect(() => {

@@ -11,17 +11,13 @@ import babyAvatar from '@/assets/images/baby-journey-img.png'
 import highlightImage from '@/assets/images/first-smile-img.png'
 import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
-import {
-  babyAgeLabel,
-  familyMembers,
-  roleLabelOf,
-  shareHighlight,
-  type FamilyMember,
-  type FamilyRole,
-} from './familyData'
+import { useAppState, setMemberRole, removeMember } from '@/store'
+import { babyAgeLabel, shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
-  const [members, setMembers] = useState<FamilyMember[]>(familyMembers)
+  // 成员来自 store：改权限、移出成员在离开页面后依然生效
+  const { members } = useAppState()
+
   /** 正在设置权限的成员；为 null 时弹层不显示 */
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [draftRole, setDraftRole] = useState<FamilyRole>('viewer')
@@ -34,18 +30,12 @@ export default function FamilyHomePage() {
   const confirmRole = () => {
     if (!editingMember) return
 
-    setMembers((previous) =>
-      previous.map((item) =>
-        item.id === editingMember.id
-          ? { ...item, role: draftRole, roleLabel: roleLabelOf(draftRole) }
-          : item,
-      ),
-    )
+    setMemberRole(editingMember.id, draftRole)
     setEditingMember(null)
-    Taro.showToast({ title: '已保存（本地）', icon: 'none' })
+    Taro.showToast({ title: '已保存', icon: 'none' })
   }
 
-  const removeMember = async () => {
+  const confirmRemoveMember = async () => {
     if (!editingMember) return
 
     const result = await Taro.showModal({
@@ -58,7 +48,7 @@ export default function FamilyHomePage() {
 
     if (!result.confirm) return
 
-    setMembers((previous) => previous.filter((item) => item.id !== editingMember.id))
+    removeMember(editingMember.id)
     setEditingMember(null)
   }
 
@@ -158,7 +148,7 @@ export default function FamilyHomePage() {
           role={draftRole}
           onRoleChange={setDraftRole}
           onConfirm={confirmRole}
-          onRemove={removeMember}
+          onRemove={confirmRemoveMember}
           onClose={() => setEditingMember(null)}
         />
       ) : null}
