@@ -59,7 +59,7 @@ export default function PageHeader({
             <View className="flex-1 flex items-center gap-3 min-w-0">
               {leading}
               {title ? (
-                <Text className="text-[24px] leading-8 font-semibold text-on-surface truncate">
+                <Text className="text-2xl font-semibold text-on-surface truncate">
                   {title}
                 </Text>
               ) : null}

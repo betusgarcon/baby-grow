@@ -156,24 +156,29 @@ module.exports = {
         full: '9999px',
       },
       spacing: {
-        'margin-mobile': '20px',
-        'gutter-mobile': '12px',
-        xl: '32px',
-        lg: '24px',
-        xs: '8px',
-        sm: '12px',
-        md: '16px',
-        base: '4px',
+        // 用 rem 而不是 px。Taro 的 pxtransform 会把 px 按 deviceRatio 换算成 rpx，
+        // 而本项目 designWidth 390 对应的 deviceRatio 是 1，写 px 会得到设计尺寸的一半
+        // （20px → 20rpx，在 390 宽机型上只有 10.4px）。
+        // Tailwind 自身的间距体系本来就基于 rem，这里对齐它，token 才能和内置类同尺度。
+        'margin-mobile': '1.25rem',
+        'gutter-mobile': '0.75rem',
+        xl: '2rem',
+        lg: '1.5rem',
+        xs: '0.5rem',
+        sm: '0.75rem',
+        md: '1rem',
+        base: '0.25rem',
       },
       fontSize: {
-        'headline-md': ['20px', { lineHeight: '28px', fontWeight: '600' }],
-        caption: ['12px', { lineHeight: '16px', fontWeight: '400' }],
-        'headline-lg': ['28px', { lineHeight: '36px', fontWeight: '600' }],
-        'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
-        'body-lg': ['18px', { lineHeight: '26px', fontWeight: '400' }],
-        'headline-lg-mobile': ['24px', { lineHeight: '32px', fontWeight: '600' }],
-        display: ['40px', { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'label-md': ['14px', { lineHeight: '20px', letterSpacing: '0.01em', fontWeight: '600' }],
+        // 同上，一律用 rem 表述设计尺寸（按 16px 基准换算），避免被转成 rpx 后减半。
+        'headline-md': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '600' }],
+        caption: ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }],
+        'headline-lg': ['1.75rem', { lineHeight: '2.25rem', fontWeight: '600' }],
+        'body-md': ['1rem', { lineHeight: '1.5rem', fontWeight: '400' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.625rem', fontWeight: '400' }],
+        'headline-lg-mobile': ['1.5rem', { lineHeight: '2rem', fontWeight: '600' }],
+        display: ['2.5rem', { lineHeight: '3rem', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'label-md': ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.01em', fontWeight: '600' }],
       },
       boxShadow: {
         card: '0 10px 30px rgba(31, 42, 46, 0.08)',
@@ -182,7 +187,7 @@ module.exports = {
         // 暖调卡片阴影（里程碑 / 心愿 / 家庭分享的信息卡）。
         // 设计稿里同一批卡片给了 0,8/32 与 0,4/24 两种近似的暖色阴影，
         // 属于未精修导致的不一致，这里归一为一种，避免同一列表里卡片层次跳变。
-        'card-soft': '0 8px 32px rgba(118, 88, 66, 0.06)',
+        'card-soft': '0 0.5rem 2rem rgba(118, 88, 66, 0.06)',
       },
     },
   },
