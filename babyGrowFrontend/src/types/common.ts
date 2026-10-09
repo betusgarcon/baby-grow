@@ -68,3 +68,10 @@ export interface ApiConfig {
   useMock: boolean
   timeout: number
 }
+
+/**
+ * 页面／区块的数据状态。
+ * UI 按状态渲染，而不是硬编码某一张设计稿的形态：
+ * 空态和加载态是独立业务状态，接入真实数据后只需切 state，不必重写结构。
+ */
+export type SectionState = 'loading' | 'empty' | 'content' | 'error'

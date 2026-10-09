@@ -59,6 +59,18 @@ import babyRollIcon from '@/assets/icons/baby_roll.svg'
 import babySpeakIcon from '@/assets/icons/baby_speak.svg'
 import babyWalkIcon from '@/assets/icons/baby_walk.svg'
 
+// 通用导航图标
+import backIcon from '@/assets/icons/back_icon.svg'
+import chevronRightIcon from '@/assets/icons/chevron_right_icon.svg'
+import chevronDownIcon from '@/assets/icons/chevron_down_icon.svg'
+import heartIcon from '@/assets/icons/heart_icon.svg'
+
+// 里程碑卡片图标（白字形，配彩色圆形底）
+import milestoneWalkIcon from '@/assets/icons/milestone_walk_icon.svg'
+import milestoneSpeakIcon from '@/assets/icons/milestone_speak_icon.svg'
+import milestoneSleepIcon from '@/assets/icons/milestone_sleep_icon.svg'
+import milestoneFoodIcon from '@/assets/icons/milestone_solid_food_icon.svg'
+
 // 2. 建立名称与 SVG 资源的映射字典 (兼容全选中/未选中状态)
 const iconMap: Record<string, string> = {
   // TabBar 图标
@@ -123,6 +135,18 @@ const iconMap: Record<string, string> = {
   'baby-roll': babyRollIcon,
   'baby-speak': babySpeakIcon,
   'baby-walk': babyWalkIcon,
+
+  // 通用导航图标
+  'back': backIcon,
+  'chevron-right': chevronRightIcon,
+  'chevron-down': chevronDownIcon,
+  'heart': heartIcon,
+
+  // 里程碑卡片图标
+  'milestone-walk': milestoneWalkIcon,
+  'milestone-speak': milestoneSpeakIcon,
+  'milestone-sleep': milestoneSleepIcon,
+  'milestone-food': milestoneFoodIcon,
 }
 
 interface IconProps {

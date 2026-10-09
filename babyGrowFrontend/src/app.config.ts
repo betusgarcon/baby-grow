@@ -1,6 +1,7 @@
 export default defineAppConfig({
   pages: [
     'pages/journey/index',
+    'pages/journey/milestones/index',
     'pages/analysis/growth/index',
     'pages/analysis/sleep-daily/index',
     'pages/analysis/sleep-monthly/index',

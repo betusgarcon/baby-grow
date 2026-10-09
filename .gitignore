@@ -68,3 +68,8 @@ figma-mcp-free/
 # 这些 PDF 可能来自商业出版物或转载渠道，只允许留在本地；
 # 需要时请使用者自备正版文档放入该目录，再由 scripts/ 生成本地知识库。
 docs/rag_docs/
+
+# ===== Figma 节点截图（产品设计稿图像，公开仓库不入库）=====
+# 只保留结构化源数据 design_sources/figma/**/node.json；
+# 截图随时可用 scripts/figma-pull.sh 重新拉取。
+design_sources/figma/**/*.png

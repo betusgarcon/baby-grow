@@ -1,48 +1,50 @@
 import Taro from '@tarojs/taro'
 import type { AnalysisCategoryKey, AnalysisSubtabKey } from '@/types/analysis'
+import {
+  navigateToRoute,
+  openRecordSheet,
+  switchTabRoute,
+  tabRouteMap,
+  type RouteId,
+} from '@/utils/routes'
 
-export const analysisRouteMap: Record<AnalysisCategoryKey | AnalysisSubtabKey, string> = {
-  growth: '/pages/analysis/growth/index',
-  sleep: '/pages/analysis/sleep-daily/index',
-  diet: '/pages/analysis/diet-week/index',
-  mood: '/pages/analysis/mood/index',
-  sleepDaily: '/pages/analysis/sleep-daily/index',
-  sleepMonthly: '/pages/analysis/sleep-monthly/index',
-  dietWeek: '/pages/analysis/diet-week/index',
-  dietMonth: '/pages/analysis/diet-month/index',
+/**
+ * 分析模块的主 tab / 子 tab key → 全站路由 id。
+ * 这样分析页组件只需要抛出 key，不用自己维护一堆硬编码路径。
+ */
+const analysisRouteIdMap: Record<AnalysisCategoryKey | AnalysisSubtabKey, RouteId> = {
+  growth: 'data-growth',
+  sleep: 'data-sleep-day',
+  diet: 'data-diet-week',
+  mood: 'data-mood',
+  sleepDaily: 'data-sleep-day',
+  sleepMonthly: 'data-sleep-month',
+  dietWeek: 'data-diet-week',
+  dietMonth: 'data-diet-month',
 }
 
 export const navigateToAnalysisPage = (key: AnalysisCategoryKey | AnalysisSubtabKey) => {
-  /**
-   * 根据分析模块的主 tab / 子 tab key，跳转到对应页面。
-   * 这样页面组件只需要抛出 key，不用自己维护一堆硬编码路径。
-   */
-  const url = analysisRouteMap[key]
-
-  if (!url) return
-
-  Taro.redirectTo({ url })
+  switchTabRoute(analysisRouteIdMap[key])
 }
 
+/**
+ * 底部 TabBar 的点击处理。
+ * 四个常规 tab 走路由替换，中间加号按钮打开记录弹层。
+ */
 export const handleBottomTabNavigation = (key: string) => {
-  /**
-   * 处理底部 tabbar 的点击行为。
-   * analysis / journey 会执行页面跳转，其他暂未实现的入口先给出 toast 占位。
-   */
-  if (key === 'analysis') {
-    Taro.redirectTo({ url: '/pages/analysis/growth/index' })
-    return
-  }
-
   if (key === 'add') {
-    Taro.showToast({ title: '记录入口待补充', icon: 'none' })
+    openRecordSheet()
     return
   }
 
-  if (key === 'journey') {
-    Taro.redirectTo({ url: '/pages/journey/index' })
+  const routeId = tabRouteMap[key]
+
+  if (!routeId) {
+    Taro.showToast({ title: '该模块待补充', icon: 'none' })
     return
   }
 
-  Taro.showToast({ title: '该模块待补充', icon: 'none' })
+  switchTabRoute(routeId)
 }
+
+export { navigateToRoute }

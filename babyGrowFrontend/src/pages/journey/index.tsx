@@ -9,6 +9,7 @@ import JourneyLog from './components/JourneyLog'
 import MenuCard from './components/MenuCard'
 import Taro from '@tarojs/taro'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
+import { navigateToRoute } from '@/utils/routes'
 import firstSmileImg from '@/assets/images/first-smile-img.png'
 import babyJourneyImg from '@/assets/images/baby-journey-img.png'
 
@@ -169,7 +170,12 @@ export default function Journey() {
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
               <Text className="text-stone-900 text-xl font-semibold">Recent Milestones</Text>
-              <Text className="text-neutral-600 text-sm font-semibold">More</Text>
+              <Text
+                className="text-neutral-600 text-sm font-semibold"
+                onClick={() => navigateToRoute('journey-milestones')}
+              >
+                More
+              </Text>
             </View>
             <View className="w-full flex justify-between items-center gap-3">
               {mockMilestones.map((milestone) => (
