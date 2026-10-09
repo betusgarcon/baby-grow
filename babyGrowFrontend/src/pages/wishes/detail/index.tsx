@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
-import { View, Text, Image, Input, MovableArea, MovableView } from '@tarojs/components'
+import { View, Text, Input, MovableArea, MovableView } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
@@ -11,7 +11,6 @@ import ProgressBar from '../components/ProgressBar'
 import ChecklistItem from '../components/ChecklistItem'
 import ExpertTipCard from '../components/ExpertTipCard'
 import { findWish, type WishChecklistItem } from '../wishesData'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
 const ITEM_GAP = 12
@@ -25,16 +24,24 @@ export default function WishChecklistDetailPage() {
   )
   const [items, setItems] = useState<WishChecklistItem[]>(wish?.checklist ?? [])
   const [draft, setDraft] = useState<{ title: string; note: string } | null>(null)
-  /** 进入编辑态时的快照，Cancel 用它还原 */
+  /**
+   * 两种状态要分开：
+   * - dirty 表示「有未保存的改动」，决定底部是否出现保存/取消；
+   * - mode === 'edit' 表示「在管理清单」，决定删除按钮、拖拽与新增是否出现。
+   * 勾选只算改动、不算管理，所以只置 dirty——否则勾一下就挂上拖拽容器，
+   * 既出现不该出现的删除按钮，也会因为重新布局而卡顿。
+   */
+  const [dirty, setDirty] = useState(false)
+  /** 进入改动前的快照，Cancel 用它还原 */
   const [snapshot, setSnapshot] = useState<WishChecklistItem[] | null>(null)
 
-  const isEditing = mode === 'edit'
+  const isManaging = mode === 'edit'
 
   const { slotHeight, onDragChange, resolveTarget } = useReorderSlot(
     items.length,
     'checklist-probe',
     ITEM_GAP,
-    isEditing,
+    isManaging,
   )
 
   // hooks 必须先于任何提前 return 调用，所以找不到心愿的判断放在这之后
@@ -55,8 +62,14 @@ export default function WishChecklistDetailPage() {
   const doneCount = items.filter((item) => item.done).length
   const progress = wish.goal > 0 ? Math.min(doneCount / wish.goal, 1) : 0
 
+  const beginChange = () => {
+    // 第一次改动时留快照，之后的改动共用这一份
+    if (!dirty) setSnapshot(items)
+    setDirty(true)
+  }
+
   const enterEdit = () => {
-    setSnapshot(items)
+    beginChange()
     setMode('edit')
   }
 
@@ -64,6 +77,7 @@ export default function WishChecklistDetailPage() {
     if (snapshot) setItems(snapshot)
     setSnapshot(null)
     setDraft(null)
+    setDirty(false)
     setMode('view')
   }
 
@@ -72,13 +86,12 @@ export default function WishChecklistDetailPage() {
     Taro.showToast({ title: '已保存（本地）', icon: 'none' })
     setSnapshot(null)
     setDraft(null)
+    setDirty(false)
     setMode('view')
   }
 
   const toggleItem = (id: string) => {
-    // 查看态下勾选也算一次改动，要先进编辑态让保存/取消出来，
-    // 否则勾完就「自动保存」了，用户没有反悔的机会
-    if (!isEditing) enterEdit()
+    beginChange()
 
     setItems((previous) =>
       previous.map((item) => (item.id === id ? { ...item, done: !item.done } : item)),
@@ -116,7 +129,7 @@ export default function WishChecklistDetailPage() {
     <View id={probe ? 'checklist-probe' : undefined}>
       <ChecklistItem
         item={item}
-        editing={isEditing}
+        editing={isManaging}
         onToggle={() => toggleItem(item.id)}
         onRemove={() => removeItem(item.id)}
       />
@@ -125,17 +138,7 @@ export default function WishChecklistDetailPage() {
 
   return (
     <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Wishes"
-          right={
-            <View className="w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center">
-              <Image src={babyAvatar} className="w-9 h-9 rounded-full" mode="aspectFill" />
-            </View>
-          }
-        />
-      }
+      header={<PageHeader showBack title="Wishes" />}
     >
       <View className="flex flex-col gap-6">
         {/* 设计稿这里是插图，没有可用资源，用同色系浅底占位并把标题叠在下沿 */}
@@ -149,7 +152,7 @@ export default function WishChecklistDetailPage() {
             </View>
           ) : null}
 
-          <Text className="text-3xl font-bold text-on-surface">{wish.title}</Text>
+          <Text className="text-2xl font-bold text-on-surface">{wish.title}</Text>
           <Text className="text-base text-on-surface-variant">{wish.detailSubtitle}</Text>
         </View>
 
@@ -179,16 +182,16 @@ export default function WishChecklistDetailPage() {
 
             <View
               className="py-2 px-4 rounded-full bg-tertiary-fixed flex items-center gap-2"
-              onClick={() => (isEditing ? saveEdit() : enterEdit())}
+              onClick={() => (isManaging ? saveEdit() : enterEdit())}
             >
               <Icon name="edit-muted" className="w-3.5 h-3.5" />
               <Text className="text-sm font-semibold text-on-tertiary-container">
-                {isEditing ? 'Done' : 'Edit List'}
+                {isManaging ? 'Done' : 'Edit List'}
               </Text>
             </View>
           </View>
 
-          {isEditing && slotHeight > 0 ? (
+          {isManaging && slotHeight > 0 ? (
             <MovableArea
               className="relative w-full"
               style={{ height: `${items.length * slotHeight}px` }}
@@ -210,12 +213,12 @@ export default function WishChecklistDetailPage() {
           ) : (
             <View className="flex flex-col gap-3">
               {items.map((item, index) => (
-                <View key={item.id}>{renderItem(item, isEditing && index === 0)}</View>
+                <View key={item.id}>{renderItem(item, isManaging && index === 0)}</View>
               ))}
             </View>
           )}
 
-          {isEditing ? (
+          {isManaging ? (
             <>
               {draft ? (
                 <View className="w-full box-border p-4 rounded-3xl border border-outline-variant flex flex-col gap-3">
@@ -274,8 +277,8 @@ export default function WishChecklistDetailPage() {
           ) : null}
         </View>
 
-        {/* 编辑态下的改动都要在这里二次确认，勾选、增删、拖拽排序都算 */}
-        {isEditing ? (
+        {/* 只要有未保存的改动就给出二次确认——勾选、增删、拖拽排序都算 */}
+        {dirty ? (
           <View className="flex items-center gap-3">
             <View
               className="flex-1 py-3 rounded-full bg-tertiary-fixed flex items-center justify-center"

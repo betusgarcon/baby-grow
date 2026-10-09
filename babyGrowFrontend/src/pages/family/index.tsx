@@ -71,25 +71,11 @@ export default function FamilyHomePage() {
   return (
     <PageContainer
       bottomBar={<BottomTabBar activeKey="family" onTabChange={handleBottomTabNavigation} />}
-      header={
-        <PageHeader
-          leading={
-            <View className="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
-              <Image src={babyAvatar} className="w-full h-full" mode="aspectFill" />
-            </View>
-          }
-          title="Family"
-          right={
-            <View className="py-1 px-3 rounded-full bg-tertiary-fixed">
-              <Text className="text-sm font-semibold text-on-tertiary-container">{babyAgeLabel}</Text>
-            </View>
-          }
-        />
-      }
+      header={<PageHeader title="Family" profile={{ avatar: babyAvatar, ageLabel: babyAgeLabel }} />}
     >
       <View className="flex flex-col gap-6">
         <View className="flex items-center justify-between">
-          <Text className="text-3xl font-bold text-on-surface">Family Circle</Text>
+          <Text className="text-xl font-bold text-on-surface">Family Circle</Text>
 
           <View
             className="py-2 px-4 rounded-full bg-surface-container-high flex items-center gap-2"
@@ -111,7 +97,7 @@ export default function FamilyHomePage() {
         </View>
 
         <View className="flex items-center justify-between">
-          <Text className="text-3xl font-bold text-on-surface">What to Share?</Text>
+          <Text className="text-xl font-bold text-on-surface">What to Share?</Text>
 
           <View
             className="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center"

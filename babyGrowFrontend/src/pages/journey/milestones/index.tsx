@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
-import PageHeader from '@/components/PageHeader'
+import PageHeader, { ProfileAvatar } from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
@@ -64,11 +64,7 @@ export default function JourneyMilestonesPage() {
         <PageHeader
           showBack
           title="Milestones"
-          right={
-            <View className="w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center">
-              <Image src={babyAvatar} className="w-9 h-9 rounded-full" mode="aspectFill" />
-            </View>
-          }
+          right={<ProfileAvatar avatar={babyAvatar} ageLabel="6M" size={40} />}
         />
       }
     >

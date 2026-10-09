@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
@@ -10,7 +10,6 @@ import { navigateToRoute } from '@/utils/routes'
 import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
 import { findWish } from '../wishesData'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
@@ -64,17 +63,7 @@ export default function WishCounterDetailPage() {
 
   return (
     <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Wishes"
-          right={
-            <View className="w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center">
-              <Image src={babyAvatar} className="w-9 h-9 rounded-full" mode="aspectFill" />
-            </View>
-          }
-        />
-      }
+      header={<PageHeader showBack title="Wishes" />}
     >
       <View className="flex flex-col gap-6">
         {/* 设计稿这里是书架照片，没有可用资源，用同色系浅底占位 */}
@@ -88,7 +77,7 @@ export default function WishCounterDetailPage() {
             </View>
           ) : null}
 
-          <Text className="text-3xl font-bold text-on-surface">{wish.title}</Text>
+          <Text className="text-2xl font-bold text-on-surface">{wish.title}</Text>
         </View>
 
         <View className="w-full box-border p-6 rounded-xl bg-surface-container-lowest shadow-card-soft flex flex-col gap-4">

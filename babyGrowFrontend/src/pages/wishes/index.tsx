@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import BottomTabBar from '@/components/BottomTabBar'
@@ -55,21 +55,7 @@ export default function WishesListPage() {
       bottomBar={
         <BottomTabBar activeKey="wishes" onTabChange={handleBottomTabNavigation} />
       }
-      header={
-        <PageHeader
-          title="Wishes"
-          leading={
-            <>
-              <View className="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
-                <Image src={babyAvatar} className="w-full h-full" mode="aspectFill" />
-              </View>
-              <Text className="px-2 py-0.5 rounded-full bg-secondary-container text-sm font-bold text-on-secondary-container">
-                6M
-              </Text>
-            </>
-          }
-        />
-      }
+      header={<PageHeader title="Wishes" profile={{ avatar: babyAvatar, ageLabel: '6M' }} />}
     >
       <View className="flex flex-col gap-4">
         {/* 标题与说明已由顶部导航栏承担，这里不再重复一遍 */}
