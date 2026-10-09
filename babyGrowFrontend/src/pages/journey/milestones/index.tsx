@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import Taro from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
@@ -124,7 +125,7 @@ export default function JourneyMilestonesPage() {
         <View className="py-md flex items-center justify-center">
           <View
             className="h-11 px-lg rounded-full border border-tertiary flex items-center gap-xs"
-            onClick={() => navigateToRoute('journey-list')}
+            onClick={() => Taro.showToast({ title: '已加载全部里程碑', icon: 'none' })}
           >
             <Icon name="chevron-down" className="w-3 h-2" />
             <Text className="text-body-md text-tertiary">more</Text>

@@ -193,7 +193,12 @@ export default function Journey() {
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
               <Text className="text-stone-900 text-xl font-semibold">Latest Journey</Text>
-              <Text className="text-neutral-600 text-sm font-semibold">More</Text>
+              <Text
+                className="text-neutral-600 text-sm font-semibold"
+                onClick={() => navigateToRoute('journey-list')}
+              >
+                More
+              </Text>
             </View>
             <View className="bg-stone-50/80 rounded-[24px] p-4 flex flex-col gap-4">
               {mockJourneyLogs.map((log) => (
