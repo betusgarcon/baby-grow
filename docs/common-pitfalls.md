@@ -347,7 +347,7 @@ src/
 ### 代码示例
 ```bash
 # ✅ 正确的目录结构
-babycare/src/
+babyGrowFrontend/src/
 ├── figma_demo/
 │   ├── pages/
 │   │   ├── home/

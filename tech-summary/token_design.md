@@ -1,6 +1,6 @@
 # Design Token 定义与 Figma 对接方案
 
-> 基于当前项目 `baby-grow-mini` 的 design token 实现，梳理 Figma 中的 Token 定义步骤、已有组件的替换方式，以及 Figma MCP Bridge 的 Token 读取能力分析。
+> 基于 `babyGrowFrontend` 的 design token 实现，梳理 Figma 中的 Token 定义步骤、已有组件的替换方式，以及 Figma MCP Bridge 的 Token 读取能力分析。
 
 ---
 
@@ -10,9 +10,12 @@
 
 | 层级 | 文件 | 作用 |
 |------|------|------|
-| **全局 Token** | `babycare/tailwind.config.js` | 全局颜色、字体、间距、圆角、阴影 |
-| **模块 Token** | `babycare/src/pages/analysis/components/analysisTokens.ts` | 分析模块专用语义化 token |
-| **全局样式** | `babycare/src/app.scss` | 通过 `theme()` 函数引用 Tailwind token |
+| **全局 Token** | `babyGrowFrontend/tailwind.config.js` | 全局颜色、字体、间距、圆角、阴影 |
+| **模块 Token** | `babyGrowFrontend/src/pages/analysis/components/analysisTokens.ts` | 分析模块专用语义化 token |
+| **全局样式** | `babyGrowFrontend/src/app.scss` | 通过 `theme()` 函数引用 Tailwind token |
+
+> 这三行原先指向 `babycare/`。那个目录是 `babyGrowFrontend` 之前的工程名留下的编译残留，
+> 源码早已不在（git 也不跟踪它）。指向它会让按本表干活的人找不到文件。
 
 ### 1.1 全局 Token（tailwind.config.js）
 

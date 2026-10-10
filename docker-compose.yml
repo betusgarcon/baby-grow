@@ -1,31 +1,16 @@
-# 本地开发用全栈一键启动：MySQL + Redis + PostgreSQL/pgvector + Java 后端 + Python AI 服务
+# 本地开发用全栈一键启动：Redis + PostgreSQL/pgvector + Java 后端 + Python AI 服务
 # 生产环境不在本文件管理范围内。
 #
 # 用法（仓库根目录）：
+#   pnpm db:up                  # 只启动数据库与缓存
 #   docker compose up -d        # 启动全部服务
-#   docker compose up -d db     # 只启动数据库
-#   docker compose down         # 停止（数据卷保留）
 #   docker compose logs -f      # 看日志
+#
+# 库的划分（见 docs/backend-design.md §4.1）：
+#   baby_grow     业务库，Java 后端独占，schema 由 Flyway 管
+#   baby_grow_ai  向量库，Python AI 服务独占
+# 两者在同一个 PostgreSQL 实例里，但用独立账号隔开，确保 AI 侧读不到业务数据。
 services:
-  mysql:
-    image: mysql:8
-    container_name: baby-grow-mysql
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: babygrow-dev
-      MYSQL_DATABASE: baby_grow
-      MYSQL_USER: babygrow
-      MYSQL_PASSWORD: babygrow-dev
-    volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pbabygrow-dev"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   redis:
     image: redis:7-alpine
     container_name: baby-grow-redis
@@ -52,6 +37,8 @@ services:
       POSTGRES_DB: baby_grow_ai
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      # 注意：init 脚本只在数据目录为空时执行一次。已有数据卷需要手动补建业务库，
+      # 见 docker/init-postgres/README.md。切勿用 `down -v` 清卷——那会一并删掉 RAG 向量。
       - ./docker/init-postgres:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d baby_grow_ai"]
@@ -107,11 +94,18 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # 连接容器内的 AI 服务
+      # 业务库
+      DB_URL: jdbc:postgresql://postgres:5432/baby_grow
+      DB_USER: babygrow
+      DB_PASSWORD: ${DB_PASSWORD:-babygrow-dev}
+      # AI 服务走容器内网，不经过公网
       AI_SERVICE_URL: http://ai-service:8001
+      # 容器里默认关闭本地直通登录；真机联调时可临时置 true
+      APP_AUTH_DEV_MODE: ${APP_AUTH_DEV_MODE:-false}
+      JWT_SECRET: ${JWT_SECRET:-baby-grow-container-dev-secret-please-override-32b}
+      WX_APPID: ${WX_APPID:-}
+      WX_SECRET: ${WX_SECRET:-}
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_healthy
       postgres:
@@ -120,6 +114,5 @@ services:
         condition: service_healthy
 
 volumes:
-  mysql-data:
   redis-data:
   postgres-data:
