@@ -14,6 +14,25 @@ from typing import Any
 from app.services.rule_registry import RuleRegistry
 
 
+def merge_avoid_items(from_model: Any, declared_allergens: list[str]) -> list[str]:
+    """Combine the model's "avoid" list with the allergens the parent declared.
+
+    The prompt asks the model to carry declared allergens into its answer, but it
+    does not always do so. Safety information must not depend on the model
+    remembering: a parent who declared an egg allergy and gets an empty avoid
+    list has been told nothing, at the exact moment they were owed a warning.
+    Declared allergens are therefore always merged in.
+
+    Order is preserved (model's own items first) and duplicates are dropped.
+    """
+    merged: list[str] = []
+    for value in list(from_model or []) + list(declared_allergens or []):
+        text = str(value).strip()
+        if text and text not in merged:
+            merged.append(text)
+    return merged
+
+
 class RuleEngine:
     """Hard rules for meal recommendations.
 

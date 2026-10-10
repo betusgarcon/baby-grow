@@ -21,7 +21,7 @@ from app.config import get_settings
 from app.models import RecipeItem, RecipeRecommendRequest, RecipeRecommendResponse, SourceRef
 from app.services.ollama_gateway import get_model_gateway
 from app.services.retrieval import RetrievalService
-from app.services.rules import RuleEngine
+from app.services.rules import RuleEngine, merge_avoid_items
 from app.telemetry import get_tracer
 
 logger = logging.getLogger(__name__)
@@ -79,6 +79,7 @@ class RecipeAgent:
             executor = ToolExecutor(
                 rule_engine=self.rule_engine,
                 retrieval_service=self.retrieval_service,
+                recent_diet=[day.model_dump() for day in request.recent_diet],
             )
 
             messages = build_agent_messages(
@@ -396,7 +397,8 @@ class RecipeAgent:
             status="ok",
             summary=parsed.get("summary", ""),
             items=items,
-            avoid_items=parsed.get("avoidItems", []),
+            # 模型漏写 avoidItems 时，声明的过敏原仍必须出现在「避免」里
+            avoid_items=merge_avoid_items(parsed.get("avoidItems"), request.allergens),
             reason=parsed.get("reason"),
             confidence=parsed.get("confidence", 0.0),
             source_refs=source_refs,

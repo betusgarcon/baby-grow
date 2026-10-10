@@ -13,10 +13,15 @@ from typing import Any, AsyncIterator
 
 @dataclass
 class ModelRequest:
-    """Uniform request passed to any model gateway provider."""
+    """Uniform request passed to any model gateway provider.
 
-    messages: list[dict[str, str]]
-    task: str  # e.g. "extraction", "recipe_fixed", "recipe_agent", "embedding"
+    Messages follow the Ollama/OpenAI shape. Individual messages may carry extra
+    keys beyond role/content — notably ``images`` (a list of base64 strings) for
+    multimodal models — so the value type is deliberately loose.
+    """
+
+    messages: list[dict[str, Any]]
+    task: str  # e.g. "extraction", "vision", "recipe_fixed", "recipe_agent", "embedding"
     format: dict[str, Any] | None = None
     tools: list[dict[str, Any]] | None = None
     options: dict[str, Any] | None = None

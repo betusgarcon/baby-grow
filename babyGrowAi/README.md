@@ -40,6 +40,7 @@ pnpm db:up
 brew install ollama
 ollama pull qwen2.5:7b-instruct-q5_K_M
 ollama pull bge-m3:latest  # 如失败可改用 nomic-embed-text:latest
+ollama pull qwen3-vl:8b    # 图片识别用；不拉的话文字提取仍可用，只有图片会失败
 ```
 
 建议开启性能优化环境变量：
@@ -126,7 +127,7 @@ babyGrowAi/
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | `/health` | 健康检查 |
-| POST | `/api/baby/records/extract` | 文本智能提取 |
+| POST | `/api/baby/records/extract` | 记录提取。文字与图片共用，由是否带 `media_base64` 决定走哪个模型 |
 | POST | `/api/baby/recipes/recommend` | 食谱推荐 |
 
 详细接口见 [`docs/api.md`](docs/api.md)。
@@ -145,5 +146,9 @@ pytest tests/ -v
 |------|------|------------|
 | 文本提取 + 食谱生成 | `qwen2.5:7b-instruct-q5_K_M` | ~5GB |
 | Embedding | `bge-m3:latest` | ~500MB |
+| 图片识别 | `qwen3-vl:8b` | ~6GB |
+
+图片识别走独立的视觉模型（`VISION_MODEL`），因为纯文本模型看不了图。它按需加载、
+不常驻——单张图约 45s（含模型冷启动），所以业务侧必须走异步任务而非同步请求。
 
 在 64GB Mac 上，建议 AI 服务可用内存控制在 24GB 以内。Ollama 原生运行时，7B + embedding 常驻约 6GB，剩余空间给前后端服务。

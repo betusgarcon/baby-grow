@@ -65,6 +65,14 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "role": "user",
+        "content": "今天去体检，体重 8.2 公斤，身高 68 厘米",
+    },
+    {
+        "role": "assistant",
+        "content": '{"growth":[{"weight_kg":8.2,"height_cm":68}]}',
+    },
+    {
+        "role": "user",
         "content": "娃儿今朝第一次翻身咯，还吃了点苹果泥",
     },
     {
@@ -87,6 +95,43 @@ def build_messages(text: str, baby_age_months: int, population: str | None = Non
         messages.append(example)
     messages.append({"role": "user", "content": user})
     return messages
+
+
+# Instruction for the multimodal path. The JSON shape is still enforced by the
+# `format` parameter, so few-shot text examples would only waste context here.
+VISION_INSTRUCTION = (
+    "这是家长上传的一张宝宝日常照片，可能附带一句说明。"
+    "请从画面中提取可结构化的成长记录：里程碑、食物、奶量、睡眠、情绪、身高体重。"
+    "只依据画面与说明，不要臆测画面里没有的信息；若确实没有可提取的记录，返回空对象。"
+    "\n家长的补充说明：{note}"
+)
+
+
+def build_vision_messages(
+    image_base64: str,
+    baby_age_months: int,
+    note: str = "",
+    population: str | None = None,
+) -> list[dict]:
+    """Build a message list carrying an image for the VLM extraction path.
+
+    The image rides on the user message as Ollama's `images` list (base64).
+    """
+    system, _ = get_rendered_prompt(
+        "extraction",
+        {"baby_age_months": baby_age_months, "text": note or ""},
+    )
+    if population and population != "baby":
+        system = f"[{population} 人群记录提取]\n{system}"
+
+    return [
+        {"role": "system", "content": system},
+        {
+            "role": "user",
+            "content": VISION_INSTRUCTION.format(note=note.strip() if note else "（无）"),
+            "images": [image_base64],
+        },
+    ]
 
 
 def get_extraction_schema() -> dict:

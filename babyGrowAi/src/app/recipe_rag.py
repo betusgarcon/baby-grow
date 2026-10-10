@@ -35,7 +35,7 @@ from app.prompts import recipe as recipe_prompts
 from app.services.embedding import get_embedding_service
 from app.services.ollama_gateway import get_model_gateway
 from app.services.retrieval import RetrievalService
-from app.services.rules import RuleEngine
+from app.services.rules import RuleEngine, merge_avoid_items
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +192,8 @@ class RecipeRAGService:
                 status="ok",
                 summary=parsed.get("summary", ""),
                 items=items,
-                avoid_items=parsed.get("avoidItems", []),
+                # 与 ReAct Agent 同一条约束：声明的过敏原始终进「避免」，不依赖模型记性
+                avoid_items=merge_avoid_items(parsed.get("avoidItems"), request.allergens),
                 reason=parsed.get("reason"),
                 confidence=parsed.get("confidence", 0.0),
                 source_refs=source_refs,

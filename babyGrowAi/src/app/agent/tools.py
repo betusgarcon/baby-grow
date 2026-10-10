@@ -3,13 +3,13 @@
 Three tools are exposed to the LLM via Ollama native function calling:
   - check_rules: deterministic safety rules (age / allergen / texture)
   - retrieve_knowledge: hybrid RAG retrieval over the knowledge base
-  - get_recent_diet: recent meals for a baby (mock; production would query DB)
+  - get_recent_diet: recent meals for a baby, supplied by the caller
 
 The LLM decides which tool to call, in what order, and when to stop. Tool
 bodies are deterministic Python — the model only controls the orchestration.
 
 Lifespan:
-    Evolving. `get_recent_diet` is a mock and must be replaced before production.
+    Evolving. The tool set and prompt are expected to change as the Agent matures.
 """
 
 import json
@@ -117,32 +117,21 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
 
 
 # ---------------------------------------------------------------------------
-# Mock recent-diet data
+# Recent diet
 # ---------------------------------------------------------------------------
 
-# TODO: replace with a real diet_records table or backend API call.
-# This data is only for local development and regression tests.
-_MOCK_RECENT_DIET: dict[str, list[dict[str, Any]]] = {
-    "baby_001": [
-        {"day": "今天", "foods": ["胡萝卜泥", "米粉", "苹果泥"]},
-        {"day": "昨天", "foods": ["南瓜粥", "蛋黄泥"]},
-        {"day": "前天", "foods": ["红薯泥", "米粉"]},
-    ],
-    "baby_002": [
-        {"day": "今天", "foods": ["猪肉泥", "青菜粥"]},
-        {"day": "昨天", "foods": ["鱼肉泥", "米饭"]},
-    ],
-}
 
+def get_recent_diet(days: int = 3, recent_diet: Optional[list[dict[str, Any]]] = None) -> list[dict[str, Any]]:
+    """Return the caller-supplied recent diet, trimmed to `days`.
 
-def get_recent_diet(baby_id: str, days: int = 3) -> list[dict[str, Any]]:
-    """Return recent diet records for a baby. Mock implementation.
-
-    Lifespan:
-        Temporary. Replace before production with a real data source.
+    The AI service deliberately has no access to the business database, so the
+    caller (the Java backend) passes recent intake in with the request. When it
+    is absent we return nothing rather than inventing meals — a fabricated diet
+    would make the recommendation silently wrong in a way nobody could see.
     """
-    records = _MOCK_RECENT_DIET.get(baby_id, [])
-    return records[:days]
+    if not recent_diet:
+        return []
+    return list(recent_diet)[:days]
 
 
 # ---------------------------------------------------------------------------
@@ -157,9 +146,11 @@ class ToolExecutor:
         self,
         rule_engine: Optional[RuleEngine] = None,
         retrieval_service: Optional[RetrievalService] = None,
+        recent_diet: Optional[list[dict[str, Any]]] = None,
     ):
         self.rule_engine = rule_engine or RuleEngine()
         self.retrieval_service = retrieval_service
+        self.recent_diet = recent_diet
 
     async def execute(self, name: str, arguments: dict[str, Any]) -> str:
         """Execute a tool by name with the given arguments. Returns JSON string."""
@@ -220,6 +211,14 @@ class ToolExecutor:
         return json.dumps({"snippets": snippets}, ensure_ascii=False)
 
     def _get_recent_diet(self, args: dict[str, Any]) -> str:
-        """Return recent diet records (currently mocked)."""
-        records = get_recent_diet(args["baby_id"], args.get("days", 3))
+        """Return recent diet records supplied by the caller."""
+        records = get_recent_diet(days=args.get("days", 3), recent_diet=self.recent_diet)
+
+        if not records:
+            # 明确告知「没有」，而不是返回空数组。空数组会让模型以为「这几天什么都没吃」，
+            # 进而推荐重复食材。
+            return json.dumps(
+                {"recent_diet": [], "note": "调用方未提供近期饮食记录，无法据此去重。请按口味与营养均衡推荐。"},
+                ensure_ascii=False,
+            )
         return json.dumps({"recent_diet": records}, ensure_ascii=False)

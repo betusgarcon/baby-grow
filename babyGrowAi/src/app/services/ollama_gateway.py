@@ -36,16 +36,21 @@ class OllamaGateway:
 
     async def chat(
         self,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Any]],
         format: Optional[dict[str, Any]] = None,
         options: Optional[dict[str, Any]] = None,
         tools: Optional[list[dict[str, Any]]] = None,
         stream: bool = False,
+        task: str = "chat",
     ) -> dict[str, Any] | AsyncIterator[dict[str, Any]]:
-        """Send a chat request through the unified router."""
+        """Send a chat request through the unified router.
+
+        `task` drives provider/model selection; pass "vision" for multimodal
+        calls so they land on the VLM rather than the default text model.
+        """
         request = ModelRequest(
             messages=messages,
-            task="chat",
+            task=task,
             format=format,
             tools=tools,
             options=options,
@@ -60,10 +65,11 @@ class OllamaGateway:
 
     async def chat_sync(
         self,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Any]],
         format: Optional[dict[str, Any]] = None,
         options: Optional[dict[str, Any]] = None,
         tools: Optional[list[dict[str, Any]]] = None,
+        task: str = "chat",
     ) -> dict[str, Any]:
         """Convenience wrapper for non-streaming chat via the router."""
         result = await self.chat(
@@ -72,6 +78,7 @@ class OllamaGateway:
             options=options,
             tools=tools,
             stream=False,
+            task=task,
         )
         if not isinstance(result, dict):
             raise RuntimeError("Unexpected non-dict response from legacy chat")

@@ -17,11 +17,12 @@ from functools import lru_cache
 from typing import Any, Optional
 
 from pgvector.sqlalchemy import Vector
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import (
     JSON,
     Column,
     DateTime,
+    Index,
     Integer,
     String,
     Text,
@@ -87,6 +88,17 @@ class MoodRecord(BaseModel):
     trigger: Optional[str] = Field(default=None, description="触发原因")
 
 
+class GrowthRecord(BaseModel):
+    """A body measurement reported by the parent.
+
+    All three fields are optional: parents often weigh without measuring height.
+    """
+
+    height_cm: Optional[float] = Field(default=None, description="身高，单位 cm")
+    weight_kg: Optional[float] = Field(default=None, description="体重，单位 kg")
+    head_cm: Optional[float] = Field(default=None, description="头围，单位 cm")
+
+
 class ExtractionResult(BaseModel):
     """Structured result of extracting baby records from free text."""
 
@@ -95,17 +107,38 @@ class ExtractionResult(BaseModel):
     milk: list[MilkRecord] = Field(default_factory=list)
     sleep: list[SleepRecord] = Field(default_factory=list)
     mood: list[MoodRecord] = Field(default_factory=list)
+    growth: list[GrowthRecord] = Field(default_factory=list)
     summary: Optional[str] = Field(default=None, description="一句话摘要")
 
 
 class ExtractRequest(BaseModel):
-    """Request body for the record extraction endpoint."""
+    """Request body for the record extraction endpoint.
+
+    Two input shapes share this endpoint:
+
+    - text-only: `text` carries the parent's note;
+    - media: `media_base64` carries an inline image, with `text` as an optional
+      caption.
+
+    The media arrives inline rather than as a URL because the AI service neither
+    reaches the business database nor holds a user token, and sharing a
+    filesystem would couple the two deployments together.
+    """
 
     baby_id: str
     baby_age_months: int = Field(..., ge=0, le=60)
-    text: str = Field(..., min_length=1, max_length=2000)
+    text: str = Field(default="", max_length=2000, description="家长的文字描述或图片说明")
     source_type: str = Field(default="TEXT", description="输入类型: TEXT/IMAGE/VIDEO")
+    media_base64: Optional[str] = Field(default=None, description="图片的 base64 内容（不含 data URI 前缀）")
+    media_mime: Optional[str] = Field(default=None, description="图片的 MIME 类型")
     population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
+
+    @model_validator(mode="after")
+    def require_some_input(self) -> "ExtractRequest":
+        """Reject a request that carries neither text nor media."""
+        if not self.text.strip() and not self.media_base64:
+            raise ValueError("text 与 media_base64 至少要有一个")
+        return self
 
 
 class ExtractResponse(BaseModel):
@@ -146,6 +179,17 @@ class SourceRef(BaseModel):
     similarity: float
 
 
+class RecentDietDay(BaseModel):
+    """One day of recent intake, supplied by the caller.
+
+    The AI service has no access to the business database by design, so recent
+    intake is passed in with the request rather than queried here.
+    """
+
+    day: str = Field(..., description="日期标签，如 今天/昨天 或 ISO 日期")
+    foods: list[str] = Field(default_factory=list, description="当天吃过的食物名称")
+
+
 class RecipeRecommendRequest(BaseModel):
     """Request body for the recipe recommendation endpoint."""
 
@@ -156,6 +200,10 @@ class RecipeRecommendRequest(BaseModel):
     liked_foods: list[str] = Field(default_factory=list)
     disliked_foods: list[str] = Field(default_factory=list)
     texture_level: Optional[str] = Field(default=None, description="质地: 泥糊/碎末/软块/颗粒/家常")
+    # 近期饮食由调用方注入。为空时 Agent 会明确告知「未提供」，而不是拿假数据糊过去。
+    recent_diet: list[RecentDietDay] = Field(
+        default_factory=list, description="宝宝近几天的饮食，按时间倒序"
+    )
     # Orchestration switch: True (default) → ReAct agent; False → fixed pipeline.
     use_agent: bool = Field(default=True, description="是否走 ReAct Agent 链路")
     population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
@@ -232,6 +280,14 @@ class KnowledgeChunk(Base):
 
     __tablename__ = "knowledge_chunks"
 
+    __table_args__ = (
+        # tsvector 上的索引必须是 GIN。写成 Column(..., index=True) 会让
+        # create_all 建出一个 btree 索引：对 tsvector 既没有意义，又会在行内容较大时
+        # 超出 btree 的约 2704 字节上限，导致插入（以及从备份恢复）直接失败。
+        # 索引名沿用已有库里的那个，create_all 在既有库上因此是幂等的。
+        Index("idx_knowledge_chunks_search_vector", "search_vector", postgresql_using="gin"),
+    )
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     document_id = Column(Integer, nullable=False, index=True)
     chunk_no = Column(Integer, default=0)
@@ -244,8 +300,8 @@ class KnowledgeChunk(Base):
     embedding = Column(Vector(1024), nullable=True)
     # Full-text column, fed the space-joined per-character tokens built by
     # `_build_tsvector`, because Postgres has no Chinese tokenizer for
-    # to_tsvector('simple', ...).
-    search_vector = Column(TSVECTOR, nullable=True, index=True)
+    # to_tsvector('simple', ...). Indexed via __table_args__ above (GIN).
+    search_vector = Column(TSVECTOR, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

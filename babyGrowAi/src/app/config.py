@@ -42,6 +42,10 @@ class Settings(BaseSettings):
     ollama_model: str = Field(default="qwen2.5:7b-instruct-q5_K_M", alias="OLLAMA_MODEL")
     # Embedding model: used for knowledge base vector search.
     embedding_model: str = Field(default="bge-m3:latest", alias="EMBEDDING_MODEL")
+    # Vision-language model: used to extract records from photos/video frames.
+    # Kept separate from the text model because VLMs are memory-hungry and are
+    # loaded on demand rather than kept resident.
+    vision_model: str = Field(default="qwen3-vl:8b", alias="VISION_MODEL")
 
     # -----------------------------------------------------------------------
     # LLM behavior
@@ -61,11 +65,8 @@ class Settings(BaseSettings):
         default="postgresql://postgres:postgres@localhost:5432/baby_grow_ai",
         alias="PG_DSN",
     )
-    # MySQL DSN is reserved for the Java backend; not used by the AI service directly.
-    mysql_dsn: str = Field(
-        default="mysql+pymysql://<user>:<password>@localhost:3306/baby_grow",
-        alias="MYSQL_DSN",
-    )
+    # 业务库不在这里：它由 Java 后端独占，本服务不连（见 docs/backend-design.md §1.2）。
+    # 原先预留的 MYSQL_DSN 随架构定案一并移除。
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
 
     # -----------------------------------------------------------------------

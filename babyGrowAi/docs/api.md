@@ -18,13 +18,16 @@ GET /health
 }
 ```
 
-## 文本智能提取
+## 记录提取（文字 / 图片）
 
 ```http
 POST /api/baby/records/extract
 ```
 
-请求体：
+一个端点同时服务两种输入，**由是否带 `media_base64` 决定走哪个模型**——调用方不需要知道
+底下是文本模型还是视觉模型。
+
+请求体（文字）：
 
 ```json
 {
@@ -35,7 +38,29 @@ POST /api/baby/records/extract
 }
 ```
 
-响应体：
+请求体（图片）：
+
+```json
+{
+  "baby_id": "baby-001",
+  "baby_age_months": 10,
+  "text": "午餐",
+  "source_type": "IMAGE",
+  "media_base64": "<图片的 base64，不含 data URI 前缀>",
+  "media_mime": "image/jpeg"
+}
+```
+
+`text` 在图片模式下退化为可选说明（即家长附的一行字）。`text` 与 `media_base64` 至少要有一个。
+
+**图片以 base64 内联传入，而不是给 URL 让 AI 去拉**：AI 服务连不到业务库、也没有用户
+token，共享文件系统又会让两边的部署耦在一起。代价是带宽——超过 10MB 的媒体由调用方
+（Java 后端）拒绝，不走这条链路。
+
+图片模式走 `VISION_MODEL`（默认 `qwen3-vl:8b`，需先 `ollama pull`）。若画面里确实没有可
+提取的记录，模型会返回空对象而不是编造内容。
+
+响应体（两种模式同形）：
 
 ```json
 {

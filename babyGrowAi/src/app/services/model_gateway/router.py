@@ -241,6 +241,7 @@ def _build_default_config() -> RoutingConfig:
 
     rules = [
         RoutingRule(task="extraction", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
+        RoutingRule(task="vision", primary=RoutingTarget(provider="ollama", model=settings.vision_model)),
         RoutingRule(task="recipe_fixed", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
         RoutingRule(task="recipe_agent", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
         RoutingRule(task="embedding", primary=RoutingTarget(provider="ollama", model=settings.embedding_model)),
