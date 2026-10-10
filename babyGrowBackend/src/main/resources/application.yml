@@ -5,12 +5,69 @@ spring:
   application:
     name: baby-grow-backend
 
+  # 本地开发时额外读同目录下的 .env（该文件不入库，见 .env.example）。
+  # 生产用真实环境变量注入，不依赖此文件。
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    # 业务库（Java 独占）。AI 侧的向量库是另一个库：baby_grow_ai
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/baby_grow}
+    username: ${DB_USER:babygrow}
+    password: ${DB_PASSWORD:babygrow-dev}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    # schema 的唯一权威是 Flyway，Hibernate 只做校验，绝不改表
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  servlet:
+    multipart:
+      # 单张照片/短视频的上限。超出由 Spring 直接拒绝，不必进到业务层
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
 ai:
   service:
-    url: http://localhost:8001
+    url: ${AI_SERVICE_URL:http://localhost:8001}
+
+app:
+  auth:
+    # 本地开发开关。为 true 时不调用微信 jscode2session，直接为固定 dev 用户签发 token，
+    # 因而没有微信凭据也能跑通主干。生产必须用 APP_AUTH_DEV_MODE=false 关掉。
+    dev-mode: ${APP_AUTH_DEV_MODE:true}
+  jwt:
+    # 占位默认值，仅够本地跑通；生产用 JWT_SECRET 覆盖（>=32 字节）
+    secret: ${JWT_SECRET:baby-grow-local-dev-only-secret-please-override-32b}
+    ttl-hours: ${JWT_TTL_HOURS:720}
+  wechat:
+    app-id: ${WX_APPID:}
+    app-secret: ${WX_SECRET:}
+  cors:
+    # 小程序不走 CORS；这里是给 Taro H5 预览调试用的
+    allowed-origin-patterns: ${CORS_ORIGIN_PATTERNS:http://localhost:*,http://127.0.0.1:*}
+  media:
+    # 本地存储根目录（容器里挂卷）
+    root: ${MEDIA_ROOT:./data/media}
+    # 拼绝对 URL 用。小程序渲染图片需要绝对地址，生产必须改成真实域名
+    public-base: ${MEDIA_PUBLIC_BASE:http://localhost:8080}
 
 management:
   endpoints:
     web:
       exposure:
         include: health
+
+logging:
+  level:
+    com.babygrow.backend: INFO
