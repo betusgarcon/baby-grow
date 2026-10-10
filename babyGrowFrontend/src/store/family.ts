@@ -20,6 +20,11 @@ export interface FamilyMember {
   /** 头像底色，走 family.* token */
   avatarClass: string
   isSelf?: boolean
+  /** pending = 已邀请但对方还没接受。后端下发，缺省视为已加入 */
+  status?: 'active' | 'pending'
+  /** 待接受成员的一次性邀请口令 */
+  inviteCode?: string
+  inviteExpiresAt?: string
 }
 
 export interface FamilyRoleOption {

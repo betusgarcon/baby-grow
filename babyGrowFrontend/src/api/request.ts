@@ -1,12 +1,13 @@
 /**
  * 统一请求封装
  * - 基于 Taro.request
- * - USE_MOCK=true 时拦截请求返回 Mock 数据
- * - USE_MOCK=false 时发起真实 HTTP 请求
+ * - 命中 mock 白名单时拦截请求返回 Mock 数据
+ * - 否则发起真实 HTTP 请求，并自动带上登录态
  */
 
 import Taro from '@tarojs/taro'
-import { API_CONFIG } from './config'
+import { API_CONFIG, shouldUseMock } from './config'
+import { getToken } from './token'
 import type { ApiResponse } from '@/types/common'
 
 /** 请求方法 */
@@ -46,7 +47,7 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
   const { url, method = 'GET', data, headers } = options
 
   // === Mock 模式：拦截请求 ===
-  if (API_CONFIG.USE_MOCK) {
+  if (shouldUseMock(url)) {
     const handler = mockRoutes.get(url)
 
     if (handler) {
@@ -62,6 +63,7 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
 
   // === 真实请求 ===
   const fullUrl = API_CONFIG.BASE_URL + url
+  const token = getToken()
   console.log(`[DATA: REAL] ${method} ${fullUrl}`)
 
   try {
@@ -71,6 +73,7 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
       data,
       header: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
       timeout: API_CONFIG.TIMEOUT,

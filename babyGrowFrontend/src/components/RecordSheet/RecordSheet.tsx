@@ -2,17 +2,28 @@ import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { saveRecordToTimeline } from '@/store'
+import { loadTimeline, saveRecordToTimeline } from '@/store'
+import { getConfig } from '@/api/config'
+import {
+  commitRecord,
+  extractRecordText,
+  pollAiTask,
+  recognizeMedia,
+  type ExtractResult,
+} from '@/api/modules/ai'
+import { uploadMedia } from '@/api/modules/media'
 import RecordInputView from './RecordInputView'
 import RecordResultView from './RecordResultView'
 import {
+  recognitionFromExtraction,
   recordSheetCopy,
   resolveInputType,
   resolveRecognition,
   type RecordInputType,
+  type RecordRecognition,
 } from './recordData'
 
-type Stage = 'input' | 'analyzing' | 'result'
+type Stage = 'input' | 'analyzing' | 'result' | 'error'
 
 interface RecordSheetProps {
   visible: boolean
@@ -21,16 +32,26 @@ interface RecordSheetProps {
   onSaved?: (type: RecordInputType) => void
 }
 
-/** 识别过程的演示时长。接入真实接口后由请求本身耗时决定 */
+/** 未配置后端时的演示时长；接了后端则由请求耗时决定 */
 const ANALYZING_MS = 900
+/** 媒体识别的轮询间隔与上限。本地 VLM 单张图约 10s，60s 足够覆盖模型冷启动 */
+const POLL_INTERVAL_MS = 1500
+const POLL_TIMEOUT_MS = 60_000
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetProps) {
   const [stage, setStage] = useState<Stage>('input')
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState<string | null>(null)
   const [inputType, setInputType] = useState<RecordInputType>('text')
+  const [recognition, setRecognition] = useState<RecordRecognition | null>(null)
+  const [extraction, setExtraction] = useState<ExtractResult | null>(null)
+  const [mediaId, setMediaId] = useState<number | null>(null)
+  const [taskId, setTaskId] = useState<number | null>(null)
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
   const [recording, setRecording] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const recorder = useRef<ReturnType<typeof Taro.getRecorderManager> | null>(null)
 
   // 关闭后重置，下次打开是干净的录入态
@@ -40,16 +61,16 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
     setStage('input')
     setText('')
     setPhoto(null)
+    setRecognition(null)
+    setExtraction(null)
+    setMediaId(null)
+    setTaskId(null)
+    setError('')
   }, [visible])
 
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current)
-    },
-    [],
-  )
-
   if (!visible) return null
+
+  const hasBackend = () => Boolean(getConfig().baseUrl)
 
   const pickPhoto = () => {
     Taro.chooseImage({
@@ -64,12 +85,61 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
     })
   }
 
-  const analyze = () => {
-    // 先定下形态再进入识别，结果页据此取对应的识别结果
-    setInputType(resolveInputType(text, photo !== null))
+  /** 轮询到识别完成，或抛出可读的失败原因 */
+  const waitForTask = async (id: number): Promise<ExtractResult | undefined> => {
+    const deadline = Date.now() + POLL_TIMEOUT_MS
+
+    while (Date.now() < deadline) {
+      const { data } = await pollAiTask(id)
+
+      if (data.status === 'succeeded') return data.result?.data ?? undefined
+      if (data.status === 'failed') throw new Error(data.error || '识别失败')
+
+      await delay(POLL_INTERVAL_MS)
+    }
+
+    throw new Error('识别超时，请稍后重试')
+  }
+
+  const analyze = async () => {
+    const type = resolveInputType(text, photo !== null)
+
+    setInputType(type)
+    setError('')
     setStage('analyzing')
 
-    timer.current = setTimeout(() => setStage('result'), ANALYZING_MS)
+    // 未配置后端：退回本地演示数据，保证没有后端也能看页面
+    if (!hasBackend()) {
+      await delay(ANALYZING_MS)
+      setRecognition(resolveRecognition(type))
+      setStage('result')
+      return
+    }
+
+    try {
+      let uploadedId: number | null = null
+      if (photo) {
+        uploadedId = (await uploadMedia(photo)).mediaId
+        setMediaId(uploadedId)
+      }
+
+      let result: ExtractResult | undefined
+      if (uploadedId !== null) {
+        const response = await recognizeMedia({ sourceType: 'IMAGE', mediaId: uploadedId, note: text })
+
+        setTaskId(response.data.taskId)
+        result = await waitForTask(response.data.taskId)
+      } else {
+        result = (await extractRecordText(text)).data.data
+      }
+
+      setExtraction(result ?? null)
+      setRecognition(recognitionFromExtraction(result))
+      setStage('result')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '识别失败，请稍后重试')
+      setStage('error')
+    }
   }
 
   /**
@@ -102,20 +172,52 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
     setRecording(true)
   }
 
-  const save = () => {
-    const recognition = resolveRecognition(inputType)
+  const save = async () => {
+    const current = recognition ?? resolveRecognition(inputType)
 
-    // 真正写进时间线，而不是只弹一句「已保存」——保存完在旅程时间线上看得到
-    saveRecordToTimeline({
-      title: recognition.title,
-      summary: recognition.summary,
-      text,
-      photo,
-    })
+    if (saving) return
+    setSaving(true)
 
-    Taro.showToast({ title: '已保存到时间线', icon: 'none' })
-    onSaved?.(inputType)
-    onClose()
+    try {
+      if (!hasBackend()) {
+        // 演示模式：只在本地时间线上追加一条
+        saveRecordToTimeline({ title: current.title, summary: current.summary, text, photo })
+      } else {
+        await commitRecord({
+          source: mediaId !== null ? 'IMAGE' : 'TEXT',
+          mediaId: mediaId ?? undefined,
+          taskId: taskId ?? undefined,
+          text,
+          title: current.title,
+          description: extraction?.summary || current.summary,
+          milestones: extraction?.milestones,
+          food: extraction?.food,
+          milk: extraction?.milk,
+          sleep: extraction?.sleep,
+          mood: extraction?.mood,
+          // AI 返回 snake_case，落库接口用 camelCase，在这里转一次
+          growth: extraction?.growth?.map((item) => ({
+            heightCm: item.height_cm,
+            weightKg: item.weight_kg,
+            headCm: item.head_cm,
+          })),
+        })
+
+        // 以服务端为准刷新，而不是本地拼一条——时间线上看到的必须是落库后的真数据
+        await loadTimeline()
+      }
+
+      Taro.showToast({ title: '已保存到时间线', icon: 'none' })
+      onSaved?.(inputType)
+      onClose()
+    } catch (err) {
+      Taro.showToast({
+        title: err instanceof Error ? err.message : '保存失败',
+        icon: 'none',
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -149,11 +251,35 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
               </View>
               <Text className="text-base text-on-surface-variant">{recordSheetCopy.analyzingText}</Text>
             </View>
+          ) : stage === 'error' ? (
+            <View className="w-full py-12 flex flex-col items-center gap-4">
+              <View className="w-14 h-14 rounded-full bg-error-container flex items-center justify-center">
+                <Icon name="event-medical" className="w-6 h-6" />
+              </View>
+              <Text className="text-base text-on-surface-variant text-center">{error}</Text>
+
+              <View className="flex gap-3 pt-2">
+                <View
+                  className="px-6 h-12 rounded-full bg-surface-container flex items-center justify-center"
+                  onClick={() => setStage('input')}
+                >
+                  <Text className="text-base font-semibold text-secondary">{recordSheetCopy.editCta}</Text>
+                </View>
+
+                <View
+                  className="px-6 h-12 rounded-full bg-primary flex items-center justify-center"
+                  onClick={analyze}
+                >
+                  <Text className="text-base font-semibold text-[#ffffff]">重试</Text>
+                </View>
+              </View>
+            </View>
           ) : (
             <RecordResultView
-              recognition={resolveRecognition(inputType)}
+              recognition={recognition ?? resolveRecognition(inputType)}
               inputText={text}
               photo={photo}
+              saving={saving}
               onSave={save}
               onEdit={() => setStage('input')}
             />

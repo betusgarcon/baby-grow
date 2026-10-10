@@ -15,6 +15,7 @@ import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
 import RecordSheet from '@/components/RecordSheet'
+import { getTodayMenu, type MenuTodayResponse } from '@/api/modules/menu'
 import firstSmileImg from '@/assets/images/first-smile-img.png'
 import babyJourneyImg from '@/assets/images/baby-journey-img.png'
 
@@ -25,41 +26,25 @@ const LOG_ICON: Record<string, string> = {
   sleep: 'moon',
 }
 
-const mockMenus = [
-  {
-    id: 1,
-    mealType: 'Breakfast',
-    title: 'Oatmeal & Banana',
-    description: 'Smoothie texture, rich in potassium.',
-    bgColor: 'bg-stone-50',
-    icon: 'breakfast',
-  },
-  {
-    id: 2,
-    mealType: 'Lunch',
-    title: 'Sweet Potato Mash',
-    description: 'Soft and easily digestible.',
-    bgColor: 'bg-orange-100/50',
-    icon: 'lunch',
-  },
-  {
-    id: 3,
-    mealType: 'Dinner',
-    title: 'Apple Puree',
-    description: 'Light and sweet for the evening.',
-    bgColor: 'bg-rose-100',
-    icon: 'supper',
-  },
-]
-
 export default function Journey() {
   // Latest Journey 与 Recent Milestones 都读 store，首页不再另写一套数据
   const { timeline, milestones, status } = useAppState()
   const [recordOpen, setRecordOpen] = useState(false)
+  // 今日菜单来自服务端缓存（毫秒级，不等 AI）
+  const [menu, setMenu] = useState<MenuTodayResponse | null>(null)
+  const [menuLoading, setMenuLoading] = useState(true)
+
+  const loadMenu = () => {
+    getTodayMenu()
+      .then((response) => setMenu(response.data))
+      .catch(() => setMenu(null))
+      .finally(() => setMenuLoading(false))
+  }
 
   useEffect(() => {
     loadTimeline()
     loadMilestones()
+    loadMenu()
   }, [])
 
   const recentLogs = timeline.slice(0, 2)
@@ -173,17 +158,46 @@ export default function Journey() {
             )}
           </View>
 
-          {/* Today's Menu */}
+          {/* Today's Menu —— 内容由后端预生成，首页只读缓存 */}
           <View className="w-full flex flex-col gap-4 overflow-hidden">
-            <Text className="text-stone-900 text-xl font-semibold px-1">Today's Menu</Text>
-            <View className="w-full flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
-              {mockMenus.map((menu) => (
-                <MenuCard 
-                  key={menu.id}
-                  {...menu}
-                />
-              ))}
+            <View className="flex justify-between items-end px-1">
+              <Text className="text-stone-900 text-xl font-semibold">Today's Menu</Text>
+              {menu?.reason ? (
+                <Text className="text-neutral-500 text-xs flex-1 text-right pl-3" numberOfLines={2}>
+                  {menu.reason}
+                </Text>
+              ) : null}
             </View>
+
+            {menuLoading ? (
+              <LoadingSkeleton blocks={1} blockHeight={96} />
+            ) : menu && menu.items.length > 0 ? (
+              <View className="w-full flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
+                {menu.items.map((item) => (
+                  <MenuCard
+                    key={item.id}
+                    icon={item.icon}
+                    mealType={item.mealType}
+                    title={item.title}
+                    description={item.description}
+                    bgColor={item.bgColor || 'bg-stone-50'}
+                  />
+                ))}
+              </View>
+            ) : (
+              // 推荐还没算好、或暂时生成失败时的空态。stale 为真表示后台正在生成
+              <View className="bg-stone-50/80 rounded-[24px]">
+                <EmptyState
+                  icon="fork_knife"
+                  title={menu?.stale ? '推荐正在准备中' : '还没有推荐'}
+                  description={
+                    menu?.error
+                      ? '生成推荐时出了点问题，稍后会自动重试。'
+                      : '记录宝宝最近吃了什么，这里会按饮食记录和喂养指南给出建议。'
+                  }
+                />
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -197,7 +211,11 @@ export default function Journey() {
       <RecordSheet
         visible={recordOpen}
         onClose={() => setRecordOpen(false)}
-        onSaved={() => setRecordOpen(false)}
+        onSaved={() => {
+          setRecordOpen(false)
+          // 刚记录的饮食可能让今日推荐过期，重新拉一次（后端会返回旧结果 + stale）
+          loadMenu()
+        }}
       />
     </View>
   )

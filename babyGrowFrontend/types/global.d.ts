@@ -23,6 +23,11 @@ declare namespace NodeJS {
      * @see https://taro-docs.jd.com/docs/next/env-mode-config#特殊环境变量-taro_app_id
      */
     TARO_APP_ID: string
+    /**
+     * 后端地址。留空则前端整体走本地 mock。
+     * @description 见 src/api/bootstrap.ts —— 启动时读它来 setConfig。
+     */
+    TARO_APP_API_BASE_URL: string
   }
 }
 

@@ -6,9 +6,11 @@
  * （图文识别结果）。这几页没有 Figma 源数据（Starter 计划配额耗尽），
  * 属上一轮 AI 产物，拿到源数据后需复核。
  *
- * 后端未实现，识别结果由本文件的 mock 按输入类型给出，
- * 接入真实接口后只需把 resolveRecognition 换成请求即可，弹层不用改。
+ * 识别结果有两条来源：配置了后端时走真实 AI（recognitionFromExtraction），
+ * 未配置时退回本文件的演示数据（resolveRecognition），保证没有后端也能看页面。
  */
+
+import type { ExtractResult } from '@/api/modules/ai'
 
 /** 输入形态。识别结果按它分派 */
 export type RecordInputType = 'text' | 'photo' | 'photo-text'
@@ -81,3 +83,65 @@ const recognitions: Record<RecordInputType, RecordRecognition> = {
 }
 
 export const resolveRecognition = (type: RecordInputType): RecordRecognition => recognitions[type]
+
+/**
+ * 把 AI 的结构化识别结果转成结果页的展示形态。
+ *
+ * 只做展示转换，不做补充创造：识别出什么就显示什么，一条都没识别到就如实说明，
+ * 而不是拿一份罐头数据糊过去——用户要在这页确认后才落库。
+ */
+export const recognitionFromExtraction = (result?: ExtractResult | null): RecordRecognition => {
+  const tags: RecordTag[] = []
+
+  result?.milestones?.forEach((item) => {
+    tags.push({
+      label: item.event,
+      variant: item.is_first ? 'gold' : 'outline',
+      icon: 'star',
+    })
+  })
+
+  result?.food?.forEach((item) => {
+    tags.push({
+      label: item.is_first ? `${item.name}（首次）` : item.name,
+      variant: 'outline',
+      icon: 'fork_knife',
+    })
+  })
+
+  result?.milk?.forEach((item) => {
+    const amount = item.amount_ml ? ` ${item.amount_ml}ml` : ''
+    tags.push({ label: `${item.type}${amount}`, variant: 'outline', icon: 'fork_knife' })
+  })
+
+  result?.sleep?.forEach((item) => {
+    const hours = item.duration_min ? `${(item.duration_min / 60).toFixed(1)}h` : ''
+    tags.push({ label: `睡眠 ${hours}`.trim(), variant: 'outline', icon: 'moon' })
+  })
+
+  result?.mood?.forEach((item) => {
+    tags.push({ label: item.mood ?? '情绪', variant: 'outline', icon: 'heart' })
+  })
+
+  result?.growth?.forEach((item) => {
+    const parts: string[] = []
+    if (item.weight_kg != null) parts.push(`${item.weight_kg}kg`)
+    if (item.height_cm != null) parts.push(`${item.height_cm}cm`)
+    if (item.head_cm != null) parts.push(`头围 ${item.head_cm}cm`)
+    if (parts.length > 0) {
+      tags.push({ label: parts.join(' · '), variant: 'outline', icon: 'profile-age' })
+    }
+  })
+
+  const detected = tags.length > 0
+
+  return {
+    title: detected ? 'AI Log Success' : 'Nothing Detected',
+    subtitle: detected
+      ? 'AI analysed your entry. Review before saving.'
+      : 'No structured record was found in this entry.',
+    summary: result?.summary?.trim() || (detected ? tags.map((tag) => tag.label).join(' · ') : '—'),
+    tags,
+  }
+}
+

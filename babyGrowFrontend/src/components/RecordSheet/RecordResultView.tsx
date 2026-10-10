@@ -15,6 +15,8 @@ interface RecordResultViewProps {
   /** 用户原始输入，纯图片时为空 */
   inputText: string
   photo: string | null
+  /** 落库进行中：禁用保存，避免重复提交 */
+  saving?: boolean
   onSave: () => void
   onEdit: () => void
 }
@@ -23,6 +25,7 @@ export default function RecordResultView({
   recognition,
   inputText,
   photo,
+  saving = false,
   onSave,
   onEdit,
 }: RecordResultViewProps) {
@@ -86,16 +89,20 @@ export default function RecordResultView({
 
       <View className="flex flex-col gap-3">
         <View
-          className="w-full h-14 rounded-full bg-primary flex items-center justify-center gap-2"
-          onClick={onSave}
+          className={`w-full h-14 rounded-full flex items-center justify-center gap-2 ${
+            saving ? 'bg-outline-variant' : 'bg-primary'
+          }`}
+          onClick={saving ? undefined : onSave}
         >
           <Icon name="save-timeline" className="w-5 h-5" />
-          <Text className="text-lg font-semibold text-[#ffffff]">{recordSheetCopy.saveCta}</Text>
+          <Text className="text-lg font-semibold text-[#ffffff]">
+            {saving ? 'Saving…' : recordSheetCopy.saveCta}
+          </Text>
         </View>
 
         <View
           className="w-full h-14 rounded-full bg-surface-container flex items-center justify-center gap-2"
-          onClick={onEdit}
+          onClick={saving ? undefined : onEdit}
         >
           <Icon name="pencil-teal" className="w-4 h-4" />
           <Text className="text-lg font-semibold text-secondary">{recordSheetCopy.editCta}</Text>

@@ -20,3 +20,19 @@ export function removeFamilyMember(id: string) {
 export function inviteFamilyMember(name: string, role: FamilyRole) {
   return http.post<FamilyMember>('/api/family/invite', { name, role })
 }
+
+/** 分享海报：内容由后端按宝宝档案与最近一条记录推导 */
+export interface PosterData {
+  title: string
+  subtitle: string
+  badge: string
+  heading: string
+  body: string
+  meta: string
+  templates?: Array<{ key: string; label: string; icon: string }>
+  toggles?: Array<{ key: string; label: string; note: string; defaultOn: boolean }>
+}
+
+export function getPoster() {
+  return http.get<PosterData>('/api/family/poster')
+}

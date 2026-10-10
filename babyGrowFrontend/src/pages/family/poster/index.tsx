@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Taro, { useShareAppMessage } from '@tarojs/taro'
 import { View, Text, Image, Button, Canvas } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
@@ -6,6 +6,7 @@ import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
 import { posterContent, posterTemplates, privacyToggles } from '@/store/family'
+import { getPoster } from '@/api/modules/family'
 
 /** 三套画风模板的差异。之前换模板只改了 chip 的选中态，预览纹丝不动 */
 const TEMPLATE_STYLE: Record<string, { wrap: string; title: string; subtitle: string; card: string }> = {
@@ -32,12 +33,38 @@ const TEMPLATE_STYLE: Record<string, { wrap: string; title: string; subtitle: st
 export default function FamilyPosterPage() {
   const [template, setTemplate] = useState(posterTemplates[0].key)
   const style = TEMPLATE_STYLE[template] ?? TEMPLATE_STYLE.warm
+  // 海报正文来自后端（按宝宝档案与最近一条记录推导）；拿不到时退回本地文案
+  const [poster, setPoster] = useState(posterContent)
+  const [templateOptions, setTemplateOptions] = useState(posterTemplates)
+  const [toggleOptions, setToggleOptions] = useState(privacyToggles)
   const [toggles, setToggles] = useState<Record<string, boolean>>(
     Object.fromEntries(privacyToggles.map((item) => [item.key, item.defaultOn])),
   )
 
+  useEffect(() => {
+    getPoster()
+      .then((response) => {
+        const data = response.data
+        setPoster({
+          title: data.title,
+          subtitle: data.subtitle,
+          badge: data.badge,
+          heading: data.heading,
+          body: data.body,
+          meta: data.meta,
+        })
+        if (data.templates?.length) setTemplateOptions(data.templates)
+        if (data.toggles?.length) {
+          setToggleOptions(data.toggles)
+          setToggles(Object.fromEntries(data.toggles.map((item) => [item.key, item.defaultOn])))
+        }
+      })
+      // 拿不到就用本地的产品文案把页面渲染出来，而不是留一片空白
+      .catch(() => undefined)
+  }, [])
+
   useShareAppMessage(() => ({
-    title: posterContent.title,
+    title: poster.title,
     path: '/pages/family/poster/index',
   }))
 
@@ -62,26 +89,26 @@ export default function FamilyPosterPage() {
 
     ctx.setFillStyle('#ffffff')
     ctx.setFontSize(20)
-    ctx.fillText(posterContent.title, 24, 52)
+    ctx.fillText(poster.title, 24, 52)
 
     ctx.setFontSize(10)
-    ctx.fillText(posterContent.subtitle, 24, 72)
+    ctx.fillText(poster.subtitle, 24, 72)
 
     ctx.setFillStyle('#ffffff')
     ctx.fillRect(16, 96, W - 32, H - 160)
 
     ctx.setFillStyle('#1e1b17')
     ctx.setFontSize(16)
-    ctx.fillText(posterContent.heading, 32, 236)
+    ctx.fillText(poster.heading, 32, 236)
 
     ctx.setFontSize(11)
-    posterContent.body.match(/.{1,16}/g)?.slice(0, 5).forEach((line, index) => {
+    poster.body.match(/.{1,16}/g)?.slice(0, 5).forEach((line, index) => {
       ctx.fillText(line, 32, 262 + index * 18)
     })
 
     ctx.setFillStyle('#474741')
     ctx.setFontSize(10)
-    ctx.fillText(posterContent.meta, 32, H - 60)
+    ctx.fillText(poster.meta, 32, H - 60)
 
     ctx.draw(false, () => {
       Taro.canvasToTempFilePath({
@@ -117,9 +144,9 @@ export default function FamilyPosterPage() {
         {/* 海报预览。底色与内页留白按设计稿，照片位没有资源用浅底占位 */}
         <View className={`w-full box-border p-5 rounded-3xl flex flex-col items-center gap-4 ${style.wrap}`}>
           <View className="flex flex-col items-center gap-1">
-            <Text className={`text-2xl font-bold ${style.title}`}>{posterContent.title}</Text>
+            <Text className={`text-2xl font-bold ${style.title}`}>{poster.title}</Text>
             <Text className={`text-caption font-semibold ${style.subtitle}`} style={{ letterSpacing: '0.12em' }}>
-              {posterContent.subtitle}
+              {poster.subtitle}
             </Text>
           </View>
 
@@ -131,17 +158,17 @@ export default function FamilyPosterPage() {
             <View className="self-start py-1 px-3 rounded-full bg-tertiary-fixed flex items-center gap-1">
               <Icon name="fork_knife" className="w-3.5 h-3.5" />
               <Text className="text-caption font-bold text-on-tertiary-container">
-                {posterContent.badge}
+                {poster.badge}
               </Text>
             </View>
 
-            <Text className="text-2xl font-bold text-on-surface">{posterContent.heading}</Text>
-            <Text className="text-sm text-on-surface-variant">{posterContent.body}</Text>
+            <Text className="text-2xl font-bold text-on-surface">{poster.heading}</Text>
+            <Text className="text-sm text-on-surface-variant">{poster.body}</Text>
 
             <View className="w-full h-px bg-analysis-divider" />
 
             <View className="flex items-center justify-between">
-              <Text className="text-caption text-on-surface-variant">{posterContent.meta}</Text>
+              <Text className="text-caption text-on-surface-variant">{poster.meta}</Text>
               <Icon name="heart" className="w-5 h-5" />
             </View>
           </View>
@@ -157,7 +184,7 @@ export default function FamilyPosterPage() {
           <Text className="text-sm font-semibold text-on-surface-variant px-1">选择画风模板</Text>
 
           <View className="flex flex-wrap gap-2">
-            {posterTemplates.map((item) => {
+            {templateOptions.map((item) => {
               const selected = item.key === template
 
               return (
@@ -182,7 +209,7 @@ export default function FamilyPosterPage() {
           <Text className="text-sm font-semibold text-on-surface-variant px-1">隐私脱敏保护</Text>
 
           <View className="flex gap-3">
-            {privacyToggles.map((item) => {
+            {toggleOptions.map((item) => {
               const on = toggles[item.key]
 
               return (
