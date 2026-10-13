@@ -20,7 +20,16 @@ export default function MilestoneCard({ title, date, image }: MilestoneCardProps
       <View className="w-20 h-20 rounded-full overflow-hidden shadow-sm shrink-0">
         <Image className="w-full h-full object-cover" src={image} />
       </View>
-      <Text className="text-stone-900 text-sm font-semibold">{title}</Text>
+
+      {/* 标题固定在「两行高」的盒子里并做两行截断。
+          否则长标题（如 Slept Through The Night）会换到三行，把这张卡连同整排都撑高；
+          短标题则居中，几种情况下的卡片高度一致。 */}
+      <View className="w-full h-10 flex items-center">
+        <Text className="w-full text-stone-900 text-sm font-semibold text-center leading-tight line-clamp-2">
+          {title}
+        </Text>
+      </View>
+
       <Text className="text-stone-700/70 text-xs">{date}</Text>
     </View>
   )

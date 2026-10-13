@@ -8,16 +8,15 @@ import BottomTabBar from '@/components/BottomTabBar'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 import highlightImage from '@/assets/images/first-smile-img.png'
 import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
 import { useAppState, loadMembers, setMemberRole, removeMember } from '@/store'
-import { babyAgeLabel, shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
+import { shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
   // 成员来自 store：改权限、移出成员在离开页面后依然生效
-  const { members, status } = useAppState()
+  const { members, status, babyHeader } = useAppState()
 
   useEffect(() => {
     loadMembers()
@@ -66,7 +65,12 @@ export default function FamilyHomePage() {
   return (
     <PageContainer
       bottomBar={<BottomTabBar activeKey="family" onTabChange={handleBottomTabNavigation} />}
-      header={<PageHeader title="Family" profile={{ avatar: babyAvatar, ageLabel: babyAgeLabel }} />}
+      header={
+        <PageHeader
+          title="Family"
+          profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
+        />
+      }
     >
       <View className="flex flex-col gap-6">
         <View className="flex items-center justify-between">
@@ -82,7 +86,7 @@ export default function FamilyHomePage() {
         </View>
 
         <AsyncSection status={status.members} onRetry={loadMembers} skeletonBlocks={1} skeletonHeight={240}>
-          <View className="w-full box-border px-4 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col">
+          <View className="w-full box-border px-4 rounded-lg bg-card shadow-card-soft flex flex-col">
             {members.map((member, index) => (
               <View key={member.id} className="flex flex-col">
                 {index > 0 ? <View className="w-full h-px bg-analysis-divider" /> : null}

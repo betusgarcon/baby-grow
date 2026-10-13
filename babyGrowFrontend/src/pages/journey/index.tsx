@@ -17,7 +17,6 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import RecordSheet from '@/components/RecordSheet'
 import { getTodayMenu, type MenuTodayResponse } from '@/api/modules/menu'
 import firstSmileImg from '@/assets/images/first-smile-img.png'
-import babyJourneyImg from '@/assets/images/baby-journey-img.png'
 
 /** 时间线条目的类型 → 首页 JourneyLog 用的图标 */
 const LOG_ICON: Record<string, string> = {
@@ -28,7 +27,7 @@ const LOG_ICON: Record<string, string> = {
 
 export default function Journey() {
   // Latest Journey 与 Recent Milestones 都读 store，首页不再另写一套数据
-  const { timeline, milestones, status } = useAppState()
+  const { timeline, milestones, status, babyHeader } = useAppState()
   const [recordOpen, setRecordOpen] = useState(false)
   // 今日菜单来自服务端缓存（毫秒级，不等 AI）
   const [menu, setMenu] = useState<MenuTodayResponse | null>(null)
@@ -56,7 +55,7 @@ export default function Journey() {
       {/* 2. 顶部 Header：改走公共 PageHeader，不再自己量一遍系统信息 */}
       <PageHeader
         title="Journey"
-        profile={{ avatar: babyJourneyImg, ageLabel: '6M' }}
+        profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
         onProfilePress={() => navigateToRoute('baby-profile-view')}
         right={
           <View
@@ -128,7 +127,7 @@ export default function Journey() {
               </Text>
             </View>
             {recentLogs.length > 0 ? (
-              <View className="bg-stone-50/80 rounded-[24px] p-4 flex flex-col gap-4">
+              <View className="bg-card rounded-[24px] p-4 flex flex-col gap-4">
                 {recentLogs.map((entry) => (
                   <JourneyLog
                     key={entry.id}
@@ -136,15 +135,15 @@ export default function Journey() {
                     time={entry.time}
                     description={entry.description}
                     icon={LOG_ICON[entry.type]}
-                    bgColor="bg-stone-100"
-                    iconColor="text-stone-600"
+                    bgColor="bg-surface-container-high"
+                    iconColor="text-on-surface-variant"
                     tags={[entry.badge]}
                   />
                 ))}
               </View>
             ) : status.timeline === 'ready' ? (
               // 首次使用还没有任何记录时的空态
-              <View className="bg-stone-50/80 rounded-[24px]">
+              <View className="bg-card rounded-[24px]">
                 <EmptyState
                   icon="star"
                   title="还没有成长记录"
@@ -180,13 +179,12 @@ export default function Journey() {
                     mealType={item.mealType}
                     title={item.title}
                     description={item.description}
-                    bgColor={item.bgColor || 'bg-stone-50'}
                   />
                 ))}
               </View>
             ) : (
               // 推荐还没算好、或暂时生成失败时的空态。stale 为真表示后台正在生成
-              <View className="bg-stone-50/80 rounded-[24px]">
+              <View className="bg-card rounded-[24px]">
                 <EmptyState
                   icon="fork_knife"
                   title={menu?.stale ? '推荐正在准备中' : '还没有推荐'}

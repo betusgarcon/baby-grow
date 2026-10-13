@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import Taro from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
-import PageHeader, { ProfileAvatar } from '@/components/PageHeader'
+import PageHeader from '@/components/PageHeader'
 import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
-import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadMilestones } from '@/store'
 import type { SectionState } from '@/types/common'
@@ -41,7 +39,7 @@ const filterMilestones = (milestones: Milestone[], month: string, year: string, 
 
 export default function JourneyMilestonesPage() {
   // 里程碑来自 store：与首页 Recent Milestones 同源
-  const { milestones, status } = useAppState()
+  const { milestones, status, babyHeader } = useAppState()
 
   const [month, setMonth] = useState(ALL_MONTHS)
   // 默认筛当年。里程碑日期是相对今天生成的，写死年份会把数据全滤掉
@@ -73,7 +71,7 @@ export default function JourneyMilestonesPage() {
         <PageHeader
           showBack
           title="Milestones"
-          right={<ProfileAvatar avatar={babyAvatar} ageLabel="6M" size={40} />}
+          profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
         />
       }
     >
@@ -116,14 +114,9 @@ export default function JourneyMilestonesPage() {
           )}
         </View>
 
+        {/* 同 journey 列表：数据一次取全，没有分页，就不该摆一个假按钮 */}
         <View className="py-md flex items-center justify-center">
-          <View
-            className="h-11 px-lg rounded-full border border-tertiary flex items-center gap-xs"
-            onClick={() => Taro.showToast({ title: '已加载全部里程碑', icon: 'none' })}
-          >
-            <Icon name="chevron-down" className="w-3 h-2" />
-            <Text className="text-body-md text-tertiary">more</Text>
-          </View>
+          <Text className="text-body-sm text-on-surface-variant">已加载全部里程碑</Text>
         </View>
       </View>
       </AsyncSection>

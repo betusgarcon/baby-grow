@@ -10,13 +10,12 @@ import RecordSheet from '@/components/RecordSheet'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { useAppState, loadWishes, removeWish, addWish } from '@/store'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
 import WishCard from './components/WishCard'
 import { wishesEmptyCopy, type Wish, type WishKind } from '@/store/wishes'
 
 export default function WishesListPage() {
   // 心愿来自 store：删掉、新建之后离开页面再回来依然保留
-  const { wishes, status } = useAppState()
+  const { wishes, status, babyHeader } = useAppState()
   const [recordOpen, setRecordOpen] = useState(false)
   /** 新建心愿的草稿。为 null 时表单不显示 */
   const [draft, setDraft] = useState<{ title: string; description: string; goal: string; kind: WishKind } | null>(
@@ -78,7 +77,12 @@ export default function WishesListPage() {
   return (
     <PageContainer
       bottomBar={<BottomTabBar activeKey="wishes" onTabChange={handleBottomTabNavigation} />}
-      header={<PageHeader title="Wishes" profile={{ avatar: babyAvatar, ageLabel: '6M' }} />}
+      header={
+        <PageHeader
+          title="Wishes"
+          profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
+        />
+      }
     >
       <View className="flex flex-col gap-4">
         <AsyncSection status={status.wishes} onRetry={loadWishes} skeletonBlocks={3} skeletonHeight={180}>

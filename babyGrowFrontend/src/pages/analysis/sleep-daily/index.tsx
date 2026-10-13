@@ -7,11 +7,7 @@ import {
   InsightCard,
 } from '@/pages/analysis/components/AnalysisCards'
 import { getSleepCircadian, getDailySleepLogs } from '@/api/modules/sleep'
-import { getBabyProfile } from '@/api/modules/baby'
-import type { BabyProfileSummary } from '@/types/analysis'
 import type { GetSleepCircadianResponse, GetDailySleepLogsResponse } from '@/types/sleep'
-
-const BABY_ID = 'baby-001'
 
 const sleepSubtabs = [
   { key: 'sleepDaily' as const, label: 'Daily Ring', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
@@ -19,38 +15,25 @@ const sleepSubtabs = [
 ]
 
 export default function AnalysisSleepDailyPage() {
-  const [profile, setProfile] = useState<BabyProfileSummary | null>(null)
   const [circadianData, setCircadianData] = useState<GetSleepCircadianResponse | null>(null)
   const [logsData, setLogsData] = useState<GetDailySleepLogsResponse | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      getBabyProfile(),
-      getSleepCircadian(BABY_ID),
-      getDailySleepLogs(BABY_ID),
-    ])
-      .then(([profileRes, circadianRes, logsRes]) => {
-        const p = profileRes.data.profile
-        setProfile({
-          name: p.name,
-          ageLabel: p.ageLabel,
-          avatar: p.avatar,
-          statusLabel: p.statusLabel || '',
-        })
+    Promise.all([getSleepCircadian(), getDailySleepLogs()])
+      .then(([circadianRes, logsRes]) => {
         setCircadianData(circadianRes.data)
         setLogsData(logsRes.data)
       })
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading || !profile || !circadianData || !logsData) {
+  if (loading || !circadianData || !logsData) {
     return <View><Text>Loading...</Text></View>
   }
 
   return (
     <AnalysisLayout
-      profile={profile}
       activeCategory="sleep"
       activeSubtab="sleepDaily"
       subtabOptions={sleepSubtabs}

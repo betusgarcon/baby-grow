@@ -77,7 +77,7 @@ export function MetricOverviewCard({
 }) {
   return (
     <View
-      className="w-full bg-white p-1 flex flex-col gap-1 rounded-[32px]"
+      className="w-full bg-card p-1 flex flex-col gap-1 rounded-[32px]"
       style={{
         border: `1px solid ${analysisColors.cardBorder}`,
         boxShadow: '0 4px 30px rgba(0,0,0,0.04)',
@@ -301,6 +301,12 @@ export function IngredientToleranceCard({
     setShowComposer(false)
   }
 
+  /** 收起录入框并清掉草稿，免得下次展开还留着上次没提交的内容 */
+  const handleCancelIngredient = () => {
+    setDraftIngredient('')
+    setShowComposer(false)
+  }
+
   return (
     <View className="w-full p-4 bg-[#F4F1EC] rounded-[32px] border border-[#E0DAD2] flex flex-col gap-3">
       <View className="flex items-center justify-between gap-3">
@@ -340,15 +346,24 @@ export function IngredientToleranceCard({
         </View>
       </View>
       {showComposer ? (
-        <View className="mt-1 p-3 rounded-[24px] bg-white border border-[#DDD7CF] flex items-center gap-2 shadow-sm">
+        <View className="mt-1 p-3 rounded-[24px] bg-white border border-[#DDD7CF] flex flex-col gap-2 shadow-sm">
           <Input
-            className="flex-1 text-sm text-[#2E2822]"
+            className="w-full text-sm text-[#2E2822]"
             placeholder="输入新的食物，比如 Blueberry"
             value={draftIngredient}
             onInput={(event) => setDraftIngredient(event.detail.value)}
           />
-          <View className="px-3 py-1.5 rounded-full bg-[#D9E7CE]" onClick={handleAddIngredient}>
-            <Text className="text-sm font-semibold text-[#5B7358]">添加</Text>
+          {/* 按钮另起一行右对齐：挤在输入框同一行时，窄屏上三者都会被压扁 */}
+          <View className="flex items-center justify-end gap-2">
+            <View
+              className="px-3 py-1.5 rounded-full bg-[#EBE7E2]"
+              onClick={handleCancelIngredient}
+            >
+              <Text className="text-sm font-semibold text-[#6D6761]">取消</Text>
+            </View>
+            <View className="px-3 py-1.5 rounded-full bg-[#D9E7CE]" onClick={handleAddIngredient}>
+              <Text className="text-sm font-semibold text-[#5B7358]">添加</Text>
+            </View>
           </View>
         </View>
       ) : null}
@@ -633,7 +648,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
         </View>
       ))}
 
-      <View className="w-full p-6 bg-white rounded-[32px] border-2 border-dashed border-[#D8DDD8] flex flex-col gap-5">
+      <View className="w-full p-6 bg-card rounded-[32px] border-2 border-dashed border-[#D8DDD8] flex flex-col gap-5">
         <View className="flex items-center gap-2" onClick={handleAddDraft}>
           <Icon name="add-circle" className="w-5 h-5" />
           <Text className="text-base text-[#2E2822]">Quick Add Log</Text>
@@ -713,7 +728,7 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
   const totalHours = 24
 
   return (
-    <View className="w-full p-5 bg-white rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
+    <View className="w-full p-5 bg-card rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
       {/* 标题区域 */}
       <View className="flex items-start justify-between gap-3">
         <View>
@@ -867,7 +882,7 @@ export function MoodCalendarCard({
   } as const
 
   return (
-    <View className="w-full p-6 bg-white rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
+    <View className="w-full p-6 bg-card rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
       <View className="flex items-start justify-between gap-3">
         <View>
           <Text className="block text-lg leading-8 font-semibold text-[#2E2822]">2026/6 情绪日历</Text>
@@ -1017,7 +1032,7 @@ export function MoodCheckinCard({
   )
 
   return (
-    <View className="w-full p-4 bg-white rounded-[32px] border border-[#D8E2DB] flex flex-col gap-4">
+    <View className="w-full p-4 bg-card rounded-[32px] border border-[#D8E2DB] flex flex-col gap-4">
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
           <Icon name="more" className="w-5 h-5" />

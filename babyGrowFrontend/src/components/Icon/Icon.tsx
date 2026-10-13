@@ -122,6 +122,7 @@ import pencilMutedIcon from '@/assets/icons/pencil_muted_icon.svg'
 import moreVertIcon from '@/assets/icons/icon-more.svg'
 import menuIcon from '@/assets/icons/icon-menu.svg'
 import profileAgeIcon from '@/assets/icons/icon-age.svg'
+import profileNameIcon from '@/assets/icons/icon-name.svg'
 import profileGenderIcon from '@/assets/icons/icon-gender.svg'
 import profileConstellationIcon from '@/assets/icons/icon-constellation.svg'
 import profileLionIcon from '@/assets/icons/icon-little-lion.svg'
@@ -257,6 +258,7 @@ const iconMap: Record<string, string> = {
   'more-vert': moreVertIcon,
   'menu': menuIcon,
   'profile-age': profileAgeIcon,
+  'profile-name': profileNameIcon,
   'profile-gender': profileGenderIcon,
   'profile-constellation': profileConstellationIcon,
   'profile-lion': profileLionIcon,

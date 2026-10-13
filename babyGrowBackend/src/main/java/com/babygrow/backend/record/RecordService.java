@@ -114,7 +114,7 @@ public class RecordService {
                 baby.getId(),
                 memoryRecordId,
                 TimelineEntries.localDateOf(occurredAt),
-                "memory",
+                resolveEntryType(request, media != null, text),
                 media == null ? "health" : "photos",
                 TimelineEntries.formatTime(occurredAt),
                 "AI LOG",
@@ -124,6 +124,36 @@ public class RecordService {
                 occurredAt.toEpochMilli());
 
         return TimelineEntries.toResponse(timelineRepository.save(entry));
+    }
+
+    /**
+     * 时间线条目的类型，决定卡片上那枚图标。
+     *
+     * <p>此前这里一律写死 "memory"，于是不管是喂奶、小睡还是随手记，
+     * 时间线上都是同一枚相机图标，整屏看下来全是「日常记录」。
+     *
+     * <p>按提交内容推断：纯睡眠记 sleep、纯吃喝记 feeding；
+     * 带文字、带照片，或者混了情绪 / 生长 / 里程碑的，归 memory——
+     * 「这是一条记忆」比「它含什么成分」更能说明它是什么。
+     */
+    private static String resolveEntryType(CommitRequest request, boolean hasMedia, String text) {
+        boolean hasSleep = request.sleep() != null && !request.sleep().isEmpty();
+        boolean hasFeed = (request.milk() != null && !request.milk().isEmpty())
+                || (request.food() != null && !request.food().isEmpty());
+        boolean hasOther = (request.mood() != null && !request.mood().isEmpty())
+                || (request.growth() != null && !request.growth().isEmpty())
+                || (request.milestones() != null && !request.milestones().isEmpty());
+
+        if (hasMedia || !text.isEmpty() || hasOther) {
+            return "memory";
+        }
+        if (hasSleep && !hasFeed) {
+            return "sleep";
+        }
+        if (hasFeed && !hasSleep) {
+            return "feeding";
+        }
+        return "memory";
     }
 
     private List<RecordEntity> structuredRecords(Long babyId, Instant occurredAt,

@@ -3,17 +3,13 @@ import { View, Text, ScrollView } from '@tarojs/components'
 import BottomTabBar from '@/components/BottomTabBar'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
-import type {
-  AnalysisCategoryKey,
-  AnalysisSubtabKey,
-  BabyProfileSummary,
-} from '@/types/analysis'
+import type { AnalysisCategoryKey, AnalysisSubtabKey } from '@/types/analysis'
+import { useAppState } from '@/store'
 import { handleBottomTabNavigation, navigateToAnalysisPage } from '@/utils/analysisNavigation'
 import SegmentedTabs from './SegmentedTabs'
 import { analysisColors } from './analysisTokens'
 
 interface AnalysisLayoutProps extends PropsWithChildren {
-  profile: BabyProfileSummary
   activeCategory: AnalysisCategoryKey
   activeSubtab?: AnalysisSubtabKey
   subtabOptions?: Array<{ key: AnalysisSubtabKey; label: string; iconActive?: string; iconInactive?: string }>
@@ -52,20 +48,27 @@ const categoryConfigs: Array<{
 ]
 
 export default function AnalysisLayout({
-  profile,
   activeCategory,
   activeSubtab,
   subtabOptions,
   children,
 }: AnalysisLayoutProps) {
+  // 头像 / 名字 / 月龄统一从 store 取（启动时已加载一次），
+  // 不再由各分析页各自请求、各自传进来——那正是各页显示不一致的根源。
+  const { babyHeader } = useAppState()
+
   return (
-    <View className="w-screen h-screen bg-surface overflow-hidden flex flex-col">
+    <View className="w-screen h-screen bg-surface-container-lowest overflow-hidden flex flex-col">
       {/* 头部改由公共 PageHeader 承担：头像 + 年龄徽章的样式原先只写死在这里，
           导致其余页面各写各的。收敛之后全站头部只有一处实现。 */}
       <PageHeader
         translucent
-        title={profile.name}
-        profile={{ avatar: profile.avatar, ageLabel: profile.ageLabel }}
+        title="Analysis"
+        profile={{
+          avatar: babyHeader.avatar,
+          ageLabel: babyHeader.ageLabel,
+          name: babyHeader.name,
+        }}
         below={
           <View className="px-4 pt-3 pb-3 flex items-center justify-center gap-2">
             {categoryConfigs.map((category) => {

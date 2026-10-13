@@ -46,8 +46,8 @@ export default function JourneyWeeklyInsightPage() {
       <AsyncSection status={status.weeklyInsight} onRetry={loadWeeklyInsight} skeletonBlocks={3} skeletonHeight={140}>
       {data ? (
       <View className="flex flex-col gap-6">
-        {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色 */}
-        <Text className="text-2xl font-bold text-secondary">{data.rangeLabel}</Text>
+        {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色；居中显示更稳 */}
+        <Text className="text-2xl font-bold text-secondary text-center">{data.rangeLabel}</Text>
 
         <View className="flex gap-3">
           {data.metrics.map((metric) => (
@@ -67,7 +67,7 @@ export default function JourneyWeeklyInsightPage() {
           ))}
         </View>
 
-        <View className="relative w-full box-border p-6 rounded-xl bg-surface-container-lowest shadow-card-soft overflow-hidden flex flex-col gap-3">
+        <View className="relative w-full box-border p-6 rounded-xl bg-card shadow-card-soft overflow-hidden flex flex-col gap-3">
           {/* 角落装饰。设计稿这层带模糊，小程序对 blur 支持不稳，
               用径向渐变衰减到全透明来近似 */}
           <View

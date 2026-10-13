@@ -13,6 +13,11 @@ module.exports = {
         'tertiary-container': '#f7fff7',
         'primary-container': '#fffdf5',
         surface: '#fff8f1',
+        // 卡片底色。取自 Figma 设计稿实测的主色（占画面约 26%），比页面底色 surface
+        // 再暖一档，卡片轮廓因此清晰可辨；又不像 secondary-container 那样饱和。
+        // 全站卡片统一用它——此前混用 bg-white / bg-surface-container-lowest / bg-stone-*，
+        // 其中 stone 系是冷灰，压在暖底上会显得浑浊、几乎看不出卡片。
+        card: '#fff3ea',
         secondary: '#765842',
         'on-primary': '#ffffff',
         'inverse-surface': '#33302b',

@@ -366,14 +366,24 @@ function renderBarChart(option: ChartOption) {
     <View className="w-full h-full flex items-end justify-between gap-3 px-1">
       {bars.map((bar) => (
         <View key={bar.label} className="flex-1 h-full flex flex-col items-center justify-end gap-2">
-          <Text className="text-[13px] font-semibold" style={{ color: '#9A7A61' }}>{bar.value}</Text>
-          <View
-            className="w-[72%] min-w-[24px] rounded-t-[14px] min-h-[22px]"
-            style={{
-              height: `${Math.max(14, (bar.value / maxValue) * 100)}%`,
-              backgroundColor: bar.color,
-            }}
-          />
+          {/*
+            值为 0 时既不画柱也不标数字。此前用 Math.max(14, …) + min-h-[22px]
+            硬留了一根短柱，看上去像「这天也喝了点」，与「还没记录」是两回事。
+          */}
+          {bar.value > 0 ? (
+            <>
+              <Text className="text-base font-semibold" style={{ color: analysisColors.titleAccent }}>
+                {bar.value}
+              </Text>
+              <View
+                className="w-[72%] min-w-[24px] rounded-t-[14px] min-h-[22px]"
+                style={{
+                  height: `${Math.max(14, (bar.value / maxValue) * 100)}%`,
+                  backgroundColor: bar.color,
+                }}
+              />
+            </>
+          ) : null}
           <Text className="text-xs font-medium" style={{ color: analysisColors.textTertiary }}>{bar.label}</Text>
         </View>
       ))}

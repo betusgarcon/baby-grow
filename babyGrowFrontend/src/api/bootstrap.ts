@@ -7,6 +7,7 @@
 
 import Taro from '@tarojs/taro'
 import { REAL_API_PATHS, setConfig } from './config'
+import { setAuthGate } from './request'
 import { login } from './modules/auth'
 import { getToken, setToken } from './token'
 
@@ -42,12 +43,22 @@ export async function bootstrapApi(): Promise<void> {
   })
 
   if (!baseUrl) {
-    console.warn('[API] 未配置 TARO_APP_API_BASE_URL，全部接口走本地 mock')
+    // 这个分支很危险：它会静默地把整个前端变成「有内容但点了没反应」的演示态，
+    // 看起来像后端没写好。所以除了日志还弹一次提示，让配置问题一眼可见。
+    console.error(
+      '[API] 未配置 TARO_APP_API_BASE_URL，全部接口走本地 mock。' +
+        '检查 .env.development / .env.production —— 注意 npm run build:weapp（不带 --watch）读的是后者。',
+    )
+    Taro.showToast({ title: '未配置后端地址，正在使用本地演示数据', icon: 'none', duration: 3000 })
     return
   }
 
   try {
-    await ensureAuth()
+    // 先同步把闸门挂上，再 await。页面在 onLaunch 返回后就会取数，
+    // 晚一步挂上，首屏那批请求就又把 token 漏掉了。
+    const gate = ensureAuth()
+    setAuthGate(gate)
+    await gate
   } catch (error) {
     // 登录失败不阻断启动：页面会各自进入错误态并给出重试入口
     console.error('[AUTH] 登录失败，接口将返回未登录错误', error)

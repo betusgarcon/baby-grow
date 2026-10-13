@@ -11,7 +11,7 @@ import { moveItem, useReorderSlot } from '@/hooks/useReorderSlot'
 import ProgressBar from '../components/ProgressBar'
 import ChecklistItem from '../components/ChecklistItem'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishChecklist, loadWishes } from '@/store'
+import { useAppState, setWishChecklist, commitWishChecklist, loadWishes } from '@/store'
 import type { WishChecklistItem } from '@/store/wishes'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
@@ -98,7 +98,8 @@ export default function WishChecklistDetailPage() {
   }
 
   const saveEdit = () => {
-    // 改动已随每次操作写进 store，这里只需要退出编辑态
+    // 勾选、增删、拖拽期间只写进了本地，到这里才提交一次
+    commitWishChecklist(wish.id)
     Taro.showToast({ title: '已保存', icon: 'none' })
     setSnapshot(null)
     setDraft(null)

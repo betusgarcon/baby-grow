@@ -72,9 +72,22 @@ public class AuthService {
         return new LoginResponse(jwtService.issue(user.getId()), me);
     }
 
+    /**
+     * 确保开发账号存在（含家庭与宝宝），返回它的 userId。
+     *
+     * <p>供演示数据灌入使用：那时还没有人登录过，但数据必须挂在一个真实的账号下，
+     * 否则接口的访问控制会把它挡在外面。
+     */
+    @Transactional
+    public Long ensureDevAccount() {
+        UserEntity user = userRepository.findByWxOpenid(DEV_OPENID)
+                .orElseGet(() -> userRepository.save(UserEntity.forOpenid(DEV_OPENID)));
+        provisionAndDescribe(user);
+        return user.getId();
+    }
+
     @Transactional(readOnly = true)
-    public MeResponse describe(Long userId) {
-        UserEntity user = userRepository.findById(userId)
+    public MeResponse describe(Long userId) {        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new BizException(com.babygrow.backend.common.ErrorCode.UNAUTHORIZED, "账号不存在"));
 
         FamilyMemberEntity membership = activeMembership(userId);

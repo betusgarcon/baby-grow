@@ -10,11 +10,22 @@ export interface NavBarMetrics {
   capsuleRight: number
 }
 
+/**
+ * 胶囊本体宽约 87px，右边缘再内缩 7px，所以从屏幕右边算起它占掉约 94px。
+ * 这是「必须让开」的最小量，不是「胶囊宽度」。
+ */
+const CAPSULE_CLEARANCE = 94
+/** 图标与胶囊之间留的视觉间距 */
+const CAPSULE_GAP = 14
+const SAFE_CAPSULE_RIGHT = CAPSULE_CLEARANCE + CAPSULE_GAP
+
 const DEFAULT_METRICS: NavBarMetrics = {
   statusBarHeight: 20,
   navBarHeight: 44,
   totalHeight: 64,
-  capsuleRight: 16,
+  // 兜底值必须「够大」而不是「够小」：偏大只是留白多一点，偏小会让右上角图标直接被
+  // 胶囊盖住——而胶囊是原生层，盖住之后点击也一并被它吃掉。宁可保守。
+  capsuleRight: SAFE_CAPSULE_RIGHT,
 }
 
 /**
@@ -43,11 +54,16 @@ export function useNavBarMetrics(): NavBarMetrics {
       const statusBarHeight = sysInfo.statusBarHeight || DEFAULT_METRICS.statusBarHeight
       const navBarHeight = (menuButton.top - statusBarHeight) * 2 + menuButton.height
 
+      // 再兜一层：即便量出来的值偏小（少数机型/基础库会返回异常值），也不允许小于安全宽度，
+      // 否则右上角图标又会被胶囊压住
+      const measured = sysInfo.windowWidth - menuButton.left
+      const clearance = Math.max(measured, CAPSULE_CLEARANCE) + CAPSULE_GAP
+
       setMetrics({
         statusBarHeight,
         navBarHeight,
         totalHeight: statusBarHeight + navBarHeight,
-        capsuleRight: sysInfo.windowWidth - menuButton.left + 16,
+        capsuleRight: clearance,
       })
     } catch (error) {
       console.error('获取导航栏尺寸失败', error)

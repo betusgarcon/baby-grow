@@ -19,6 +19,11 @@ export interface RequestOptions {
   method?: HttpMethod
   data?: Record<string, unknown>
   headers?: Record<string, string>
+  /**
+   * 跳过登录闸门。**登录请求自身必须置为 true**：
+   * 闸门等的就是登录落地，登录请求若也去等它，就是自己等自己，永久挂起。
+   */
+  skipAuthGate?: boolean
 }
 
 /** Mock 处理器类型 */
@@ -26,6 +31,22 @@ export type MockHandler = (params: Record<string, unknown>) => unknown
 
 /** Mock 路由注册表 */
 const mockRoutes = new Map<string, MockHandler>()
+
+/**
+ * 登录闸门。
+ *
+ * 启动时的静默登录是异步的，而页面在 App 的 onLaunch 之后立刻就会取数。
+ * 不等这一步，页面就会抢在 token 落库之前把请求发出去，后端一律判未登录——
+ * 表现是「接口全 401、页面全空、但 Network 里能看到请求确实发了」。
+ *
+ * 由 bootstrap 在发起登录时同步塞入，请求侧在发真实请求前 await。
+ * 放这里而不是放进 bootstrap，是为了避开 request → bootstrap → auth → request 的循环依赖。
+ */
+let authGate: Promise<void> | null = null
+
+export function setAuthGate(gate: Promise<void> | null) {
+  authGate = gate
+}
 
 /** 注册 Mock 路由（供 mock/index.ts 调用） */
 export const registerMock = (path: string, handler: MockHandler) => {
@@ -62,15 +83,33 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
   }
 
   // === 真实请求 ===
+  // 先等登录落地，否则页面首屏取数会带着空 token 发出去，后端一律回 401。
+  // 登录请求自己跳过这一步——否则它等的是自己，直接死锁。
+  if (authGate && !options.skipAuthGate) {
+    try {
+      await authGate
+    } catch {
+      // 登录失败不阻断请求：照常发出，由后端返回未登录，页面各自进入错误态
+    }
+  }
+
   const fullUrl = API_CONFIG.BASE_URL + url
   const token = getToken()
   console.log(`[DATA: REAL] ${method} ${fullUrl}`)
+
+  // 丢掉值为 undefined 的查询参数。
+  // 留着它们会被序列化成字面量 "undefined" 塞进 URL（`?weekStart=undefined`），
+  // 后端按 Integer 之类绑定时直接 400——Mood 页整页空白就是这么来的。
+  // 根因修在这里，而不是在每个调用点各判断一次。
+  const query = data
+    ? Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined))
+    : undefined
 
   try {
     const response = await Taro.request({
       url: fullUrl,
       method,
-      data,
+      data: query,
       header: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -98,8 +137,8 @@ export const http = {
   get: <T>(url: string, params?: Record<string, unknown>) =>
     request<T>({ url, method: 'GET', data: params }),
 
-  post: <T>(url: string, data?: Record<string, unknown>) =>
-    request<T>({ url, method: 'POST', data }),
+  post: <T>(url: string, data?: Record<string, unknown>, options?: Pick<RequestOptions, 'skipAuthGate'>) =>
+    request<T>({ url, method: 'POST', data, ...options }),
 
   put: <T>(url: string, data?: Record<string, unknown>) =>
     request<T>({ url, method: 'PUT', data }),

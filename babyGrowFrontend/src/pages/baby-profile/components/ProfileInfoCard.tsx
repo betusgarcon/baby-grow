@@ -1,4 +1,4 @@
-import { View, Text, Picker } from '@tarojs/components'
+import { View, Text, Picker, Input } from '@tarojs/components'
 import Icon from '@/components/Icon'
 import type { ProfileInfoItem } from '@/store/profile'
 
@@ -12,6 +12,11 @@ interface ProfileInfoCardProps {
   maxDate?: string
   onSelect?: (value: string) => void
   onLongPress?: () => void
+  /**
+   * 文本型字段（name）在输入框失焦时才触发。
+   * 选择器是「选完即定」，而输入框每次按键都会回调——不能按一次提交一次。
+   */
+  onTextCommit?: () => void
 }
 
 export default function ProfileInfoCard({
@@ -21,7 +26,9 @@ export default function ProfileInfoCard({
   maxDate,
   onSelect,
   onLongPress,
+  onTextCommit,
 }: ProfileInfoCardProps) {
+  const isName = item.key === 'name'
   const isAge = item.key === 'age'
   const valueIndex = Math.max(item.options?.indexOf(item.value) ?? 0, 0)
 
@@ -38,11 +45,25 @@ export default function ProfileInfoCard({
         <Icon name={item.icon} className="w-5 h-5" />
       </View>
 
-      <View className="flex-1 flex flex-col">
-        <Text className="text-caption text-on-surface-variant">{item.label}</Text>
-
+      {/*
+        不再显示 Name / Age / Gender 这类文字标签：它们和左侧图标的语义重复，
+        图标与取值本身已经说明了这一行是什么。行内只留取值。
+      */}
+      <View className="flex-1 flex flex-col justify-center">
         {!editing ? (
           valueNode
+        ) : isName ? (
+          // 名字是自由文本，没有可选项，所以给输入框而不是选择器
+          <Input
+            className="w-full box-border h-9 px-3 rounded-full bg-surface-container-lowest text-base"
+            type="text"
+            maxlength={20}
+            value={item.value}
+            placeholder="宝宝的名字"
+            placeholderClass="text-on-surface-variant"
+            onInput={(event) => onSelect?.(event.detail.value)}
+            onBlur={() => onTextCommit?.()}
+          />
         ) : isAge ? (
           // 年龄不直接选，而是选生日再由生日算出当前年龄——年龄会随时间自己变
           <Picker

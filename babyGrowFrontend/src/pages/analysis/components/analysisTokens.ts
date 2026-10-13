@@ -48,7 +48,8 @@ export const analysisShadows = {
 } as const
 
 export const analysisClasses = {
-  card: `bg-white border border-[${analysisColors.cardBorder}] ${analysisShadows.card}`,
+  // 卡片底走全局的 bg-card（暖色），不再用纯白——纯白压在暖色页面上看不出卡片
+  card: `bg-card border border-[${analysisColors.cardBorder}] ${analysisShadows.card}`,
   softCard: `bg-[${analysisColors.cardMutedBg}] border border-[${analysisColors.cardMutedBorder}]`,
   interactivePill: `bg-[${analysisColors.activeBg}] text-[${analysisColors.activeText}]`,
 } as const

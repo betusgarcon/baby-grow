@@ -11,17 +11,14 @@ import type {
   AddIngredientParams,
 } from '@/types/diet'
 
-/** 获取本周饮食数据 */
-export function getWeeklyDiet(babyId: string, weekStart?: string) {
-  return http.get<GetWeeklyDietResponse>('/api/baby/diet/weekly', {
-    babyId,
-    weekStart,
-  })
+/** 获取本周饮食数据（宝宝由登录态解析，不传 id） */
+export function getWeeklyDiet(weekStart?: string) {
+  return http.get<GetWeeklyDietResponse>('/api/baby/diet/weekly', { weekStart })
 }
 
 /** 获取本月饮食数据 */
-export function getMonthlyDiet(babyId: string, month?: string) {
-  return http.get<GetMonthlyDietResponse>('/api/baby/diet/monthly', { babyId, month })
+export function getMonthlyDiet(month?: string) {
+  return http.get<GetMonthlyDietResponse>('/api/baby/diet/monthly', { month })
 }
 
 /** 添加食材 */

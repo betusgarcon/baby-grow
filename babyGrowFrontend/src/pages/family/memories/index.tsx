@@ -7,7 +7,7 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
-import { useAppState, loadMemories } from '@/store'
+import { useAppState, loadMemories, setPosterMemories } from '@/store'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
 import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './memoriesData'
 
@@ -73,7 +73,11 @@ export default function FamilyMemoriesPage() {
 
           <View
             className="py-2 px-4 rounded-full bg-secondary flex items-center gap-1"
-            onClick={() => navigateToRoute('family-poster')}
+            onClick={() => {
+              // 把勾选的记忆带过去。此前只做了跳转，海报页对勾选一无所有
+              setPosterMemories(memories.filter((item) => selected.includes(item.id)))
+              navigateToRoute('family-poster')
+            }}
           >
             <Icon name="photo-gallery" className="w-4 h-4" />
             <Text className="text-sm font-semibold text-[#ffffff]">Poster</Text>

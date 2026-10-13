@@ -35,6 +35,7 @@ import {
   deleteVaccineDetail,
 } from '@/api/modules/vaccine'
 import { getMilestones } from '@/api/modules/milestones'
+import { getBabyProfile } from '@/api/modules/baby'
 import { getCalendarEvents } from '@/api/modules/calendar'
 import { getWeeklyInsight } from '@/api/modules/weeklyInsight'
 import { getMemories } from '@/api/modules/memories'
@@ -52,6 +53,7 @@ export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error'
 export type SliceKey =
   | 'timeline'
   | 'profile'
+  | 'babyHeader'
   | 'members'
   | 'wishes'
   | 'vaccine'
@@ -59,6 +61,22 @@ export type SliceKey =
   | 'calendar'
   | 'weeklyInsight'
   | 'memories'
+
+/**
+ * 导航栏里那一组「头像 + 名字 + 月龄」。
+ *
+ * 单独成一个 slice，是因为它出现在几乎每个页面的顶部，而来源此前有四套：
+ * 分析页读接口、首页/家庭页/里程碑页各自写死常量、画像页读另一份 store。
+ * 同一个宝宝在不同页面显示成不同头像，就是这么来的。
+ *
+ * 统一取 `/api/baby/profile`（精简档案），与画像编辑页的 `profile` slice
+ * （完整档案，走 profile-detail）刻意分开——两者用途不同，别混。
+ */
+export interface BabyHeaderState {
+  name: string
+  avatar: string
+  ageLabel: string
+}
 
 export interface ProfileState {
   name: string
@@ -72,6 +90,7 @@ export interface AppState {
   status: Record<SliceKey, LoadStatus>
   timeline: JourneyEntry[]
   profile: ProfileState
+  babyHeader: BabyHeaderState
   members: FamilyMember[]
   wishes: Wish[]
   /** null 既可能是「还没加载」也可能是「已删除」，靠 status 区分 */
@@ -80,6 +99,13 @@ export interface AppState {
   calendarEvents: CalendarEvent[]
   weeklyInsight: WeeklyInsight | null
   memories: MemoryItem[]
+  /**
+   * 记忆页勾选后带进海报页的那几条。
+   *
+   * 走 store 而不是路由参数：勾选是多选、条数不定，塞进 query 又长又容易丢；
+   * 而且海报页要与记忆页看到的是同一份数据（同一张图、同一个标题）。
+   */
+  posterMemories: MemoryItem[]
 }
 
 const EMPTY_PROFILE: ProfileState = {
@@ -89,10 +115,17 @@ const EMPTY_PROFILE: ProfileState = {
   preferences: [],
 }
 
+const EMPTY_BABY_HEADER: BabyHeaderState = {
+  name: '',
+  avatar: '',
+  ageLabel: '',
+}
+
 export const appStore = createStore<AppState>({
   status: {
     timeline: 'idle',
     profile: 'idle',
+    babyHeader: 'idle',
     members: 'idle',
     wishes: 'idle',
     vaccine: 'idle',
@@ -103,6 +136,7 @@ export const appStore = createStore<AppState>({
   },
   timeline: [],
   profile: EMPTY_PROFILE,
+  babyHeader: EMPTY_BABY_HEADER,
   members: [],
   wishes: [],
   vaccine: null,
@@ -110,6 +144,7 @@ export const appStore = createStore<AppState>({
   calendarEvents: [],
   weeklyInsight: null,
   memories: [],
+  posterMemories: [],
 })
 
 export const useAppState = () => useStoreState(appStore)
@@ -160,6 +195,22 @@ export const loadTimeline = () =>
 export const loadProfile = () =>
   load('profile', getProfile, (data) => appStore.set((p) => ({ ...p, profile: data })))
 
+/**
+ * 加载导航栏那组「头像 + 名字 + 月龄」。
+ * 启动时调一次即可，全站复用同一份，不再让各页各写各的常量。
+ */
+export const loadBabyHeader = () =>
+  load('babyHeader', getBabyProfile, (data) =>
+    appStore.set((p) => ({
+      ...p,
+      babyHeader: {
+        name: data.profile.name ?? '',
+        avatar: data.profile.avatar ?? '',
+        ageLabel: data.profile.ageLabel ?? '',
+      },
+    })),
+  )
+
 export const loadMembers = () =>
   load('members', getFamilyMembers, (data) => appStore.set((p) => ({ ...p, members: data })))
 
@@ -185,6 +236,11 @@ export const loadWeeklyInsight = () =>
 export const loadMemories = () =>
   load('memories', getMemories, (data) => appStore.set((p) => ({ ...p, memories: data })))
 
+/** 记忆页勾选后写这里，海报页据此渲染。纯本地状态，不涉及后端 */
+export const setPosterMemories = (items: MemoryItem[]) => {
+  appStore.set((previous) => ({ ...previous, posterMemories: items }))
+}
+
 /* ---------------------------------------------------------------- 时间线 */
 
 export const appendTimelineEntry = (entry: JourneyEntry) => {
@@ -208,9 +264,24 @@ export const saveRecordToTimeline = (params: {
 
 /* ---------------------------------------------------------------- 宝宝画像 */
 
+/**
+ * 只改本地，不落库。
+ *
+ * 编辑模式（整体编辑 / 偏好管理）期间每一步操作都只更新本地状态，
+ * 等用户点 Save Changes 才由 {@link commitProfile} 提交一次。此前这里
+ * 直接 persist，改一项就发一个 PUT——拖几下偏好能打出十几个请求。
+ */
 const patchProfile = (patch: Partial<ProfileState>) => {
   appStore.set((previous) => ({ ...previous, profile: { ...previous.profile, ...patch } }))
-  persist('更新宝宝画像', () => putProfile(patch))
+}
+
+/**
+ * 把当前本地档案整体提交一次。退出编辑模式时调用。
+ *
+ * 提交全量而非单字段，所以一次编辑无论改了几处，后端都只收到一个请求。
+ */
+export const commitProfile = () => {
+  persist('更新宝宝画像', () => putProfile(appStore.get().profile))
 }
 
 /**
@@ -227,7 +298,27 @@ export const setProfileBirthday = (birthday: string) => {
   patchProfile({ birthday, info })
 }
 
+/**
+ * 改宝宝名字。
+ *
+ * 顺带同步 `babyHeader`——导航栏那个名字和画像是同一个值的两个展示位，
+ * 只改一边会切页后对不上。
+ */
+export const setProfileName = (name: string) => {
+  appStore.set((previous) => ({
+    ...previous,
+    profile: { ...previous.profile, name },
+    babyHeader: { ...previous.babyHeader, name },
+  }))
+}
+
 export const setProfileInfoValue = (key: ProfileInfoKey, value: string) => {
+  // name 不在 info 数组里（它是档案顶层的字段），单独走
+  if (key === 'name') {
+    setProfileName(value)
+    return
+  }
+
   if (key === 'age') {
     setProfileBirthday(value)
     return
@@ -303,14 +394,29 @@ export const addWish = (wish: Wish) => {
   persist('新建心愿', () => postWish(wish))
 }
 
+/**
+ * 改本地清单。
+ *
+ * 勾选是高频操作，勾几下就发几个 PUT 毫无必要——改完先留在本地，
+ * 由页面在退出编辑（Save Changes）时调 {@link commitWishChecklist} 提交一次。
+ */
 export const setWishChecklist = (wishId: string, checklist: WishChecklistItem[]) => {
   appStore.set((previous) => ({
     ...previous,
     wishes: previous.wishes.map((wish) => (wish.id === wishId ? { ...wish, checklist } : wish)),
   }))
-  persist('更新心愿清单', () => putWishChecklist(wishId, checklist))
 }
 
+/** 把某个心愿的清单提交一次 */
+export const commitWishChecklist = (wishId: string) => {
+  const wish = appStore.get().wishes.find((item) => item.id === wishId)
+
+  if (!wish) return
+
+  persist('更新心愿清单', () => putWishChecklist(wishId, wish.checklist ?? []))
+}
+
+/** 改本地计数。同上，+1 / -1 连点不该连发请求 */
 export const setWishCounter = (wishId: string, current: number) => {
   appStore.set((previous) => ({
     ...previous,
@@ -318,7 +424,15 @@ export const setWishCounter = (wishId: string, current: number) => {
       wish.id === wishId && wish.counter ? { ...wish, counter: { ...wish.counter, current } } : wish,
     ),
   }))
-  persist('更新心愿进度', () => putWishCounter(wishId, current))
+}
+
+/** 把某个心愿的计数提交一次 */
+export const commitWishCounter = (wishId: string) => {
+  const wish = appStore.get().wishes.find((item) => item.id === wishId)
+
+  if (!wish?.counter) return
+
+  persist('更新心愿进度', () => putWishCounter(wishId, wish.counter!.current))
 }
 
 /* ---------------------------------------------------------------- 事件详情 */

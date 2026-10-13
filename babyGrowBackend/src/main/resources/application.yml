@@ -61,6 +61,11 @@ app:
     root: ${MEDIA_ROOT:./data/media}
     # 拼绝对 URL 用。小程序渲染图片需要绝对地址，生产必须改成真实域名
     public-base: ${MEDIA_PUBLIC_BASE:http://localhost:8080}
+  demo-data:
+    # 演示数据：启动后给开发账号灌一套完整数据，让前端一打开就是满的。
+    # 只有 auth.dev-mode 同时开启时才真正生效，生产不可能误灌。
+    # 想测试空态时置为 false。
+    enabled: ${DEMO_DATA_ENABLED:true}
 
 management:
   endpoints:

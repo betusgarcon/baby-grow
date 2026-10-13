@@ -31,7 +31,7 @@ export default function PageContainer({
   header,
   bottomBar,
   children,
-  background = 'bg-surface',
+  background = 'bg-surface-container-lowest',
   className = '',
   contentClassName = '',
 }: PageContainerProps) {

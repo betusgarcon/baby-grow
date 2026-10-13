@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import Taro from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
-import Icon from '@/components/Icon'
 import type { SectionState } from '@/types/common'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
@@ -98,16 +96,14 @@ export default function JourneyListPage() {
           />
         )}
 
-        {/* 空态下没有「更多」可加载，按钮跟着一起收起来 */}
+        {/*
+          数据是一次性取全的，没有分页可加载。此前这里摆了个「more」按钮，
+          点下去只弹一句「已加载全部」——按钮样式不变，等于给了个永远不会
+          起作用的假控件。没有更多就直接说出来，别让它看着还能点。
+        */}
         {state === 'content' ? (
           <View className="py-4 flex items-center justify-center">
-            <View
-              className="h-11 px-6 rounded-full border border-tertiary flex items-center gap-2"
-              onClick={() => Taro.showToast({ title: '已加载全部记录', icon: 'none' })}
-            >
-              <Icon name="chevron-down" className="w-3 h-2" />
-              <Text className="text-base text-tertiary">more</Text>
-            </View>
+            <Text className="text-caption text-on-surface-variant">已加载全部记录</Text>
           </View>
         ) : null}
         </AsyncSection>

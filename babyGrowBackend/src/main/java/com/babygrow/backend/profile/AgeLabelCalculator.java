@@ -2,7 +2,12 @@ package com.babygrow.backend.profile;
 
 import java.time.LocalDate;
 
-/** 由生日推算年龄展示文案。与前端 {@code store/profile.ts} 的 computeAgeLabel 保持同一口径。 */
+/**
+ * 由生日推算年龄展示文案。与前端 {@code store/profile.ts} 的 computeAgeLabel 保持同一口径。
+ *
+ * <p>统一用短格式（6M / 1Y2M）：这个值主要出现在头像底部那枚很窄的徽章里，
+ * 「6 Months」会被圆形容器裁掉两侧。改动此处必须同步改前端，反之亦然。
+ */
 public final class AgeLabelCalculator {
 
     private AgeLabelCalculator() {
@@ -32,7 +37,7 @@ public final class AgeLabelCalculator {
 
         int months = monthsBetween(birthday, today);
         if (months < 12) {
-            return months + " Months";
+            return months + "M";
         }
 
         int years = months / 12;

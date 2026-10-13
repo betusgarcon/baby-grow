@@ -8,7 +8,14 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProfileInfoCard from './components/ProfileInfoCard'
 import PreferenceCard from './components/PreferenceCard'
-import { useAppState, loadProfile, setProfileInfoValue, setProfilePreferences, restoreProfile } from '@/store'
+import {
+  useAppState,
+  loadProfile,
+  setProfileInfoValue,
+  setProfilePreferences,
+  commitProfile,
+  restoreProfile,
+} from '@/store'
 import AsyncSection from '@/components/AsyncSection'
 import type { ProfileState } from '@/store'
 import {
@@ -16,6 +23,7 @@ import {
   computeAgeLabel,
   newPreferenceIcon,
   todayIsoDate,
+  type ProfileInfoItem,
   type ProfileInfoKey,
   type ProfilePreference,
 } from '@/store/profile'
@@ -33,6 +41,15 @@ const isProfileMode = (value: string | undefined): value is ProfileMode =>
 
 /** 偏好卡片的间距，与 tailwind 的 gap-3 对齐；拖拽换位按实测行高计算 */
 const PREFERENCE_GAP = 12
+
+/**
+ * 触摸事件里我们要的部分。
+ *
+ * Taro 给 MovableView 的 onTouchStart / onTouchEnd 标注的是宽泛的 BaseEventOrig，
+ * 上面没有 touches / changedTouches，只能自己收一个最小形状出来。
+ */
+type TouchPoint = { clientY?: number }
+type TouchLikeEvent = { touches?: TouchPoint[]; changedTouches?: TouchPoint[] }
 
 export default function BabyProfilePage() {
   const router = useRouter()
@@ -54,12 +71,13 @@ export default function BabyProfilePage() {
   /** 长按某一行后就只让那一行进入编辑，不必整页变成编辑态 */
   const [editingKey, setEditingKey] = useState<ProfileInfoKey | null>(null)
 
-  /** 新增偏好走手动输入，草稿为 null 时表单不显示 */
-  const [draft, setDraft] = useState<{ label: string; value: string } | null>(null)
+  /** 偏好草稿。带 id 表示在改已有的那条，不带则是新增 */
+  const [draft, setDraft] = useState<{ id?: string; label: string; value: string } | null>(null)
 
   /** 拖拽换位需要真实像素，行高只能实测，rem 与 movable 的 y 单位对不上 */
   const [slotHeight, setSlotHeight] = useState(0)
-  const dragY = useRef<number | null>(null)
+  /** 按下时的屏幕 Y。松手时与它比较，判断用户到底有没有拖动 */
+  const touchStartY = useRef<number | null>(null)
 
   const isEditing = mode !== 'view'
   const isManagingPreferences = mode === 'preferences'
@@ -89,6 +107,10 @@ export default function BabyProfilePage() {
   const selectInfoValue = (key: ProfileInfoKey, value: string) => {
     setProfileInfoValue(key, value)
     setEditingKey(null)
+
+    // 长按单项修改这条路径上没有 Save 按钮，改完就得提交，否则改动只活在本页。
+    // 整体编辑模式（有 Save Changes）则先留着，交给 save() 一次性提交。
+    if (!isEditing) commitProfile()
   }
 
   const removePreference = (id: string) => {
@@ -104,21 +126,39 @@ export default function BabyProfilePage() {
       return
     }
 
-    setProfilePreferences([
-      ...preferences,
-      { id: `custom-${Date.now()}`, icon: newPreferenceIcon, label, value: value ?? '' },
-    ])
+    setProfilePreferences(
+      draft?.id
+        ? // 改已有的那条：只换 label / value，图标与排位保持不变
+          preferences.map((item) =>
+            item.id === draft.id ? { ...item, label, value: value ?? '' } : item,
+          )
+        : [
+            ...preferences,
+            { id: `custom-${Date.now()}`, icon: newPreferenceIcon, label, value: value ?? '' },
+          ],
+    )
     setDraft(null)
   }
 
-  const handleDrop = (fromIndex: number) => () => {
-    const droppedY = dragY.current
-    dragY.current = null
+  /**
+   * 松手时结算顺序。
+   *
+   * 刻意不用 MovableView 的 `event.detail.y`：它的语义（是相对起点的偏移还是
+   * 组件当前的绝对坐标）在不同平台上并不一致，实测在真机上只是点一下整行热区
+   * 或铅笔，它也会带着一个非零值触发 onChange，于是「没拖也被重排」。
+   *
+   * 改为直接比较按下与松手时的屏幕 Y：位移不到半格就当作没拖过。
+   * 点热区、点铅笔都会走到这里，但它们位移为 0，自然被挡掉。
+   */
+  const handleDrop = (fromIndex: number, startY: number | null, endY: number | null) => {
+    if (!slotHeight || startY === null || endY === null) return
 
-    if (!slotHeight || droppedY === null) return
+    const delta = endY - startY
+
+    if (Math.abs(delta) < slotHeight / 2) return
 
     const target = Math.min(
-      Math.max(Math.round(droppedY / slotHeight), 0),
+      Math.max(fromIndex + Math.round(delta / slotHeight), 0),
       preferences.length - 1,
     )
 
@@ -138,6 +178,8 @@ export default function BabyProfilePage() {
   }
 
   const save = () => {
+    // 编辑期间的增删、换位、改名都只落在本地，到这里才提交一次
+    commitProfile()
     Taro.showToast({ title: '已保存', icon: 'none' })
     setProfileSnapshot(null)
     setMode('view')
@@ -159,9 +201,22 @@ export default function BabyProfilePage() {
         preference={preference}
         editable={isManagingPreferences}
         onRemove={() => removePreference(preference.id)}
+        onEdit={() =>
+          setDraft({ id: preference.id, label: preference.label, value: preference.value })
+        }
       />
     </View>
   )
+
+  // 名字是档案顶层的字段，不在后端返回的 info 列表里，单独补一行。
+  // 刻意复用同一种行卡片，好让它和 age / gender / constellation 的维护方式一致。
+  const nameItem: ProfileInfoItem = {
+    key: 'name',
+    icon: 'profile-name',
+    label: 'Name',
+    value: name,
+    circleClass: 'bg-secondary-fixed',
+  }
 
   return (
     <PageContainer header={<PageHeader showBack title="宝宝画像" />}>
@@ -182,17 +237,23 @@ export default function BabyProfilePage() {
             </View>
           </View>
 
+          {/* 名字直接读 store：改名保存后这里和导航栏会一起变 */}
           <Text className="text-2xl font-bold text-on-surface">{name}</Text>
-
-          <View className="py-1 px-3 rounded-full bg-secondary-container flex items-center gap-1">
-            <Icon name="profile-lion" className="w-4 h-4" />
-            <Text className="text-sm font-semibold text-on-secondary-container">
-              {babyProfile.badge}
-            </Text>
-          </View>
         </View>
 
         <View className="flex flex-col gap-3">
+          <ProfileInfoCard
+            item={nameItem}
+            editing={mode === 'edit' || editingKey === 'name'}
+            onSelect={(value) => setProfileInfoValue('name', value)}
+            onLongPress={() => setEditingKey('name')}
+            onTextCommit={() => {
+              setEditingKey(null)
+              // 输入框失焦即提交；这条路径上没有 Save 按钮，不提交改动就丢了
+              if (!isEditing) commitProfile()
+            }}
+          />
+
           {info.map((item) => (
             <ProfileInfoCard
               key={item.key}
@@ -235,10 +296,18 @@ export default function BabyProfilePage() {
                   y={index * slotHeight}
                   className="absolute left-0 w-full"
                   style={{ height: `${slotHeight}px` }}
-                  onChange={(event) => {
-                    dragY.current = event.detail.y
+                  onTouchStart={(event) => {
+                    touchStartY.current =
+                      (event as unknown as TouchLikeEvent).touches?.[0]?.clientY ?? null
                   }}
-                  onTouchEnd={handleDrop(index)}
+                  onTouchEnd={(event) => {
+                    const startY = touchStartY.current
+                    const endY =
+                      (event as unknown as TouchLikeEvent).changedTouches?.[0]?.clientY ?? null
+
+                    touchStartY.current = null
+                    handleDrop(index, startY, endY)
+                  }}
                 >
                   <View className="pb-3">{renderPreference(preference, false)}</View>
                 </MovableView>
@@ -264,7 +333,13 @@ export default function BabyProfilePage() {
                   placeholderClass="text-on-surface-variant"
                   value={draft.label}
                   onInput={(event) =>
-                    setDraft((previous) => ({ label: event.detail.value, value: previous?.value ?? '' }))
+                    // 带上 previous?.id，否则改到一半 draft 就丢了 id，
+                    // 一次「编辑」会退化成「新增」
+                    setDraft((previous) => ({
+                      id: previous?.id,
+                      label: event.detail.value,
+                      value: previous?.value ?? '',
+                    }))
                   }
                 />
                 <Input
@@ -273,7 +348,11 @@ export default function BabyProfilePage() {
                   placeholderClass="text-on-surface-variant"
                   value={draft.value}
                   onInput={(event) =>
-                    setDraft((previous) => ({ label: previous?.label ?? '', value: event.detail.value }))
+                    setDraft((previous) => ({
+                      id: previous?.id,
+                      label: previous?.label ?? '',
+                      value: event.detail.value,
+                    }))
                   }
                 />
 
@@ -285,7 +364,7 @@ export default function BabyProfilePage() {
                     取消
                   </Text>
                   <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
-                    添加
+                    {draft.id ? '保存' : '添加'}
                   </Text>
                 </View>
               </View>

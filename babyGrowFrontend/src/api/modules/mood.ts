@@ -13,12 +13,18 @@ import type {
   GetMoodJournalParams,
 } from '@/types/mood'
 
-/** 获取情绪日历数据 */
-export function getMoodCalendar(babyId: string, year?: number, month?: number) {
+/**
+ * 获取情绪日历数据。
+ *
+ * year / month 必须给具体值。此前调用方一个都没传，`undefined` 被序列化进 query
+ * （`?year=undefined&month=undefined`），后端按 Integer 绑定失败直接 400，整页空白。
+ * 这里兜底成当月，调用方即使漏传也不会再把页面打挂。
+ */
+export function getMoodCalendar(year?: number, month?: number) {
+  const now = new Date()
   return http.get<GetMoodCalendarResponse>('/api/baby/mood/calendar', {
-    babyId,
-    year,
-    month,
+    year: year ?? now.getFullYear(),
+    month: month ?? now.getMonth() + 1,
   })
 }
 

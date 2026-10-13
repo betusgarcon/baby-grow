@@ -45,7 +45,7 @@ export default function MilestoneFilterCard({
   onKeywordChange,
 }: MilestoneFilterCardProps) {
   return (
-    <View className="w-full box-border p-md rounded-lg bg-surface-container-low border border-outline-variant flex flex-col gap-sm">
+    <View className="w-full box-border p-md rounded-lg bg-card border border-outline-variant flex flex-col gap-sm">
       <View className="flex items-center gap-sm">
         <SelectField label="Month" value={month} range={monthOptions} onChange={onMonthChange} />
         <SelectField label="Year" value={year} range={yearOptions} onChange={onYearChange} />

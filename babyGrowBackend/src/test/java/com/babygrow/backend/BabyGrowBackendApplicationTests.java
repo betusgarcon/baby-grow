@@ -20,7 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
         "spring.datasource.username=sa",
         "spring.datasource.password=",
         "spring.flyway.enabled=false",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        // 演示数据默认开着，会让这个测试也去灌 28 天记录。这里关掉，保持它只验 bean 图。
+        "app.demo-data.enabled=false"
 })
 class BabyGrowBackendApplicationTests {
 

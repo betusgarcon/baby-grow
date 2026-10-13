@@ -7,12 +7,15 @@ interface PreferenceCardProps {
   /** 管理态：左侧显示移除按钮、右侧显示铅笔 */
   editable?: boolean
   onRemove?: () => void
+  /** 点铅笔改这条偏好的名称与备注。此前这个图标没有绑任何事件，纯装饰 */
+  onEdit?: () => void
 }
 
 export default function PreferenceCard({
   preference,
   editable = false,
   onRemove,
+  onEdit,
 }: PreferenceCardProps) {
   return (
     <View className="w-full box-border p-4 rounded-3xl bg-surface-container-low flex items-center gap-3">
@@ -31,7 +34,11 @@ export default function PreferenceCard({
         <Text className="text-caption text-on-surface-variant">{preference.value}</Text>
       </View>
 
-      {editable ? <Icon name="edit-muted" className="w-4 h-4 shrink-0" /> : null}
+      {editable ? (
+        <View className="shrink-0 p-1" onClick={onEdit}>
+          <Icon name="edit-muted" className="w-4 h-4" />
+        </View>
+      ) : null}
     </View>
   )
 }

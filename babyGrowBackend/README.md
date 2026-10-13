@@ -206,9 +206,25 @@ curl -s http://localhost:8080/api/baby/profile-detail
 | `DB_USER` / `DB_PASSWORD` | `babygrow` / `babygrow-dev` | 业务库账号 |
 | `AI_SERVICE_URL` | `http://localhost:8001` | Python AI 服务，仅内网 |
 | `APP_AUTH_DEV_MODE` | `true` | **为 true 时跳过微信校验**，为固定 dev 用户签发 token。生产必须设 false |
+| `DEMO_DATA_ENABLED` | `true` | 演示数据开关，见下方。仅 `APP_AUTH_DEV_MODE=true` 时生效 |
 | `JWT_SECRET` | 占位串 | HS256 要求 ≥32 字节，生产必须换成随机值 |
 | `JWT_TTL_HOURS` | `720` | 令牌有效期 |
 | `WX_APPID` / `WX_SECRET` | 空 | 仅 `APP_AUTH_DEV_MODE=false` 时需要 |
+| `MEDIA_ROOT` / `MEDIA_PUBLIC_BASE` | `./data/media` / `http://localhost:8080` | 媒体存储目录与对外地址前缀 |
+
+## 演示数据
+
+`DEMO_DATA_ENABLED=true`（默认）时，服务启动后会给开发账号灌一套完整数据：宝宝档案、
+近 28 天的记录、3 个里程碑、2 个心愿、4 条记忆、1 次接种、2 个待接受的邀请。
+前端一打开就是满的，不用手点几十次。
+
+两个保护：
+
+- **只有 `APP_AUTH_DEV_MODE=true` 时才生效**——生产环境 dev-mode 必为 false，不可能误灌。
+- **宝宝已有记录时直接跳过**，不会覆盖你自己录的数据。想重灌就先清空 `records`。
+
+灌的是**真实数据、走真实服务调用**（`RecordService.commit` 等），不是让接口返回假响应。
+后者会把投影重建、时间线生成、访问控制这些真实链路上的问题掩盖掉——排障时最怕这个。
 
 ## 接口
 

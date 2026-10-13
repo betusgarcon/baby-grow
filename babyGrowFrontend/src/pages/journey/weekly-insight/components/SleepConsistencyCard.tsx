@@ -6,7 +6,7 @@ export default function SleepConsistencyCard({ sleep }: { sleep: SleepConsistenc
   const maxHours = Math.max(...sleep.dailyHours)
 
   return (
-    <View className="w-full box-border p-6 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col gap-4">
+    <View className="w-full box-border p-6 rounded-lg bg-card shadow-card-soft flex flex-col gap-4">
       <View className="flex items-start justify-between">
         <View className="flex flex-col">
           <Text className="text-xl font-semibold text-on-surface">{sleep.title}</Text>

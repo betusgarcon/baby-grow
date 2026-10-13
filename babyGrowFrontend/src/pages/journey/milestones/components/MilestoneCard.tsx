@@ -41,7 +41,7 @@ export default function MilestoneCard({ milestone }: MilestoneCardProps) {
   const gradient = TIER_GRADIENT[milestone.tier]
 
   return (
-    <View className="relative w-full box-border p-lg rounded-3xl bg-surface-container-lowest shadow-card-soft overflow-hidden flex flex-col gap-md">
+    <View className="relative w-full box-border p-lg rounded-3xl bg-card shadow-card-soft overflow-hidden flex flex-col gap-md">
       {/* 卡片角落装饰。这是项目允许用 absolute 的场景之一，其余内容一律走文档流。 */}
       <View
         className="absolute -top-8 -right-8 w-40 h-40"

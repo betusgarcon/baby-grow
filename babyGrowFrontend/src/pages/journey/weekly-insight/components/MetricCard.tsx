@@ -10,7 +10,7 @@ export const TONE_CLASS: Record<InsightTone, { pill: string; bar: string }> = {
 
 export default function MetricCard({ metric }: { metric: MetricSummary }) {
   return (
-    <View className="flex-1 box-border p-4 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col gap-2">
+    <View className="flex-1 box-border p-4 rounded-lg bg-card shadow-card-soft flex flex-col gap-2">
       <View className="flex items-center gap-2">
         <Icon name={metric.icon} className="w-4 h-4" />
         <Text className="text-sm font-semibold text-on-surface-variant">{metric.label}</Text>

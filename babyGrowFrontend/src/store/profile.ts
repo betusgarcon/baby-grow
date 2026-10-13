@@ -11,7 +11,7 @@ import babyAvatar from '@/assets/images/baby-journey-img.png'
  * 后端接口未实现，先用本地 mock。
  */
 
-export type ProfileInfoKey = 'age' | 'gender' | 'constellation'
+export type ProfileInfoKey = 'name' | 'age' | 'gender' | 'constellation'
 
 export interface ProfileInfoItem {
   key: ProfileInfoKey
@@ -52,7 +52,11 @@ export const todayIsoDate = () => toIsoDate(new Date())
 
 /**
  * 由生日算出当前年龄的展示文案。
- * 不足 1 岁按月，满 1 岁按 X Y M，与设计稿的 6 Months / 1Y2M 两种写法一致。
+ * 不足 1 岁按月写作 6M，满 1 岁写作 1Y2M —— 与设计稿一致，也与后端
+ * {@code AgeLabelCalculator} 同一口径（改这里必须同步改那边，有测试锁着）。
+ *
+ * 用短格式而非「6 Months」是因为这个值主要出现在头像底部那枚很窄的徽章里，
+ * 长文案会被圆形容器裁掉。
  */
 export const computeAgeLabel = (birthday: string, today = todayIsoDate()) => {
   const [by, bm, bd] = birthday.split('-').map(Number)
@@ -62,7 +66,7 @@ export const computeAgeLabel = (birthday: string, today = todayIsoDate()) => {
   if (td < bd) months -= 1
   if (months < 0) months = 0
 
-  if (months < 12) return `${months} Months`
+  if (months < 12) return `${months}M`
 
   const years = Math.floor(months / 12)
   const rest = months % 12

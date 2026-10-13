@@ -13,34 +13,18 @@ import {
 import { View, Text } from '@tarojs/components'
 import { analysisColors } from '@/pages/analysis/components/analysisTokens'
 import { getGrowthPage } from '@/api/modules/growth'
-import { getBabyProfile } from '@/api/modules/baby'
-import type { GrowthMetricKey, GrowthRangeKey, BabyProfileSummary } from '@/types/analysis'
+import type { GrowthMetricKey, GrowthRangeKey } from '@/types/analysis'
 import type { GetGrowthPageResponse } from '@/types/growth'
 
-const BABY_ID = 'baby-001'
-
 export default function AnalysisGrowthPage() {
-  const [profile, setProfile] = useState<BabyProfileSummary | null>(null)
   const [pageData, setPageData] = useState<GetGrowthPageResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeRange, setActiveRange] = useState<GrowthRangeKey>('birth')
   const [activeMetric, setActiveMetric] = useState<GrowthMetricKey>('weight')
 
   useEffect(() => {
-    Promise.all([
-      getBabyProfile(),
-      getGrowthPage(BABY_ID),
-    ])
-      .then(([profileRes, pageRes]) => {
-        const p = profileRes.data.profile
-        setProfile({
-          name: p.name,
-          ageLabel: p.ageLabel,
-          avatar: p.avatar,
-          statusLabel: p.statusLabel || '',
-        })
-        setPageData(pageRes.data)
-      })
+    getGrowthPage()
+      .then((pageRes) => setPageData(pageRes.data))
       .finally(() => setLoading(false))
   }, [])
 
@@ -55,14 +39,14 @@ export default function AnalysisGrowthPage() {
     [pageData, activeMetric]
   )
 
-  if (loading || !profile || !pageData) {
+  if (loading || !pageData) {
     return <View><Text>Loading...</Text></View>
   }
 
   const activeSnapshot = pageData.trends[activeRange][activeMetric]
 
   return (
-    <AnalysisLayout profile={profile} activeCategory="growth">
+    <AnalysisLayout activeCategory="growth">
       <InsightCard data={pageData.insight} />
 
       <View

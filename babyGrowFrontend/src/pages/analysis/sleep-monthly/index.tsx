@@ -6,11 +6,7 @@ import {
   SleepEvolutionCard,
 } from '@/pages/analysis/components/AnalysisCards'
 import { getSleepEvolution } from '@/api/modules/sleep'
-import { getBabyProfile } from '@/api/modules/baby'
-import type { BabyProfileSummary } from '@/types/analysis'
 import type { GetSleepEvolutionResponse } from '@/types/sleep'
-
-const BABY_ID = 'baby-001'
 
 const sleepSubtabs = [
   { key: 'sleepDaily' as const, label: 'Daily Ring', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
@@ -18,35 +14,21 @@ const sleepSubtabs = [
 ]
 
 export default function AnalysisSleepMonthlyPage() {
-  const [profile, setProfile] = useState<BabyProfileSummary | null>(null)
   const [evolutionData, setEvolutionData] = useState<GetSleepEvolutionResponse | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      getBabyProfile(),
-      getSleepEvolution(BABY_ID),
-    ])
-      .then(([profileRes, evolutionRes]) => {
-        const p = profileRes.data.profile
-        setProfile({
-          name: p.name,
-          ageLabel: p.ageLabel,
-          avatar: p.avatar,
-          statusLabel: p.statusLabel || '',
-        })
-        setEvolutionData(evolutionRes.data)
-      })
+    getSleepEvolution()
+      .then((evolutionRes) => setEvolutionData(evolutionRes.data))
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading || !profile || !evolutionData) {
+  if (loading || !evolutionData) {
     return <View><Text>Loading...</Text></View>
   }
 
   return (
     <AnalysisLayout
-      profile={profile}
       activeCategory="sleep"
       activeSubtab="sleepMonthly"
       subtabOptions={sleepSubtabs}

@@ -114,29 +114,11 @@ export default function JourneyVaccinePage() {
     navigateBack()
   }
 
+  // 头部不再挂右侧控件：原先那个分享按钮（64px）和居中的标题直接叠在一起，
+  // 而编辑态的「保存」在内容区已经有一份，属重复。分享改到内容底部，
+  // 与编辑 / 删除并列——三者都是一个页面级动作，放一起更合理。
   return (
-    <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Event Details"
-          right={
-            editing ? (
-              <Text className="text-base font-semibold text-tertiary" onClick={commitEdit}>
-                保存
-              </Text>
-            ) : (
-              <Button
-                openType="share"
-                className="share-button w-16 h-9 flex items-center justify-center bg-transparent p-0"
-              >
-                <Icon name="event-share" className="w-5 h-5" />
-              </Button>
-            )
-          }
-        />
-      }
-    >
+    <PageContainer header={<PageHeader showBack title="Event Details" />}>
       <View className="flex flex-col gap-4">
         <View className="w-full box-border p-6 rounded-3xl bg-surface-container flex flex-col items-center gap-3">
           <View className="w-14 h-14 rounded-full bg-tertiary-fixed flex items-center justify-center">
@@ -267,6 +249,7 @@ export default function JourneyVaccinePage() {
 
         {!editing ? (
           <View className="flex flex-col gap-3 pt-2">
+            {/* 主操作独占一行 */}
             <View
               className="w-full h-12 rounded-full bg-primary flex items-center justify-center gap-2"
               onClick={beginEdit}
@@ -275,12 +258,25 @@ export default function JourneyVaccinePage() {
               <Text className="text-base font-semibold text-[#ffffff]">Edit Entry</Text>
             </View>
 
-            <View
-              className="w-full h-12 rounded-full border border-outline-variant bg-surface-container-lowest flex items-center justify-center gap-2"
-              onClick={confirmDelete}
-            >
-              <Icon name="event-delete" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-error">Delete Record</Text>
+            {/* 分享与删除并排：两者都够不上主操作的分量，各占半行。
+                底色用 surface-container 而不是纯白——页面底色就是白的，
+                白底按钮在白页面上等于没有边界，看不出这里可以点。 */}
+            <View className="flex gap-3">
+              <Button
+                openType="share"
+                className="share-button flex-1 h-12 rounded-full border border-outline-variant bg-surface-container flex items-center justify-center gap-2 p-0"
+              >
+                <Icon name="event-share" className="w-5 h-5" />
+                <Text className="text-base font-semibold text-on-surface">Share</Text>
+              </Button>
+
+              <View
+                className="flex-1 h-12 rounded-full border border-outline-variant bg-surface-container flex items-center justify-center gap-2"
+                onClick={confirmDelete}
+              >
+                <Icon name="event-delete" className="w-5 h-5" />
+                <Text className="text-base font-semibold text-error">Delete</Text>
+              </View>
             </View>
           </View>
         ) : null}

@@ -10,7 +10,7 @@ import java.util.List;
  * <p>全部走环境变量占位（见 application.yml），源码里不出现任何真实凭据。
  */
 @ConfigurationProperties(prefix = "app")
-public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media media) {
+public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media media, DemoData demoData) {
 
     public record Auth(boolean devMode) {
     }
@@ -44,5 +44,20 @@ public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media 
      *                    生产环境需改成真实域名。
      */
     public record Media(String root, String publicBase) {
+    }
+
+    /**
+     * 演示数据。
+     *
+     * <p>打开时，服务启动后会给开发账号灌一套完整的演示数据（宝宝档案、几周的记录、心愿、
+     * 记忆、疫苗），让前端一打开就是满的。**只有在 {@code auth.dev-mode} 也开启时才生效**，
+     * 因此生产环境不可能误灌。
+     *
+     * <p>灌的是真实数据、走的是真实写入路径，不是响应层返回假数据——后者会把真实链路的
+     * 问题掩盖掉。
+     *
+     * @param enabled 开关；已有记录时不会重复灌
+     */
+    public record DemoData(boolean enabled) {
     }
 }

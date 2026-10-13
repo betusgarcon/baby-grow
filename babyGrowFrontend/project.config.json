@@ -4,7 +4,7 @@
   "description": "宝宝成长记录小程序",
   "appid": "wx083b2496af7d8e05",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,

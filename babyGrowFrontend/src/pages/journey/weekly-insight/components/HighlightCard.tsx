@@ -9,7 +9,7 @@ export default function HighlightCard({ highlight }: { highlight: DevelopmentHig
   return (
     // 左侧色条是这张卡的识别特征，用固定宽度的兄弟节点而不是 border-left，
     // 这样圆角处也能被正确裁切
-    <View className="w-full box-border rounded-3xl bg-surface-container-lowest overflow-hidden flex">
+    <View className="w-full box-border rounded-3xl bg-card overflow-hidden flex">
       <View className={`w-1 shrink-0 ${tone.bar}`} />
 
       <View className="flex-1 p-4 flex items-start gap-4">

@@ -6,6 +6,8 @@ import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.png'
 import { posterContent, posterTemplates, privacyToggles } from '@/store/family'
+import { TONE_CLASS } from '../memories/memoriesData'
+import { useAppState } from '@/store'
 import { getPoster } from '@/api/modules/family'
 
 /** 三套画风模板的差异。之前换模板只改了 chip 的选中态，预览纹丝不动 */
@@ -31,6 +33,8 @@ const TEMPLATE_STYLE: Record<string, { wrap: string; title: string; subtitle: st
 }
 
 export default function FamilyPosterPage() {
+  // 记忆页勾选进来的那几条。为空时海报退回「最近一条记录」的单张形态
+  const { posterMemories: selectedMemories } = useAppState()
   const [template, setTemplate] = useState(posterTemplates[0].key)
   const style = TEMPLATE_STYLE[template] ?? TEMPLATE_STYLE.warm
   // 海报正文来自后端（按宝宝档案与最近一条记录推导）；拿不到时退回本地文案
@@ -125,21 +129,10 @@ export default function FamilyPosterPage() {
     })
   }
 
+  // 头部原本右侧挂着一个「<三个点> Layout」的胶囊，但它没有任何点击行为，
+  // 纯装饰却看着像能操作。去掉——版式选择正文里已经有一份了。
   return (
-    <PageContainer
-      header={
-        <PageHeader
-          showBack
-          title="Poster Preview"
-          right={
-            <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
-              <Icon name="menu" className="w-4 h-4" />
-              <Text className="text-caption font-semibold text-on-surface">Layout</Text>
-            </View>
-          }
-        />
-      }
-    >
+    <PageContainer header={<PageHeader showBack title="Poster Preview" />}>
       <View className="flex flex-col gap-5">
         {/* 海报预览。底色与内页留白按设计稿，照片位没有资源用浅底占位 */}
         <View className={`w-full box-border p-5 rounded-3xl flex flex-col items-center gap-4 ${style.wrap}`}>
@@ -151,19 +144,41 @@ export default function FamilyPosterPage() {
           </View>
 
           <View className={`w-full box-border p-4 rounded-3xl flex flex-col gap-3 ${style.card}`}>
-            <View className="w-full h-40 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
-              <Image src={babyAvatar} className="w-full h-full" mode="aspectFill" />
-            </View>
+            {/*
+              带着勾选进来时以勾选为准：勾几条就画几张。
+              没勾选才退回后端按「最近一条记录」推导的单张形态。
+            */}
+            {selectedMemories.length > 0 ? (
+              selectedMemories.map((memory) => (
+                <View
+                  key={memory.id}
+                  className={`w-full box-border p-3 rounded-2xl flex flex-col gap-2 ${TONE_CLASS[memory.tone].photo}`}
+                >
+                  <View className="self-start py-0.5 px-2 rounded-full bg-card">
+                    <Text className="text-caption font-bold text-on-surface">{memory.category}</Text>
+                  </View>
 
-            <View className="self-start py-1 px-3 rounded-full bg-tertiary-fixed flex items-center gap-1">
-              <Icon name="fork_knife" className="w-3.5 h-3.5" />
-              <Text className="text-caption font-bold text-on-tertiary-container">
-                {poster.badge}
-              </Text>
-            </View>
+                  <Text className="text-xl font-bold text-on-surface">{memory.title}</Text>
+                  <Text className="text-caption text-on-surface-variant">{memory.date}</Text>
+                </View>
+              ))
+            ) : (
+              <>
+                <View className="w-full h-40 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
+                  <Image src={babyAvatar} className="w-full h-full" mode="aspectFill" />
+                </View>
 
-            <Text className="text-2xl font-bold text-on-surface">{poster.heading}</Text>
-            <Text className="text-sm text-on-surface-variant">{poster.body}</Text>
+                <View className="self-start py-1 px-3 rounded-full bg-tertiary-fixed flex items-center gap-1">
+                  <Icon name="fork_knife" className="w-3.5 h-3.5" />
+                  <Text className="text-caption font-bold text-on-tertiary-container">
+                    {poster.badge}
+                  </Text>
+                </View>
+
+                <Text className="text-2xl font-bold text-on-surface">{poster.heading}</Text>
+                <Text className="text-sm text-on-surface-variant">{poster.body}</Text>
+              </>
+            )}
 
             <View className="w-full h-px bg-analysis-divider" />
 

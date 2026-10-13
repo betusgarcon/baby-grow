@@ -21,13 +21,13 @@ class AgeLabelCalculatorTest {
 
     @Test
     void countsWholeMonths() {
-        assertThat(AgeLabelCalculator.compute(LocalDate.of(2026, 4, 10), TODAY)).isEqualTo("6 Months");
+        assertThat(AgeLabelCalculator.compute(LocalDate.of(2026, 4, 10), TODAY)).isEqualTo("6M");
     }
 
     @Test
     void rollsBackAMonthWhenDayOfMonthNotReached() {
         // 4-11 出生，到 10-10 还差一天才满 6 个月
-        assertThat(AgeLabelCalculator.compute(LocalDate.of(2026, 4, 11), TODAY)).isEqualTo("5 Months");
+        assertThat(AgeLabelCalculator.compute(LocalDate.of(2026, 4, 11), TODAY)).isEqualTo("5M");
     }
 
     @Test
@@ -42,6 +42,6 @@ class AgeLabelCalculatorTest {
 
     @Test
     void clampsFutureBirthdayToZero() {
-        assertThat(AgeLabelCalculator.compute(LocalDate.of(2027, 1, 1), TODAY)).isEqualTo("0 Months");
+        assertThat(AgeLabelCalculator.compute(LocalDate.of(2027, 1, 1), TODAY)).isEqualTo("0M");
     }
 }

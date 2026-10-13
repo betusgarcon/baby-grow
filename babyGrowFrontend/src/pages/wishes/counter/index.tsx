@@ -10,7 +10,7 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishCounter, loadWishes } from '@/store'
+import { useAppState, setWishCounter, commitWishCounter, loadWishes } from '@/store'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
@@ -69,7 +69,8 @@ export default function WishCounterDetailPage() {
   }
 
   const saveEdit = () => {
-    // 改动已随每次加减写进 store，这里只需要退出编辑态
+    // 加减号期间只写进了本地，到这里才提交一次——连点十下也只有一个请求
+    commitWishCounter(wish.id)
     Taro.showToast({ title: '已保存', icon: 'none' })
     setSavedCurrent(null)
     setMode('view')
