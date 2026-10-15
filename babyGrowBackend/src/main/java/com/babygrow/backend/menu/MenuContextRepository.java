@@ -3,6 +3,7 @@ package com.babygrow.backend.menu;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -36,11 +37,22 @@ public class MenuContextRepository {
      *
      * <p>只取辅食不取奶：推荐的是辅食食谱，把奶量算进「最近吃过」会让模型误以为
      * 已经吃过某些食材而重复推荐。
+     *
+     * <p>「哪一天」用一个**显式传入的时区**来切，不用 {@code current_setting('TIMEZONE')}。
+     * 那个值是 Postgres 会话的时区，来自 initdb 时写进 postgresql.conf 的 timezone，
+     * 与 JVM 的时区是两套互不相干的配置——实测（2026-10-16）容器里 TZ=Asia/Shanghai
+     * 已生效、系统时间是 CST，但 GUC 仍是 Etc/UTC。而 Java 侧所有「今天」都出自
+     * LocalDate.now()，取的是 JVM 时区。两边不同源，国内用户在 00:00–08:00 之间
+     * 就会被切到不同的「天」上。
+     *
+     * <p>传 JVM 的 ZoneId 进来，是让「天」只有一个来源，而不是靠两处配置碰巧一致。
+     * {@code occurred_at} 是 TIMESTAMPTZ，{@code AT TIME ZONE z} 得到的正是该时区的
+     * 墙上时间，切天用它是正确的。
      */
     public List<RecentFoodRow> findRecentSolidFoods(Long babyId, int days) {
         return jdbc.query(
                 """
-                SELECT to_char(occurred_at AT TIME ZONE current_setting('TIMEZONE'), 'YYYY-MM-DD') AS day,
+                SELECT to_char(occurred_at AT TIME ZONE CAST(? AS text), 'YYYY-MM-DD') AS day,
                        food_name
                   FROM feedings
                  WHERE baby_id = ?
@@ -50,6 +62,6 @@ public class MenuContextRepository {
                  ORDER BY day DESC, food_name
                 """,
                 (rs, rowNum) -> new RecentFoodRow(rs.getString("day"), rs.getString("food_name")),
-                babyId, days);
+                ZoneId.systemDefault().getId(), babyId, days);
     }
 }
