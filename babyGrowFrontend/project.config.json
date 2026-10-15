@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "babyGrowFrontend",
   "description": "宝宝成长记录小程序",
-  "appid": "wx083b2496af7d8e05",
+  "appid": "wx75a6801154b2ff4f",
   "setting": {
     "urlCheck": false,
     "es6": false,
@@ -36,5 +36,6 @@
     "include": []
   },
   "editorSetting": {},
-  "libVersion": "3.17.0"
+  "libVersion": "3.17.0",
+  "isGameTourist": false
 }

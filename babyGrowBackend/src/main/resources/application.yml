@@ -66,6 +66,12 @@ app:
     # 只有 auth.dev-mode 同时开启时才真正生效，生产不可能误灌。
     # 想测试空态时置为 false。
     enabled: ${DEMO_DATA_ENABLED:true}
+  wish:
+    cover:
+      # 新建心愿后异步调用文生图生成头图。默认关闭：出图打的是外部付费接口，
+      # 未配置（AI 服务侧缺 IMAGE_MODEL_API_KEY）而打开，只会让每条新心愿
+      # 静默变成 failed。关闭时页面显示渐变占位，心愿功能不受影响。
+      enabled: ${WISH_COVER_ENABLED:false}
 
 management:
   endpoints:

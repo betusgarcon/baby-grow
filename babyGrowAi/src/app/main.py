@@ -14,7 +14,8 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.models import init_db
-from app.routers import extract, recipe
+from app.routers import extract, recipe, wish
+from app.services.image_gateway import get_image_gateway
 from app.services.ollama_gateway import get_model_gateway
 from app.telemetry import SERVICE_NAME, init_telemetry
 
@@ -31,6 +32,7 @@ FastAPIInstrumentor.instrument_app(app)
 
 app.include_router(extract.router)
 app.include_router(recipe.router)
+app.include_router(wish.router)
 
 
 @app.get("/health")
@@ -42,6 +44,9 @@ async def health():
         "status": "ok" if ollama_ok else "degraded",
         "service": "baby-grow-ai",
         "ollama": "ok" if ollama_ok else "unreachable",
+        # 出图是否可用只看配没配 key。放进来是因为「心愿头图全是 failed」
+        # 最常见的根因就是漏配 IMAGE_MODEL_API_KEY，一眼能查比翻日志快。
+        "image": "configured" if get_image_gateway().enabled else "unconfigured",
     }
 
 

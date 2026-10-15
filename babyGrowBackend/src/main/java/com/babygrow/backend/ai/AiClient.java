@@ -115,4 +115,23 @@ public class AiClient {
         body.put("population", "baby");
         return body;
     }
+
+    /**
+     * 生成心愿头图。同步调用，但由异步任务线程发起，用户不等。
+     *
+     * <p>返回体里的 {@code image_base64} 是 AI 服务自己从出图供应商下载后转的——Java
+     * 不直接访问硅基流动。这与 {@link #extractMedia} 内联 base64 是同一个理由：
+     * 外部 AI 供应商的出口统一收在 AI 服务里，业务服务不需要出网。
+     *
+     * <p>这里不设超时：出图可能几十秒，而 AI 服务侧的 {@code IMAGE_MODEL_TIMEOUT}
+     * 已经保证了它有界返回，不必在这里再叠一层。
+     */
+    public Map<String, Object> generateWishCover(String wishKey, String title, String description, int ageMonths) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("wish_id", wishKey);
+        body.put("title", title);
+        body.put("description", description == null ? "" : description);
+        body.put("baby_age_months", ageMonths);
+        return post("/api/baby/wishes/cover", body);
+    }
 }

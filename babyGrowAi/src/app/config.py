@@ -76,14 +76,49 @@ class Settings(BaseSettings):
     rag_min_similarity: float = Field(default=0.5, alias="RAG_MIN_SIMILARITY")
 
     # -----------------------------------------------------------------------
-    # External model fallback (reserved for future phases)
+    # 模型后端选择
     # -----------------------------------------------------------------------
-    # Currently unused. The gateway only talks to Ollama. These fields exist so
-    # the fallback can be enabled without changing the settings schema.
-    external_model_enabled: bool = Field(default=False, alias="EXTERNAL_MODEL_ENABLED")
+    # 全局开关，决定文本类任务（识别、食谱）走哪一侧：
+    #   gateway（默认）—— 云端大模型网关，DeepSeek 的 API 是 OpenAI 兼容的，
+    #                    因此复用 openai provider，只需填下面三个参数
+    #   local          —— 本机 Ollama，同时把云端挂作兜底（本机不在线时自动切走）
+    #
+    # 之所以默认 gateway：本机不常开机、在外时无法穿透，可用性太低；
+    # 云端才是能一直依赖的那一侧。回家想用本机模型时改这个值即可。
+    #
+    # 注意 embedding 不受本开关影响——知识库向量是用 bge-m3 生成的，
+    # 换模型会导致向量空间不匹配、检索直接失效（除非整库重新向量化）。
+    # 具体路由见 services/model_gateway/router.py。
+    ai_model_source: str = Field(default="gateway", alias="AI_MODEL_SOURCE")
+
+    # 云端网关连接参数。三者齐全才算「配好了」，缺任何一个都不启用该 provider，
+    # 免得路由选中一个必然失败的地址。
     external_model_api_key: str = Field(default="", alias="EXTERNAL_MODEL_API_KEY")
     external_model_base_url: str = Field(default="", alias="EXTERNAL_MODEL_BASE_URL")
     external_model_name: str = Field(default="", alias="EXTERNAL_MODEL_NAME")
+
+    # -----------------------------------------------------------------------
+    # 文生图（心愿头图）
+    # -----------------------------------------------------------------------
+    # 刻意与上面那套路由分开，原因有三：
+    #   1. 出图是另一家供应商、另一种接口形状（不是 chat completions），
+    #      套不进 model_gateway 的 ModelRequest/ModelResponse；
+    #   2. 它不受 AI_MODEL_SOURCE 影响——Ollama **不支持出图**，
+    #      所以这一路没有本机退路，开关对它没有意义；
+    #   3. 目前只有一家供应商，本来也没有 fallback 链可言。
+    # 出第二家时再抽公共抽象（见 services/image_gateway.py 的说明）。
+    #
+    # 未填 api_key 时该能力整体关闭：路由返回 503，调用方把心愿标成 failed，
+    # 页面回落到渐变占位——心愿本身照常可用。
+    image_model_api_key: str = Field(default="", alias="IMAGE_MODEL_API_KEY")
+    image_model_base_url: str = Field(
+        default="https://api.siliconflow.cn/v1", alias="IMAGE_MODEL_BASE_URL"
+    )
+    image_model_name: str = Field(default="Kwai-Kolors/Kolors", alias="IMAGE_MODEL_NAME")
+    # 头图是按 3:4 左右的区域裁切显示的，方图裁出来最不吃亏
+    image_model_size: str = Field(default="1024x1024", alias="IMAGE_MODEL_SIZE")
+    # 出图比对话慢得多，超时要给够；这也顺带界定了 Java 侧那次调用的上界
+    image_model_timeout: int = Field(default=120, alias="IMAGE_MODEL_TIMEOUT")
 
 
 @lru_cache

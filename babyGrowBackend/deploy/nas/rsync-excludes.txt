@@ -1,0 +1,36 @@
+# rsync 排除清单（deploy.sh 与 update-backend.sh 共用，--exclude-from 读取）
+#
+# 抽成一份而不是两个脚本各写一遍：两边不一致过一次就会出问题——比如漏排除
+# frpc.toml 时，--delete 会把它从 NAS 上删掉，而那个文件本地并不存在
+# （它由部署脚本在 NAS 上渲染生成）。frpc 容器一旦重启（restart: always，
+# NAS 重启也会触发）就挂不上配置，外网隧道直接断掉，等于把自己关在门外。
+
+# ── 依赖与构建产物 ──────────────────────────────────────
+# 容器里会重新装、重新编译，传上去既慢又没用。
+# 写不带 / 的形式，匹配任意层级的同名目录。
+node_modules
+.venv
+target
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+babyGrowFrontend/dist
+
+# ── 版本控制与本地工具配置 ──────────────────────────────
+.git
+.claude
+
+# ── 运行时状态 ──────────────────────────────────────────
+# **必须用开头的 / 锚定**。不锚定的话 `data` 会连 babyGrowAi/data 一起排除，
+# 而那个目录是 AI 镜像的**构建输入**（知识库原始指南文档，Dockerfile 里要 COPY 进去），
+# 排掉它 NAS 上的 AI 镜像就构不出来。
+/data
+/babyGrowBackend/data
+
+# 本地 compose 用的 .env（仓库根），不是 NAS 上那份，别混着传
+/.env
+
+# ── NAS 上生成、本地不存在的文件 ────────────────────────
+babyGrowBackend/deploy/nas/frpc.toml
+babyGrowBackend/deploy/nas/docker-compose.nas.yml.rendered.yml

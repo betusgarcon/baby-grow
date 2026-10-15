@@ -21,6 +21,7 @@
     "build:quickapp": "taro build --type quickapp",
     "build:harmony-hybrid": "taro build --type harmony-hybrid",
     "dev:weapp": "npm run build:weapp -- --watch",
+    "dev:weapp:online": "npm run build:weapp -- --watch --mode production",
     "dev:swan": "npm run build:swan -- --watch",
     "dev:alipay": "npm run build:alipay -- --watch",
     "dev:tt": "npm run build:tt -- --watch",

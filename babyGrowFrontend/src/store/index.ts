@@ -32,6 +32,7 @@ export {
   commitWishChecklist,
   setWishCounter,
   commitWishCounter,
+  regenerateWishCover,
   updateVaccine,
   removeVaccine,
 } from './appStore'

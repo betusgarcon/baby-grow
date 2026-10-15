@@ -225,33 +225,61 @@ from opentelemetry import trace as _trace_module
 
 def _build_default_config() -> RoutingConfig:
     settings = get_settings()
-    default_provider = "ollama"
-    providers = [ProviderConfig(provider=default_provider, model=settings.ollama_model, enabled=True)]
 
-    if settings.external_model_enabled:
+    # 云端 provider 只有三个参数都配齐才可用。缺一个就不注册它——
+    # 否则路由会选中一个必然失败的地址，再靠熔断器兜，日志里全是噪声。
+    cloud_ready = bool(
+        settings.external_model_api_key
+        and settings.external_model_base_url
+        and settings.external_model_name
+    )
+
+    # 全局开关决定文本类任务的主后端。
+    local_primary = (settings.ai_model_source or "").strip().lower() == "local"
+    # gateway 模式下云端是主；没配好就退回 ollama，免得整条链路不可用
+    cloud_primary = cloud_ready and not local_primary
+    # local 模式下把云端挂作兜底，本机不在线时自动切走
+    cloud_fallback = cloud_ready and local_primary
+
+    providers = [
+        ProviderConfig(provider="ollama", model=settings.ollama_model, enabled=True),
+    ]
+    if cloud_ready:
         providers.append(
             ProviderConfig(
                 provider="openai",
-                model=settings.external_model_name or "gpt-4o-mini",
+                model=settings.external_model_name,
                 api_key=settings.external_model_api_key,
                 base_url=settings.external_model_base_url,
                 enabled=True,
             )
         )
 
+    text_primary = (
+        RoutingTarget(provider="openai", model=settings.external_model_name)
+        if cloud_primary
+        else RoutingTarget(provider="ollama", model=settings.ollama_model)
+    )
+    text_fallback = (
+        [RoutingTarget(provider="openai", model=settings.external_model_name)]
+        if cloud_fallback
+        else []
+    )
+
     rules = [
-        RoutingRule(task="extraction", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
-        RoutingRule(task="vision", primary=RoutingTarget(provider="ollama", model=settings.vision_model)),
-        RoutingRule(task="recipe_fixed", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
-        RoutingRule(task="recipe_agent", primary=RoutingTarget(provider="ollama", model=settings.ollama_model)),
+        RoutingRule(task="extraction", primary=text_primary, fallback=list(text_fallback)),
+        RoutingRule(task="recipe_fixed", primary=text_primary, fallback=list(text_fallback)),
+        RoutingRule(task="recipe_agent", primary=text_primary, fallback=list(text_fallback)),
+        # embedding 始终走本机，不受开关影响。
+        # 知识库 3093 个分块的向量是用 bge-m3 生成的；换 embedding 模型就是换了一个
+        # 向量空间，检索会静默失准（不报错，只是召回全错）。要换必须整库重新向量化。
         RoutingRule(task="embedding", primary=RoutingTarget(provider="ollama", model=settings.embedding_model)),
+        # 视觉同理，且云端（DeepSeek）根本没有视觉 API，只有本机这一条路。
+        # 本机不在线时由上层降级处理，不做静默失败。
+        RoutingRule(task="vision", primary=RoutingTarget(provider="ollama", model=settings.vision_model)),
     ]
 
-    if settings.external_model_enabled:
-        for rule in rules:
-            rule.fallback.append(RoutingTarget(provider="openai", model=settings.external_model_name or "gpt-4o-mini"))
-
-    return RoutingConfig(providers=providers, rules=rules, default_provider=default_provider)
+    return RoutingConfig(providers=providers, rules=rules, default_provider=text_primary.provider)
 
 
 # Singleton and compatibility helpers.

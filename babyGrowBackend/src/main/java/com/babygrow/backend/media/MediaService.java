@@ -62,6 +62,28 @@ public class MediaService {
                 userId, babyId, kind, objectKey, url, mime, content.length));
     }
 
+    /**
+     * 存一张服务端生成的图片（AI 出图），不经过用户上传。
+     *
+     * <p>与 {@link #upload} 的唯一区别是入口：字节直接来自 AI 服务，没有 MultipartFile
+     * 也没有原始文件名。落库与拼 URL 完全一致，所以生成图与用户上传的照片在下游是
+     * 同一种东西，共用 {@code GET /api/media/{objectKey}} 那套能力 URL 读取。
+     */
+    @Transactional
+    public MediaAssetEntity storeGenerated(byte[] content, String mime, Long ownerUserId, Long babyId) {
+        if (content == null || content.length == 0) {
+            throw BizException.badRequest("图片内容为空");
+        }
+
+        // AI 服务未必回 mime，缺省按 PNG 处理：这是出图接口最常见的输出格式
+        String normalizedMime = mime == null || mime.isBlank() ? "image/png" : mime.toLowerCase(Locale.ROOT);
+        String objectKey = storage.store(content, extensionOf(null, normalizedMime));
+        String url = properties.media().publicBase() + "/api/media/" + objectKey;
+
+        return repository.save(MediaAssetEntity.of(
+                ownerUserId, babyId, MediaAssetEntity.KIND_IMAGE, objectKey, url, normalizedMime, content.length));
+    }
+
     @Transactional(readOnly = true)
     public StoredMedia load(Long mediaId) {
         MediaAssetEntity asset = repository.findById(mediaId)

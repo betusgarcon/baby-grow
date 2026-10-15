@@ -18,6 +18,11 @@ public final class WishDtos {
     public record CounterView(int current, int target, String unit) {
     }
 
+    /**
+     * @param coverUrl    头图的绝对地址，生成成功前为空
+     * @param coverStatus none / pending / ready / failed，见 {@code WishEntity} 上的常量。
+     *                    前端据此区分「还在生成」与「不会有了」
+     */
     public record WishView(String id,
                            String icon,
                            String circleClass,
@@ -32,7 +37,9 @@ public final class WishDtos {
                            String badge,
                            List<ChecklistItemView> checklist,
                            CounterView counter,
-                           String expertTip) {
+                           String expertTip,
+                           String coverUrl,
+                           String coverStatus) {
     }
 
     /** 新建心愿。字段一律可空——前端只填自己关心的那几项。 */

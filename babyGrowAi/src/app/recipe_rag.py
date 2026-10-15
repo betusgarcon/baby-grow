@@ -85,25 +85,39 @@ class RecipeRAGService:
                 population=request.population,
             )
 
-            # Step 2: lazy init the retrieval service if not injected.
-            # We open a DB session here only when the service is not already
-            # carrying an active session (tests inject one).
-            if self.retrieval_service is None:
-                from sqlalchemy.orm import Session
+            # Step 2-3: 检索知识库。
+            #
+            # 这一步依赖本机的 embedding 模型——知识库那 3093 个分块的向量是
+            # bge-m3 生成的，换模型会导致向量空间不匹配、检索静默失准，
+            # 所以它不能跟着 AI_MODEL_SOURCE 一起切到云端。
+            #
+            # 本机不在线时这里会抛错，但那不该让整个推荐失败：规则引擎
+            # （月龄、过敏原、质地）本身就能给出安全可用的建议，检索只是让它
+            # 更贴合具体场景。所以检索失败就退化成「没有知识上下文」，
+            # 后面照常走提示词和模型。
+            retrieved: list[dict] = []
+            context = ""
+            try:
+                if self.retrieval_service is None:
+                    from sqlalchemy.orm import Session
 
-                with Session(bind=get_engine()) as db:
-                    self.retrieval_service = RetrievalService(db=db)
+                    with Session(bind=get_engine()) as db:
+                        self.retrieval_service = RetrievalService(db=db)
 
-            # Step 3: retrieve relevant knowledge chunks.
-            retrieved = await self.retrieval_service.retrieve(
-                query=request.query,
-                baby_age_months=request.baby_age_months,
-                allergens=request.allergens,
-                texture_level=request.texture_level,
-                top_k=get_settings().rag_top_k,
-            )
-
-            context = "\n\n".join([r["content"] for r in retrieved])
+                retrieved = await self.retrieval_service.retrieve(
+                    query=request.query,
+                    baby_age_months=request.baby_age_months,
+                    allergens=request.allergens,
+                    texture_level=request.texture_level,
+                    top_k=get_settings().rag_top_k,
+                )
+                context = "\n\n".join([r["content"] for r in retrieved])
+            except Exception:
+                logger.warning(
+                    "知识库检索不可用（多半是本地 embedding 模型不在线），"
+                    "本次推荐降级为「纯规则 + 模型」，不含知识上下文",
+                    exc_info=True,
+                )
 
             # Step 4: build the prompt and call the model.
             messages = recipe_prompts.build_recipe_prompt(

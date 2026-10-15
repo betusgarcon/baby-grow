@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Input } from '@tarojs/components'
+import { View, Text, Input, Textarea } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import BottomTabBar from '@/components/BottomTabBar'
@@ -40,7 +40,7 @@ export default function WishesListPage() {
     removeWish(wish.id)
   }
 
-  const commitDraft = () => {
+  const commitDraft = async () => {
     const title = draft?.title.trim()
 
     if (!title) {
@@ -48,30 +48,38 @@ export default function WishesListPage() {
       return
     }
 
-    const goal = Math.max(Number(draft?.goal) || 1, 1)
     const isCounter = draft?.kind === 'counter'
+    // 目标次数只对计数式有意义。清单式的目标数由后端按清单实际条数派生，
+    // 这里传什么都不作数——否则界面上会出现「填 4 但只有 2 条」这种对不上的显示
+    const goal = Math.max(Number(draft?.goal) || 1, 1)
+    const description = draft?.description.trim() || '新的成长目标'
     const id = `wish-${Date.now()}`
 
-    addWish({
-      id,
-      icon: 'star',
-      circleClass: 'bg-wish-swim',
-      title,
-      description: draft?.description.trim() || '新的成长目标',
-      detailSubtitle: draft?.description.trim() || '新的成长目标',
-      goal,
-      unitLabel: isCounter ? 'Times' : 'Steps',
-      checklistTitle: isCounter ? undefined : `${title} Checklist`,
-      // 新心愿的去向由自己生成，指向带自己 id 的详情页
-      path: isCounter
-        ? `/pages/wishes/counter/index?wish=${id}`
-        : `/pages/wishes/detail/index?wish=${id}`,
-      kind: isCounter ? 'counter' : 'checklist',
-      checklist: isCounter ? undefined : [],
-      counter: isCounter ? { current: 0, target: goal, unit: 'Times' } : undefined,
-    })
-    setDraft(null)
-    Taro.showToast({ title: '已新建', icon: 'none' })
+    try {
+      await addWish({
+        id,
+        icon: 'star',
+        circleClass: 'bg-wish-swim',
+        title,
+        description,
+        detailSubtitle: description,
+        goal: isCounter ? goal : 0,
+        unitLabel: isCounter ? 'Times' : 'Steps',
+        checklistTitle: isCounter ? undefined : `${title} Checklist`,
+        // 新心愿的去向由自己生成，指向带自己 id 的详情页
+        path: isCounter
+          ? `/pages/wishes/counter/index?wish=${id}`
+          : `/pages/wishes/detail/index?wish=${id}`,
+        kind: isCounter ? 'counter' : 'checklist',
+        checklist: isCounter ? undefined : [],
+        counter: isCounter ? { current: 0, target: goal, unit: 'Times' } : undefined,
+      })
+      setDraft(null)
+      Taro.showToast({ title: '已新建', icon: 'none' })
+    } catch (error) {
+      console.error('[wishes] 新建心愿失败', error)
+      Taro.showToast({ title: '新建失败，请稍后再试', icon: 'none' })
+    }
   }
 
   return (
@@ -118,22 +126,43 @@ export default function WishesListPage() {
                 onInput={(event) => setDraft((p) => (p ? { ...p, title: event.detail.value } : p))}
               />
 
-              <Input
-                className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                placeholder="一句话说明，可留空"
-                placeholderClass="text-on-surface-variant"
-                value={draft.description}
-                onInput={(event) => setDraft((p) => (p ? { ...p, description: event.detail.value } : p))}
-              />
+              <View className="flex flex-col gap-1">
+                <Textarea
+                  className="w-full box-border h-24 p-4 rounded-3xl bg-surface-container text-base text-on-surface"
+                  placeholder="详细描述这个心愿：想达到什么、打算怎么开始"
+                  placeholderClass="text-on-surface-variant"
+                  maxlength={300}
+                  value={draft.description}
+                  onInput={(event) =>
+                    setDraft((p) => (p ? { ...p, description: event.detail.value } : p))
+                  }
+                />
+                <Text className="px-1 text-caption text-on-surface-variant">
+                  写得具体些。这段描述会用作生成头图的提示词
+                </Text>
+              </View>
 
-              <Input
-                className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                type="number"
-                placeholder="目标数量，如 4"
-                placeholderClass="text-on-surface-variant"
-                value={draft.goal}
-                onInput={(event) => setDraft((p) => (p ? { ...p, goal: event.detail.value } : p))}
-              />
+              {draft.kind === 'counter' ? (
+                <View className="flex flex-col gap-1">
+                  <Input
+                    className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
+                    type="number"
+                    placeholder="目标次数，如 100"
+                    placeholderClass="text-on-surface-variant"
+                    value={draft.goal}
+                    onInput={(event) =>
+                      setDraft((p) => (p ? { ...p, goal: event.detail.value } : p))
+                    }
+                  />
+                  <Text className="px-1 text-caption text-on-surface-variant">
+                    这个心愿一共要完成几次，进度按「已完成 / 目标次数」显示
+                  </Text>
+                </View>
+              ) : (
+                <Text className="px-1 text-caption text-on-surface-variant">
+                  清单式的进度按清单实际条数算，不用另填目标数
+                </Text>
+              )}
 
               <View className="flex items-center gap-2">
                 {(['checklist', 'counter'] as WishKind[]).map((kind) => (

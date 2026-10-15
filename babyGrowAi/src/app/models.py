@@ -230,6 +230,41 @@ class RecipeRecommendResponse(BaseModel):
 
 
 # ===========================================================================
+# Pydantic models: wish cover image
+# ===========================================================================
+
+
+class WishCoverRequest(BaseModel):
+    """Request body for generating a wish's cover image.
+
+    The prompt is built on this side from `title` + `description`, so callers
+    never do prompt engineering -- that keeps the wording in one place and lets
+    it change without touching the Java backend or the mini-program.
+    """
+
+    wish_id: str = Field(..., description="心愿的 client_key，仅用于日志与审计")
+    title: str = Field(..., min_length=1, max_length=128, description="心愿名称")
+    description: str = Field(default="", max_length=1000, description="家长写的详细描述，作为提示词的一部分")
+    baby_age_months: int = Field(default=12, ge=0, le=60, description="月龄，用于让画面年龄感合理")
+
+
+class WishCoverResponse(BaseModel):
+    """Response carrying the generated image, inline as base64.
+
+    Inline rather than a URL: the image lives on the provider's CDN and those
+    URLs expire, and the caller has to end up with the bytes anyway so it can
+    store them behind its own capability URL.
+    """
+
+    status: str
+    image_base64: Optional[str] = None
+    mime: str = "image/png"
+    model_name: Optional[str] = None
+    elapsed_ms: Optional[int] = None
+    error: Optional[str] = None
+
+
+# ===========================================================================
 # SQLAlchemy models: knowledge base
 # ===========================================================================
 

@@ -1,0 +1,143 @@
+# NAS 生产 compose：PostgreSQL(pgvector) + Redis + Java API + Python AI + FRP Client
+#
+# 与仓库根 docker-compose.yml（本地开发用）的关键差异：
+#   - 数据库与 Redis 不发布端口，只走 compose 内网，局域网/公网都不可直达
+#   - 只对宿主机暴露 127.0.0.1:3003，供 FRP 隧道接入；API 本身不可被公网直达
+#   - AI 服务不发布端口，只由 API 容器经内网调用
+#   - 数据卷路径是 {{}} 占位符，部署脚本按实际目录替换后生成 .rendered.yml
+#
+# 端口选择：手册 V4 里写的是 3001，但那个端口与兄弟项目 dailypawn 的 AI 服务默认端口
+# 重叠（它同样是 3001）。为免日后两边都上线时撞车，这里改用 3003。
+#
+# 库的划分与本地一致（见 docs/backend-design.md §4.1）：
+#   baby_grow     业务库，Java 后端独占，schema 由 Flyway 管
+#   baby_grow_ai  向量库，Python AI 服务独占（含 3093 个知识库分块，迁移时要用）
+# 同一个 Postgres 实例、两个独立账号，确保 AI 侧读不到业务数据。
+
+name: babygrow
+
+services:
+  frpc:
+    image: snowdreamtech/frpc:latest
+    container_name: babygrow-frpc
+    restart: always
+    volumes:
+      - ./frpc.toml:/etc/frp/frpc.toml:ro
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: babygrow-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: baby_grow_ai
+    volumes:
+      - {{NAS_POSTGRES_DIR}}:/var/lib/postgresql/data
+      # 只在数据目录为空时执行一次，用来建业务库与 babygrow 账号。
+      # 已有数据卷时要手动补建，见 docker/init-postgres/README.md。
+      # 路径基准是**本 compose 文件所在目录**，所以是三层 ../ 回到仓库根。
+      # 少一层会指到不存在的 babyGrowBackend/docker/，compose 会建一个空目录顶上，
+      # 于是脚本静默不执行、baby_grow 库永远建不出来。
+      - ../../../docker/init-postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d baby_grow_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  redis:
+    image: redis:7-alpine
+    container_name: babygrow-redis
+    restart: always
+    volumes:
+      - {{NAS_REDIS_DIR}}:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  babygrow-ai:
+    # context 必须是**应用目录本身**，不能用仓库根：babyGrowAi/Dockerfile 里是
+    # `COPY . .` + `pip install -e .`，它假定 pom.xml/pyproject.toml 就在 context 根。
+    # 用仓库根的话 `pip install -e .` 找不到 pyproject.toml，构建直接失败。
+    # 顺带：.dockerignore 只认 context 根目录下那一份，写成应用目录后
+    # babyGrowAi/.dockerignore 才会真正生效。
+    build:
+      context: ../../../babyGrowAi
+      dockerfile: Dockerfile
+    container_name: babygrow-ai
+    restart: always
+    env_file:
+      - .env
+    environment:
+      # 容器内互连一律用服务名，不走宿主机端口
+      PG_DSN: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/baby_grow_ai
+      REDIS_URL: redis://redis:6379/0
+      UVICORN_RELOAD: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  babygrow-api:
+    # 同 babygrow-ai：context 是应用目录，Dockerfile 里有 `COPY pom.xml ./`
+    build:
+      context: ../../../babyGrowBackend
+      dockerfile: Dockerfile
+    container_name: babygrow-api
+    restart: always
+    env_file:
+      - .env
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/baby_grow
+      AI_SERVICE_URL: http://babygrow-ai:8001
+    # 只绑回环：外部一律经 ECS → FRP 隧道进来，宿主机以外不可直达。
+    # 宿主 3003 → 容器 8080（Spring Boot 的默认端口），frpc 的 localPort 填 3003。
+    ports:
+      - "127.0.0.1:3003:8080"
+    volumes:
+      - {{NAS_UPLOADS_DIR}}:/app/data/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      babygrow-ai:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1G

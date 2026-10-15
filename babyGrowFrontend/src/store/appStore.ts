@@ -27,6 +27,7 @@ import {
   removeWish as deleteWish,
   updateWishChecklist as putWishChecklist,
   updateWishCounter as putWishCounter,
+  regenerateWishCover as postWishCover,
 } from '@/api/modules/wishes'
 import { getProfile, updateProfile as putProfile } from '@/api/modules/profile'
 import {
@@ -389,10 +390,22 @@ export const removeWish = (wishId: string) => {
   persist('删除心愿', () => deleteWish(wishId))
 }
 
-export const addWish = (wish: Wish) => {
-  appStore.set((previous) => ({ ...previous, wishes: [...previous.wishes, wish] }))
-  persist('新建心愿', () => postWish(wish))
-}
+/**
+ * 新建心愿。
+ *
+ * **这里不同于其它写操作的「先改本地、再异步落库」。** 心愿的响应里有几项只有后端
+ * 知道：清单式的目标数按实际条数派生、头图的生成状态与地址。本地猜不出正确的值，
+ * 猜错会让界面与数据库不一致（列表显示错的「x of y」，或者挂着一个永不消失的「生成中」）。
+ * 所以用响应覆盖本地，而不是先塞一个本地造的对象进去。
+ *
+ * 失败时向上抛，由页面提示；本地也不会留下一条根本没存上的心愿。
+ */
+export const addWish = (wish: Wish) =>
+  postWish(wish).then((response) => {
+    if (response.code !== 0) throw new Error(response.message)
+
+    appStore.set((previous) => ({ ...previous, wishes: [...previous.wishes, response.data] }))
+  })
 
 /**
  * 改本地清单。
@@ -434,6 +447,24 @@ export const commitWishCounter = (wishId: string) => {
 
   persist('更新心愿进度', () => putWishCounter(wishId, wish.counter!.current))
 }
+
+/**
+ * 重新生成头图。只有「生成失败后重试」与「想换一张」会走到这里。
+ *
+ * 不复用 persist：它把响应丢掉了，而这里的响应正是刚置为 pending 的心愿，
+ * 拿来覆盖本地就能立刻把页面切到「生成中」，不必等下一次整页刷新。
+ *
+ * 失败会向上抛，由调用页面决定怎么提示——这个 store 不依赖 Taro。
+ */
+export const regenerateWishCover = (wishId: string) =>
+  postWishCover(wishId).then((response) => {
+    if (response.code !== 0) throw new Error(response.message)
+
+    appStore.set((previous) => ({
+      ...previous,
+      wishes: previous.wishes.map((wish) => (wish.id === wishId ? response.data : wish)),
+    }))
+  })
 
 /* ---------------------------------------------------------------- 事件详情 */
 

@@ -67,6 +67,14 @@ services:
       EMBEDDING_MODEL: bge-m3:latest
       # 关闭热重载，Docker 内不需要
       UVICORN_RELOAD: "false"
+      # 文生图（心愿头图）。与上面的文本模型完全独立的一路，
+      # 因为 Ollama 不支持出图，所以没有本机退路。
+      # 从仓库根的 .env 读，没填就是关闭状态，/health 会显示 image=unconfigured。
+      IMAGE_MODEL_API_KEY: ${IMAGE_MODEL_API_KEY:-}
+      IMAGE_MODEL_BASE_URL: ${IMAGE_MODEL_BASE_URL:-https://api.siliconflow.cn/v1}
+      IMAGE_MODEL_NAME: ${IMAGE_MODEL_NAME:-Kwai-Kolors/Kolors}
+      IMAGE_MODEL_SIZE: ${IMAGE_MODEL_SIZE:-1024x1024}
+      IMAGE_MODEL_TIMEOUT: ${IMAGE_MODEL_TIMEOUT:-120}
     depends_on:
       postgres:
         condition: service_healthy
@@ -105,6 +113,9 @@ services:
       JWT_SECRET: ${JWT_SECRET:-baby-grow-container-dev-secret-please-override-32b}
       WX_APPID: ${WX_APPID:-}
       WX_SECRET: ${WX_SECRET:-}
+      # 心愿头图。默认关闭：出图打的是外部付费接口，AI 服务侧没配 IMAGE_MODEL_API_KEY
+      # 就打开，只会让每条新心愿静默变成 failed。
+      WISH_COVER_ENABLED: ${WISH_COVER_ENABLED:-false}
     depends_on:
       redis:
         condition: service_healthy

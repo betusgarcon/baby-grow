@@ -34,6 +34,14 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# ===== 部署脚本在本地/NAS 上渲染出的产物 =====
+# frpc.toml 是把 frpc.toml.template 里的 {{FRP_TOKEN}} / {{ECS_PUBLIC_IP}}
+# 替换成真实值生成的，**含凭据**——公开仓库里绝不能入库。
+# .rendered.yml 里是真实的 NAS 目录路径，同理。
+# 两者都由 deploy.sh / update-backend.sh 每次覆盖生成，不需要版本控制。
+babyGrowBackend/deploy/nas/frpc.toml
+babyGrowBackend/deploy/nas/docker-compose.nas.yml.rendered.yml
+
 # ===== 日志 =====
 *.log
 npm-debug.log*

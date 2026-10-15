@@ -11,8 +11,15 @@ import { moveItem, useReorderSlot } from '@/hooks/useReorderSlot'
 import ProgressBar from '../components/ProgressBar'
 import ChecklistItem from '../components/ChecklistItem'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishChecklist, commitWishChecklist, loadWishes } from '@/store'
-import type { WishChecklistItem } from '@/store/wishes'
+import WishHero from '../components/WishHero'
+import {
+  useAppState,
+  setWishChecklist,
+  commitWishChecklist,
+  loadWishes,
+  regenerateWishCover,
+} from '@/store'
+import { wishProgress, wishTarget, type WishChecklistItem } from '@/store/wishes'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
 const ITEM_GAP = 12
@@ -76,7 +83,9 @@ export default function WishChecklistDetailPage() {
   }
 
   const doneCount = items.filter((item) => item.done).length
-  const progress = wish.goal > 0 ? Math.min(doneCount / wish.goal, 1) : 0
+  // 走统一的 wishProgress：清单式的分母是清单实际条数，不是 wish.goal——
+  // 这里原先自己算了一遍，改了分母口径后就会漏改
+  const progress = wishProgress(wish)
 
   const beginChange = () => {
     // 第一次改动时留快照，之后的改动共用这一份
@@ -105,6 +114,13 @@ export default function WishChecklistDetailPage() {
     setDraft(null)
     setDirty(false)
     setMode('view')
+  }
+
+  const retryCover = () => {
+    regenerateWishCover(wish.id).catch((error) => {
+      console.error('[wish] 重新生成头图失败', error)
+      Taro.showToast({ title: '头图生成失败，请稍后再试', icon: 'none' })
+    })
   }
 
   const toggleItem = (id: string) => {
@@ -156,20 +172,7 @@ export default function WishChecklistDetailPage() {
       header={<PageHeader showBack title="Wishes" />}
     >
       <View className="flex flex-col gap-6">
-        {/* 设计稿这里是插图，没有可用资源，用同色系浅底占位并把标题叠在下沿 */}
-        <View
-          className="relative w-full h-56 rounded-3xl overflow-hidden flex flex-col justify-end p-6 gap-2"
-          style={{ backgroundImage: 'linear-gradient(160deg, #faf2ea 0%, #e8e1d9 100%)' }}
-        >
-          {wish.badge ? (
-            <View className="self-start py-1 px-3 rounded-full bg-secondary-container">
-              <Text className="text-caption font-bold text-on-secondary-container">{wish.badge}</Text>
-            </View>
-          ) : null}
-
-          <Text className="text-2xl font-bold text-on-surface">{wish.title}</Text>
-          <Text className="text-base text-on-surface-variant">{wish.detailSubtitle}</Text>
-        </View>
+        <WishHero wish={wish} onRetryCover={retryCover} />
 
         <View className="flex flex-col gap-2">
           <Text
@@ -184,7 +187,7 @@ export default function WishChecklistDetailPage() {
               {Math.round(progress * 100)}% Completed
             </Text>
             <Text className="text-caption text-on-surface-variant">
-              ({doneCount} of {wish.goal})
+              ({doneCount} of {wishTarget(wish)})
             </Text>
           </View>
 

@@ -25,6 +25,15 @@ public class WishEntity {
     public static final String KIND_CHECKLIST = "checklist";
     public static final String KIND_COUNTER = "counter";
 
+    /** 从未请求生成（功能未开启，或迁移前的历史数据） */
+    public static final String COVER_NONE = "none";
+    /** 已入队 / 生成中 */
+    public static final String COVER_PENDING = "pending";
+    /** 已生成，{@code coverMediaId} 有值 */
+    public static final String COVER_READY = "ready";
+    /** 生成失败，可手动重试 */
+    public static final String COVER_FAILED = "failed";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -79,6 +88,13 @@ public class WishEntity {
 
     @Column(name = "counter_unit", length = 32)
     private String counterUnit;
+
+    /** 头图对应的 media_assets 行；生成成功前为空 */
+    @Column(name = "cover_media_id")
+    private Long coverMediaId;
+
+    @Column(name = "cover_status", nullable = false, length = 16)
+    private String coverStatus = COVER_NONE;
 
     @Column(name = "sort", nullable = false)
     private int sort;
@@ -232,6 +248,22 @@ public class WishEntity {
 
     public void setCounterUnit(String counterUnit) {
         this.counterUnit = counterUnit;
+    }
+
+    public Long getCoverMediaId() {
+        return coverMediaId;
+    }
+
+    public void setCoverMediaId(Long coverMediaId) {
+        this.coverMediaId = coverMediaId;
+    }
+
+    public String getCoverStatus() {
+        return coverStatus;
+    }
+
+    public void setCoverStatus(String coverStatus) {
+        this.coverStatus = coverStatus;
     }
 
     public int getSort() {

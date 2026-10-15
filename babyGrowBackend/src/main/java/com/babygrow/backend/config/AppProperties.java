@@ -10,7 +10,7 @@ import java.util.List;
  * <p>全部走环境变量占位（见 application.yml），源码里不出现任何真实凭据。
  */
 @ConfigurationProperties(prefix = "app")
-public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media media, DemoData demoData) {
+public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media media, DemoData demoData, Wish wish) {
 
     public record Auth(boolean devMode) {
     }
@@ -59,5 +59,20 @@ public record AppProperties(Auth auth, Jwt jwt, Wechat wechat, Cors cors, Media 
      * @param enabled 开关；已有记录时不会重复灌
      */
     public record DemoData(boolean enabled) {
+    }
+
+    /** 心愿相关配置。 */
+    public record Wish(Cover cover) {
+
+        /**
+         * 心愿头图。
+         *
+         * @param enabled 新建心愿后是否异步调用文生图生成头图。**默认关闭**——出图要打外部
+         *                付费接口，没配 key 的环境不该在建心愿时静默产生一堆失败任务。
+         *                关闭时 {@code cover_status} 一直是 {@code none}，页面显示渐变占位，
+         *                心愿本身的勾选/计数/删除完全不受影响。
+         */
+        public record Cover(boolean enabled) {
+        }
     }
 }

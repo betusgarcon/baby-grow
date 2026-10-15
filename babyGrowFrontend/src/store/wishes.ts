@@ -11,6 +11,18 @@
 /** 勾选式（博物馆 / 游泳 / 徒步 / 攀岩）与计数式（读书）两种详情形态 */
 export type WishKind = 'checklist' | 'counter'
 
+/**
+ * 头图状态。
+ *
+ * `none`   从未请求（功能未开启，或早于该功能的数据）
+ * `pending` 生成中
+ * `ready`  已生成
+ * `failed` 生成失败，可重试
+ *
+ * 字段可选，省略等价于 `none`——mock 数据与旧接口返回都不必改。
+ */
+export type WishCoverStatus = 'none' | 'pending' | 'ready' | 'failed'
+
 export interface WishChecklistItem {
   id: string
   title: string
@@ -35,7 +47,13 @@ export interface Wish {
   description: string
   /** 详情页 hero 上的说明。设计稿里两处文案不同，所以分开存 */
   detailSubtitle: string
-  /** 总目标数。勾选式心愿的进度按「已完成 / 目标数」算，目标数可能大于清单条数 */
+  /**
+   * 目标数。**含义随 kind 变化**：
+   * - `counter`：目标次数，进度按「当前值 / 目标次数」算；
+   * - `checklist`：不再由用户填，落库时等于清单实际条数。分母改用实际条数，
+   *   是为了避免「填了 4 但只加了 2 条，却显示 1 of 4」这种自相矛盾的显示。
+   *   读取进度请用 {@link wishTarget}，不要直接读这个字段。
+   */
   goal: number
   /** 进度文案里的量词，如 Strokes / Museums */
   unitLabel: string
@@ -50,6 +68,9 @@ export interface Wish {
   counter?: WishCounter
   /** Expert Tip，用 ** 包裹需要加重的那段 */
   expertTip?: string
+  /** AI 生成的头图绝对地址。生成成功前为空 */
+  coverUrl?: string
+  coverStatus?: WishCoverStatus
 }
 
 /** 已完成数：勾选式看勾了几条，计数式看当前值 */
@@ -58,12 +79,23 @@ export const wishDoneCount = (wish: Wish) =>
     ? wish.counter.current
     : (wish.checklist ?? []).filter((item) => item.done).length
 
+/**
+ * 进度的分母。
+ *
+ * 清单式用**清单的实际条数**，计数式才用 `goal`。直接读 `wish.goal` 是不对的——
+ * 清单式下它可能与条数对不上。
+ */
+export const wishTarget = (wish: Wish) =>
+  wish.kind === 'counter' ? wish.goal : (wish.checklist ?? []).length
+
 /** 进度 0~1。从清单/计数派生，勾选一项进度就跟着变，不再另存一份写死的值 */
-export const wishProgress = (wish: Wish) =>
-  wish.goal > 0 ? Math.min(wishDoneCount(wish) / wish.goal, 1) : 0
+export const wishProgress = (wish: Wish) => {
+  const target = wishTarget(wish)
+  return target > 0 ? Math.min(wishDoneCount(wish) / target, 1) : 0
+}
 
 export const wishProgressLabel = (wish: Wish) =>
-  `${wishDoneCount(wish)} of ${wish.goal} ${wish.unitLabel}`
+  `${wishDoneCount(wish)} of ${wishTarget(wish)} ${wish.unitLabel}`
 
 export const wishesEmptyCopy = {
   title: 'No wishes yet.',
@@ -121,6 +153,11 @@ export const wishes: Wish[] = [
         note: 'High-contrast exhibits available',
         done: false,
       },
+      { id: 'maritime', title: 'Maritime Museum', note: 'Harbor views, stroller friendly', done: false },
+      { id: 'childrens-zoo', title: "Children's Zoo", note: 'Petting area on weekends', done: false },
+      { id: 'transport', title: 'Transport Museum', note: 'Vintage trains to climb on', done: false },
+      { id: 'planetarium', title: 'Planetarium', note: 'Dark inside, bring a blanket', done: false },
+      { id: 'folk-art', title: 'Folk Art Museum', note: 'Craft corner for toddlers', done: false },
     ],
     expertTip:
       "Museums are great sensory experiences. Focus on **high-contrast exhibits** and take plenty of breaks. 15-20 minutes is often enough for a toddler's focus.",

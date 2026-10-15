@@ -1,0 +1,31 @@
+# frpc.toml — FRP Client（部署在 NAS）
+# 把 {{}} 占位符替换后另存为 frpc.toml（deploy.sh 会自动做）。
+# 服务端 frps.toml 的 auth.token 必须与 {{FRP_TOKEN}} 一致。
+#
+# 只建 baby-grow 自己的隧道。NAS 上还有兄弟项目 dailypawn 的 frpc 在跑，
+# 它已承担了 SSH 隧道（remotePort 2222）——这里**不要**重复建，
+# 两个 frpc 用同一个 proxy name / remotePort 会让 frps 报端口冲突。
+#
+# ECS frps 已设 proxyBindAddr=127.0.0.1，隧道端口只在 ECS 本机（Nginx）可达，
+# 公网无法直连，这一点由 ECS 侧的配置保证。
+
+serverAddr = "{{ECS_PUBLIC_IP}}"
+serverPort = 7000
+
+auth.method = "token"
+auth.token = "{{FRP_TOKEN}}"
+
+# ECS 未就绪时不退出容器，持续重连（飞牛 frpc 应用同款经验：退出了会闪退）
+loginFailExit = false
+
+log.to = "/var/log/frpc.log"
+log.level = "info"
+log.maxDays = 7
+
+# baby-grow API → ECS 127.0.0.1:3003（仅 Nginx 反代可达）
+[[proxies]]
+name = "babygrow-api"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 3003
+remotePort = 3003

@@ -10,7 +10,8 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
-import { useAppState, setWishCounter, commitWishCounter, loadWishes } from '@/store'
+import WishHero from '../components/WishHero'
+import { useAppState, setWishCounter, commitWishCounter, loadWishes, regenerateWishCover } from '@/store'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
@@ -76,24 +77,20 @@ export default function WishCounterDetailPage() {
     setMode('view')
   }
 
+  const retryCover = () => {
+    regenerateWishCover(wish.id).catch((error) => {
+      console.error('[wish] 重新生成头图失败', error)
+      Taro.showToast({ title: '头图生成失败，请稍后再试', icon: 'none' })
+    })
+  }
+
   return (
     <PageContainer
       header={<PageHeader showBack title="Wishes" />}
     >
       <View className="flex flex-col gap-6">
-        {/* 设计稿这里是书架照片，没有可用资源，用同色系浅底占位 */}
-        <View
-          className="relative w-full h-52 rounded-3xl overflow-hidden flex flex-col justify-end p-6 gap-2"
-          style={{ backgroundImage: 'linear-gradient(160deg, #faf2ea 0%, #e8e1d9 100%)' }}
-        >
-          {wish.badge ? (
-            <View className="self-start py-1 px-3 rounded-full bg-secondary-container">
-              <Text className="text-caption font-bold text-on-secondary-container">{wish.badge}</Text>
-            </View>
-          ) : null}
-
-          <Text className="text-2xl font-bold text-on-surface">{wish.title}</Text>
-        </View>
+        {/* 与详情页共用同一个头图组件；这里原本也有一份逐字重复的渐变占位 */}
+        <WishHero wish={wish} onRetryCover={retryCover} />
 
         <View className="w-full box-border p-6 rounded-xl bg-surface-container-lowest shadow-card-soft flex flex-col gap-4">
           <Text className="text-base text-on-surface-variant">Reading Progress</Text>

@@ -2,6 +2,17 @@ import { View, Text, Textarea, Image } from '@tarojs/components'
 import Icon from '@/components/Icon'
 import { recordSheetCopy } from './recordData'
 
+/**
+ * 拍照识别是否可用。
+ *
+ * 视觉模型（qwen3-vl）只能跑在本机的 Ollama 上——云端网关用的 DeepSeek 没有视觉 API。
+ * 本机不常开机，所以体验版阶段先把入口收起来，避免用户点了没反应。
+ *
+ * 后端 `/records/recognize` 与 AI 服务的 `vision` 路由都原样保留，
+ * 将来有常开机器、或换到带视觉的云端模型时，把这里改成 true 即可。
+ */
+const PHOTO_RECOGNITION_ENABLED = false
+
 interface RecordInputViewProps {
   text: string
   photo: string | null
@@ -25,7 +36,7 @@ export default function RecordInputView({
   onClose,
 }: RecordInputViewProps) {
   // 没有任何内容时不给提交，避免空记录走到识别结果
-  const canAnalyze = text.trim().length > 0 || photo !== null
+  const canAnalyze = text.trim().length > 0 || (PHOTO_RECOGNITION_ENABLED && photo !== null)
 
   return (
     <View className="flex flex-col gap-5">
@@ -70,12 +81,14 @@ export default function RecordInputView({
             <Icon name="mic" className="w-5 h-5" />
           </View>
 
-          <View
-            className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center"
-            onClick={onPickPhoto}
-          >
-            <Icon name="photo-gallery" className="w-5 h-5" />
-          </View>
+          {PHOTO_RECOGNITION_ENABLED ? (
+            <View
+              className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center"
+              onClick={onPickPhoto}
+            >
+              <Icon name="photo-gallery" className="w-5 h-5" />
+            </View>
+          ) : null}
         </View>
       </View>
 

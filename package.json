@@ -5,8 +5,13 @@
   "description": "宝宝成长记录 monorepo（前端小程序 + Java 后端 + Python AI 服务）",
   "scripts": {
     "dev:weapp": "pnpm --filter @baby-grow/frontend dev:weapp",
+    "dev:weapp:online": "pnpm --filter @baby-grow/frontend dev:weapp:online",
     "build:weapp": "pnpm --filter @baby-grow/frontend build:weapp",
     "dev:backend": "cd babyGrowBackend && ./mvnw spring-boot:run",
+    "deploy:prod": "./babyGrowBackend/deploy/nas/update-backend.sh",
+    "deploy:prod:full": "./babyGrowBackend/deploy/nas/deploy.sh",
+    "deploy:init-data": "./babyGrowBackend/deploy/nas/init-vector-db.sh",
+    "deploy:init-nginx": "./babyGrowBackend/deploy/ecs/init-nginx.sh",
     "ai:setup": "cd babyGrowAi && python3 -m venv .venv && .venv/bin/pip install -e .",
     "dev:ai": "babyGrowAi/.venv/bin/python -m uvicorn app.main:app --app-dir babyGrowAi/src --reload --port 8001",
     "db:up": "docker compose up -d redis postgres",

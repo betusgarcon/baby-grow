@@ -55,4 +55,15 @@ public class WishController {
                                                @RequestBody CounterUpdateRequest request) {
         return ApiResponse.ok(wishService.updateCounter(userId, request.id(), request.current()));
     }
+
+    /**
+     * 重新生成头图。生成失败后重试，或单纯想换一张时用。
+     *
+     * <p>头图本身在新建心愿时自动排队生成，这个接口只是显式的重做入口。
+     */
+    @PostMapping("/cover")
+    public ApiResponse<WishView> regenerateCover(@AuthenticationPrincipal Long userId,
+                                                 @RequestBody WishDtos.WishIdRequest request) {
+        return ApiResponse.ok(wishService.regenerateCover(userId, request.id()));
+    }
 }
