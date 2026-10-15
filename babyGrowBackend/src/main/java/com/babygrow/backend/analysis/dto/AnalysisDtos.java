@@ -13,6 +13,13 @@ import java.util.Map;
  * <p><b>所有嵌套对象都必须返回完整结构，即便没有数据也要给空数组。</b>
  * 分析页会直接解引用（例如 {@code pageData.trends[range][metric].points}），返回 null 会让
  * 页面崩掉而不是显示空态。这是本组接口最重要的约束。
+ *
+ * <p><b>页面级响应都带 {@code hasData}。</b>它回答的是「这一页有没有东西可看」——
+ * 该页主要数据集（生长看身高/体重/头围记录，睡眠看睡眠记录，饮食看喂养/辅食记录，
+ * 情绪看情绪记录）有没有记录，而**不是**「某个时间区间有没有点」。
+ * 前端据此在一条记录都没有时显示设计好的空态，而不是渲染一组空图表。
+ * 各 service 内部本来就在算这些空判断，这里只是把它显式告诉前端——
+ * 前端无法区分「真没记录」与「有记录但这个区间没数据」，只能靠这个字段。
  */
 public final class AnalysisDtos {
 
@@ -80,7 +87,8 @@ public final class AnalysisDtos {
                                      List<TimeRange> timeRanges,
                                      Map<String, Map<String, GrowthTrendSnapshot>> trends,
                                      MonthlyDiet monthlyDiet,
-                                     List<MilestoneItem> milestones) {
+                                     List<MilestoneItem> milestones,
+                                     boolean hasData) {
     }
 
     public record GrowthTrendResponse(GrowthTrendSnapshot snapshot,
@@ -98,14 +106,14 @@ public final class AnalysisDtos {
                                    List<SleepSegment> segments) {
     }
 
-    public record SleepCircadianResponse(CircadianSummary summary) {
+    public record SleepCircadianResponse(CircadianSummary summary, boolean hasData) {
     }
 
     public record DailySleepLog(String id, String title, String range, String duration,
                                 String type, String icon) {
     }
 
-    public record DailySleepLogsResponse(List<DailySleepLog> logs, Insight insight) {
+    public record DailySleepLogsResponse(List<DailySleepLog> logs, Insight insight, boolean hasData) {
     }
 
     /** startHour 是 0-24 的浮点数，duration 单位小时——图表按 24 小时横轴摆放 */
@@ -115,7 +123,7 @@ public final class AnalysisDtos {
     public record SleepEvolutionRow(String label, String summary, List<SleepEvolutionSegment> segments) {
     }
 
-    public record SleepEvolutionResponse(List<SleepEvolutionRow> rows, Insight insight) {
+    public record SleepEvolutionResponse(List<SleepEvolutionRow> rows, Insight insight, boolean hasData) {
     }
 
     // ── 饮食 ──────────────────────────────────────────────
@@ -125,7 +133,8 @@ public final class AnalysisDtos {
 
     public record WeeklyDietResponse(List<DietBarItem> bars, String averageLabel,
                                      String standardLabel, String narrativeNote,
-                                     Insight insight, ReferenceRange referenceRange) {
+                                     Insight insight, ReferenceRange referenceRange,
+                                     boolean hasData) {
     }
 
     public record DietRatioItem(String label, double value, String colorClass) {
@@ -139,7 +148,8 @@ public final class AnalysisDtos {
 
     public record MonthlyDietResponse(String title, String subtitle, String extra,
                                       MonthlyDietDonut donut, MonthlyDietIngredients ingredients,
-                                      Insight insight) {
+                                      Insight insight,
+                                      boolean hasData) {
     }
 
     // ── 情绪 ──────────────────────────────────────────────
@@ -152,7 +162,8 @@ public final class AnalysisDtos {
 
     public record MoodCalendarResponse(List<MoodCalendarDay> days,
                                        List<MoodLegendItem> legends,
-                                       Insight insight) {
+                                       Insight insight,
+                                       boolean hasData) {
     }
 
     public record MoodCheckinOption(String key, String label, String emoji, String icon,

@@ -64,6 +64,11 @@ public class AiTaskService {
     public RecognizeResponse submitRecognize(Long userId, RecognizeRequest request) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
 
+        // 先确认这张图是调用者自己的。mediaId 自增可猜，漏了这一步就能把别人上传的
+        // 照片送去识别，再通过轮询任务读回它的 AI 描述——一次跨用户的隐私读取。
+        // 校验放在入队之前：越权要立刻以 403 返回，而不是变成一条注定失败的任务。
+        mediaService.requireOwned(request.mediaId(), userId);
+
         AiTaskEntity task = taskRepository.save(AiTaskEntity.pending(
                 baby.getId(), AiTaskEntity.TYPE_RECOGNIZE_MEDIA, String.valueOf(request.mediaId())));
 

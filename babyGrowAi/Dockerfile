@@ -14,6 +14,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+# PyPI 源。默认走官方，国内构建时用 build arg 换成镜像。
+#
+# 不是可选的优化：NAS 直连 files.pythonhosted.org 会读超时（实测 2026-10-15，
+# pip 报 HTTPSConnectionPool(host='files.pythonhosted.org') Read timed out），
+# AI 镜像构不出来，而 compose 是在建容器**之前**构建的，于是一次构建失败
+# 会把整次部署挡在门外。超时与重试也一并放宽，链路抖动时不至于一次就死。
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ENV PIP_INDEX_URL=${PIP_INDEX_URL} \
+    PIP_DEFAULT_TIMEOUT=120 \
+    PIP_RETRIES=5
+
 # 复制全部源码和数据（editable install 需要 src 存在）
 COPY . .
 RUN pip install --no-cache-dir -e .

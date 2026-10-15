@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-import { View, Text } from '@tarojs/components'
 import AnalysisLayout from '@/pages/analysis/components/AnalysisLayout'
 import {
   ChartCard,
@@ -7,8 +5,10 @@ import {
   IngredientToleranceCard,
   InsightCard,
 } from '@/pages/analysis/components/AnalysisCards'
+import AsyncSection from '@/components/AsyncSection'
+import EmptyState from '@/components/EmptyState'
+import { useAsyncData } from '@/hooks/useAsyncData'
 import { getMonthlyDiet } from '@/api/modules/diet'
-import type { GetMonthlyDietResponse } from '@/types/diet'
 
 const dietSubtabs = [
   { key: 'dietWeek' as const, label: '本周奶量', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
@@ -16,18 +16,9 @@ const dietSubtabs = [
 ]
 
 export default function AnalysisDietMonthPage() {
-  const [pageData, setPageData] = useState<GetMonthlyDietResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getMonthlyDiet()
-      .then((pageRes) => setPageData(pageRes.data))
-      .finally(() => setLoading(false))
-  }, [])
-
-  if (loading || !pageData) {
-    return <View><Text>Loading...</Text></View>
-  }
+  // 此前是 .then().finally()，没有 catch：失败后永久停在裸的 "Loading..."，
+  // 而且那个分支没套 AnalysisLayout，连页头都没有
+  const { status, data: pageData, retry } = useAsyncData(getMonthlyDiet)
 
   return (
     <AnalysisLayout
@@ -35,25 +26,43 @@ export default function AnalysisDietMonthPage() {
       activeSubtab="dietMonth"
       subtabOptions={dietSubtabs}
     >
-      <ChartCard
-        title={pageData.title}
-        subtitle={pageData.subtitle}
-        extra={pageData.extra}
+      <AsyncSection
+        status={status}
+        onRetry={retry}
+        skeletonBlocks={3}
+        skeletonHeight={160}
+        isEmpty={pageData?.hasData === false}
+        emptyState={
+          <EmptyState
+            icon="fork_knife"
+            title="还没有辅食记录"
+            description="点下面中间的 + 记下宝宝吃了什么，这里会按类别显示构成与已尝试的食材。"
+          />
+        }
       >
-        <DietDonutSummary
-          ratio={pageData.donut.ratio}
-          title={pageData.donut.title}
-          legends={pageData.donut.legends}
-          dataSource="mock"
-        />
-        <IngredientToleranceCard
-          title={pageData.ingredients.badge}
-          badge="已成功建立耐受"
-          ingredients={pageData.ingredients.list}
-        />
-      </ChartCard>
+        {pageData ? (
+          <>
+            <ChartCard
+              title={pageData.title}
+              subtitle={pageData.subtitle}
+              extra={pageData.extra}
+            >
+              <DietDonutSummary
+                ratio={pageData.donut.ratio}
+                title={pageData.donut.title}
+                legends={pageData.donut.legends}
+              />
+              <IngredientToleranceCard
+                title={pageData.ingredients.badge}
+                badge="已成功建立耐受"
+                ingredients={pageData.ingredients.list}
+              />
+            </ChartCard>
 
-      <InsightCard data={pageData.insight} />
+            <InsightCard data={pageData.insight} />
+          </>
+        ) : null}
+      </AsyncSection>
     </AnalysisLayout>
   )
 }

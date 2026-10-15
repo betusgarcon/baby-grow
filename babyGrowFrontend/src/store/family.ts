@@ -87,8 +87,17 @@ export const roleLabelOf = (role: FamilyRole) => {
   return 'Viewer · Read Only'
 }
 
-/** 首页右上角的宝宝月龄标签 */
-export const babyAgeLabel = '6mo 12d'
+/**
+ * 把下面这批文案里写死的宝宝名换成真实名字。
+ *
+ * 为什么必须换：这些字符串会出现在**发给亲友的邀请消息**、受邀者的欢迎页和分享海报上。
+ * 名字写死意味着每个用户都在替一个叫「Leo」的陌生孩子发邀请。
+ *
+ * 真实名字来自 /api/baby/profile（store 里的 babyHeader.name）。名字还没取到
+ * （首帧、或接口失败）时退回中性称呼，而不是继续露出 Leo。
+ */
+export const withBabyName = (text: string, babyName?: string) =>
+  text.replace(/Leo/g, babyName?.trim() || '宝宝')
 
 export interface ShareHighlight {
   badge: string
@@ -122,14 +131,24 @@ export const invitedView = {
   action: '接受邀请，即刻加入空间',
 }
 
-/** 长图海报的内容与可选项 */
+/**
+ * 长图海报的内容与可选项。
+ *
+ * 这只是 `/api/family/poster` 拿不到时的**兜底**，页面正常情况下用的是后端按宝宝档案
+ * 与最近一条记录推导出来的内容。
+ *
+ * 原先这份兜底里有一整套编造的细节：「今天干掉了 150g 的甜南瓜泥」「体重稳定增长在
+ * 12kg 黄金线上」「2023.09.24 · 家属记录」，还带着写死的名字「Leo 的成长手账」。
+ * 接口一失败，用户看到的是一张**别人的**成长海报，而且读起来像是自己孩子的数据。
+ * 兜底文案必须一眼看出是占位，不能是具体数字和日期。
+ */
 export const posterContent = {
-  title: 'Leo 的成长手账',
+  title: '成长手账',
   subtitle: 'GENIUS TRACK · MEMORY CAPSULE',
-  badge: '辅食探索记',
-  heading: '解锁甜南瓜泥',
-  body: '吃辅食就像画画，今天干掉了 150g 的甜南瓜泥，脸上、手上、肚兜上全部染成可爱的暖橙色。体重稳定增长在 12kg 黄金线上。',
-  meta: '2023.09.24 · 家属记录',
+  badge: '成长记录',
+  heading: '记录今天的小事',
+  body: '挑选几条记忆，生成一张可以分享的成长海报。',
+  meta: '由宝宝成长记录生成',
 }
 
 export const posterTemplates = [

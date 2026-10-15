@@ -189,6 +189,7 @@ export const growthMockRoutes = [
   {
     path: '/api/baby/growth',
     handler: (): GetGrowthPageResponse => ({
+      hasData: true,
       insight: {
         title: 'AI Growth Narrative',
         content:

@@ -4,9 +4,17 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
-import { invitedView } from '@/store/family'
+import babyAvatar from '@/assets/images/baby-journey-img.jpg'
+import { invitedView, withBabyName } from '@/store/family'
+import { useAppState } from '@/store'
+
 export default function FamilyInvitedViewPage() {
+  const { babyHeader } = useAppState()
+
+  // 这一页里的文案会出现在受邀者看到的内容里，宝宝名不能是写死的「Leo」。
+  const invitedTitle = withBabyName(invitedView.title, babyHeader.name)
+  const invitedBody = withBabyName(invitedView.body, babyHeader.name)
+
   const accept = () => {
     // 后端未实现，先给提示并回到家庭首页
     Taro.showToast({ title: '已加入（本地）', icon: 'none' })
@@ -32,7 +40,7 @@ export default function FamilyInvitedViewPage() {
         <View className="w-full box-border p-6 rounded-3xl bg-surface-container-lowest flex flex-col items-center gap-5">
           <View className="py-2 px-5 rounded-full bg-tertiary-container">
             <Text className="text-caption font-bold text-on-tertiary-container">
-              {invitedView.title.toUpperCase()}
+              {invitedTitle.toUpperCase()}
             </Text>
           </View>
 
@@ -50,12 +58,12 @@ export default function FamilyInvitedViewPage() {
 
             <View className="flex-1 flex flex-col gap-1">
               <Text className="text-sm font-bold text-on-surface">{invitedView.badge}</Text>
-              <Text className="text-caption text-on-surface-variant">{invitedView.body}</Text>
+              <Text className="text-caption text-on-surface-variant">{invitedBody}</Text>
             </View>
           </View>
 
           <Text className="text-2xl font-bold text-on-surface text-center">{invitedView.badge}</Text>
-          <Text className="text-base text-on-surface-variant text-center">{invitedView.body}</Text>
+          <Text className="text-base text-on-surface-variant text-center">{invitedBody}</Text>
 
           <Text className="text-sm text-on-surface-variant">邀请人：{invitedView.inviter}</Text>
         </View>

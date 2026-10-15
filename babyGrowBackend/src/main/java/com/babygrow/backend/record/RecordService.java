@@ -4,13 +4,13 @@ import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.analysis.RecordProjectionService;
 import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.menu.MenuService;
+import com.babygrow.backend.media.MediaService;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.MediaAssetEntity;
 import com.babygrow.backend.domain.RecordEntity;
 import com.babygrow.backend.domain.TimelineEntryEntity;
 import com.babygrow.backend.record.dto.RecordDtos.CommitRequest;
 import com.babygrow.backend.record.dto.RecordDtos.TimelineEntryResponse;
-import com.babygrow.backend.repository.MediaAssetRepository;
 import com.babygrow.backend.repository.RecordRepository;
 import com.babygrow.backend.repository.TimelineEntryRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +40,7 @@ public class RecordService {
     private final FamilyAccessService accessService;
     private final RecordRepository recordRepository;
     private final TimelineEntryRepository timelineRepository;
-    private final MediaAssetRepository mediaRepository;
+    private final MediaService mediaService;
     private final RecordProjectionService projectionService;
     private final MenuService menuService;
     private final ObjectMapper objectMapper;
@@ -48,14 +48,14 @@ public class RecordService {
     public RecordService(FamilyAccessService accessService,
                          RecordRepository recordRepository,
                          TimelineEntryRepository timelineRepository,
-                         MediaAssetRepository mediaRepository,
+                         MediaService mediaService,
                          RecordProjectionService projectionService,
                          MenuService menuService,
                          ObjectMapper objectMapper) {
         this.accessService = accessService;
         this.recordRepository = recordRepository;
         this.timelineRepository = timelineRepository;
-        this.mediaRepository = mediaRepository;
+        this.mediaService = mediaService;
         this.projectionService = projectionService;
         this.menuService = menuService;
         this.objectMapper = objectMapper;
@@ -237,14 +237,9 @@ public class RecordService {
         if (mediaId == null) {
             return null;
         }
-        MediaAssetEntity media = mediaRepository.findById(mediaId)
-                .orElseThrow(() -> BizException.notFound("媒体不存在"));
-
-        // 只能引用自己上传的媒体，否则可以把别人的图片挂到自己的记录上
-        if (!userId.equals(media.getOwnerUserId())) {
-            throw BizException.forbidden("无权引用该媒体");
-        }
-        return media;
+        // 只能引用自己上传的媒体，否则可以把别人的图片挂到自己的记录上。
+        // 校验本身下沉到 MediaService——识别路径也要用同一份，两处各写一遍就会漏。
+        return mediaService.requireOwned(mediaId, userId);
     }
 
     private static String resolveSource(String requested, MediaAssetEntity media) {

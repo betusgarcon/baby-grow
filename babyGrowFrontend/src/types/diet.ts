@@ -26,6 +26,8 @@ export interface GetWeeklyDietResponse {
     title: string
     content: string
   }
+  /** 该宝宝有没有奶量记录（不限本周）。false 时显示空态而不是空柱状图 */
+  hasData: boolean
 }
 
 /** 饮食占比图例项 */
@@ -60,6 +62,8 @@ export interface GetMonthlyDietResponse {
     title: string
     content: string
   }
+  /** 该宝宝有没有喂养记录（不限本月）。false 时显示空态而不是空占比图 */
+  hasData: boolean
 }
 
 /** 添加食材请求 */

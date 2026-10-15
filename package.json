@@ -7,7 +7,7 @@
     "dev:weapp": "pnpm --filter @baby-grow/frontend dev:weapp",
     "dev:weapp:online": "pnpm --filter @baby-grow/frontend dev:weapp:online",
     "build:weapp": "pnpm --filter @baby-grow/frontend build:weapp",
-    "dev:backend": "cd babyGrowBackend && ./mvnw spring-boot:run",
+    "dev:backend": "cd babyGrowBackend && APP_AUTH_DEV_MODE=true ./mvnw spring-boot:run",
     "deploy:prod": "./babyGrowBackend/deploy/nas/update-backend.sh",
     "deploy:prod:full": "./babyGrowBackend/deploy/nas/deploy.sh",
     "deploy:init-data": "./babyGrowBackend/deploy/nas/init-vector-db.sh",

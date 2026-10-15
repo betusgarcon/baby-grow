@@ -3,9 +3,12 @@ import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro'
 import { View, Text, Image, Button } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import AsyncSection from '@/components/AsyncSection'
+import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
-import { inviteToken } from '@/store/family'
+import { navigateToRoute } from '@/utils/routes'
+import babyAvatar from '@/assets/images/baby-journey-img.jpg'
+import { inviteToken, withBabyName } from '@/store/family'
 import { useAppState, loadMembers } from '@/store'
 
 /**
@@ -15,7 +18,7 @@ import { useAppState, loadMembers } from '@/store'
  * 标题与正文仍是产品文案，属于静态内容。
  */
 export default function FamilyInviteTokenPage() {
-  const { members } = useAppState()
+  const { members, status, babyHeader } = useAppState()
 
   useEffect(() => {
     const shareMenuOptions = {
@@ -38,13 +41,17 @@ export default function FamilyInviteTokenPage() {
     ? `一次性安全钥匙 · ${hoursUntil(latestInvite.inviteExpiresAt)}小时内有效`
     : inviteToken.codeNote
 
+  // 这几条文案会随分享卡片发到亲友那里，宝宝名不能是写死的「Leo」。
+  const inviteTitle = withBabyName(inviteToken.title, babyHeader.name)
+  const inviteBody = withBabyName(inviteToken.body, babyHeader.name)
+
   useShareAppMessage(() => ({
-    title: inviteToken.title,
+    title: inviteTitle,
     path: '/pages/family/invited/index',
   }))
 
   useShareTimeline(() => ({
-    title: inviteToken.title,
+    title: inviteTitle,
   }))
 
   const copyToken = async () => {
@@ -72,6 +79,26 @@ export default function FamilyInviteTokenPage() {
       }
     >
       <View className="flex flex-col gap-6">
+        {/* 此前没接 status.members：加载中、请求失败、真的没有邀请，三者都显示
+            同一句「暂无待接受的邀请」，分不清也重试不了 */}
+        <AsyncSection
+          status={status.members}
+          onRetry={loadMembers}
+          skeletonBlocks={2}
+          skeletonHeight={140}
+          isEmpty={!latestInvite}
+          emptyState={
+            <View className="bg-card rounded-[24px]">
+              <EmptyState
+                icon="family-active"
+                title="还没有待接受的邀请"
+                description="先邀请一位家人，这里会生成一个一次性口令给他。"
+                actionText="去邀请家人"
+                onAction={() => navigateToRoute('family-invite')}
+              />
+            </View>
+          }
+        >
         {/* 凭证本体：虚线外框示意「可撕下的入场券」 */}
         <View className="w-full box-border p-6 rounded-3xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center gap-5">
           <View className="py-1 px-4 rounded-full bg-secondary-container">
@@ -89,7 +116,7 @@ export default function FamilyInviteTokenPage() {
 
             <View className="flex-1 flex flex-col gap-1">
               <Text className="text-sm font-bold text-on-surface">
-                {latestInvite?.name ?? inviteToken.title}
+                {latestInvite?.name ?? inviteTitle}
               </Text>
               <Text className="text-caption text-on-surface-variant">
                 {code || '暂无待接受的邀请'}
@@ -98,8 +125,8 @@ export default function FamilyInviteTokenPage() {
             </View>
           </View>
 
-          <Text className="text-2xl font-bold text-on-surface text-center">{inviteToken.title}</Text>
-          <Text className="text-base text-on-surface-variant text-center">{inviteToken.body}</Text>
+          <Text className="text-2xl font-bold text-on-surface text-center">{inviteTitle}</Text>
+          <Text className="text-base text-on-surface-variant text-center">{inviteBody}</Text>
         </View>
 
         {/* 必须用 openType="share" 才能拉起小程序的分享面板 */}
@@ -122,6 +149,7 @@ export default function FamilyInviteTokenPage() {
           <Icon name="event-attachment" className="w-5 h-5" />
           <Text className="text-base font-semibold text-on-surface">仅复制加密安全口令</Text>
         </View>
+        </AsyncSection>
       </View>
     </PageContainer>
   )

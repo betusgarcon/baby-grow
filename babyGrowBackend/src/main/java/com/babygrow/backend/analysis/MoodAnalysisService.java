@@ -74,7 +74,8 @@ public class MoodAnalysisService {
 
         List<MoodCalendarDay> days = buildGrid(target, moodByDay);
 
-        return new MoodCalendarResponse(days, LEGENDS, insight(target, moodByDay));
+        return new MoodCalendarResponse(days, LEGENDS, insight(target, moodByDay),
+                moodRepository.existsByBabyId(baby.getId()));
     }
 
     @Transactional(readOnly = true)

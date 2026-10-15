@@ -68,13 +68,15 @@ class RecipeAgent:
             tool_trace: list[str] = []
             retrieved_chunks: list[dict[str, Any]] = []
 
-            # Lazily init retrieval service (mirrors RecipeRAGService pattern).
-            if self.retrieval_service is None:
-                from app.models import get_engine
-                from sqlalchemy.orm import Session
+            # 缓存的来源引用是**实例**状态，而这个 agent 是进程级单例。
+            # 不复位的话，上一个请求检索到的分块会留在字典里，被本次请求的
+            # 来源绑定拿去用——用户 B 的推荐结果里会引用只有用户 A 检索到的片段。
+            self._retrieved_chunks.clear()
 
-                with Session(bind=get_engine()) as db:
-                    self.retrieval_service = RetrievalService(db=db)
+            # 惰性初始化检索服务，与 RecipeRAGService 保持一致。
+            # 同样刻意不传 db：session 若挂在这个单例上就会跨请求复用。
+            if self.retrieval_service is None:
+                self.retrieval_service = RetrievalService()
 
             executor = ToolExecutor(
                 rule_engine=self.rule_engine,
@@ -171,7 +173,11 @@ class RecipeAgent:
                                 messages.append(
                                     {
                                         "role": "tool",
+                                        # Ollama 用 name 认领结果，OpenAI 兼容端点（DeepSeek）
+                                        # 要求用 tool_call_id 关联到 assistant 的那次调用。
+                                        # 两个都带上：Go 侧解码会忽略未知字段，互不干扰。
                                         "name": name,
+                                        "tool_call_id": call.get("id"),
                                         "content": result,
                                     }
                                 )

@@ -7,7 +7,7 @@ import EmptyState from '@/components/EmptyState'
 import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadMilestones } from '@/store'
 import type { SectionState } from '@/types/common'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
+import babyAvatar from '@/assets/images/baby-journey-img.jpg'
 import MilestoneCard from './components/MilestoneCard'
 import MilestoneFilterCard from './components/MilestoneFilterCard'
 import PhotoMemoryCard from './components/PhotoMemoryCard'
@@ -61,6 +61,10 @@ export default function JourneyMilestonesPage() {
 
   const resetFilters = () => {
     setMonth(ALL_MONTHS)
+    // 年份也要一起还原，且还原成**页面默认值**（当年）而不是空。
+    // 此前漏了这一行：选了别的年份把列表滤空之后，点「重置筛选」月份和关键词都回来了，
+    // 列表却仍然是空的，看起来像重置无效。
+    setYear(String(new Date().getFullYear()))
     setKeyword('')
   }
 

@@ -88,4 +88,6 @@ export interface GetGrowthPageResponse {
     unlocked: boolean
     icon: string
   }>
+  /** 该宝宝有没有身高/体重/头围记录。false 时页面显示空态，而不是一组空曲线 */
+  hasData: boolean
 }

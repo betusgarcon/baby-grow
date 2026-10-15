@@ -3,7 +3,7 @@
  */
 
 import type { BabyProfileResponse } from '@/types/baby'
-import babyAvatar from '@/assets/images/baby-journey-img.png'
+import babyAvatar from '@/assets/images/baby-journey-img.jpg'
 
 export const babyMockRoutes = [
   {

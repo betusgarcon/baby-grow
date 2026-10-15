@@ -1,5 +1,5 @@
 import { View, Text, Image } from '@tarojs/components'
-import fallbackAvatar from '@/assets/images/baby-journey-img.png'
+import fallbackAvatar from '@/assets/images/baby-journey-img.jpg'
 
 interface ProfileAvatarProps {
   avatar: string

@@ -30,6 +30,7 @@ export const dietMockRoutes = [
   {
     path: '/api/baby/diet/weekly',
     handler: (): GetWeeklyDietResponse => ({
+      hasData: true,
       bars: weeklyBars,
       averageLabel: 'Average: 676 ml/day',
       standardLabel: 'Standard: 700 ml/day',
@@ -45,6 +46,7 @@ export const dietMockRoutes = [
   {
     path: '/api/baby/diet/monthly',
     handler: (): GetMonthlyDietResponse => ({
+      hasData: true,
       title: 'Monthly Diet Composition',
       subtitle: 'October 2024',
       extra: '3 new ingredients introduced',

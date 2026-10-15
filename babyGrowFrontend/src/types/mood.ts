@@ -45,6 +45,8 @@ export interface GetMoodCalendarResponse {
     title: string
     content: string
   }
+  /** 该宝宝有没有情绪记录（不限本月）。false 时显示空态而不是一张全空日历 */
+  hasData: boolean
 }
 
 /** 获取情绪打卡选项响应 */

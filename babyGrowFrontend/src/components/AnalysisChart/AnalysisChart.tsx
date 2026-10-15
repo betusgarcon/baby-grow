@@ -7,7 +7,6 @@ interface AnalysisChartProps {
   className?: string
   style?: CSSProperties
   isPage?: boolean
-  dataSource?: 'mock' | 'real' | 'inline'
 }
 
 type ChartDatum =
@@ -103,9 +102,20 @@ function renderLineChart(option: ChartOption) {
   const minValue = 0
   const span = Math.max(maxValue - minValue, 1)
 
-  const monthNumbers = labels.map((l) => parseInt(l.replace('M', ''), 10))
-  const minDataMonth = Math.min(...monthNumbers)
-  const maxDataMonth = Math.max(...monthNumbers)
+  // 标签按 "<n>M" 取月份数字，取不到的要退回点序号，不能让它变成 NaN。
+  //
+  // 原先写的是 parseInt(l.replace('M',''), 10)：标签一旦不是 "<n>M" 形式
+  // （本地化成月份名、纯数字 "0"、空串），结果就是 NaN。而 NaN 会污染下面
+  // 每一次 Math.min / Math.max，且 `NaN <= NaN` 为 false 会让保护分支失效，
+  // 最终把点的 left/top 写成字符串 "NaN%"——整条曲线跑到画面之外。
+  const monthNumbers = labels.map((label, index) => {
+    const parsed = parseInt(String(label).replace(/[^0-9]/g, ''), 10)
+    return Number.isFinite(parsed) ? parsed : index
+  })
+
+  // 空数组时 Math.min(...[]) 是 Infinity，会把最终区间变成 Infinity
+  const minDataMonth = monthNumbers.length > 0 ? Math.min(...monthNumbers) : 0
+  const maxDataMonth = monthNumbers.length > 0 ? Math.max(...monthNumbers) : 0
 
   const minMonth = minDataMonth
   const maxMonth = maxDataMonth
@@ -406,14 +416,7 @@ export default function AnalysisChart({
   option,
   className,
   style,
-  dataSource,
 }: AnalysisChartProps) {
-  const sourceLabel = dataSource ?? 'inline'
-  const pointCount = (option.series ?? []).reduce(
-    (sum, s) => sum + (s.data?.length ?? 0),
-    0,
-  )
-
   return (
     <View
       className={className}

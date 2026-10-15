@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import AnalysisLayout from '@/pages/analysis/components/AnalysisLayout'
 import {
   ChartCard,
@@ -11,118 +11,135 @@ import {
   MilestoneProgressCard,
 } from '@/pages/analysis/components/AnalysisCards'
 import { View, Text } from '@tarojs/components'
+import AsyncSection from '@/components/AsyncSection'
+import EmptyState from '@/components/EmptyState'
+import { useAsyncData } from '@/hooks/useAsyncData'
 import { analysisColors } from '@/pages/analysis/components/analysisTokens'
 import { getGrowthPage } from '@/api/modules/growth'
 import type { GrowthMetricKey, GrowthRangeKey } from '@/types/analysis'
-import type { GetGrowthPageResponse } from '@/types/growth'
 
 export default function AnalysisGrowthPage() {
-  const [pageData, setPageData] = useState<GetGrowthPageResponse | null>(null)
-  const [loading, setLoading] = useState(true)
+  // 此前是页面局部 useState + `.then().finally()`，没有 catch：请求一失败就永久
+  // 停在裸的 "Loading..."，而且那个分支没套 AnalysisLayout，连页头都没有。
+  const { status, data: pageData, retry } = useAsyncData(getGrowthPage)
   const [activeRange, setActiveRange] = useState<GrowthRangeKey>('birth')
   const [activeMetric, setActiveMetric] = useState<GrowthMetricKey>('weight')
 
-  useEffect(() => {
-    getGrowthPage()
-      .then((pageRes) => setPageData(pageRes.data))
-      .finally(() => setLoading(false))
-  }, [])
+  const metricCards = useMemo(() => {
+    if (!pageData) return []
+    return pageData.metrics.map((metric) => ({
+      ...metric,
+      active: metric.key === activeMetric,
+    }))
+  }, [pageData, activeMetric])
 
-  const metricCards = useMemo(
-    () => {
-      if (!pageData) return []
-      return pageData.metrics.map((metric) => ({
-        ...metric,
-        active: metric.key === activeMetric,
-      }))
-    },
-    [pageData, activeMetric]
-  )
-
-  if (loading || !pageData) {
-    return <View><Text>Loading...</Text></View>
-  }
-
-  const activeSnapshot = pageData.trends[activeRange][activeMetric]
+  // 区间/指标是本地切换的，不重新取数。
+  //
+  // 两级下标都必须可选链：activeRange / activeMetric 是本地默认值（'birth' / 'weight'），
+  // 后端若没给出这一档（比如没有 'birth' 分桶），`pageData.trends[activeRange]` 就是
+  // undefined，再取 [activeMetric] 直接抛 TypeError。这发生在 render 期间，
+  // 而小程序没有错误边界——整页白屏，且看不出是数据形状的问题。
+  const activeSnapshot = pageData?.trends?.[activeRange]?.[activeMetric] ?? null
 
   return (
     <AnalysisLayout activeCategory="growth">
-      <InsightCard data={pageData.insight} />
-
-      <View
-        className="w-full bg-white rounded-[32px] p-4 flex flex-col gap-3"
-        style={{
-          border: `1px solid ${analysisColors.cardBorder}`,
-          boxShadow: '0 4px 30px rgba(0,0,0,0.04)',
-        }}
+      <AsyncSection
+        status={status}
+        onRetry={retry}
+        skeletonBlocks={3}
+        skeletonHeight={160}
+        isEmpty={pageData?.hasData === false}
+        emptyState={
+          <EmptyState
+            icon="metric-weight"
+            title="还没有生长记录"
+            description="点下面中间的 + 记一次身高、体重或头围，这里会画出成长曲线。"
+          />
+        }
       >
-        <MetricOverviewCard
-          metrics={metricCards}
-          onMetricChange={(key) => setActiveMetric(key as GrowthMetricKey)}
-        />
+        {pageData && activeSnapshot ? (
+          <>
+            <InsightCard data={pageData.insight} />
 
-        <View className="pt-1 flex flex-col gap-3">
-          <View
-            className="w-full rounded-[28px] p-2 flex items-center"
-            style={{ backgroundColor: analysisColors.inactiveBg }}
-          >
-            {pageData.timeRanges.map((item) => {
-              const isActive = item.key === activeRange
+            <View
+              className="w-full bg-white rounded-[32px] p-4 flex flex-col gap-3"
+              style={{
+                border: `1px solid ${analysisColors.cardBorder}`,
+                boxShadow: '0 4px 30px rgba(0,0,0,0.04)',
+              }}
+            >
+              <MetricOverviewCard
+                metrics={metricCards}
+                onMetricChange={(key) => setActiveMetric(key as GrowthMetricKey)}
+              />
 
-              return (
+              <View className="pt-1 flex flex-col gap-3">
                 <View
-                  key={item.key}
-                  className="flex-1 min-h-12 rounded-full px-2 flex items-center justify-center"
-                  style={{
-                    backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                    boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
-                  }}
-                  onClick={() => setActiveRange(item.key as GrowthRangeKey)}
+                  className="w-full rounded-[28px] p-2 flex items-center"
+                  style={{ backgroundColor: analysisColors.inactiveBg }}
                 >
-                  <Text
-                    className="text-sm font-medium text-center"
-                    style={{ color: isActive ? analysisColors.textPrimary : analysisColors.textSecondary }}
-                  >
-                    {item.label}
-                  </Text>
+                  {pageData.timeRanges.map((item) => {
+                    const isActive = item.key === activeRange
+
+                    return (
+                      <View
+                        key={item.key}
+                        className="flex-1 min-h-12 rounded-full px-2 flex items-center justify-center"
+                        style={{
+                          backgroundColor: isActive ? '#FFFFFF' : 'transparent',
+                          boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                        }}
+                        onClick={() => setActiveRange(item.key as GrowthRangeKey)}
+                      >
+                        <Text
+                          className="text-sm font-medium text-center"
+                          style={{
+                            color: isActive
+                              ? analysisColors.textPrimary
+                              : analysisColors.textSecondary,
+                          }}
+                        >
+                          {item.label}
+                        </Text>
+                      </View>
+                    )
+                  })}
                 </View>
-              )
-            })}
-          </View>
 
-          <GrowthTrendChart
-            points={activeSnapshot.points}
-            chartLabel={activeSnapshot.chartLabel}
-            comparisonLabel={activeSnapshot.comparisonLabel}
-            dataSource="mock"
-          />
-          <MetricFooter
-            age={activeSnapshot.footer.age}
-            value={activeSnapshot.footer.value}
-            badge={activeSnapshot.footer.badge}
-          />
-        </View>
-      </View>
+                <GrowthTrendChart
+                  points={activeSnapshot.points}
+                  chartLabel={activeSnapshot.chartLabel}
+                  comparisonLabel={activeSnapshot.comparisonLabel}
+                />
+                <MetricFooter
+                  age={activeSnapshot.footer?.age ?? ''}
+                  value={activeSnapshot.footer?.value ?? ''}
+                  badge={activeSnapshot.footer?.badge ?? ''}
+                />
+              </View>
+            </View>
 
-      <ChartCard
-        title="Monthly Diet Composition"
-        subtitle="Monthly dietary ratio summary"
-        extra="Solids Exploring"
-      >
-        <DietDonutSummary
-          ratio={pageData.monthlyDiet.ratio}
-          title="Formula"
-          legends={pageData.monthlyDiet.legends}
-          dataSource="mock"
-        />
-        <IngredientToleranceCard
-          title={pageData.monthlyDiet.badge}
-          badge={`${pageData.monthlyDiet.ingredientCount} items`}
-          ingredients={pageData.monthlyDiet.ingredients}
-        />
-      </ChartCard>
+            <ChartCard
+              title="Monthly Diet Composition"
+              subtitle="Monthly dietary ratio summary"
+              extra="Solids Exploring"
+            >
+              <DietDonutSummary
+                ratio={pageData.monthlyDiet.ratio}
+                title="Formula"
+                legends={pageData.monthlyDiet.legends}
+              />
+              <IngredientToleranceCard
+                title={pageData.monthlyDiet.badge}
+                badge={`${pageData.monthlyDiet.ingredientCount} items`}
+                ingredients={pageData.monthlyDiet.ingredients}
+              />
+            </ChartCard>
 
-      <MilestoneProgressCard items={pageData.milestones} />
+            <MilestoneProgressCard items={pageData.milestones} />
+          </>
+        ) : null}
+      </AsyncSection>
     </AnalysisLayout>
   )
 }

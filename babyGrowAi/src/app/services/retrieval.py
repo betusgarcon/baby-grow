@@ -131,6 +131,38 @@ class RetrievalService:
                 Chunks declaring a population exclude queries for anyone else;
                 chunks that declare none are unaffected.
         """
+        # `self.db` 只在调用方自带 session 时才有值（测试，或某个请求的作用域内）。
+        #
+        # 单例场景下**不能**把 session 存到 self 上。原来的写法是
+        # `with Session(...) as db: self.retrieval_service = RetrievalService(db=db)`——
+        # 块一退出 session 就被关了，可这个 service 是进程级单例、之后每个请求都在用它；
+        # 更麻烦的是它会被并发请求同时使用，而 SQLAlchemy 的 Session 不是并发安全的。
+        # 所以改成：有现成的就用，没有就为这一次调用开一个短生命周期的。
+        if self.db is not None:
+            return await self._retrieve_with(
+                self.db, query, baby_age_months, allergens, texture_level, top_k, population
+            )
+
+        from sqlalchemy.orm import Session
+
+        from app.models import get_engine
+
+        with Session(bind=get_engine()) as db:
+            return await self._retrieve_with(
+                db, query, baby_age_months, allergens, texture_level, top_k, population
+            )
+
+    async def _retrieve_with(
+        self,
+        db: Any,
+        query: str,
+        baby_age_months: int,
+        allergens: list[str] | None,
+        texture_level: str | None,
+        top_k: int | None,
+        population: str | None,
+    ) -> list[dict[str, Any]]:
+        """真正的检索实现。session 由调用方提供，生命周期也由调用方负责。"""
         top_k = top_k or get_settings().rag_top_k
 
         # Guard against empty queries that produce zero-dimension vectors.
@@ -138,15 +170,11 @@ class RetrievalService:
             logger.warning("Empty query passed to retrieval; returning no results.")
             return []
 
-        # Cannot retrieve without an active DB session.
-        if self.db is None:
-            return []
-
         query_vector = await self.embedding_service.embed(query)
 
         # 1. Vector search: top candidates by cosine distance.
         vector_candidates = (
-            self.db.query(KnowledgeChunk)
+            db.query(KnowledgeChunk)
             .order_by(KnowledgeChunk.embedding.cosine_distance(query_vector))  # type: ignore[attr-defined]
             .limit(top_k * 4)
             .all()
@@ -158,7 +186,7 @@ class RetrievalService:
             text_candidates: list[KnowledgeChunk] = []
         else:
             text_candidates = (
-                self.db.query(KnowledgeChunk)
+                db.query(KnowledgeChunk)
                 .filter(text("search_vector @@ to_tsquery('simple', :q)").bindparams(q=ts_query))
                 .order_by(func.ts_rank_cd(KnowledgeChunk.search_vector, text("to_tsquery('simple', :q)").bindparams(q=ts_query)).desc())
                 .limit(top_k * 4)

@@ -97,6 +97,20 @@ class Settings(BaseSettings):
     external_model_base_url: str = Field(default="", alias="EXTERNAL_MODEL_BASE_URL")
     external_model_name: str = Field(default="", alias="EXTERNAL_MODEL_NAME")
 
+    # 关掉推理模式（DeepSeek 的 thinking 参数）。
+    #
+    # **接了推理模型就必须打开这个开关。** 实测（2026-10-15，deepseek-flash）：
+    # 它每次调用会先烧掉两百多个推理 token；抽取的提示词很长（system + 6 组
+    # few-shot），推理量随之涨到把 AI_MAX_TOKENS=1024 吃光，content 直接返回空，
+    # 前端看到的是整条抽取 503。关掉之后同一个请求只花 41 个 token、零推理，
+    # 既没有空响应，又便宜约 5 倍、还更快。
+    #
+    # 默认 False：这是 DeepSeek 的私有参数，原生 OpenAI 端点会以「未知字段」拒绝，
+    # 所以不能无条件发。指向 DeepSeek 时在 .env 里置 true。
+    external_model_disable_thinking: bool = Field(
+        default=False, alias="EXTERNAL_MODEL_DISABLE_THINKING"
+    )
+
     # -----------------------------------------------------------------------
     # 文生图（心愿头图）
     # -----------------------------------------------------------------------

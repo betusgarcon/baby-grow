@@ -11,6 +11,7 @@ Lifespan:
     Stable. Future work may add a real confidence score.
 """
 
+import asyncio
 import logging
 import time
 from typing import Any, Optional
@@ -112,6 +113,15 @@ class BabyRecordExtractor:
                 response = await self._call_with_retry(messages, schema, task=task)
                 content = self._extract_content(response)
                 if not content:
+                    # 空内容最常见的成因是推理型模型把 AI_MAX_TOKENS 全烧在推理上，
+                    # 于是 content 为空（见 config.py 的 external_model_disable_thinking）。
+                    # 这条日志是给排查用的；返回给用户的那句保持简短。
+                    logger.warning(
+                        "模型返回空内容 task=%s model=%s —— 若用的是推理模型，"
+                        "请确认已关闭 thinking 或调大 AI_MAX_TOKENS",
+                        task,
+                        model,
+                    )
                     return self._error_response("Empty model response", start, model, raw_text)
 
                 try:
@@ -159,7 +169,9 @@ class BabyRecordExtractor:
             except Exception as exc:  # noqa: BLE001
                 last_error = exc
                 logger.warning("Model call failed (task=%s, attempt %s): %s", task, attempt + 1, exc)
-                time.sleep(0.5 * (attempt + 1))
+                # 必须 await：这是 async 函数，time.sleep 会**阻塞整个事件循环**，
+                # 重试等待的这 0.5~1.0s 里所有并发请求一起停摆。
+                await asyncio.sleep(0.5 * (attempt + 1))
         raise last_error or RuntimeError("Model extraction failed")
 
     def _extract_content(self, response: dict[str, Any]) -> str:

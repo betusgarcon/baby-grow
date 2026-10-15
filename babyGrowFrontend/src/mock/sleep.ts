@@ -88,12 +88,14 @@ export const sleepMockRoutes = [
   {
     path: '/api/baby/sleep/circadian',
     handler: (): GetSleepCircadianResponse => ({
+      hasData: true,
       summary: sleepCircadianSummary,
     }),
   },
   {
     path: '/api/baby/sleep/logs',
     handler: (): GetDailySleepLogsResponse => ({
+      hasData: true,
       logs: dailySleepLogs,
       insight: {
         title: '12-Month Development & Sleep',
@@ -105,6 +107,7 @@ export const sleepMockRoutes = [
   {
     path: '/api/baby/sleep/evolution',
     handler: (): GetSleepEvolutionResponse => ({
+      hasData: true,
       rows: sleepEvolutionRows,
       insight: {
         title: 'AI Sleep Consolidation',

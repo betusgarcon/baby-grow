@@ -99,7 +99,8 @@ public class DietAnalysisService {
         return new WeeklyDietResponse(bars, "Average " + average + " ml", standardLabel, narrativeNote, insight,
                 standard == null ? null : new ReferenceRange(
                         standard.recommendedMin(), standard.recommendedMax(), standard.axisMax(),
-                        standard.unit(), standard.source(), standard.version()));
+                        standard.unit(), standard.source(), standard.version()),
+                feedingRepository.existsByBabyId(baby.getId()));
     }
 
     @Transactional(readOnly = true)
@@ -157,7 +158,8 @@ public class DietAnalysisService {
                 "Solids Exploring",
                 new MonthlyDietDonut(topRatio, "Solids", legends),
                 new MonthlyDietIngredients("Ingredients", ingredients.size() + " items", ingredients),
-                insight);
+                insight,
+                feedingRepository.existsByBabyId(baby.getId()));
     }
 
     /** 缺省取本周一 */

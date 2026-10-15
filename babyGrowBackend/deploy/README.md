@@ -108,6 +108,37 @@ ECS_HOST=<别名> pnpm deploy:init-nginx
 
 只加 location、不动整块 server——那一块里还有 dailypawn 的路由。
 
+### 1b. ECS：把 3003 加进 frps 的端口白名单（**容易漏，漏了隧道必失败**）
+
+`frps.toml` 里有一份 `allowPorts` 白名单，客户端只能绑列出的端口：
+
+```toml
+allowPorts = [
+  { start = 2222, end = 2222 },   # dailypawn 的 SSH
+  { start = 3002, end = 3002 },   # dailypawn 的 API
+]
+```
+
+**里面没有 3003 时，frpc 能登录成功、但建隧道会被拒绝**，日志长这样：
+
+```
+login to server success, get run id [...]
+proxy added: [babygrow-api]
+[babygrow-api] start error: port not allowed
+```
+
+而表现只是公网一律 **502**，很容易一路去怀疑 nginx / frpc / 端口映射（实际排查时就绕了一圈）。
+补一行即可：
+
+```toml
+  { start = 3003, end = 3003 },   # baby-grow 的 API
+```
+
+改的是 ECS 上的 `/opt/apps/frps.toml`（容器里是只读挂载的 `/etc/frp/frps.toml`）。
+**注意这一步会短暂影响 dailypawn**：重载或重启 frps 期间它那两条隧道（2222 / 3002）也会断几秒。
+能接受就 `docker restart frps`；想尽量不断线可先试 `docker kill -s HUP frps`（frp 支持 HUP 重载，
+但 `allowPorts` 是否随之生效未实测），不行再重启。
+
 ### 2. NAS：准备目录与环境变量
 
 ```bash
@@ -223,6 +254,25 @@ pnpm dev:weapp:online
 而不是让整个推荐失败——规则引擎（月龄、过敏原、质地）本身就能给出安全可用的建议。
 
 切换只需改 `.env` 里的这一个值，然后 `update-backend.sh` 重建 `babygrow-ai`。
+
+### 云端模型：接推理模型必须关 thinking
+
+用 DeepSeek 的 `deepseek-flash` 时，`.env` 里 **`EXTERNAL_MODEL_DISABLE_THINKING` 必须是 `true`**。
+
+实测（2026-10-15，首次真打云端）：`deepseek-flash` 是推理模型，每次调用先烧两百多个
+推理 token；抽取的提示词很长（system + 6 组 few-shot），推理量随之涨到把
+`AI_MAX_TOKENS=1024` 吃光，`content` 返回空——前端看到的是整条抽取 503，
+日志里只有一句 `Empty model response`。
+
+关掉之后：同一个请求 36 个 token、零推理，**从 27s 降到 0.9s**，也不再有空响应。
+
+```
+EXTERNAL_MODEL_NAME=deepseek-flash
+EXTERNAL_MODEL_DISABLE_THINKING=true
+```
+
+换成非推理模型、或指向原生 OpenAI 端点时置回 `false`——`thinking` 是 DeepSeek 的
+私有参数，别家会以「未知字段」拒绝。
 
 ---
 

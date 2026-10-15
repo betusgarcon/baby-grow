@@ -23,15 +23,61 @@ def _count_tokens_approx(messages: list[dict[str, str]]) -> int:
     """Rough token count for the input messages when usage is missing."""
     total = 0
     for m in messages:
-        total += len(m.get("content", "")) // 4
+        # `or ""`：带 tool_calls 的助手消息 content 就是 None，而
+        # m.get("content", "") 在「键存在、值为 None」时返回 None，不是默认值——
+        # len(None) 会直接抛 TypeError，把一次正常的调用判成失败。
+        total += len(m.get("content") or "") // 4
         total += 4
     return total
+
+
+def _tool_calls_of(message: Any) -> list[dict[str, Any]]:
+    """把 SDK 的 tool_calls 转成可回传的普通 dict 列表。
+
+    `type` **不能省**：ReAct agent 会把 assistant 这条消息连同 tool_calls 原样回传，
+    DeepSeek 严格校验请求体，缺了它整轮报 422「missing field `type`」——
+    第一轮调用看着完全正常，第二轮才炸，很难定位。
+    """
+    calls = getattr(message, "tool_calls", None) or []
+    return [
+        {
+            "id": tc.id,
+            "type": "function",
+            "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+        }
+        for tc in calls
+    ]
+
+
+def _usage_tokens(raw: Any) -> tuple[int, int]:
+    """从响应里取出 (input_tokens, output_tokens)。
+
+    OpenAI SDK 的 `usage` 是 **CompletionUsage 对象**，不是 dict——直接
+    `.get("prompt_tokens")` 会抛 AttributeError: 'CompletionUsage' object has no
+    attribute 'get'。这条路以前从没被真实调用过（云端 provider 只在三个外部参数
+    齐全时才注册），所以一直到 2026-10-15 第一次真打 DeepSeek 才暴露。
+
+    两种形态都兼容：dict（部分兼容实现）与对象（官方 SDK）。取不到就返回 0，
+    由调用方决定要不要退化成估算。
+    """
+    usage = getattr(raw, "usage", None)
+    if usage is None:
+        return 0, 0
+
+    def pick(name: str) -> int:
+        value = usage.get(name) if isinstance(usage, dict) else getattr(usage, name, None)
+        return int(value) if isinstance(value, (int, float)) else 0
+
+    return pick("prompt_tokens"), pick("completion_tokens")
 
 
 class OpenAIModelGateway(BaseModelGateway):
     """OpenAI-compatible provider adapter."""
 
     provider: str = "openai"
+
+    # 是否支持 OpenAI 的 json_schema 严格模式。默认否——见 _response_format 的说明。
+    supports_json_schema: bool = False
 
     def __init__(
         self,
@@ -40,11 +86,19 @@ class OpenAIModelGateway(BaseModelGateway):
         model: str | None = None,
         timeout: int | None = None,
         pricing: dict[str, float] | None = None,
+        disable_thinking: bool | None = None,
     ):
         settings = get_settings()
         self._default_model = model or settings.external_model_name or "gpt-4o-mini"
         self.timeout = timeout or settings.ai_timeout
         self._pricing = pricing or {"input": 0.0, "output": 0.0}
+        # 见 config.py 里 external_model_disable_thinking 的说明：
+        # 接推理模型时不开这个开关，抽取会因推理 token 吃光额度而返回空内容。
+        self.disable_thinking = (
+            settings.external_model_disable_thinking
+            if disable_thinking is None
+            else disable_thinking
+        )
 
         # Use provided key or fall back to the legacy external config.
         key = api_key or settings.external_model_api_key
@@ -76,6 +130,30 @@ class OpenAIModelGateway(BaseModelGateway):
             return fmt.model_json_schema()
         return fmt if isinstance(fmt, dict) else None
 
+    def _response_format(self, schema: dict[str, Any]) -> dict[str, Any]:
+        """构造约束模型输出的 response_format。
+
+        **默认用 json_object，不用 OpenAI 的 json_schema 严格模式。**
+        实测（2026-10-15，DeepSeek / deepseek-flash）：带 json_schema 的请求被直接拒绝，
+
+            This response_format type is unavailable now
+
+        而 json_object 返回 200。json_schema 是较新的可选特性，很多「OpenAI 兼容」的
+        实现都没有它——把兼容性押在它身上会让整条抽取链路 400。
+
+        JSON 的结构约束本来就不是靠它：抽取的 few-shot 示例已经逐条给出了确切的
+        字段形状，食谱那边也是靠提示词。response_format 在这里只负责保证输出是
+        **合法 JSON**，json_object 足够，且各家都支持。
+
+        真遇到支持严格模式的提供商，把 supports_json_schema 置 True 即可。
+        """
+        if self.supports_json_schema:
+            return {
+                "type": "json_schema",
+                "json_schema": {"name": "result", "schema": schema},
+            }
+        return {"type": "json_object"}
+
     async def chat(self, request: ModelRequest) -> ModelResponse:
         """Call OpenAI-compatible chat completions endpoint."""
         model = request.preferred_model or self._default_model
@@ -88,10 +166,13 @@ class OpenAIModelGateway(BaseModelGateway):
             "stream": request.stream,
         }
         if schema:
-            kwargs["response_format"] = {"type": "json_schema", "json_schema": {"name": "result", "schema": schema}}
+            kwargs["response_format"] = self._response_format(schema)
         if request.tools:
             kwargs["tools"] = request.tools
             kwargs["tool_choice"] = "auto"
+        if self.disable_thinking:
+            # DeepSeek 的私有参数，官方 SDK 会把它并进请求体顶层。
+            kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
 
         with tracer.start_as_current_span("model_gateway.openai.chat") as span:
             span.set_attribute("provider", self.provider)
@@ -112,20 +193,14 @@ class OpenAIModelGateway(BaseModelGateway):
             # For non-streaming, extract usage and content.
             if not request.stream:
                 choice = raw.choices[0] if raw.choices else None
-                content = choice.message.content if choice and choice.message else ""
-                tool_calls: list[dict[str, Any]] = []
-                if choice and choice.message and choice.message.tool_calls:
-                    for tc in choice.message.tool_calls:
-                        tool_calls.append({
-                            "id": tc.id,
-                            "function": {
-                                "name": tc.function.name,
-                                "arguments": tc.function.arguments,
-                            },
-                        })
-                usage = raw.usage or {}
-                input_tokens = usage.get("prompt_tokens") or _count_token_approx(request.messages)
-                output_tokens = usage.get("completion_tokens") or len(content) // 4
+                # `or ""`：工具调用型的响应里 message.content 是 None（内容都在
+                # tool_calls 上），后面 `len(content) // 4` 会直接抛 TypeError。
+                # 同时 ModelResponse.content 声明为 str，None 会在下游各处漏出去。
+                content = (choice.message.content if choice and choice.message else "") or ""
+                tool_calls = _tool_calls_of(choice.message) if choice and choice.message else []
+                input_tokens, output_tokens = _usage_tokens(raw)
+                input_tokens = input_tokens or _count_tokens_approx(request.messages)
+                output_tokens = output_tokens or len(content) // 4
                 span.set_attribute("input_tokens", input_tokens)
                 span.set_attribute("output_tokens", output_tokens)
                 return ModelResponse(

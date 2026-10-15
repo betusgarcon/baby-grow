@@ -36,12 +36,21 @@ export default function JourneyCalendarPage() {
     loadCalendarEvents()
   }, [])
 
+  // 依赖里必须有 calendarEvents。
+  //
+  // 这个页面是在 store 还处于 loading（calendarEvents 为 []）时就挂载并算出第一份
+  // 结果的；漏掉这个依赖，等接口回来把数组填上时这两个 memo 都不会重算——
+  // 表现是「冷启动进日历，格子上一个圆点都没有，选中的那天写着 Nothing on this day」，
+  // 而随手点一下别的日期又突然正常了（因为 selectedDate 变了才触发重算）。
   const cells = useMemo(
     () => buildMonthGrid(year, month, selectedDate, calendarEvents),
-    [year, month, selectedDate],
+    [year, month, selectedDate, calendarEvents],
   )
 
-  const dayEvents = useMemo(() => eventsForDate(calendarEvents, selectedDate), [selectedDate])
+  const dayEvents = useMemo(
+    () => eventsForDate(calendarEvents, selectedDate),
+    [calendarEvents, selectedDate],
+  )
 
   /** 切到指定年月，并把选中日期落到该月 1 号，避免停在当月不存在的日期上 */
   const applyMonth = (nextYear: number, nextMonth: number) => {

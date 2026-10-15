@@ -10,13 +10,20 @@ import MenuCard from './components/MenuCard'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
 import { relativeLabelOf } from '@/store/timeline'
-import { useAppState, loadTimeline, loadMilestones } from '@/store'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
+import AsyncSection from '@/components/AsyncSection'
 import RecordSheet from '@/components/RecordSheet'
 import { getTodayMenu, type MenuTodayResponse } from '@/api/modules/menu'
-import firstSmileImg from '@/assets/images/first-smile-img.png'
+import {
+  useAppState,
+  loadTimeline,
+  loadMilestones,
+  loadCalendarEvents,
+  loadWeeklyInsight,
+} from '@/store'
+import firstSmileImg from '@/assets/images/first-smile-img.jpg'
 
 /** 时间线条目的类型 → 首页 JourneyLog 用的图标 */
 const LOG_ICON: Record<string, string> = {
@@ -25,9 +32,29 @@ const LOG_ICON: Record<string, string> = {
   sleep: 'moon',
 }
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/**
+ * 今天（本地时区的 YYYY-MM-DD）。
+ *
+ * 不能用 `toISOString().slice(0,10)`——那是 UTC，东八区凌晨会算成前一天，
+ * 于是当天的日程会被判成"已经过去"。日期都是 YYYY-MM-DD，可以直接按字符串比大小。
+ */
+function localToday(): string {
+  const now = new Date()
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
+/** '2026-10-28' → 'Scheduled for Oct 28' */
+function scheduledLabel(iso: string): string {
+  const [, month, day] = iso.split('-')
+  return `Scheduled for ${MONTHS[Number(month) - 1] ?? ''} ${Number(day)}`
+}
+
 export default function Journey() {
   // Latest Journey 与 Recent Milestones 都读 store，首页不再另写一套数据
-  const { timeline, milestones, status, babyHeader } = useAppState()
+  const { timeline, milestones, calendarEvents, weeklyInsight, status, babyHeader } = useAppState()
   const [recordOpen, setRecordOpen] = useState(false)
   // 今日菜单来自服务端缓存（毫秒级，不等 AI）
   const [menu, setMenu] = useState<MenuTodayResponse | null>(null)
@@ -43,10 +70,23 @@ export default function Journey() {
   useEffect(() => {
     loadTimeline()
     loadMilestones()
+    // 顶部两块的数据源。这两个接口各自的详情页早就在用了，首页此前只是没读，
+    // 于是拿写死的字符串顶着——新用户会看到一句编造的疫苗提醒和一句带假名字的周报。
+    loadCalendarEvents()
+    loadWeeklyInsight()
     loadMenu()
   }, [])
 
   const recentLogs = timeline.slice(0, 2)
+
+  // 最近一条尚未到来的日程。日历事件按日期倒序返回，这里筛出未来的取最早一条。
+  // 没有未来日程时整块不渲染，而不是留一个空壳。
+  const upcomingEvent = calendarEvents
+    .filter((event) => event.date >= localToday())
+    .sort((a, b) => a.date.localeCompare(b.date))[0]
+
+  // 周报同理：没有数据就不渲染整块
+  const insightLine = weeklyInsight?.advice?.content
 
   return (
     // 1. 根容器：锁死屏幕 100% 高度 + overflow-hidden，彻底禁止整页回弹和滚动
@@ -75,21 +115,22 @@ export default function Journey() {
         showScrollbar={false}
       >
         <View className="w-full px-5 py-6 flex flex-col gap-8 pb-40">
-          <View onClick={() => navigateToRoute('journey-vaccine')}>
-            <VaccineReminder
-              icon="injection"
-              title="Upcoming: 6-Month Vaccination"
-              date="Scheduled for Oct 28th."
-            />
-          </View>
+          {/* 没有未来日程就整块不渲染（此前这里写死了一句疫苗提醒，新用户也会看到） */}
+          {upcomingEvent ? (
+            <View onClick={() => navigateToRoute(upcomingEvent.route)}>
+              <VaccineReminder
+                icon="injection"
+                title={`Upcoming: ${upcomingEvent.title}`}
+                date={scheduledLabel(upcomingEvent.date)}
+              />
+            </View>
+          ) : null}
 
-          <View onClick={() => navigateToRoute('journey-weekly-insight')}>
-            <WeeklyInsight
-              icon="star"
-              title="WEEKLY INSIGHT"
-              content="Leo 这周白天小睡的时长比上周多了 15%。"
-            />
-          </View>
+          {insightLine ? (
+            <View onClick={() => navigateToRoute('journey-weekly-insight')}>
+              <WeeklyInsight icon="star" title="WEEKLY INSIGHT" content={insightLine} />
+            </View>
+          ) : null}
 
           {/* Recent Milestones */}
           <View className="w-full flex flex-col gap-4">
@@ -102,17 +143,36 @@ export default function Journey() {
                 More
               </Text>
             </View>
-            <View className="w-full flex justify-between items-center gap-3">
+            <AsyncSection
+              status={status.milestones}
+              onRetry={loadMilestones}
+              skeletonBlocks={1}
+              skeletonHeight={140}
+              isEmpty={milestones.length === 0}
+              emptyState={
+                <View className="bg-card rounded-[24px]">
+                  <EmptyState
+                    icon="star"
+                    title="还没有里程碑"
+                    description="记录宝宝的每一个「第一次」，这里会按时间排开。"
+                    actionText="去记录一条"
+                    onAction={() => setRecordOpen(true)}
+                  />
+                </View>
+              }
+            >
               {/* 用里程碑页的同一份数据，避免首页与里程碑页各写一套对不上 */}
-              {milestones.slice(0, 3).map((milestone) => (
-                <MilestoneCard
-                  key={milestone.id}
-                  title={milestone.title}
-                  date={relativeLabelOf(milestone.date)}
-                  image={firstSmileImg}
-                />
-              ))}
-            </View>
+              <View className="w-full flex justify-between items-center gap-3">
+                {milestones.slice(0, 3).map((milestone) => (
+                  <MilestoneCard
+                    key={milestone.id}
+                    title={milestone.title}
+                    date={relativeLabelOf(milestone.date)}
+                    image={firstSmileImg}
+                  />
+                ))}
+              </View>
+            </AsyncSection>
           </View>
 
           {/* Latest Journey */}
@@ -126,7 +186,25 @@ export default function Journey() {
                 More
               </Text>
             </View>
-            {recentLogs.length > 0 ? (
+            {/* 走 AsyncSection：此前 error 被当成"还在加载"，骨架会一直转、没有重试入口 */}
+            <AsyncSection
+              status={status.timeline}
+              onRetry={loadTimeline}
+              skeletonBlocks={1}
+              skeletonHeight={96}
+              isEmpty={recentLogs.length === 0}
+              emptyState={
+                <View className="bg-card rounded-[24px]">
+                  <EmptyState
+                    icon="star"
+                    title="还没有成长记录"
+                    description="记录下今天的第一件小事，时间线就会从这里铺开。"
+                    actionText="去记录一条"
+                    onAction={() => setRecordOpen(true)}
+                  />
+                </View>
+              }
+            >
               <View className="bg-card rounded-[24px] p-4 flex flex-col gap-4">
                 {recentLogs.map((entry) => (
                   <JourneyLog
@@ -141,20 +219,7 @@ export default function Journey() {
                   />
                 ))}
               </View>
-            ) : status.timeline === 'ready' ? (
-              // 首次使用还没有任何记录时的空态
-              <View className="bg-card rounded-[24px]">
-                <EmptyState
-                  icon="star"
-                  title="还没有成长记录"
-                  description="记录下今天的第一件小事，时间线就会从这里铺开。"
-                  actionText="去记录一条"
-                  onAction={() => setRecordOpen(true)}
-                />
-              </View>
-            ) : (
-              <LoadingSkeleton blocks={1} blockHeight={96} />
-            )}
+            </AsyncSection>
           </View>
 
           {/* Today's Menu —— 内容由后端预生成，首页只读缓存 */}

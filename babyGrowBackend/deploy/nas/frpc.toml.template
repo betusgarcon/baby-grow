@@ -1,6 +1,12 @@
 # frpc.toml — FRP Client（部署在 NAS）
-# 把 {{}} 占位符替换后另存为 frpc.toml（deploy.sh 会自动做）。
-# 服务端 frps.toml 的 auth.token 必须与 {{FRP_TOKEN}} 一致。
+# 把下面的占位符替换后另存为 frpc.toml（deploy.sh / update-backend.sh 会自动做）。
+#
+# ⚠️ **本文件任何位置都不能出现连续两个半角花括号，注释里也不行。**
+# snowdreamtech/frpc 会把这份配置当 Go text/template 渲染，空的 ｛｛｝｝ 会直接报错：
+#   template: frp:2: missing value for command
+# 结果 frpc 起不来、隧道不通、公网一律 502。2026-10-15 首次部署就栽在这里，
+# 报错行号指的就是当时第 2 行注释里的那对括号。
+# 渲染脚本在写回之前会检查残留，改动本文件后跑一次部署即可发现。
 #
 # 只建 baby-grow 自己的隧道。NAS 上还有兄弟项目 dailypawn 的 frpc 在跑，
 # 它已承担了 SSH 隧道（remotePort 2222）——这里**不要**重复建，

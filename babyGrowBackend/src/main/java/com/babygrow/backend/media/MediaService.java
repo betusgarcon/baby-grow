@@ -84,6 +84,25 @@ public class MediaService {
                 ownerUserId, babyId, MediaAssetEntity.KIND_IMAGE, objectKey, url, normalizedMime, content.length));
     }
 
+    /**
+     * 取一份媒体，并校验它属于 {@code userId}。
+     *
+     * <p>mediaId 是自增的、可猜的，所以「能读到自己上传的图」这件事必须由这一层保证，
+     * 而不是指望每个调用方各写一遍。归属校验放在这里的原因是有过教训：
+     * {@code RecordService} 的提交路径自己写了一版校验，而 {@code AiTaskService}
+     * 的识别路径漏了同一件事——同一份媒体，两条路径两种待遇。
+     */
+    @Transactional(readOnly = true)
+    public MediaAssetEntity requireOwned(Long mediaId, Long userId) {
+        MediaAssetEntity asset = repository.findById(mediaId)
+                .orElseThrow(() -> BizException.notFound("媒体不存在"));
+
+        if (!userId.equals(asset.getOwnerUserId())) {
+            throw BizException.forbidden("无权引用该媒体");
+        }
+        return asset;
+    }
+
     @Transactional(readOnly = true)
     public StoredMedia load(Long mediaId) {
         MediaAssetEntity asset = repository.findById(mediaId)

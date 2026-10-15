@@ -31,6 +31,8 @@ export interface GetSleepCircadianParams {
 /** 获取昼夜节律响应 */
 export interface GetSleepCircadianResponse {
   summary: SleepCircadianSummary
+  /** 该宝宝有没有睡眠记录（不限当天）。false 时显示空态而不是一个全空的环形图 */
+  hasData: boolean
 }
 
 /** 每日睡眠日志项 */
@@ -56,6 +58,8 @@ export interface GetDailySleepLogsResponse {
     title: string
     content: string
   }
+  /** 该宝宝有没有睡眠记录（不限当天）。false 时显示空态，页面仍保留日期选择 */
+  hasData: boolean
 }
 
 /** 睡眠演变段 */
@@ -85,6 +89,8 @@ export interface GetSleepEvolutionResponse {
     title: string
     content: string
   }
+  /** 该宝宝有没有睡眠记录。false 时显示空态而不是一排空行 */
+  hasData: boolean
 }
 
 /** 睡眠日志新增请求 */

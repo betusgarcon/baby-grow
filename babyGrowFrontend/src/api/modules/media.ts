@@ -8,6 +8,7 @@
 import Taro from '@tarojs/taro'
 import { API_CONFIG } from '../config'
 import { getToken } from '../token'
+import { UNAUTHORIZED_CODE, awaitAuthGate, tryReauthenticate } from '../request'
 
 export interface UploadResponse {
   mediaId: number
@@ -21,7 +22,21 @@ interface RawEnvelope {
   message: string
 }
 
-export async function uploadMedia(filePath: string): Promise<UploadResponse> {
+/**
+ * @param retriedAfterReauth 内部使用，保证 401 后最多只重发一次
+ */
+export async function uploadMedia(filePath: string, retriedAfterReauth = false): Promise<UploadResponse> {
+  // 没有后端地址时直接说清楚。此前会拼出一个相对 URL 交给 uploadFile，
+  // 失败信息与「后端没配」这件事毫无关联，排查全靠猜。
+  if (!API_CONFIG.BASE_URL) {
+    throw new Error('未配置后端地址，无法上传')
+  }
+
+  // 必须等登录落地。这条路径绕开了 request()，而页面在 App.onLaunch 之后立刻就会
+  // 取数——不等的话，冷启动时用户先选了照片就会带着空 token 上传，后端判未登录，
+  // 表现成「只有上传失败，别的接口都正常」。
+  await awaitAuthGate()
+
   const token = getToken()
 
   const result = await Taro.uploadFile({
@@ -39,6 +54,13 @@ export async function uploadMedia(filePath: string): Promise<UploadResponse> {
   }
 
   if (body.code !== 0) {
+    // 与 request() 一致：登录态失效就重登一次再重发，只重发一次。
+    if (body.code === UNAUTHORIZED_CODE && !retriedAfterReauth) {
+      const reauthenticated = await tryReauthenticate()
+      if (reauthenticated) {
+        return uploadMedia(filePath, true)
+      }
+    }
     throw new Error(body.message || '上传失败')
   }
 

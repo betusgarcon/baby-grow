@@ -29,6 +29,13 @@ public class MemoryService {
     private static final Set<String> TONES = Set.of("green", "peach", "grey", "blue");
     private static final Set<String> MEDIA_TYPES = Set.of("Media", "Text");
 
+    /**
+     * memories.title 是 VARCHAR(128)。超长此前不会在这里被拦，而是一路走到写库，
+     * 由数据库抛 DataIntegrityViolation——对外是 500（现在是 409），排查时看日志才知道
+     * 是标题太长。在入口拦下，报错才指向真正的问题。
+     */
+    private static final int TITLE_MAX_LENGTH = 128;
+
     private final FamilyAccessService accessService;
     private final MemoryRepository memoryRepository;
     private final ObjectMapper objectMapper;
@@ -64,6 +71,9 @@ public class MemoryService {
 
         if (request.title() == null || request.title().isBlank()) {
             throw BizException.badRequest("请填写记忆标题");
+        }
+        if (request.title().trim().length() > TITLE_MAX_LENGTH) {
+            throw BizException.badRequest("记忆标题最多 " + TITLE_MAX_LENGTH + " 个字");
         }
 
         Long babyId = accessService.findBabyId(me.getFamilyId()).orElse(null);

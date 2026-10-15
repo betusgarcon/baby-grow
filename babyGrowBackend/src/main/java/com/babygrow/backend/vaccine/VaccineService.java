@@ -102,14 +102,22 @@ public class VaccineService {
         return toView(vaccinationRepository.save(target));
     }
 
-    /** 删除当前这一针。没有记录时什么也不做——重复删除不该报错。 */
+    /**
+     * 删除当前这一针。没有记录时什么也不做——重复删除不该报错。
+     *
+     * <p>删的必须是 {@link #currentVaccination} 挑出来的那一条，不能图省事取列表首行：
+     * 上面那句「读与写共用同一段挑选逻辑」说的就是这个。两条路径曾经不一致——
+     * remove 取的是 {@code findByBabyIdOrderByAdministeredAtDescIdDesc(...).get(0)}，
+     * 而 Postgres 在 DESC 下把 NULL 排在**最前**，于是「还没接种的预约」恰好是首行；
+     * 结果是详情页显示 A 针，点删除删掉的却是 B 针。
+     */
     @Transactional
     public void remove(Long userId) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
-        List<BabyVaccinationEntity> all = vaccinationRepository.findByBabyIdOrderByAdministeredAtDescIdDesc(baby.getId());
 
-        if (!all.isEmpty()) {
-            vaccinationRepository.delete(all.get(0));
+        BabyVaccinationEntity target = currentVaccination(baby.getId());
+        if (target != null) {
+            vaccinationRepository.delete(target);
         }
     }
 

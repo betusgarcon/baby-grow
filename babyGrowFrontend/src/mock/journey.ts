@@ -11,7 +11,7 @@ import type {
   VaccineReminder,
   WeeklyInsight,
 } from '@/types/journey'
-import firstSmileImg from '@/assets/images/first-smile-img.png'
+import firstSmileImg from '@/assets/images/first-smile-img.jpg'
 
 const milestones: MilestoneRecord[] = [
   {

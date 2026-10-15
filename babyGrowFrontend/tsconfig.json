@@ -12,6 +12,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
+    // 不检查 node_modules 里第三方 .d.ts 的一致性。
+    //
+    // 没有这一项时 `pnpm type-check` 会稳定地报出 66 个错误，全部来自 Taro 3.6 自带的
+    // 类型定义（找不到 react-native / vue / rollup 的声明、Lottie 里未定义的
+    // CommonEventFunction 等），与项目源码无关。后果是这条命令永远是红的，
+    // 于是没人再看它的输出——真正属于我们代码的错误会被这 66 条噪声淹掉。
+    "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": ".",
     "jsx": "react-jsx",

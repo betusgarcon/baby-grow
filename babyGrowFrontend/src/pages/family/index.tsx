@@ -4,15 +4,16 @@ import Taro from '@tarojs/taro'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import AsyncSection from '@/components/AsyncSection'
+import EmptyState from '@/components/EmptyState'
 import BottomTabBar from '@/components/BottomTabBar'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { navigateToRoute } from '@/utils/routes'
-import highlightImage from '@/assets/images/first-smile-img.png'
+import highlightImage from '@/assets/images/first-smile-img.jpg'
 import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
 import { useAppState, loadMembers, setMemberRole, removeMember } from '@/store'
-import { shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
+import { shareHighlight, withBabyName, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
   // 成员来自 store：改权限、移出成员在离开页面后依然生效
@@ -31,12 +32,17 @@ export default function FamilyHomePage() {
     setDraftRole(member.role)
   }
 
-  const confirmRole = () => {
+  const confirmRole = async () => {
     if (!editingMember) return
 
-    setMemberRole(editingMember.id, draftRole)
+    const member = editingMember
     setEditingMember(null)
-    Taro.showToast({ title: '已保存', icon: 'none' })
+
+    // 等落库结果再报结果。此前是「发出去就弹已保存」——保存失败时用户被告知成功，
+    // 而界面上的新权限会在下次刷新时变回去。store 现在会在失败时回滚，
+    // 所以这里的文案也要跟着说清「已恢复」。
+    const saved = await setMemberRole(member.id, draftRole)
+    Taro.showToast({ title: saved ? '已保存' : '保存失败，已恢复原权限', icon: 'none' })
   }
 
   const confirmRemoveMember = async () => {
@@ -52,14 +58,34 @@ export default function FamilyHomePage() {
 
     if (!result.confirm) return
 
-    removeMember(editingMember.id)
+    const member = editingMember
     setEditingMember(null)
+
+    // 失败时 store 会把这个人放回列表，这里补一句说明，否则用户只会看到
+    // 他「删了又自己回来了」。
+    const removed = await removeMember(member.id)
+    if (!removed) {
+      Taro.showToast({ title: '移出失败，请稍后再试', icon: 'none' })
+    }
   }
 
-  /** 分享走系统剪贴板，这步是真的；生成真实分享链接要等后端 */
+  /**
+   * 复制一条可分享的邀请口令。
+   *
+   * 原先把写死的 'https://nurture-bloom.app/s/leo-space' 塞进剪贴板——一个不存在的
+   * 域名，还带着别人家孩子的名字。用户会把它发给家人，而对方点开是死链。
+   * 改成复制后端真正下发的待接受口令；没有待接受邀请时如实说明。
+   */
   const copySecureLink = async () => {
-    await Taro.setClipboardData({ data: 'https://nurture-bloom.app/s/leo-space' })
-    Taro.showToast({ title: '安全链接已复制', icon: 'none' })
+    const pending = members.find((member) => member.inviteCode)
+
+    if (!pending?.inviteCode) {
+      Taro.showToast({ title: '还没有待接受的邀请口令，请先邀请成员', icon: 'none' })
+      return
+    }
+
+    await Taro.setClipboardData({ data: pending.inviteCode })
+    Taro.showToast({ title: '邀请口令已复制', icon: 'none' })
   }
 
   return (
@@ -85,7 +111,24 @@ export default function FamilyHomePage() {
           </View>
         </View>
 
-        <AsyncSection status={status.members} onRetry={loadMembers} skeletonBlocks={1} skeletonHeight={240}>
+        <AsyncSection
+          status={status.members}
+          onRetry={loadMembers}
+          skeletonBlocks={1}
+          skeletonHeight={240}
+          isEmpty={members.length === 0}
+          emptyState={
+            <View className="bg-card rounded-[24px]">
+              <EmptyState
+                icon="family-active"
+                title="还没有家人加入"
+                description="邀请家人一起记录，大家的记录会汇总到同一个宝宝下。"
+                actionText="邀请家人"
+                onAction={() => navigateToRoute('family-invite')}
+              />
+            </View>
+          }
+        >
           <View className="w-full box-border px-4 rounded-lg bg-card shadow-card-soft flex flex-col">
             {members.map((member, index) => (
               <View key={member.id} className="flex flex-col">
@@ -126,7 +169,9 @@ export default function FamilyHomePage() {
                 <Text className="text-caption font-bold text-on-surface">{shareHighlight.badge}</Text>
               </View>
 
-              <Text className="text-2xl font-bold text-[#ffffff]">{shareHighlight.title}</Text>
+              <Text className="text-2xl font-bold text-[#ffffff]">
+                {withBabyName(shareHighlight.title, babyHeader.name)}
+              </Text>
               <Text className="text-sm text-[#ffffff]">{shareHighlight.subtitle}</Text>
             </View>
           </View>

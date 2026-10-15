@@ -3,6 +3,7 @@ package com.babygrow.backend.auth;
 import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.common.ErrorCode;
 import com.babygrow.backend.config.AppProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,12 @@ public class WechatApiClient {
 
     private final AppProperties properties;
     private final RestClient restClient;
+    private final ObjectMapper objectMapper;
 
-    public WechatApiClient(AppProperties properties, RestClient.Builder builder) {
+    public WechatApiClient(AppProperties properties, RestClient.Builder builder, ObjectMapper objectMapper) {
         this.properties = properties;
         this.restClient = builder.baseUrl(ENDPOINT).build();
+        this.objectMapper = objectMapper;
     }
 
     public String exchangeOpenid(String code) {
@@ -39,7 +42,17 @@ public class WechatApiClient {
                             + "或开启 APP_AUTH_DEV_MODE=true 使用本地直通登录。");
         }
 
-        Map<?, ?> body = restClient.get()
+        // **先取字符串，再自己解析，不要直接 .body(Map.class)。**
+        //
+        // 微信在部分错误响应上把 Content-Type 标成 text/plain，而 Spring 的
+        // HttpMessageConverter 不为 text/plain 提供 Map 转换器，于是
+        //   UnknownContentTypeException: no suitable HttpMessageConverter found
+        //   for response type [interface java.util.Map] and content type [text/plain]
+        // 被全局兜底成 500「服务器内部错误」。前端拿到 500 就没有 token，
+        // 后续每个接口都 401 —— 现象是整站空白，但根因离现场很远。
+        //
+        // 这条路以前只跑过 dev-mode（短路到固定 openid），所以直到真机首次登录才暴露。
+        String raw = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("appid", wechat.appId())
                         .queryParam("secret", wechat.appSecret())
@@ -47,11 +60,21 @@ public class WechatApiClient {
                         .queryParam("grant_type", "authorization_code")
                         .build())
                 .retrieve()
-                .body(Map.class);
+                .body(String.class);
 
-        if (body == null) {
+        if (raw == null || raw.isBlank()) {
             throw new BizException(ErrorCode.UNAUTHORIZED, "微信登录失败：响应为空");
         }
+
+        Map<?, ?> body;
+        try {
+            body = objectMapper.readValue(raw, Map.class);
+        } catch (Exception ex) {
+            // 只截断后记日志：正常响应里含 session_key，不该原样落盘
+            log.warn("jscode2session 返回了无法解析的内容：{}", raw.substring(0, Math.min(raw.length(), 200)));
+            throw new BizException(ErrorCode.UNAUTHORIZED, "微信登录失败：返回内容无法解析");
+        }
+
         Object openid = body.get("openid");
         if (openid == null) {
             // errcode 常见：40029 code 无效、45011 频率限制

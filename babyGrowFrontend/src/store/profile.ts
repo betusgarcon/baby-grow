@@ -1,4 +1,4 @@
-import babyAvatar from '@/assets/images/baby-journey-img.png'
+import babyAvatar from '@/assets/images/baby-journey-img.jpg'
 
 /**
  * 宝宝档案的视图数据。
@@ -51,6 +51,16 @@ export const defaultBirthday = (() => {
 export const todayIsoDate = () => toIsoDate(new Date())
 
 /**
+ * 解析 YYYY-MM-DD。格式不对（空串、缺位、字母）返回 null，
+ * 而不是让 NaN 渗进后面的月份算术里。
+ */
+const parseIsoDate = (value: string) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value ?? '')
+  if (!match) return null
+  return { year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) }
+}
+
+/**
  * 由生日算出当前年龄的展示文案。
  * 不足 1 岁按月写作 6M，满 1 岁写作 1Y2M —— 与设计稿一致，也与后端
  * {@code AgeLabelCalculator} 同一口径（改这里必须同步改那边，有测试锁着）。
@@ -59,11 +69,19 @@ export const todayIsoDate = () => toIsoDate(new Date())
  * 长文案会被圆形容器裁掉。
  */
 export const computeAgeLabel = (birthday: string, today = todayIsoDate()) => {
-  const [by, bm, bd] = birthday.split('-').map(Number)
-  const [ty, tm, td] = today.split('-').map(Number)
+  // 生日拿不到时返回空串。
+  //
+  // 此前是 `birthday.split('-').map(Number)`：空串会得到 [0]，于是 bm/bd 是
+  // undefined，months 变成 NaN。而后面每一道判断对 NaN 都是 false
+  // （NaN < 12 假、NaN === 0 假），最后拼出字符串 "NaNYNaNM" 显示在头像徽章上。
+  // 两个真实触发点：档案接口没返回生日；以及页面首帧还没取到数据（birthday 是 ''）。
+  const birth = parseIsoDate(birthday)
+  const current = parseIsoDate(today)
 
-  let months = (ty - by) * 12 + (tm - bm)
-  if (td < bd) months -= 1
+  if (!birth || !current) return ''
+
+  let months = (current.year - birth.year) * 12 + (current.month - birth.month)
+  if (current.day < birth.day) months -= 1
   if (months < 0) months = 0
 
   if (months < 12) return `${months}M`

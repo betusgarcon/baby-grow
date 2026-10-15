@@ -7,7 +7,7 @@
  * 后端接口未实现，先用本地 mock；接入 API 后整体删除即可。
  */
 
-import firstSmileImg from '@/assets/images/first-smile-img.png'
+import firstSmileImg from '@/assets/images/first-smile-img.jpg'
 
 /** 卡片形态。决定标记图标与卡片内部的排版方式 */
 export type JourneyEntryType = 'memory' | 'feeding' | 'sleep'

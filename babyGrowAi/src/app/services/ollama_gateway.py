@@ -18,6 +18,30 @@ class _BaseModelGateway:  # noqa: D101
     pass
 
 
+def _legacy_message_shape(response: Any) -> dict[str, Any]:
+    """把路由层的 ModelResponse 归一成旧的 ``{"message": {...}}`` 形状。
+
+    这个兼容层的四个调用方（extractor / recipe_rag / agent.react 的两处）都是
+    用 ``response.get("message", {}).get("content", "")`` 取内容的。
+
+    原先这里直接 ``return response.raw_response``，对本机 Ollama 恰好成立——
+    它的原始响应本来就是 ``{"message": {"content": ...}}``。但 OpenAI 兼容提供商的
+    raw_response 是 ``{"choices": [{"message": {...}}]}``，于是
+    ``response.get("message", {})`` 必然取到空字典，**content 永远为空**，
+    前端看到的是整条抽取 503。
+
+    这条路径此前只跑过本机 Ollama（云端 provider 要三个外部参数齐全才注册），
+    所以直到 2026-10-15 首次真打 DeepSeek 才暴露。归一放在这里而不是逐个改调用方：
+    四个调用方共享同一个约定，约定就该由提供方保证。
+    """
+    return {
+        "message": {
+            "content": response.content,
+            "tool_calls": list(response.tool_calls or []),
+        }
+    }
+
+
 tracer = get_tracer("ollama_gateway")
 
 
@@ -57,11 +81,10 @@ class OllamaGateway:
             stream=stream,
         )
         response = await self._router.chat(request)
-        # Preserve legacy return shape: a dict with {"message": {...}}
         if stream:
             # Streaming not supported via legacy wrapper; return raw-like empty.
             return {}
-        return response.raw_response
+        return _legacy_message_shape(response)
 
     async def chat_sync(
         self,

@@ -65,6 +65,22 @@ render_configs() {
     && sed -e 's|{{ECS_PUBLIC_IP}}|${ECS_PUBLIC_IP}|g' \
            -e 's|{{FRP_TOKEN}}|${FRP_TOKEN}|g' \
            ${FRPC_TEMPLATE} > ${FRPC_RENDERED}"
+
+  # 渲染后不允许残留任何未替换的占位符。
+  #
+  # 这条检查是踩出来的：frpc 镜像会把配置当 Go text/template 渲染，模板第 2 行
+  # 注释里那对空花括号没被 sed 替换掉，frpc 直接起不来，报
+  #   template: frp:2: missing value for command
+  # 而后果是隧道不通、公网一律 502 —— 排查时一路怀疑 nginx、frps、端口，
+  # 最后才发现是注释里的两个括号。宁可在这里当场拦下。
+  local leftover
+  leftover="$(ssh "${NAS_HOST}" "grep -c '{{' ${COMPOSE_RENDERED} ${FRPC_RENDERED} 2>/dev/null || true")"
+  if printf '%s' "${leftover}" | grep -qv ':0$'; then
+    echo "❌ 渲染后仍残留未替换的占位符："
+    ssh "${NAS_HOST}" "grep -n '{{' ${COMPOSE_RENDERED} ${FRPC_RENDERED} || true" | sed 's/^/    /'
+    echo "   检查 .env 里的变量，以及模板/ compose 里是否有手误写出的花括号。"
+    exit 1
+  fi
 }
 
 # 等后端就绪。两个脚本都靠它判定成功，所以判定条件是同一个——

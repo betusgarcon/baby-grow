@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro'
 import { View, Text, Button } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import AsyncSection from '@/components/AsyncSection'
+import EmptyState from '@/components/EmptyState'
+import RecordSheet from '@/components/RecordSheet'
 import Icon from '@/components/Icon'
 import { useAppState, loadWeeklyInsight } from '@/store'
 import MetricCard from './components/MetricCard'
@@ -11,7 +13,10 @@ import SleepConsistencyCard from './components/SleepConsistencyCard'
 import HighlightCard from './components/HighlightCard'
 
 export default function JourneyWeeklyInsightPage() {
-  const { weeklyInsight: data, status } = useAppState()
+  const { weeklyInsight: data, status, babyHeader } = useAppState()
+  const [recordOpen, setRecordOpen] = useState(false)
+  // 分享卡上此前写死了一个假名字。宝宝名在 babyHeader 里就有，没有时退回默认称呼
+  const babyName = babyHeader.name || '宝宝'
 
   // 右上角菜单里同时放出「发送给朋友」和「分享到朋友圈」。
   // 当前 Taro 版本的 showShareMenu 类型里没有 menus 字段，但小程序基础库支持，
@@ -28,12 +33,12 @@ export default function JourneyWeeklyInsightPage() {
   }, [])
 
   useShareAppMessage(() => ({
-    title: `Leo 的每周小记 · ${data?.rangeLabel ?? ''}`,
+    title: `${babyName} 的每周小记 · ${data?.rangeLabel ?? ''}`,
     path: '/pages/journey/weekly-insight/index',
   }))
 
   useShareTimeline(() => ({
-    title: `Leo 的每周小记 · ${data?.rangeLabel ?? ''}`,
+    title: `${babyName} 的每周小记 · ${data?.rangeLabel ?? ''}`,
   }))
 
   return (
@@ -43,7 +48,24 @@ export default function JourneyWeeklyInsightPage() {
         <PageHeader showBack title="Weekly Insights" />
       }
     >
-      <AsyncSection status={status.weeklyInsight} onRetry={loadWeeklyInsight} skeletonBlocks={3} skeletonHeight={140}>
+      <AsyncSection
+        status={status.weeklyInsight}
+        onRetry={loadWeeklyInsight}
+        skeletonBlocks={3}
+        skeletonHeight={140}
+        isEmpty={!data}
+        emptyState={
+          <View className="bg-card rounded-[24px]">
+            <EmptyState
+              icon="star"
+              title="这周还没有可总结的记录"
+              description="记录几天的喂养、睡眠和成长，这里会按周汇总成一份小记。"
+              actionText="去记录一条"
+              onAction={() => setRecordOpen(true)}
+            />
+          </View>
+        }
+      >
       {data ? (
       <View className="flex flex-col gap-6">
         {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色；居中显示更稳 */}
@@ -100,6 +122,17 @@ export default function JourneyWeeklyInsightPage() {
       </View>
       ) : null}
       </AsyncSection>
+
+      {/* 空态的「去记录一条」要能真的拉起记录弹层，所以本页自己持有一个 */}
+      <RecordSheet
+        visible={recordOpen}
+        onClose={() => setRecordOpen(false)}
+        onSaved={() => {
+          setRecordOpen(false)
+          // 刚记的内容会计入本周统计，重新拉一次
+          loadWeeklyInsight()
+        }}
+      />
     </PageContainer>
   )
 }

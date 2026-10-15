@@ -110,8 +110,15 @@ export default function JourneyVaccinePage() {
 
     if (!result.confirm) return
 
-    removeVaccine()
-    navigateBack()
+    // 删成功才返回上一页。之前是无条件 navigateBack：删失败时用户已经离开页面，
+    // 看不到任何错误，回来一看记录还在。store 失败时会回滚，所以这里只要不跳转，
+    // 页面自然还是原来的记录。
+    const removed = await removeVaccine()
+    if (removed) {
+      navigateBack()
+    } else {
+      Taro.showToast({ title: '删除失败，请稍后再试', icon: 'none' })
+    }
   }
 
   // 头部不再挂右侧控件：原先那个分享按钮（64px）和居中的标题直接叠在一起，
@@ -191,9 +198,10 @@ export default function JourneyVaccinePage() {
               <Text className="text-xl font-bold text-on-surface">{detail.doseLabel}</Text>
 
               <View className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+                {/* doseProgress 缺失时 `undefined * 100` 是 NaN，会写成 width: "NaN%" */}
                 <View
                   className="h-full rounded-full bg-primary"
-                  style={{ width: `${Math.round(detail.doseProgress * 100)}%` }}
+                  style={{ width: `${Math.round((detail.doseProgress ?? 0) * 100)}%` }}
                 />
               </View>
             </EventSectionCard>
@@ -235,14 +243,16 @@ export default function JourneyVaccinePage() {
 
           {/* 没有照片时渲染占位块，选过之后显示真实图片 */}
           <View className="relative w-full h-44 rounded-3xl bg-surface-variant overflow-hidden flex items-center justify-center">
-            {detail.attachment.image ? (
+            {/* attachment 缺失时必须可选链：`detail.attachment.image` 会直接抛
+                TypeError，而这在 render 期间——整页白屏 */}
+            {detail.attachment?.image ? (
               <Image src={detail.attachment.image} className="w-full h-full" mode="aspectFill" />
             ) : (
               <Icon name="event-attachment" className="w-8 h-8" />
             )}
 
             <View className="absolute left-0 right-0 bottom-0 p-3">
-              <Text className="text-caption text-on-surface">{detail.attachment.name}</Text>
+              <Text className="text-caption text-on-surface">{detail.attachment?.name ?? ''}</Text>
             </View>
           </View>
         </View>

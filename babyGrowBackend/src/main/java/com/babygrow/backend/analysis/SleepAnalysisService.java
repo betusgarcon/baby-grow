@@ -83,7 +83,7 @@ public class SleepAnalysisService {
                         new SleepSegment("Nap", minutesToHours(napMinutes), COLOR_NAP),
                         new SleepSegment("Awake", minutesToHours(awakeMinutes), COLOR_AWAKE)));
 
-        return new SleepCircadianResponse(summary);
+        return new SleepCircadianResponse(summary, sleepRepository.existsByBabyId(baby.getId()));
     }
 
     @Transactional(readOnly = true)
@@ -108,7 +108,7 @@ public class SleepAnalysisService {
                         "这一天共记录了 " + logs.size() + " 段睡眠，合计 "
                                 + AnalysisSupport.formatDuration(sumMinutes(sessions, null)) + "。");
 
-        return new DailySleepLogsResponse(logs, insight);
+        return new DailySleepLogsResponse(logs, insight, sleepRepository.existsByBabyId(baby.getId()));
     }
 
     /**
@@ -132,7 +132,7 @@ public class SleepAnalysisService {
                 ? new Insight("还没有睡眠记录", "记录几天的入睡与醒来时间后，这里会按月龄对比睡眠节律的变化。")
                 : new Insight("Sleep Rhythm", "每一行是该月龄段内所有记录的典型一天，按小时覆盖统计得出。");
 
-        return new SleepEvolutionResponse(rows, insight);
+        return new SleepEvolutionResponse(rows, insight, !empty);
     }
 
     private SleepEvolutionRow evolutionRow(BabyEntity baby, int ageMonths) {

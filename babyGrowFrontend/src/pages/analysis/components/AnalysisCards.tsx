@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo, useState } from 'react'
+import { PropsWithChildren, useMemo, useRef, useState } from 'react'
 import { Input, Textarea, View, Text } from '@tarojs/components'
 import AnalysisChart from '@/components/AnalysisChart'
 import Icon from '@/components/Icon'
@@ -150,12 +150,10 @@ export function GrowthTrendChart({
   points,
   chartLabel = 'Weight (kg)',
   comparisonLabel = 'WHO Boy Standard',
-  dataSource,
 }: {
   points: Array<GrowthChartPoint | GrowthComparisonChartPoint>
   chartLabel?: string
   comparisonLabel?: string
-  dataSource?: 'mock' | 'real' | 'inline'
 }) {
   // 这张卡只负责把“文案标题 / 图表 / 图例”组合好。
   // 具体折线如何画，继续下沉给 AnalysisChart + option 工厂函数。
@@ -176,7 +174,7 @@ export function GrowthTrendChart({
           border: `1px solid ${analysisColors.cardMutedBorder}`,
         }}
       >
-        <AnalysisChart option={createGrowthTrendOption(points)} style={{ height: '100%', width: '100%' }} dataSource={dataSource} />
+        <AnalysisChart option={createGrowthTrendOption(points)} style={{ height: '100%', width: '100%' }} />
       </View>
 
       <View className="flex items-center gap-5 px-1">
@@ -229,12 +227,10 @@ export function DietDonutSummary({
   ratio,
   title,
   legends,
-  dataSource,
 }: {
   ratio: number
   title: string
   legends: DonutLegendItem[]
-  dataSource?: 'mock' | 'real' | 'inline'
 }) {
   // 调试：确认传入的 legends 数据和每个 colorClass 解析后的颜色
   const option = useMemo(() => {
@@ -248,7 +244,7 @@ export function DietDonutSummary({
   return (
     <View className="flex items-center gap-4">
       <View className="w-28 h-28 shrink-0 relative">
-        <AnalysisChart option={option} style={{ height: '112px', width: '112px' }} dataSource={dataSource} />
+        <AnalysisChart option={option} style={{ height: '112px', width: '112px' }} />
         <View className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <View className="text-center bg-white/85 rounded-full px-2 py-1">
           <Text className="block text-xs text-[#6F6760] font-bold">{title}</Text>
@@ -410,12 +406,10 @@ export function WeeklyMilkChart({
   bars,
   averageLabel,
   standardLabel,
-  dataSource,
 }: {
   bars: WeeklyDietBar[]
   averageLabel: string
   standardLabel: string
-  dataSource?: 'mock' | 'real' | 'inline'
 }) {
   // 饮食周视图的核心是“奶量变化 + 标准区间说明”，
   // 所以上面的三行文案尽量保持固定结构，方便快速扫读。
@@ -428,7 +422,7 @@ export function WeeklyMilkChart({
       </View>
 
       <View className="h-44 rounded-[24px] bg-[#F7F4EF] border border-[#ECE4DB] px-2 py-2 overflow-hidden">
-        <AnalysisChart option={createDietWeekBarOption(bars)} style={{ height: '100%', width: '100%' }} dataSource={dataSource} />
+        <AnalysisChart option={createDietWeekBarOption(bars)} style={{ height: '100%', width: '100%' }} />
       </View>
     </View>
   )
@@ -451,16 +445,22 @@ export function NarrativeNote({
 
 export function CircadianRingCard({
   summary,
-  dataSource,
 }: {
   summary: SleepCircadianSummary
-  dataSource?: 'mock' | 'real' | 'inline'
 }) {
   // 环图上方的中心文案和下方的 Night / Naps 摘要，都来自同一份 summary。
   // 这样改动 mock 数据时，不会出现“环图比例改了，底部文案没跟着改”的问题。
-  const totalHours = summary.segments.reduce((sum, segment) => sum + segment.value, 0)
-  const nightSegment = summary.segments.find((segment) => segment.label === 'Night Sleep')
-  const napSegment = summary.segments.find((segment) => segment.label === 'Nap Sleep')
+  //
+  // segments 要兜底：后端没给分段时 `.reduce` 会抛 TypeError，而这发生在 render 期间，
+  // 小程序没有错误边界——整页白屏。
+  const segments = summary.segments ?? []
+  const totalHours = segments.reduce((sum, segment) => sum + segment.value, 0)
+  const nightSegment = segments.find((segment) => segment.label === 'Night Sleep')
+  const napSegment = segments.find((segment) => segment.label === 'Nap Sleep')
+
+  // 各段都是 0 时 totalHours 也是 0，0/0 得到 NaN，会原样渲染成 "NaN%"
+  const percentOf = (value: number | undefined) =>
+    totalHours > 0 ? Math.round(((value ?? 0) / totalHours) * 100) : 0
 
   return (
     <BaseAnalysisCard className="overflow-hidden" elevated padded={false}>
@@ -478,7 +478,7 @@ export function CircadianRingCard({
       <View className="px-5 py-8 flex justify-center relative">
         {/* 外层容器比圆环大，为时间标签留出空间 */}
         <View className="w-80 h-80 relative flex items-center justify-center">
-          <AnalysisChart option={createSleepDailyRingOption(summary)} style={{ height: '224px', width: '224px' }} dataSource={dataSource} />
+          <AnalysisChart option={createSleepDailyRingOption(summary)} style={{ height: '224px', width: '224px' }} />
 
           {/* 四个方位的时间刻度 - 放置在圆环外侧，不与圆环重叠 */}
           {/* 顶部 00:00 */}
@@ -527,7 +527,7 @@ export function CircadianRingCard({
           <View>
             <Text className="block text-base text-[#2E2822]">Night</Text>
             <Text className="block text-base text-[#6F6760]">
-              {summary.nightLabel} · {Math.round(((nightSegment?.value || 0) / totalHours) * 100)}%
+              {summary.nightLabel} · {percentOf(nightSegment?.value)}%
             </Text>
           </View>
         </View>
@@ -537,7 +537,7 @@ export function CircadianRingCard({
           <View>
             <Text className="block text-base text-[#2E2822]">Naps</Text>
             <Text className="block text-base text-[#6F6760]">
-              {summary.napLabel} · {Math.round(((napSegment?.value || 0) / totalHours) * 100)}%
+              {summary.napLabel} · {percentOf(napSegment?.value)}%
             </Text>
           </View>
         </View>
@@ -554,18 +554,29 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
   const [drafts, setDrafts] = useState<Array<{ id: string; title: string; start: string; end: string }>>([])
   const [syncedLogs, setSyncedLogs] = useState<DailySleepLogItem[]>(logs)
 
+  // 草稿 id 用自增计数器，不能用 current.length + 1。
+  //
+  // 用长度的话删掉中间一行再新增就会重复：[draft-1, draft-2] 删掉 draft-1 之后
+  // 长度回到 1，新增又生成 draft-2。两行共用一个 id，handleDraftChange 会同时改到
+  // 两行，React 的 key 也会撞。
+  const draftSequence = useRef(0)
+
   const handleAddDraft = () => {
     // 新增草稿时直接给一份默认值，
     // 这样页面能立刻看到一行可编辑表单，不需要先弹窗。
-    setDrafts((current) => [
-      ...current,
-      {
-        id: `draft-${current.length + 1}`,
-        title: current.length % 2 === 0 ? 'Late Nap' : 'Quick Snooze',
-        start: current.length % 2 === 0 ? '18:10' : '10:20',
-        end: current.length % 2 === 0 ? '18:45' : '10:50',
-      },
-    ])
+    setDrafts((current) => {
+      draftSequence.current += 1
+
+      return [
+        ...current,
+        {
+          id: `draft-${draftSequence.current}`,
+          title: current.length % 2 === 0 ? 'Late Nap' : 'Quick Snooze',
+          start: current.length % 2 === 0 ? '18:10' : '10:20',
+          end: current.length % 2 === 0 ? '18:45' : '10:50',
+        },
+      ]
+    })
   }
 
   const handleDraftChange = (id: string, field: 'title' | 'start' | 'end', value: string) => {
@@ -735,9 +746,9 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
           <Text className="block text-lg leading-7 font-semibold text-[#2E2822]">24h 昼夜睡眠规律演变</Text>
           <Text className="block text-base text-[#8C857D] mt-1">横轴代表一天 24 小时进程</Text>
         </View>
-        <View className="px-4 py-2 rounded-[24px] bg-[#ECE6DF] flex-shrink-0">
-          <Text className="text-sm whitespace-nowrap text-[#6F6760]">节律趋于合流</Text>
-        </View>
+        {/* 这里原本有一个写死的徽章，文案是「节律趋于合流」。它是一句关于自家宝宝
+            睡眠状态的判断，却与任何接口数据无关——每个用户看到的都是同一句话。
+            后端目前没有对应字段，所以先去掉，而不是继续展示一句编出来的结论。 */}
       </View>
 
       {/* 图表区域：X轴 + 条形图 */}
@@ -847,6 +858,12 @@ export function MoodCalendarCard({
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'happy' | 'clingy' | 'discomfort'>('all')
   const [filterOpen, setFilterOpen] = useState(false)
   const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日']
+
+  // 标题按本地日期算，不写死。原先是「2026/6 情绪日历」——下个月就变成错的，
+  // 而且与后端返回的数据没有任何关系（日历渲染的就是当前月）。
+  const now = new Date()
+  const calendarTitle = `${now.getFullYear()}/${now.getMonth() + 1} 情绪日历`
+
   const filterOptions = [
     { key: 'all', label: '所有' },
     { key: 'happy', label: '开心' },
@@ -885,7 +902,7 @@ export function MoodCalendarCard({
     <View className="w-full p-6 bg-card rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
       <View className="flex items-start justify-between gap-3">
         <View>
-          <Text className="block text-lg leading-8 font-semibold text-[#2E2822]">2026/6 情绪日历</Text>
+          <Text className="block text-lg leading-8 font-semibold text-[#2E2822]">{calendarTitle}</Text>
           <Text className="block text-sm text-[#8C857D] mt-1">
             Click to view daily notes and AI diagnostics
           </Text>
@@ -958,7 +975,10 @@ export function MoodCalendarCard({
             )
           }
 
-          const style = dayStyleMap[day.type]
+          // day.type 在后端是一个字符串，类型里那几个字面量只是我们的期望值。
+          // 收到没见过的取值时 dayStyleMap[...] 是 undefined，紧接着取 .bg 就抛
+          // TypeError——render 期间、没有错误边界，整页白屏。兜到 empty 上。
+          const style = dayStyleMap[day.type] ?? dayStyleMap.empty
 
           return (
             <View
@@ -988,48 +1008,18 @@ export function MoodCalendarCard({
   )
 }
 
-export function MoodJournalCard() {
-  // MoodJournalCard 暂时是静态卡片，用来承接设计稿里的“爸妈随手记”区域。
-  return (
-    <View className="w-full flex flex-col gap-4">
-      <View className="flex items-center justify-between gap-3">
-        <View className="flex items-center gap-2">
-          <Icon name="insight-summary" className="w-5 h-5" />
-          <Text className="text-lg leading-8 font-semibold text-[#2E2822]">6月17日 情绪手账</Text>
-        </View>
-        <View className="px-3 py-1 rounded-full bg-[#F1D7CF]">
-          <Text className="text-sm text-[#8F5A36]">黏人烦躁</Text>
-        </View>
-      </View>
-
-      <BaseAnalysisCard className="flex flex-col gap-3" style={{ backgroundColor: analysisColors.cardMutedBg, border: `1px solid ${analysisColors.cardMutedBorder}` }}>
-        <View className="flex items-center gap-2">
-          <Icon name="ai-conclude" className="w-4 h-4" />
-          <Text className="text-sm font-bold text-[#2E2822]">爸妈随手记</Text>
-        </View>
-        <Text className="text-base leading-7 text-[#2E2822]">
-          今天 Leo 明显更黏人，午后长牙位置有轻微红肿。下午情绪在抱抱和啃咬玩具后明显缓和，晚饭前短时间烦躁，夜间入睡前通过固定洗澡和绘本流程恢复稳定。
-        </Text>
-      </BaseAnalysisCard>
-    </View>
-  )
-}
-
 export function MoodCheckinCard({
   options,
 }: {
   options: MoodCheckinOption[]
 }) {
   // 情绪打卡是一个典型的“小表单”：
-  // 选择情绪、填写备注、点击同步，全部状态都在本地维护。
+  // 选择情绪、填写备注，全部状态都在本地维护。
+  //
+  // 备注初值刻意留空。原先这里预填了一段「今天抓着东西就咬，午睡比较短，傍晚想被抱着安抚。」
+  // ——那是编出来的内容，却会以「用户自己写的手账」的样子出现在每个账号上。
   const [selectedKey, setSelectedKey] = useState<MoodCheckinOption['key']>('clingy')
-  const [note, setNote] = useState('今天抓着东西就咬，午睡比较短，傍晚想被抱着安抚。')
-  const [synced, setSynced] = useState(false)
-
-  const selectedOption = useMemo(
-    () => options.find((option) => option.key === selectedKey) ?? options[0],
-    [options, selectedKey]
-  )
+  const [note, setNote] = useState('')
 
   return (
     <View className="w-full p-4 bg-card rounded-[32px] border border-[#D8E2DB] flex flex-col gap-4">
@@ -1053,12 +1043,7 @@ export function MoodCheckinCard({
                 backgroundColor: isActive ? option.activeBg : option.inactiveBg,
                 borderColor: isActive ? option.activeColor : '#ebe7e1',
               }}
-              onClick={() => {
-                // 一旦重新选择情绪，就说明“待同步内容”发生变化，
-                // 所以要把已同步状态重置掉。
-                setSelectedKey(option.key)
-                setSynced(false)
-              }}
+              onClick={() => setSelectedKey(option.key)}
             >
               <View
                 className="w-16 h-16 rounded-full flex items-center justify-center"
@@ -1088,23 +1073,16 @@ export function MoodCheckinCard({
             className="w-full min-h-[96px] text-sm leading-5 text-[#2E2822]"
             value={note}
             maxlength={160}
-            onInput={(event) => {
-              setNote(event.detail.value)
-              setSynced(false)
-            }}
+            onInput={(event) => setNote(event.detail.value)}
           />
         </View>
       </View>
 
-      <View
-        className="w-full py-4 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: synced ? '#6E8F7A' : '#9AB5BE' }}
-        onClick={() => setSynced(true)}
-      >
-        <Text className="text-base text-white font-semibold">
-          {synced ? `已同步为「${selectedOption.label}」` : '同步到 AI 情绪日历'}
-        </Text>
-      </View>
+      {/* 这里原本有一个「同步到 AI 情绪日历」按钮，但它只把本地一个 synced 标志置为 true，
+          不发任何请求——一个看起来会写入、实际什么都不做的控件。后端也确认没有
+          /api/baby/mood/checkin 这个端点（AnalysisController 里只有 mood/calendar 与
+          mood/checkin-options）。做不了的事就不该给一个能点的按钮。
+          等后端补上打卡端点，再把按钮接回去。 */}
     </View>
   )
 }

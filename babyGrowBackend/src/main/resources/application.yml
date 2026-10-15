@@ -44,10 +44,17 @@ ai:
 app:
   auth:
     # 本地开发开关。为 true 时不调用微信 jscode2session，直接为固定 dev 用户签发 token，
-    # 因而没有微信凭据也能跑通主干。生产必须用 APP_AUTH_DEV_MODE=false 关掉。
-    dev-mode: ${APP_AUTH_DEV_MODE:true}
+    # 因而没有微信凭据也能跑通主干。
+    #
+    # **默认必须是 false**：它是 fail-safe 的方向差别。留 true 的话，任何一个忘了设
+    # APP_AUTH_DEV_MODE 的部署都会静默地免鉴权、且所有客户端共用一个账号——症状是
+    # 「一切正常」，没有任何报错能提示你。默认 false 时同样的疏忽表现为登录失败，
+    # 当场就能发现。本地要用请显式打开：仓库根的 docker-compose.yml 已置 true，
+    # `pnpm dev:backend` 也在脚本里显式传了 true。
+    dev-mode: ${APP_AUTH_DEV_MODE:false}
   jwt:
-    # 占位默认值，仅够本地跑通；生产用 JWT_SECRET 覆盖（>=32 字节）
+    # 占位默认值，仅够本地跑通；生产用 JWT_SECRET 覆盖（>=32 字节）。
+    # 注意 JwtService 会拒绝在 dev-mode 关闭时使用这个占位值——它是公开的。
     secret: ${JWT_SECRET:baby-grow-local-dev-only-secret-please-override-32b}
     ttl-hours: ${JWT_TTL_HOURS:720}
   wechat:

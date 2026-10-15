@@ -49,7 +49,11 @@ class OllamaModelGateway(BaseModelGateway):
         self._default_model = model or settings.ollama_model
         self._embedding_model = embedding_model or settings.embedding_model
         self.timeout = timeout or settings.ai_timeout
-        self.client = ollama.AsyncClient(host=self.base_url)
+        # timeout 必须真的交给 httpx：ollama.AsyncClient 的默认值是 timeout=None，
+        # 也就是**同时关掉连接超时和读取超时**。于是「Ollama 收下连接但一直不吐字」
+        # （模型加载中、生成卡住）会让请求无限期挂住——路由层的云端回退永远等不到
+        # 那个异常，因为它压根没抛。上面算出来的 self.timeout 之前就是这么被丢掉的。
+        self.client = ollama.AsyncClient(host=self.base_url, timeout=self.timeout)
         self._pricing = pricing or {"input": 0.0, "output": 0.0}
 
     @property

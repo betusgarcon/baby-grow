@@ -37,6 +37,14 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: baby_grow_ai
+      # 必须与 babygrow-api 同值。后端用 JVM 默认时区算「今天」，menu 的按天分桶 SQL
+      # 用 current_setting('TIMEZONE')；不钉住的话容器默认走 UTC，国内用户在
+      # 00:00–08:00 之间看到的「今天」会是昨天。
+      TZ: ${TZ:-Asia/Shanghai}
+      # 业务库账号 babygrow 的密码，由 init 脚本读取。
+      # **必须与后端用的 DB_PASSWORD 是同 .env 里的同一个值**，否则后端启动时
+      # 直接 FATAL: password authentication failed（实测 2026-10-15 踩到）。
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - {{NAS_POSTGRES_DIR}}:/var/lib/postgresql/data
       # 只在数据目录为空时执行一次，用来建业务库与 babygrow 账号。
@@ -81,6 +89,11 @@ services:
     build:
       context: ../../../babyGrowAi
       dockerfile: Dockerfile
+      args:
+        # NAS 在国内，直连 PyPI 会读超时（实测），默认走清华镜像。
+        # 只影响生产构建——仓库根的 compose 用的是 Dockerfile 里的官方源默认值。
+        # 想换源：在 .env 里设 PIP_INDEX_URL。
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}
     container_name: babygrow-ai
     restart: always
     env_file:
@@ -124,6 +137,8 @@ services:
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/baby_grow
       AI_SERVICE_URL: http://babygrow-ai:8001
+      # 见 postgres 服务里的说明：与数据库容器同值，否则「今天」会算错一天。
+      TZ: ${TZ:-Asia/Shanghai}
     # 只绑回环：外部一律经 ECS → FRP 隧道进来，宿主机以外不可直达。
     # 宿主 3003 → 容器 8080（Spring Boot 的默认端口），frpc 的 localPort 填 3003。
     ports:

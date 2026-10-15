@@ -2,6 +2,7 @@ package com.babygrow.backend.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,6 +48,24 @@ public class GlobalExceptionHandler {
         log.warn("请求参数有误 {}", ex.getMessage());
         return ResponseEntity.status(ErrorCode.BAD_REQUEST.getHttpStatus())
                 .body(ApiResponse.fail(ErrorCode.BAD_REQUEST));
+    }
+
+    /**
+     * 唯一约束 / 外键 / 非空约束被违反。
+     *
+     * <p>不接这个的话会落到下面的兜底，对外是 500——但这类失败几乎都是可预期的：
+     * 要么是「先查后插」的两个请求撞在了一起（{@code MenuService.today} 的
+     * {@code (baby_id, date)}、心愿的 {@code (baby_id, client_key)}），要么是某一列
+     * 的长度比校验允许的更长（{@code memories.title} 是 128）。这两类都该是 409/400
+     * 语义，而不是「服务器内部错误」——后者既误导排查，又让客户端以为重试无用。
+     *
+     * <p>冲突详情只进日志：异常消息里会带上表名、列名甚至行内容。
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        log.warn("数据完整性约束冲突", ex);
+        return ResponseEntity.status(ErrorCode.CONFLICT.getHttpStatus())
+                .body(ApiResponse.fail(ErrorCode.CONFLICT));
     }
 
     /** 兜底。对外不暴露堆栈，详情只进日志 */

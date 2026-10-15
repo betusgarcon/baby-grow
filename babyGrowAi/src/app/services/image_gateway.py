@@ -9,26 +9,33 @@
 
 所以这里是一个独立的小客户端。将来出现第二家供应商时，再从这里抽公共抽象。
 
-**⚠️ 接口形状尚未实测确认**
+**接口形状：已实测确认（2026-10-15）**
 
-下面的请求字段名与响应结构（`image_size` / `batch_size` / `images[].url`）取自硅基流动
-公开文档的约定，但**没有用真实 key 打过**——文档域名与 GitHub 镜像都被本机网络策略
-拦掉了，无法在线核对。它的接口是 OpenAI 风格但并不等同（OpenAI 用 `size`、返回
-`data[].url`）。
+用真实 key 打过一次，结论与实现一致，两处曾经的疑点都已定案：
 
-因此把映射收敛到 `_request_body()` 与 `_first_image_url()` 两处：真打一次发现有出入时，
-只改这两个函数即可，其余代码不受影响。首次启用前请务必先实测。
+- 请求字段名就是 `image_size` / `batch_size` / `num_inference_steps` /
+  `guidance_scale`（不是 OpenAI 的 `size`）；`negative_prompt` 也被接受。
+- 响应是 `{"images": [{"url": ...}], "timings": {...}, "seed": ...}`，
+  另有同样的 `data[].url`。`_first_image_url()` 两种键名都兼容。
+- 返回的 URL 是 `https://s3.siliconflow.cn/temporary/...`，**带时效**，
+  但下载**不需要** Authorization（已确认可匿名 GET）——所以下面的下载逻辑是对的。
+- 该 URL 的 `Content-Type` 是 `application/octet-stream` 而非图片类型，
+  所以类型要按魔数判（见 `_resolve_mime`）。
+- 实测 Kolors 出图约 3.4s / 2.0MB（1024x1024 PNG），远快于
+  `IMAGE_MODEL_TIMEOUT` 的 120s 默认值。
 
 Lifespan:
     New. Provider-specific; may be generalized if a second image vendor is added.
 """
 
 import base64
+import ipaddress
 import logging
 import time
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 
@@ -52,9 +59,71 @@ NEGATIVE_PROMPT = (
 # 家长的描述会直接进提示词，截断一下，避免超长输入既烧 token 又把主体冲淡
 PROMPT_MAX_CHARS = 300
 
+# 图片魔数 → MIME。
+#
+# 为什么需要这个：供应商 CDN 返回的 Content-Type 是 application/octet-stream，
+# **不是** image/png（实测确认）。照抄这个 header 会让 media_assets.mime 存成
+# "application/octet-stream"，文件名还会被拼成 .octet-stream，下游拿到的就不是
+# 一个图片类型。所以 header 不可信时按内容识别。
+_MAGIC_TO_MIME: tuple[tuple[bytes, str], ...] = (
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+    (b"\xff\xd8\xff", "image/jpeg"),
+    (b"GIF87a", "image/gif"),
+    (b"GIF89a", "image/gif"),
+)
+
+
+def _sniff_mime(content: bytes) -> str | None:
+    for magic, mime in _MAGIC_TO_MIME:
+        if content.startswith(magic):
+            return mime
+    if content[:4] == b"RIFF" and content[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
+def _resolve_mime(declared: str | None, content: bytes) -> str:
+    """以 header 为准，但它不是图片类型时按内容判断，最后兜底 PNG。"""
+    mime = (declared or "").split(";")[0].strip().lower()
+    if mime.startswith("image/"):
+        return mime
+    return _sniff_mime(content) or "image/png"
+
 
 class ImageGenerationError(RuntimeError):
     """出图失败。消息会原样透给调用方，所以要写成人能看懂的一句话。"""
+
+
+# 只有 https 且目标是公网地址才允许去取。
+#
+# 这个 URL 来自供应商的响应体，不是我们自己的配置，所以不能无条件 GET：被篡改的
+# 供应商（或链路上的中间人）可以让这里返回 http://169.254.169.254/... 或某个内网
+# 主机，本服务就会替它去取，再把字节当作图片回给调用方——一次服务端请求伪造。
+# 供应商 CDN 是 https 公网域名，收紧到「https + 非内网」对正常流程零影响。
+_BLOCKED_HOST_SUFFIXES = (".local", ".internal", ".localhost")
+_BLOCKED_HOSTS = frozenset({"localhost", "metadata", "metadata.google.internal"})
+
+
+def _assert_fetchable(url: str) -> None:
+    """校验供应商给的下载地址可以安全访问。不通过就抛 ImageGenerationError。"""
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise ImageGenerationError(f"出图服务返回的图片地址不是 https：{url[:120]}")
+
+    host = (parsed.hostname or "").lower()
+    if not host:
+        raise ImageGenerationError("出图服务返回的图片地址没有主机名")
+
+    if host in _BLOCKED_HOSTS or host.endswith(_BLOCKED_HOST_SUFFIXES):
+        raise ImageGenerationError(f"拒绝访问内网地址：{host}")
+
+    # IP 字面量：直接按网段判断，不给回环 / 私有 / 链路本地（含云元数据 169.254.169.254）
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return  # 域名，交给上面的后缀规则
+    if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast:
+        raise ImageGenerationError(f"拒绝访问内网地址：{host}")
 
 
 @dataclass
@@ -165,24 +234,7 @@ class ImageGateway:
 
         async with httpx.AsyncClient(timeout=self._timeout, transport=self._transport) as client:
             response = await self._post(client, prompt)
-            remote_url = self._first_image_url(response.json())
-
-            if remote_url.startswith("http"):
-                image = await client.get(remote_url)
-                if image.status_code >= 400:
-                    raise ImageGenerationError(
-                        f"下载生成的图片失败：HTTP {image.status_code}"
-                    )
-                content = image.content
-                mime = image.headers.get("content-type", "image/png").split(";")[0]
-            else:
-                # 少数模型直接回 base64
-                try:
-                    content = base64.b64decode(remote_url)
-                except (ValueError, TypeError) as exc:
-                    raise ImageGenerationError("出图接口返回的既不是 URL 也不是合法 base64") from exc
-                mime = "image/png"
-                remote_url = ""
+            content, mime, remote_url = await self._extract_image(client, response)
 
         elapsed_ms = int((time.perf_counter() - started) * 1000)
         logger.info(
@@ -191,6 +243,52 @@ class ImageGateway:
         return ImageResult(
             content=content, mime=mime, model=self._model, elapsed_ms=elapsed_ms, remote_url=remote_url
         )
+
+    async def _extract_image(
+        self, client: httpx.AsyncClient, response: httpx.Response
+    ) -> tuple[bytes, str, str]:
+        """把出图响应变成「字节 + mime + 来源 URL」。失败一律折成 ImageGenerationError。
+
+        这里每一步都可能以**非** ImageGenerationError 的方式炸掉，而调用方
+        （`generate_cover`）只接 ImageGenerationError——漏掉一种，用户看到的就是
+        500 加一段堆栈，而不是它准备好的 503。两个具体的漏点：
+        200 但响应体是网关错误页或截断内容 → `json.JSONDecodeError`；
+        下载时连接失败或超时 → `httpx.HTTPError`。
+        """
+        try:
+            payload = response.json()
+        except ValueError as exc:  # 含 json.JSONDecodeError
+            raise ImageGenerationError("出图服务返回的不是合法 JSON") from exc
+
+        remote_url = self._first_image_url(payload)
+
+        if remote_url.startswith("http"):
+            _assert_fetchable(remote_url)
+            try:
+                image = await client.get(remote_url)
+            except httpx.HTTPError as exc:
+                raise ImageGenerationError(f"下载生成的图片失败：{exc}") from exc
+            if image.status_code >= 400:
+                raise ImageGenerationError(f"下载生成的图片失败：HTTP {image.status_code}")
+            content = image.content
+            # header 是 application/octet-stream，得按内容判类型
+            mime = _resolve_mime(image.headers.get("content-type"), content)
+            return content, mime, remote_url
+
+        # 少数模型直接回 base64。
+        # validate=True：不加的话 b64decode 会**静默忽略**非字母表字符，于是
+        # `data:image/png;base64,AAAA` 这种带前缀的串也会「解码成功」，
+        # 得到一堆被前缀位偏移污染的字节，却被打上 image/png 存进库。
+        try:
+            content = base64.b64decode(remote_url, validate=True)
+        except (ValueError, TypeError) as exc:
+            raise ImageGenerationError("出图接口返回的既不是 URL 也不是合法 base64") from exc
+
+        # mime 不再是写死的 image/png：按魔数判，判不出来就说明这压根不是图片
+        mime = _sniff_mime(content)
+        if mime is None:
+            raise ImageGenerationError("出图接口返回的 base64 不是可识别的图片")
+        return content, mime, ""
 
     async def _post(self, client: httpx.AsyncClient, prompt: str) -> httpx.Response:
         """发一次请求，把各类失败转成一句人话。

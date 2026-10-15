@@ -11,6 +11,38 @@ import { useAppState, loadMemories, setPosterMemories } from '@/store'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
 import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './memoriesData'
 
+/**
+ * 判断一条记忆是否落在所选时间范围内。
+ *
+ * 后端给的 `date` 是**展示串**（"Oct 12, 2023"，见 MemoryService 的 DISPLAY_DATE），
+ * 所以这里按这个格式解析。更稳妥的做法是后端同时下发一个 ISO 日期，但那属于接口
+ * 契约变更，本次不动。
+ *
+ * 解析失败时返回 false（不匹配），而不是默默把它留在结果里——筛选器多显示一条
+ * 不该出现的数据，比少显示一条更难被发现。
+ */
+const matchesTimeRange = (date: string, range: string) => {
+  if (!range || range === 'All Time') return true
+
+  const parsed = new Date(date)
+  if (Number.isNaN(parsed.getTime())) return false
+
+  const now = new Date()
+
+  if (range === 'Last 7 Days') {
+    const from = new Date(now)
+    from.setDate(now.getDate() - 6)
+    from.setHours(0, 0, 0, 0)
+    return parsed.getTime() >= from.getTime()
+  }
+
+  if (range === 'This Month') {
+    return parsed.getFullYear() === now.getFullYear() && parsed.getMonth() === now.getMonth()
+  }
+
+  return true
+}
+
 export default function FamilyMemoriesPage() {
   // 记忆来自 store，加载状态也由它给
   const { memories, status } = useAppState()
@@ -30,11 +62,19 @@ export default function FamilyMemoriesPage() {
     const query = keyword.trim().toLowerCase()
 
     return memories.filter((item) => {
-      if (filters.category && !item.tags.includes(filters.category)) return false
+      // tags 要兜底：后端某条记忆不带 tags 时，`.includes` / `.join` 都是 TypeError，
+      // 而这发生在 render 期间的 useMemo 里——整页白屏，且看不出是数据缺字段。
+      const tags = item.tags ?? []
+
+      // 时间范围此前是被完全忽略的：面板上能选 All Time / Last 7 Days / This Month，
+      // 存进了 filters.time，但过滤时不看它——选了「最近 7 天」列表纹丝不动。
+      if (!matchesTimeRange(item.date, filters.time)) return false
+
+      if (filters.category && !tags.includes(filters.category)) return false
       if (filters.media && item.media !== filters.media) return false
 
       if (query) {
-        const haystack = `${item.title} ${item.category} ${item.tags.join(' ')}`.toLowerCase()
+        const haystack = `${item.title} ${item.category} ${tags.join(' ')}`.toLowerCase()
         if (!haystack.includes(query)) return false
       }
 

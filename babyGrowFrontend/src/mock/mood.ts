@@ -84,6 +84,7 @@ export const moodMockRoutes = [
   {
     path: '/api/baby/mood/calendar',
     handler: (): GetMoodCalendarResponse => ({
+      hasData: true,
       days: moodCalendarDays,
       legends: moodLegend,
       insight: {

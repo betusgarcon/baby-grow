@@ -27,6 +27,9 @@ public class FamilyService {
     /** 邀请口令有效期，与设计稿的「72 小时内有效」一致 */
     private static final Duration INVITE_TTL = Duration.ofHours(72);
 
+    /** family_members.display_name 是 VARCHAR(64) */
+    private static final int DISPLAY_NAME_MAX_LENGTH = 64;
+
     /** 头像底色轮换。展示层的东西，但契约要求接口下发 */
     private static final String[] AVATAR_CLASSES = {
             "bg-family-clay", "bg-family-sage", "bg-family-lilac", "bg-family-poster"};
@@ -51,7 +54,7 @@ public class FamilyService {
         FamilyMemberEntity me = accessService.requireMembership(userId);
 
         return memberRepository.findByFamilyIdOrderByIdAsc(me.getFamilyId()).stream()
-                .map(member -> toView(member, userId))
+                .map(member -> toView(member, userId, me.isAdmin()))
                 .toList();
     }
 
@@ -71,7 +74,7 @@ public class FamilyService {
         }
 
         target.setRole(role);
-        return toView(memberRepository.save(target), userId);
+        return toView(memberRepository.save(target), userId, me.isAdmin());
     }
 
     /** 移除成员。不能移除自己，也不能把最后一个 admin 移除。 */
@@ -104,6 +107,10 @@ public class FamilyService {
         if (name == null || name.isBlank()) {
             throw BizException.badRequest("请填写称呼");
         }
+        // family_members.display_name 是 VARCHAR(64)，超长会在写库时才炸成 409
+        if (name.trim().length() > DISPLAY_NAME_MAX_LENGTH) {
+            throw BizException.badRequest("称呼最多 " + DISPLAY_NAME_MAX_LENGTH + " 个字");
+        }
         if (!isValidRole(role) || FamilyMemberEntity.ROLE_ADMIN.equals(role)) {
             // 邀请只能给 contributor / viewer：把管理员权限通过口令发出去太危险
             throw BizException.badRequest("邀请只能选择协作者或只读看护者");
@@ -112,7 +119,8 @@ public class FamilyService {
         FamilyMemberEntity member = FamilyMemberEntity.pending(
                 me.getFamilyId(), name.trim(), role, newInviteToken(), Instant.now().plus(INVITE_TTL), userId);
 
-        return toView(memberRepository.save(member), userId);
+        // 这里必须带上口令：创建者正要把它发给对方，这是口令唯一的「交到手上」时机。
+        return toView(memberRepository.save(member), userId, true);
     }
 
     /** 受邀者凭口令加入。此时才把这条 pending 行挂到自己的账号上。 */
@@ -122,7 +130,7 @@ public class FamilyService {
             throw BizException.badRequest("请填写邀请口令");
         }
 
-        FamilyMemberEntity invite = memberRepository.findByInviteToken(code.trim().toUpperCase())
+        FamilyMemberEntity invite = memberRepository.findByInviteTokenForUpdate(code.trim().toUpperCase())
                 .filter(member -> FamilyMemberEntity.STATUS_PENDING.equals(member.getStatus()))
                 .orElseThrow(() -> BizException.notFound("邀请口令无效或已被使用"));
 
@@ -147,7 +155,15 @@ public class FamilyService {
 
     /* ------------------------------------------------------------------ */
 
-    private MemberView toView(FamilyMemberEntity member, Long currentUserId) {
+    /**
+     * @param includeInviteCode 是否带上待接受邀请的口令。
+     *
+     * <p>口令是**加入家庭的凭据**，谁能看到谁就能把人拉进来。此前无论谁调
+     * {@code GET /api/family/members} 都会拿到所有待接受邀请的明文口令——于是一个
+     * 只读的 viewer 也能把口令转给外人，对方凭它加入即成为可写的 contributor。
+     * 因此只在两处放行：admin 查列表时，以及邀请创建者拿到刚签发的那个口令时。
+     */
+    private MemberView toView(FamilyMemberEntity member, Long currentUserId, boolean includeInviteCode) {
         String name = resolveName(member);
         boolean self = member.getUserId() != null && member.getUserId().equals(currentUserId);
 
@@ -160,8 +176,10 @@ public class FamilyService {
                 member.getAvatarClass() == null ? AVATAR_CLASSES[0] : member.getAvatarClass(),
                 self,
                 member.getStatus(),
-                member.getInviteToken(),
-                member.getInviteExpiresAt() == null ? null : member.getInviteExpiresAt().toString());
+                includeInviteCode ? member.getInviteToken() : null,
+                includeInviteCode && member.getInviteExpiresAt() != null
+                        ? member.getInviteExpiresAt().toString()
+                        : null);
     }
 
     private String resolveName(FamilyMemberEntity member) {

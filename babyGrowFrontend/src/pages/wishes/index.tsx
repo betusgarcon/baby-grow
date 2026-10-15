@@ -21,6 +21,14 @@ export default function WishesListPage() {
   const [draft, setDraft] = useState<{ title: string; description: string; goal: string; kind: WishKind } | null>(
     null,
   )
+  /**
+   * 新建请求是否在飞行中。
+   *
+   * 没有它的话，「新建」这个 Text 在整个 await 期间一直可点，而每次调用都会生成
+   * 一个新的 `wish-${Date.now()}` —— 两次点击只要不在同一毫秒，就会建出两条心愿。
+   * 与 RecordSheet 的 saving 是同一个模式。
+   */
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     loadWishes()
@@ -41,6 +49,9 @@ export default function WishesListPage() {
   }
 
   const commitDraft = async () => {
+    // 连点保护：第一次点击之后到请求返回之前，不再受理第二次
+    if (saving) return
+
     const title = draft?.title.trim()
 
     if (!title) {
@@ -48,14 +59,16 @@ export default function WishesListPage() {
       return
     }
 
-    const isCounter = draft?.kind === 'counter'
-    // 目标次数只对计数式有意义。清单式的目标数由后端按清单实际条数派生，
-    // 这里传什么都不作数——否则界面上会出现「填 4 但只有 2 条」这种对不上的显示
-    const goal = Math.max(Number(draft?.goal) || 1, 1)
-    const description = draft?.description.trim() || '新的成长目标'
-    const id = `wish-${Date.now()}`
+    setSaving(true)
 
     try {
+      const isCounter = draft?.kind === 'counter'
+      // 目标次数只对计数式有意义。清单式的目标数由后端按清单实际条数派生，
+      // 这里传什么都不作数——否则界面上会出现「填 4 但只有 2 条」这种对不上的显示
+      const goal = Math.max(Number(draft?.goal) || 1, 1)
+      const description = draft?.description.trim() || '新的成长目标'
+      const id = `wish-${Date.now()}`
+
       await addWish({
         id,
         icon: 'star',
@@ -79,6 +92,9 @@ export default function WishesListPage() {
     } catch (error) {
       console.error('[wishes] 新建心愿失败', error)
       Taro.showToast({ title: '新建失败，请稍后再试', icon: 'none' })
+    } finally {
+      // 成败都要放开，否则一次失败会让按钮永久失效
+      setSaving(false)
     }
   }
 

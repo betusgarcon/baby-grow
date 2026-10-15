@@ -64,6 +64,12 @@ temp/
 # ===== Trae 调试日志 =====
 .dbg/
 
+# ===== Claude Code 本地配置 =====
+# 里面有 settings.local.json（本机权限允许清单）与 launch.json。
+# 这是个人环境配置，绝不入库；顺带挡住 .claude/worktrees/（本仓库的工作树就建在那里，
+# 一旦被 add 进去会把整个工作树的副本塞进版本库）。
+.claude/
+
 # ===== Secrets（绝对不能提交）=====
 *.pem
 *.key

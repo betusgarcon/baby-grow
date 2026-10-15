@@ -96,7 +96,9 @@ public class GrowthAnalysisService {
                 TIME_RANGES,
                 trends,
                 monthlyDiet(baby),
-                milestones(baby));
+                milestones(baby),
+                // measurements 已经是全量，直接判空即可
+                !measurements.isEmpty());
     }
 
     @Transactional(readOnly = true)

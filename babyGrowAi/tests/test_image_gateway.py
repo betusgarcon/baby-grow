@@ -1,11 +1,9 @@
 """Tests for the text-to-image gateway (wish covers).
 
-The request and response shapes in `image_gateway.py` were written from the
-provider's published conventions but have **never been exercised against the
-real API** (the docs domain is blocked from this machine). These tests therefore
-pin down what we currently believe the shape is: when a real call reveals a
-mismatch, the fix belongs in `_request_body` / `_first_image_url`, and the
-assertions here are the specification to update.
+The request and response shapes were confirmed against the live API on
+2026-10-15 with a real key: `image_size` / `batch_size` are the field names the
+provider accepts, and the envelope really is `{"images": [{"url": ...}]}`.
+These tests pin that down so a later refactor can't quietly drift away from it.
 
 A fake transport is injected rather than a mock library, matching how the rest
 of the suite fakes collaborators by hand.
@@ -130,6 +128,47 @@ def test_generate_accepts_an_inline_base64_payload():
     result = asyncio.run(_gateway(handler).generate("a prompt"))
 
     assert result.content == PNG_BYTES
+
+
+def test_generate_sniffs_the_type_when_the_cdn_says_octet_stream():
+    """实测：供应商 CDN 返回的 Content-Type 是 application/octet-stream。
+
+    照抄这个 header 会把 media_assets.mime 存成非图片类型，文件名还会变成
+    .octet-stream，所以必须按内容判。
+    """
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/images/generations"):
+            return httpx.Response(200, json={"images": [{"url": CDN_URL}]})
+        return httpx.Response(
+            200, content=PNG_BYTES, headers={"content-type": "application/octet-stream"}
+        )
+
+    assert asyncio.run(_gateway(handler).generate("a prompt")).mime == "image/png"
+
+
+def test_generate_recognises_a_jpeg_when_the_header_is_unhelpful():
+    jpeg = b"\xff\xd8\xff\xe0" + b"\x00" * 32
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/images/generations"):
+            return httpx.Response(200, json={"images": [{"url": CDN_URL}]})
+        return httpx.Response(
+            200, content=jpeg, headers={"content-type": "application/octet-stream"}
+        )
+
+    assert asyncio.run(_gateway(handler).generate("a prompt")).mime == "image/jpeg"
+
+
+def test_a_declared_image_type_wins_over_sniffing():
+    """header 说是 webp 就信它，不必再猜。"""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/images/generations"):
+            return httpx.Response(200, json={"images": [{"url": CDN_URL}]})
+        return httpx.Response(200, content=PNG_BYTES, headers={"content-type": "image/webp"})
+
+    assert asyncio.run(_gateway(handler).generate("a prompt")).mime == "image/webp"
 
 
 def test_generate_also_accepts_the_openai_data_key():

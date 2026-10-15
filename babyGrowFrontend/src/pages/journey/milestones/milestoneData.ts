@@ -107,4 +107,16 @@ export const photoMemory: PhotoMemory = {
 /** 筛选区的可选项 */
 export const monthOptions = ['All', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export const yearOptions = ['2025', '2024', '2023']
+/**
+ * 年份按当前年份生成，不能写死。
+ *
+ * 原先是 ['2025','2024','2023']，而页面默认筛的是**当年**（new Date().getFullYear()）。
+ * 于是选择器的取值范围里根本没有当前年：价值上默认选中落在 index 0（显示成 2023），
+ * 用户一旦真的去选一个年份，`year` 就变成 2025 或更早，而里程碑日期是相对今天生成的，
+ * 结果就是**一选必空**。日历页早就是按当前年份算的，这里对齐它。
+ */
+const CURRENT_YEAR = new Date().getFullYear()
+
+export const yearOptions = Array.from({ length: 6 }, (_, index) =>
+  String(CURRENT_YEAR - 5 + index),
+)

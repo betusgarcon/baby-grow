@@ -35,6 +35,14 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: baby_grow_ai
+      # 与后端容器必须一致。后端用 JVM 默认时区算「今天」，而 menu 的按天分桶 SQL 用
+      # current_setting('TIMEZONE')——两者不一致时，「今天的推荐」会落在错误的一天上。
+      # 显式钉住，别让容器默认的 UTC 悄悄决定业务日期。
+      TZ: ${TZ:-Asia/Shanghai}
+      # 业务库账号 babygrow 的密码。02-create-baby-grow-db.sh 从这里取，
+      # 不再写死在脚本里——写死会让生产用上已知弱口令，且与 .env 里的
+      # DB_PASSWORD 不一致（后端会直接连不上）。
+      DB_PASSWORD: ${DB_PASSWORD:-babygrow-dev}
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # 注意：init 脚本只在数据目录为空时执行一次。已有数据卷需要手动补建业务库，
@@ -106,10 +114,16 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/baby_grow
       DB_USER: babygrow
       DB_PASSWORD: ${DB_PASSWORD:-babygrow-dev}
+      # 见 postgres 服务里的说明：与数据库容器同值，否则「今天」会算错一天。
+      # 小程序用户都在国内，所以默认东八区而不是 UTC。
+      TZ: ${TZ:-Asia/Shanghai}
       # AI 服务走容器内网，不经过公网
       AI_SERVICE_URL: http://ai-service:8001
-      # 容器里默认关闭本地直通登录；真机联调时可临时置 true
-      APP_AUTH_DEV_MODE: ${APP_AUTH_DEV_MODE:-false}
+      # 容器里默认开启本地直通登录——这是本地开发栈，不开就没法登录（本地没有微信凭据）。
+      # 与生产相反：生产 compose 走 .env，APP_AUTH_DEV_MODE=false 且有真实 JWT_SECRET。
+      # 应用自身的默认值是 false，这里显式覆盖成 true，让「本地能跑」和「漏配即失败」
+      # 两个目标各自成立。
+      APP_AUTH_DEV_MODE: ${APP_AUTH_DEV_MODE:-true}
       JWT_SECRET: ${JWT_SECRET:-baby-grow-container-dev-secret-please-override-32b}
       WX_APPID: ${WX_APPID:-}
       WX_SECRET: ${WX_SECRET:-}

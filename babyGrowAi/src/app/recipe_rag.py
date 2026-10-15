@@ -29,7 +29,6 @@ from app.models import (
     RecipeRecommendResponse,
     RecipeItem,
     SourceRef,
-    get_engine,
 )
 from app.prompts import recipe as recipe_prompts
 from app.services.embedding import get_embedding_service
@@ -99,10 +98,11 @@ class RecipeRAGService:
             context = ""
             try:
                 if self.retrieval_service is None:
-                    from sqlalchemy.orm import Session
-
-                    with Session(bind=get_engine()) as db:
-                        self.retrieval_service = RetrievalService(db=db)
+                    # 刻意不传 db：传进来的 session 会随这个进程级单例一直活着、
+                    # 被后续每个请求复用，而它当初还是在一个 already-exited 的
+                    # `with Session(...)` 块里建的。不传时 RetrievalService 会为
+                    # 每次检索自己开一个短生命周期的 session。
+                    self.retrieval_service = RetrievalService()
 
                 retrieved = await self.retrieval_service.retrieve(
                     query=request.query,
@@ -171,20 +171,40 @@ class RecipeRAGService:
 
             try:
                 parsed = json.loads(content)
-            except json.JSONDecodeError as exc:
-                logger.warning("Recipe response JSON decode failed: %s", exc)
+            except ValueError as exc:
+                # JSONDecodeError 是 ValueError 的子类，两者一起收
+                logger.warning("Recipe response could not be parsed as JSON: %s", exc)
                 raise
 
-            items = [
-                RecipeItem(
-                    meal_type=item.get("mealType"),
-                    dish_name=item["dishName"],
-                    reason=item.get("reason"),
-                    ingredients=item.get("ingredients", []),
-                    instructions=item.get("instructions"),
+            # 模型偶尔会回一个顶层数组或字符串，而后面每个字段都按 dict 取。
+            # 不拦住的话会在某个 .get 上炸成 AttributeError，用户看到的是
+            # 「推荐失败」，却完全指不到真正的原因（外壳形状不对）。
+            if not isinstance(parsed, dict):
+                logger.warning(
+                    "Recipe response is not a JSON object: %s", type(parsed).__name__
                 )
-                for item in parsed.get("items", [])
-            ]
+                raise ValueError("模型返回的不是 JSON 对象")
+
+            items: list[RecipeItem] = []
+            for raw_item in parsed.get("items") or []:
+                if not isinstance(raw_item, dict):
+                    continue
+                # 菜名缺失就跳过这一条，而不是让 KeyError 把整份推荐废掉——
+                # 一个连菜名都取不到的条目本来也没法展示。
+                dish_name = raw_item.get("dishName") or raw_item.get("dish_name")
+                if not dish_name:
+                    logger.warning("Skipping recipe item without a dish name: %s", raw_item)
+                    continue
+                raw_ingredients = raw_item.get("ingredients")
+                items.append(
+                    RecipeItem(
+                        meal_type=raw_item.get("mealType"),
+                        dish_name=dish_name,
+                        reason=raw_item.get("reason"),
+                        ingredients=raw_ingredients if isinstance(raw_ingredients, list) else [],
+                        instructions=raw_item.get("instructions"),
+                    )
+                )
 
             elapsed = int((time.time() - start) * 1000)
 

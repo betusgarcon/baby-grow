@@ -155,6 +155,15 @@ const setStatus = (key: SliceKey, value: LoadStatus) => {
 }
 
 /**
+ * 每个数据域最近一次加载的序号。
+ *
+ * 用来丢弃「迟到的那一次」：双击重试、或页面重新挂载，都会让同一个域同时有两个
+ * 请求在飞。先发的那个若后到，就会把已经显示的新数据覆盖回旧的，而且状态也会
+ * 从 ready 退回 loading/error——用户看到的是「刷新之后反而变旧了」。
+ */
+const loadSequence = new Map<SliceKey, number>()
+
+/**
  * 通用加载：先置 loading，成功落到数据并置 ready，失败置 error。
  * 页面用 AsyncSection 消费这个状态，失败时有重试入口。
  */
@@ -163,6 +172,8 @@ const load = async <T>(
   fetcher: () => Promise<{ code: number; data: T; message: string }>,
   apply: (data: T) => void,
 ) => {
+  const sequence = (loadSequence.get(key) ?? 0) + 1
+  loadSequence.set(key, sequence)
   setStatus(key, 'loading')
 
   try {
@@ -170,9 +181,15 @@ const load = async <T>(
 
     if (response.code !== 0) throw new Error(response.message)
 
+    // 已经被更新的一次加载取代了，这次的结果直接丢弃——数据和状态都不要动
+    if (loadSequence.get(key) !== sequence) return
+
     apply(response.data)
     setStatus(key, 'ready')
   } catch (error) {
+    // 同样：迟到的失败不该把新的成功状态打回 error
+    if (loadSequence.get(key) !== sequence) return
+
     console.error(`[store] 加载 ${key} 失败`, error)
     setStatus(key, 'error')
   }
@@ -180,13 +197,29 @@ const load = async <T>(
 
 /**
  * 写操作统一走这里：先更新本地让界面立刻响应，再异步落库。
- * 落库失败只记日志并提示，不回滚本地——后端接上后按需改成事务式。
+ *
+ * 落库失败时会调 {@link rollback} 把本地恢复成操作前的样子。
+ * 之前这里只 console.error、既不回滚也不上报，于是一次失败的「移出成员」
+ * 让界面显示人已经移走了，服务端上他却还在家里——下次刷新又冒出来，
+ * 用户完全无从判断到底成没成。宁可界面先动再弹回去，也不要显示一个假结果。
+ *
+ * 返回是否成功。刻意不向外抛：调用点全是「点了就走」的写法，
+ * 抛出去只会变成一串无人处理的 Promise 拒绝，回滚这件事反而做不成。
+ * 需要给用户提示的页面自己接这个布尔值。
  */
-const persist = (label: string, request: () => Promise<unknown>) => {
-  request().catch((error) => {
-    console.error(`[store] ${label} 落库失败`, error)
-  })
-}
+const persist = (
+  label: string,
+  request: () => Promise<unknown>,
+  rollback?: () => void,
+): Promise<boolean> =>
+  request().then(
+    () => true,
+    (error) => {
+      console.error(`[store] ${label} 落库失败`, error)
+      rollback?.()
+      return false
+    },
+  )
 
 /* ---------------------------------------------------------------- 加载 */
 
@@ -202,14 +235,21 @@ export const loadProfile = () =>
  */
 export const loadBabyHeader = () =>
   load('babyHeader', getBabyProfile, (data) =>
-    appStore.set((p) => ({
-      ...p,
-      babyHeader: {
-        name: data.profile.name ?? '',
-        avatar: data.profile.avatar ?? '',
-        ageLabel: data.profile.ageLabel ?? '',
-      },
-    })),
+    appStore.set((p) => {
+      // `data.profile` 可能是 undefined：包了一层 data 的接口在「查不到」时
+      // 完全可能回 {code:0, data:{}}。直接取 .name 就是 TypeError，
+      // 而它长在导航栏上——一崩全站每个页面的顶部都进错误态。
+      const profile = data?.profile ?? EMPTY_BABY_HEADER
+
+      return {
+        ...p,
+        babyHeader: {
+          name: profile.name ?? '',
+          avatar: profile.avatar ?? '',
+          ageLabel: profile.ageLabel ?? '',
+        },
+      }
+    }),
   )
 
 export const loadMembers = () =>
@@ -344,31 +384,56 @@ export const restoreProfile = (profile: ProfileState) => {
 /* ---------------------------------------------------------------- 家庭成员 */
 
 export const setMemberRole = (id: string, role: FamilyRole) => {
+  const before = appStore.get().members.find((member) => member.id === id)
+
   appStore.set((previous) => ({
     ...previous,
     members: previous.members.map((member) =>
       member.id === id ? { ...member, role, roleLabel: roleLabelOf(role) } : member,
     ),
   }))
-  persist('修改成员权限', () => putMemberRole(id, role))
+
+  return persist(
+    '修改成员权限',
+    () => putMemberRole(id, role),
+    () => {
+      if (!before) return
+      appStore.set((previous) => ({
+        ...previous,
+        members: previous.members.map((member) => (member.id === id ? before : member)),
+      }))
+    },
+  )
 }
 
 export const removeMember = (id: string) => {
+  // 整份存下来用于回滚：成员列表不长，而「把走的那个人按回原来的位置」比
+  // 只把他的数据补回去更不容易漏掉 roleLabel 之类的派生字段。
+  const before = appStore.get().members
+
   appStore.set((previous) => ({
     ...previous,
     members: previous.members.filter((member) => member.id !== id),
   }))
-  persist('移出成员', () => removeFamilyMember(id))
+
+  return persist(
+    '移出成员',
+    () => removeFamilyMember(id),
+    () => appStore.set((previous) => ({ ...previous, members: before })),
+  )
 }
 
 /** 邀请发出后把受邀人作为「待接受」加进成员列表 */
 export const addPendingMember = (name: string, role: FamilyRole) => {
+  // 本地先生成的这条 id 只用于占位；服务端会另给一条真正的 pending 行。
+  const placeholderId = `pending-${Date.now()}`
+
   appStore.set((previous) => ({
     ...previous,
     members: [
       ...previous.members,
       {
-        id: `pending-${Date.now()}`,
+        id: placeholderId,
         name,
         role,
         roleLabel: `${roleLabelOf(role)} · Pending`,
@@ -377,17 +442,33 @@ export const addPendingMember = (name: string, role: FamilyRole) => {
       },
     ],
   }))
-  persist('邀请成员', () => inviteFamilyMember(name, role))
+
+  return persist(
+    '邀请成员',
+    () => inviteFamilyMember(name, role),
+    () =>
+      appStore.set((previous) => ({
+        ...previous,
+        members: previous.members.filter((member) => member.id !== placeholderId),
+      })),
+  )
 }
 
 /* ---------------------------------------------------------------- 心愿 */
 
 export const removeWish = (wishId: string) => {
+  const before = appStore.get().wishes
+
   appStore.set((previous) => ({
     ...previous,
     wishes: previous.wishes.filter((wish) => wish.id !== wishId),
   }))
-  persist('删除心愿', () => deleteWish(wishId))
+
+  return persist(
+    '删除心愿',
+    () => deleteWish(wishId),
+    () => appStore.set((previous) => ({ ...previous, wishes: before })),
+  )
 }
 
 /**
@@ -469,13 +550,29 @@ export const regenerateWishCover = (wishId: string) =>
 /* ---------------------------------------------------------------- 事件详情 */
 
 export const updateVaccine = (patch: Partial<VaccineDetail>) => {
+  const before = appStore.get().vaccine
+
   appStore.set((previous) =>
     previous.vaccine ? { ...previous, vaccine: { ...previous.vaccine, ...patch } } : previous,
   )
-  persist('更新事件详情', () => updateVaccineDetail(patch))
+
+  return persist(
+    '更新事件详情',
+    () => updateVaccineDetail(patch),
+    () => appStore.set((previous) => ({ ...previous, vaccine: before })),
+  )
 }
 
 export const removeVaccine = () => {
+  // 乐观地把详情清空（页面据此退出）。删失败时要能原样回来，
+  // 否则用户看到「已删除」，实际记录还在。
+  const before = appStore.get().vaccine
+
   appStore.set((previous) => ({ ...previous, vaccine: null }))
-  persist('删除事件详情', deleteVaccineDetail)
+
+  return persist(
+    '删除事件详情',
+    deleteVaccineDetail,
+    () => appStore.set((previous) => ({ ...previous, vaccine: before })),
+  )
 }

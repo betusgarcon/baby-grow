@@ -24,6 +24,11 @@ export interface RequestOptions {
    * 闸门等的就是登录落地，登录请求若也去等它，就是自己等自己，永久挂起。
    */
   skipAuthGate?: boolean
+  /**
+   * 内部使用：这次请求是不是「401 之后重登再试」的那一次。
+   * 用来保证最多只重试一次——否则后端一直回 401 时会变成无限重试。
+   */
+  retriedAfterReauth?: boolean
 }
 
 /** Mock 处理器类型 */
@@ -46,6 +51,49 @@ let authGate: Promise<void> | null = null
 
 export function setAuthGate(gate: Promise<void> | null) {
   authGate = gate
+}
+
+/**
+ * 「重新登录」钩子。
+ *
+ * 为什么是注册进来的回调、而不是直接 import 登录模块：登录请求自身也要走
+ * request()，request 再 import 登录模块就成环了（request → auth → request）。
+ * 与上面的 authGate 完全同一个理由、同一种做法。
+ *
+ * 返回值表示重登是否成功；失败时调用方按普通错误处理，不重试。
+ */
+type ReauthHandler = () => Promise<boolean>
+
+let reauthHandler: ReauthHandler | null = null
+
+export function setReauthHandler(handler: ReauthHandler | null) {
+  reauthHandler = handler
+}
+
+/** 后端「未登录或登录已过期」的业务码，对应 ErrorCode.UNAUTHORIZED */
+const UNAUTHORIZED_CODE = 40100
+
+export { UNAUTHORIZED_CODE }
+
+/**
+ * 等登录落地。
+ *
+ * 给**不走 request()** 的调用点用——目前只有 media.ts 的 Taro.uploadFile 那条
+ * multipart 路径：它绕开了 request() 里的闸门，冷启动时会抢在 token 落库之前
+ * 把请求发出去，结果就是「图片上传失败，而其它接口都正常」。
+ */
+export async function awaitAuthGate(): Promise<void> {
+  if (!authGate) return
+  try {
+    await authGate
+  } catch {
+    // 登录失败不阻断：照常发出，由后端判未登录
+  }
+}
+
+/** 用与 request() 相同的路径重登一次。返回值表示是否成功。 */
+export async function tryReauthenticate(): Promise<boolean> {
+  return reauthHandler ? reauthHandler() : false
 }
 
 /** 注册 Mock 路由（供 mock/index.ts 调用） */
@@ -122,6 +170,28 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
     const resData = response.data as ApiResponse<T>
 
     if (resData.code !== 0) {
+      // 登录态失效时恢复一次。
+      //
+      // 此前全站没有任何恢复路径：clearToken() 定义了却**零调用**，于是 token 一旦
+      // 过期（或后端换了密钥），每个接口都回 401、每页都进错误态，而「重试」重发的
+      // 还是同一个废 token——用户永久卡死。这里的处理是：丢掉废 token、重新静默登录、
+      // 把原请求原样重发一次。
+      //
+      // 只重发一次（retriedAfterReauth），否则后端持续 401 时会变成无限循环。
+      // 登录请求自己跳过（skipAuthGate），它不可能是「需要重登」的那种请求。
+      if (
+        resData.code === UNAUTHORIZED_CODE &&
+        !options.skipAuthGate &&
+        !options.retriedAfterReauth &&
+        reauthHandler
+      ) {
+        console.warn(`[DATA: REAL] 登录态已失效，重新登录后重试一次：${url}`)
+        const reauthenticated = await reauthHandler()
+        if (reauthenticated) {
+          return request<T>({ ...options, retriedAfterReauth: true })
+        }
+      }
+
       throw new Error(resData.message || '请求失败')
     }
 
