@@ -236,8 +236,11 @@ export default function Journey() {
                   标题挤掉，也把一段「解释」当成了正文。收成一个 info 小圆点，
                   需要时再展开——它是次要信息，不该占首屏的主视线。 */}
               {menuReason ? (
+                // 外面那层 p-2 -m-2 只为把触摸区域撑大：圆点本身 w-5 h-5 只有 20px，
+                // 而它是查看说明的**唯一**入口，20px 在手机上很难点中。负边距让撑大的
+                // 热区不占额外布局空间——视觉大小不变，可点范围到 36px。
                 <View
-                  className="w-5 h-5 shrink-0 rounded-full border border-outline-variant flex items-center justify-center"
+                  className="p-2 -m-2"
                   onClick={() =>
                     Taro.showModal({
                       title: '今日推荐说明',
@@ -247,7 +250,9 @@ export default function Journey() {
                     })
                   }
                 >
-                  <Text className="text-xs font-bold text-on-surface-variant">i</Text>
+                  <View className="w-5 h-5 rounded-full border border-outline-variant flex items-center justify-center">
+                    <Text className="text-xs font-bold text-on-surface-variant">i</Text>
+                  </View>
                 </View>
               ) : null}
             </View>
