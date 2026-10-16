@@ -45,13 +45,22 @@ export default function FamilyInviteTokenPage() {
   const inviteTitle = withBabyName(inviteToken.title, babyHeader.name)
   const inviteBody = withBabyName(inviteToken.body, babyHeader.name)
 
+  // 分享出去的链接把口令带上，对方点进来就直接是那条邀请——
+  // 否则要手工抄一串大小写混排的字符（口令用的是无歧义字母表，但仍然很容易抄错）。
+  // invited 页从路由参数里取 code 并直接调接受接口。
+  const invitePath = code
+    ? `/pages/family/invited/index?code=${encodeURIComponent(code)}`
+    : '/pages/family/invited/index'
+
   useShareAppMessage(() => ({
     title: inviteTitle,
-    path: '/pages/family/invited/index',
+    path: invitePath,
   }))
 
   useShareTimeline(() => ({
     title: inviteTitle,
+    // 分享到朋友圈走的是 query：onShareTimeline 不支持自定义 path
+    query: code ? `code=${encodeURIComponent(code)}` : '',
   }))
 
   const copyToken = async () => {

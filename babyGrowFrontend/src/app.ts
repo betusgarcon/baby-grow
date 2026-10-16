@@ -11,6 +11,27 @@ import { loadBabyHeader } from '@/store'
 /** 没有家庭时要去的地方。见下方 start() 的说明 */
 const ONBOARDING_PATH = '/pages/onboarding/index'
 
+/** 受邀者从分享链接落进来的页面 */
+const INVITE_LANDING_PAGE = 'pages/family/invited/index'
+
+/**
+ * 这次启动是不是从分享链接直接落到受邀页的。
+ *
+ * 这种启动**不能**把人送去引导页：分享链接里带着口令，受邀页正等着他点「接受邀请」；
+ * 半路 reLaunch 走会把那次邀请丢掉，他只能重新找人要一串口令。
+ */
+function launchedFromInviteLink(): boolean {
+  try {
+    const options = Taro.getLaunchOptionsSync()
+    const path = (options?.path ?? '').replace(/^\//, '').split('?')[0]
+
+    return path === INVITE_LANDING_PAGE
+  } catch {
+    // 取不到启动参数时按「不是」处理，退化成原来的行为（没有家庭就去引导页）
+    return false
+  }
+}
+
 /**
  * 启动序列：配置后端地址 → 静默登录 → 判断这个账号有没有家庭 → 取导航栏数据。
  *
@@ -30,8 +51,9 @@ async function start() {
 
   try {
     const response = await fetchMe()
+    const familyless = response.code === 0 && !response.data?.familyId
 
-    if (response.code === 0 && !response.data?.familyId) {
+    if (familyless && !launchedFromInviteLink()) {
       await Taro.reLaunch({ url: ONBOARDING_PATH })
       return
     }

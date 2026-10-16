@@ -54,6 +54,9 @@ export type RouteId =
   | 'family-invited-view'
   | 'family-search-results'
   | 'family-poster'
+  // 首次进入应用：创建家庭或凭口令加入。
+  // 它不在原型路由表里（原型假定账号一进来就有家庭），所以路径由这里登记。
+  | 'onboarding'
 
 /** 已实现路由：id → Taro 页面路径。新增页面时在此登记，并同步 src/app.config.ts。 */
 export const routePathMap: Partial<Record<RouteId, string>> = {
@@ -86,6 +89,7 @@ export const routePathMap: Partial<Record<RouteId, string>> = {
   'family-invited-view': '/pages/family/invited/index',
   'family-search-results': '/pages/family/memories/index',
   'family-poster': '/pages/family/poster/index',
+  'onboarding': '/pages/onboarding/index',
   'data-growth': '/pages/analysis/growth/index',
   'data-sleep-day': '/pages/analysis/sleep-daily/index',
   'data-sleep-month': '/pages/analysis/sleep-monthly/index',

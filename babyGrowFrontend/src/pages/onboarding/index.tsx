@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import Taro from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import { View, Text, Input, Picker } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import PrimaryButton from '@/components/PrimaryButton'
 import Icon from '@/components/Icon'
 import { createFamily, acceptInvite } from '@/api/modules/family'
-import { loadBabyHeader } from '@/store'
+import { enterApp } from '@/utils/enterApp'
 import { todayIsoDate } from '@/store/profile'
 
 /**
@@ -18,22 +18,14 @@ import { todayIsoDate } from '@/store/profile'
  * 的第一站，两个出口都在这里。
  */
 export default function OnboardingPage() {
+  const router = useRouter()
+
   const [babyName, setBabyName] = useState('')
   const [birthday, setBirthday] = useState('')
-  const [code, setCode] = useState('')
+  // 口令允许随链接带进来（?code=XXXX），免得用户手抄一串大小写混排的字符
+  const [code, setCode] = useState((router.params.code ?? '').trim().toUpperCase())
   const [creating, setCreating] = useState(false)
   const [joining, setJoining] = useState(false)
-
-  /**
-   * 两个出口共用的收尾。
-   *
-   * 必须先刷 navigation bar 那组数据再进首页：启动时那次 loadBabyHeader() 是在
-   * 「还没有家庭」的状态下发的，会 403；此刻家庭已经有了，得重新取一次。
-   */
-  const enterApp = async () => {
-    await loadBabyHeader()
-    Taro.reLaunch({ url: '/pages/journey/index' })
-  }
 
   const submitCreate = async () => {
     if (creating) return
@@ -78,7 +70,10 @@ export default function OnboardingPage() {
       await enterApp()
     } catch (error) {
       console.error('[onboarding] 加入家庭失败', error)
-      Taro.showToast({ title: '加入失败，口令可能已失效', icon: 'none' })
+      // 服务端会区分「口令无效 / 已过期 / 你已经有家庭了」，原样带出来，
+      // 而不是用一句笼统的「口令可能已失效」把人引到错误的排查方向。
+      const message = error instanceof Error ? error.message : ''
+      Taro.showToast({ title: message || '加入失败，请稍后再试', icon: 'none' })
     } finally {
       setJoining(false)
     }

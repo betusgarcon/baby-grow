@@ -423,7 +423,16 @@ export const removeMember = (id: string) => {
   )
 }
 
-/** 邀请发出后把受邀人作为「待接受」加进成员列表 */
+/**
+ * 邀请一位亲友：先在本地放一条占位，再用服务端返回的那条替换它。
+ *
+ * **这份响应不能丢**。里面有一次性邀请口令，而口令只在「创建它的那一次响应」里
+ * 带得回来——成员列表只对 admin 展示它（见 FamilyService.toView 的 includeInviteCode）。
+ * 换个说法：一个 contributor 发出的邀请，如果响应被丢掉，那串口令就彻底拿不到了，
+ * 接下来的凭证页会显示「暂无待接受的邀请」，邀请等于发不出去。
+ *
+ * 所以这里走 addWish 那种「用响应覆盖本地」的写法，而不是 persist 的「发出后不管」。
+ */
 export const addPendingMember = (name: string, role: FamilyRole) => {
   // 本地先生成的这条 id 只用于占位；服务端会另给一条真正的 pending 行。
   const placeholderId = `pending-${Date.now()}`
@@ -443,14 +452,26 @@ export const addPendingMember = (name: string, role: FamilyRole) => {
     ],
   }))
 
-  return persist(
-    '邀请成员',
-    () => inviteFamilyMember(name, role),
-    () =>
+  return inviteFamilyMember(name, role).then(
+    (response) => {
+      if (response.code !== 0) throw new Error(response.message)
+
+      appStore.set((previous) => ({
+        ...previous,
+        members: previous.members.map((member) =>
+          member.id === placeholderId ? response.data : member,
+        ),
+      }))
+      return true
+    },
+    (error) => {
+      console.error('[store] 邀请成员失败', error)
       appStore.set((previous) => ({
         ...previous,
         members: previous.members.filter((member) => member.id !== placeholderId),
-      })),
+      }))
+      return false
+    },
   )
 }
 
