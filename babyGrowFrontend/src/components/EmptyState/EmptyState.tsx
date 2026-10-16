@@ -45,9 +45,18 @@ export default function EmptyState({
       ) : null}
 
       {actionText ? (
-        <PrimaryButton className="mt-lg" onClick={onAction}>
-          {actionText}
-        </PrimaryButton>
+        // 外面这层 w-full + justify-center 是为了让操作按钮**水平居中**。
+        //
+        // 不能只靠父级的 items-center：PrimaryButton 在非 block 时自带
+        // `self-start`，它会盖掉父级的对齐，把按钮钉在左边——journey 首页、
+        // 里程碑、心愿、记忆四个空态的按钮都是这么跑到左边去的。
+        // 套一层 flex 行容器后，横向位置由这层的 justify-center 决定，
+        // 而 self-start 此时作用在行容器的纵轴（垂直）上，不再影响居中。
+        <View className="w-full flex justify-center">
+          <PrimaryButton className="mt-lg" onClick={onAction}>
+            {actionText}
+          </PrimaryButton>
+        </View>
       ) : null}
     </View>
   )

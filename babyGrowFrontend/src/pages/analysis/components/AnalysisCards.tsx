@@ -1,7 +1,9 @@
 import { PropsWithChildren, useMemo, useRef, useState } from 'react'
 import { Input, Textarea, View, Text } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import AnalysisChart from '@/components/AnalysisChart'
 import Icon from '@/components/Icon'
+import { moodCheckin } from '@/api/modules/mood'
 import BaseAnalysisCard from './BaseAnalysisCard'
 import {
   DailySleepLogItem,
@@ -1010,16 +1012,53 @@ export function MoodCalendarCard({
 
 export function MoodCheckinCard({
   options,
+  onSaved,
 }: {
   options: MoodCheckinOption[]
+  /** 打卡成功后的回调，交给页面去刷新日历 */
+  onSaved?: () => void
 }) {
-  // 情绪打卡是一个典型的“小表单”：
-  // 选择情绪、填写备注，全部状态都在本地维护。
+  // 情绪打卡是一个小表单：选择情绪、填写备注，提交一次写一条记录。
   //
   // 备注初值刻意留空。原先这里预填了一段「今天抓着东西就咬，午睡比较短，傍晚想被抱着安抚。」
   // ——那是编出来的内容，却会以「用户自己写的手账」的样子出现在每个账号上。
-  const [selectedKey, setSelectedKey] = useState<MoodCheckinOption['key']>('clingy')
+  //
+  // 选中项**不预设**。原先默认选中「黏人烦躁」，那是设计稿的静态样子；真做成表单后，
+  // 默认选中意味着随手点提交就会记下一条用户没选过的情绪，属于脏数据。
+  const [selectedKey, setSelectedKey] = useState<MoodCheckinOption['key'] | null>(null)
   const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const submit = async () => {
+    // 连点保护：请求飞行期间不再受理第二次，否则会连写两条记录
+    if (saving) return
+
+    if (!selectedKey) {
+      Taro.showToast({ title: '请先选择一种情绪', icon: 'none' })
+      return
+    }
+
+    setSaving(true)
+    try {
+      const response = await moodCheckin({
+        mood: selectedKey,
+        note: note.trim() || undefined,
+      })
+
+      if (response.code !== 0) throw new Error(response.message)
+
+      Taro.showToast({ title: '已记录', icon: 'none' })
+      setSelectedKey(null)
+      setNote('')
+      onSaved?.()
+    } catch (error) {
+      console.error('[mood] 情绪打卡失败', error)
+      Taro.showToast({ title: '记录失败，请稍后再试', icon: 'none' })
+    } finally {
+      // 成败都要放开，否则一次失败会让按钮永久失效
+      setSaving(false)
+    }
+  }
 
   return (
     <View className="w-full p-4 bg-card rounded-[32px] border border-[#D8E2DB] flex flex-col gap-4">
@@ -1073,16 +1112,26 @@ export function MoodCheckinCard({
             className="w-full min-h-[96px] text-sm leading-5 text-[#2E2822]"
             value={note}
             maxlength={160}
+            placeholder="想补充的话可以写在这里（选填）"
+            placeholderClass="text-[#A9A29B]"
             onInput={(event) => setNote(event.detail.value)}
           />
         </View>
       </View>
 
-      {/* 这里原本有一个「同步到 AI 情绪日历」按钮，但它只把本地一个 synced 标志置为 true，
-          不发任何请求——一个看起来会写入、实际什么都不做的控件。后端也确认没有
-          /api/baby/mood/checkin 这个端点（AnalysisController 里只有 mood/calendar 与
-          mood/checkin-options）。做不了的事就不该给一个能点的按钮。
-          等后端补上打卡端点，再把按钮接回去。 */}
+      {/* 提交按钮。此前这里有一个「同步到 AI 情绪日历」的按钮，只改本地一个标志、
+          不发任何请求；后端当时也没有 /api/baby/mood/checkin。端点补齐后按真实契约接上：
+          提交 → 写一条 mood_entries → 回调让页面刷新日历。 */}
+      <View
+        className={`w-full py-4 rounded-full flex items-center justify-center bg-tertiary ${
+          saving ? 'opacity-60' : 'active:opacity-80'
+        }`}
+        onClick={submit}
+      >
+        <Text className="text-base text-[#ffffff] font-semibold">
+          {saving ? '记录中…' : '记录今日心情'}
+        </Text>
+      </View>
     </View>
   )
 }

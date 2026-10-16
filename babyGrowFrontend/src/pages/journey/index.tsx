@@ -1,4 +1,5 @@
 import { View, Text, ScrollView } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import BottomTabBar from '@/components/BottomTabBar'
 import Icon from '@/components/Icon'
@@ -59,6 +60,9 @@ export default function Journey() {
   // 今日菜单来自服务端缓存（毫秒级，不等 AI）
   const [menu, setMenu] = useState<MenuTodayResponse | null>(null)
   const [menuLoading, setMenuLoading] = useState(true)
+
+  // 取成局部变量再判空：后面要在点击回调里用它，闭包里重新读 menu 会丢掉非空收窄。
+  const menuReason = menu?.reason ?? ''
 
   const loadMenu = () => {
     getTodayMenu()
@@ -224,12 +228,27 @@ export default function Journey() {
 
           {/* Today's Menu —— 内容由后端预生成，首页只读缓存 */}
           <View className="w-full flex flex-col gap-4 overflow-hidden">
-            <View className="flex justify-between items-end px-1">
+            <View className="flex justify-between items-center px-1">
               <Text className="text-stone-900 text-xl font-semibold">Today's Menu</Text>
-              {menu?.reason ? (
-                <Text className="text-neutral-500 text-xs flex-1 text-right pl-3" numberOfLines={2}>
-                  {menu.reason}
-                </Text>
+              {/* 说明文字改成点击弹出。
+                  后端给的 reason 常常是一整段（例如「4个月以下宝宝不建议添加辅食…
+                  知识库检索当前不可用…因此不生成辅食推荐」），直接铺在标题右边既把
+                  标题挤掉，也把一段「解释」当成了正文。收成一个 info 小圆点，
+                  需要时再展开——它是次要信息，不该占首屏的主视线。 */}
+              {menuReason ? (
+                <View
+                  className="w-5 h-5 shrink-0 rounded-full border border-outline-variant flex items-center justify-center"
+                  onClick={() =>
+                    Taro.showModal({
+                      title: '今日推荐说明',
+                      content: menuReason,
+                      showCancel: false,
+                      confirmText: '知道了',
+                    })
+                  }
+                >
+                  <Text className="text-xs font-bold text-on-surface-variant">i</Text>
+                </View>
               ) : null}
             </View>
 

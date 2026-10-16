@@ -7,6 +7,8 @@ import { http } from '@/api/request'
 import type {
   GetMoodCalendarResponse,
   GetMoodCheckinOptionsResponse,
+  MoodCheckinParams,
+  MoodCheckinResponse,
 } from '@/types/mood'
 
 /**
@@ -29,7 +31,17 @@ export function getMoodCheckinOptions() {
   return http.get<GetMoodCheckinOptionsResponse>('/api/baby/mood/checkin-options')
 }
 
-// 这里原本还有 moodCheckin / getMoodJournal 两个函数，指向
-// /api/baby/mood/checkin 与 /api/baby/mood/journal——后端都没有（AnalysisController
-// 里 mood 只有 calendar 与 checkin-options 两个 GET）。前端还有一个「同步到 AI 情绪日历」
-// 的按钮看着像在调用它们，实际只改本地状态。两者都已移除，等后端补上端点再接。
+/**
+ * 情绪打卡。
+ *
+ * 后端 `POST /api/baby/mood/checkin` 会写一条 mood_entries；宝宝由服务端从登录态解析，
+ * 所以参数里没有 babyId。
+ */
+export function moodCheckin(params: MoodCheckinParams) {
+  return http.post<MoodCheckinResponse>('/api/baby/mood/checkin', { ...params })
+}
+
+// 这里原先还有 moodCheckin / getMoodJournal 两个函数，指向
+// /api/baby/mood/checkin 与 /api/baby/mood/journal——后者后端从来没有过
+// （AnalysisController 里 mood 只有 calendar 与 checkin-options），已随类型一并删除。
+// checkin 现在有真实端点，所以按上面的真实契约重新接上。

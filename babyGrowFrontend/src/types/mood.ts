@@ -54,35 +54,21 @@ export interface GetMoodCheckinOptionsResponse {
   options: MoodCheckinOption[]
 }
 
-/** 情绪打卡请求 */
+/**
+ * 情绪打卡请求。
+ *
+ * 刻意**没有 babyId**：宝宝由服务端从登录态解析。此前这里留着一个 babyId 字段，
+ * 是 mock 时代的形状，与真实接口不符——收下它就得再校验归属，不如不收。
+ */
 export interface MoodCheckinParams {
-  babyId: string
   mood: 'happy' | 'clingy' | 'discomfort'
-  note?: string
-}
-
-/** 情绪打卡响应 */
-export interface MoodCheckinResponse {
-  id: string
-  mood: string
-  note?: string
-  createdAt: string
-}
-
-/** 获取情绪手账请求参数 */
-export interface GetMoodJournalParams {
-  babyId: string
+  /** 补记过去某天时传 YYYY-MM-DD；缺省为今天 */
   date?: string
+  note?: string
 }
 
-/** 获取情绪手账响应 */
-export interface GetMoodJournalResponse {
+/** 情绪打卡响应：落到哪一天、哪一档。前端据此刷新日历 */
+export interface MoodCheckinResponse {
   date: string
-  moodTag: string
-  entries: Array<{
-    id: string
-    title: string
-    content: string
-    createdAt: string
-  }>
+  mood: string
 }

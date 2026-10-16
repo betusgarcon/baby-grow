@@ -7,6 +7,8 @@ import com.babygrow.backend.analysis.dto.AnalysisDtos.GrowthTrendResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MonthlyDietResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCalendarResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinOptionsResponse;
+import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinRequest;
+import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.SleepCircadianResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.SleepEvolutionResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.WeeklyDietResponse;
@@ -16,6 +18,7 @@ import com.babygrow.backend.repository.RecordRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -120,6 +123,13 @@ public class AnalysisController {
     @GetMapping("/mood/checkin-options")
     public ApiResponse<MoodCheckinOptionsResponse> moodCheckinOptions() {
         return ApiResponse.ok(moodService.checkinOptions());
+    }
+
+    /** 情绪打卡。宝宝由登录态解析，请求体里没有 babyId */
+    @PostMapping("/mood/checkin")
+    public ApiResponse<MoodCheckinResponse> moodCheckin(@AuthenticationPrincipal Long userId,
+                                                        @RequestBody MoodCheckinRequest request) {
+        return ApiResponse.ok(moodService.checkin(userId, request));
     }
 
     // ── 维护 ──────────────────────────────────────────────

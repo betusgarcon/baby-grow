@@ -200,11 +200,6 @@ export default function FamilyMemoriesPage() {
             icon="search"
             title="No memories found"
             description="Try adjusting your filters to find those special moments."
-            actionText="Adjust Filters"
-            onAction={() => {
-              setDraftFilters(filters)
-              setFilterOpen(true)
-            }}
           />
         )}
         </AsyncSection>

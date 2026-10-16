@@ -6,7 +6,6 @@ import PageHeader from '@/components/PageHeader'
 import BottomTabBar from '@/components/BottomTabBar'
 import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
-import RecordSheet from '@/components/RecordSheet'
 import Icon from '@/components/Icon'
 import { handleBottomTabNavigation } from '@/utils/analysisNavigation'
 import { useAppState, loadWishes, removeWish, addWish } from '@/store'
@@ -16,7 +15,6 @@ import { wishesEmptyCopy, type Wish, type WishKind } from '@/store/wishes'
 export default function WishesListPage() {
   // 心愿来自 store：删掉、新建之后离开页面再回来依然保留
   const { wishes, status, babyHeader } = useAppState()
-  const [recordOpen, setRecordOpen] = useState(false)
   /** 新建心愿的草稿。为 null 时表单不显示 */
   const [draft, setDraft] = useState<{ title: string; description: string; goal: string; kind: WishKind } | null>(
     null,
@@ -126,8 +124,6 @@ export default function WishesListPage() {
               icon="star"
               title={wishesEmptyCopy.title}
               description={wishesEmptyCopy.description}
-              actionText="去记录一条"
-              onAction={() => setRecordOpen(true)}
             />
           )}
 
@@ -221,13 +217,6 @@ export default function WishesListPage() {
           )}
         </AsyncSection>
       </View>
-
-      {/* 记录弹层由页面自己持有；接上后会回调刷新列表 */}
-      <RecordSheet
-        visible={recordOpen}
-        onClose={() => setRecordOpen(false)}
-        onSaved={() => setRecordOpen(false)}
-      />
     </PageContainer>
   )
 }

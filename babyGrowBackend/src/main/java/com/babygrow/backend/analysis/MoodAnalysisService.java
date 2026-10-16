@@ -6,19 +6,25 @@ import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCalendarDay;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCalendarResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinOption;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinOptionsResponse;
+import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinRequest;
+import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodLegendItem;
+import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.MoodEntryEntity;
 import com.babygrow.backend.repository.MoodEntryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** 情绪分析。 */
 @Service
@@ -26,6 +32,13 @@ public class MoodAnalysisService {
 
     /** 连续同种情绪达到这个天数才算「一段」，用于高亮——单天波动不值得标记 */
     private static final int PATTERN_RUN_DAYS = 3;
+
+    /** mood_entries.note 是 VARCHAR(255)，超了会在写库时才炸成 409 */
+    private static final int NOTE_MAX_LENGTH = 255;
+
+    /** 打卡允许的三档，与 ck_mood_entries_mood 约束、以及下发给前端的选项一致 */
+    private static final Set<String> CHECKIN_MOODS = Set.of(
+            MoodEntryEntity.MOOD_HAPPY, MoodEntryEntity.MOOD_CLINGY, MoodEntryEntity.MOOD_DISCOMFORT);
 
     private static final List<MoodLegendItem> LEGENDS = List.of(
             new MoodLegendItem("开心", "bg-[#CFD8C7]"),
@@ -84,6 +97,56 @@ public class MoodAnalysisService {
     }
 
     /**
+     * 情绪打卡：直接写一条情绪记录。
+     *
+     * <p>与「AI 从记录里抽出的情绪」共用同一张 {@code mood_entries}，区别只在
+     * {@code record_id}——打卡没有来源记录，所以留空。日历是按 {@code occurred_at}
+     * 落在哪一天聚合的，因此打卡默认写「此刻」，也允许指定日期补记。
+     */
+    @Transactional
+    public MoodCheckinResponse checkin(Long userId, MoodCheckinRequest request) {
+        // 用 requireWritableBaby 而不是 requireBaby：viewer 是只读角色，不该能写。
+        // 宝宝也从登录态解析——请求体里刻意没有 babyId（见 MoodCheckinRequest 的说明）。
+        BabyEntity baby = accessService.requireWritableBaby(userId);
+
+        String mood = request.mood() == null ? "" : request.mood().trim();
+        if (!CHECKIN_MOODS.contains(mood)) {
+            throw BizException.badRequest("请选择一种情绪：开心 / 黏人烦躁 / 身体不适");
+        }
+
+        LocalDate day = parseDay(request.date());
+
+        String note = request.note() == null ? null : request.note().trim();
+        if (note != null && note.isEmpty()) {
+            note = null;
+        }
+        if (note != null && note.length() > NOTE_MAX_LENGTH) {
+            throw BizException.badRequest("备注最多 " + NOTE_MAX_LENGTH + " 个字");
+        }
+
+        // 今天用「此刻」而不是当天 0 点：日历只按天聚合，两者落在同一格，
+        // 但记下真实时刻更贴近「刚打卡」这件事。补记过去则取那一天的开始。
+        Instant occurredAt = day.equals(LocalDate.now())
+                ? Instant.now()
+                : AnalysisSupport.startOfDay(day);
+
+        moodRepository.save(MoodEntryEntity.of(baby.getId(), null, occurredAt, mood, null, null, note));
+
+        return new MoodCheckinResponse(day.toString(), mood);
+    }
+
+    private static LocalDate parseDay(String value) {
+        if (value == null || value.isBlank()) {
+            return LocalDate.now();
+        }
+        try {
+            return LocalDate.parse(value.trim());
+        } catch (DateTimeParseException ex) {
+            throw BizException.badRequest("日期格式应为 YYYY-MM-DD");
+        }
+    }
+
+    /**
      * 组装日历网格。
      *
      * <p><b>必须补前导空位</b>：前端是 {@code grid-cols-7} 平铺渲染，且表头以周一开头。
@@ -102,7 +165,6 @@ public class MoodAnalysisService {
             }
         }
 
-        LocalDate today = LocalDate.now();
         for (int day = 1; day <= target.lengthOfMonth(); day++) {
             String mood = moodByDay.get(day);
             cells.add(new MoodCalendarDay(day, mood == null ? "empty" : mood, null));

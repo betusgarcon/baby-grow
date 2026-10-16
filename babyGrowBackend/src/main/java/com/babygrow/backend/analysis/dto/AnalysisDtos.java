@@ -173,6 +173,21 @@ public final class AnalysisDtos {
     public record MoodCheckinOptionsResponse(List<MoodCheckinOption> options) {
     }
 
+    /**
+     * 情绪打卡请求。
+     *
+     * <p><b>刻意不收 babyId</b>：宝宝由服务端从登录态解析。客户端的 babyId 无法被信任，
+     * 收了就得再校验一次归属，而不收则根本不存在这个问题。
+     *
+     * <p>{@code date} 是 {@code YYYY-MM-DD}，用于补记过去某天；缺省为今天。
+     */
+    public record MoodCheckinRequest(String mood, String date, String note) {
+    }
+
+    /** 打卡结果。回「落到哪一天、哪一档」，前端据此刷新日历 */
+    public record MoodCheckinResponse(String date, String mood) {
+    }
+
     /** 生长指标的量纲，供服务内部使用 */
     public enum Metric {
         HEIGHT("height", "Height", "cm", "Height (cm)"),

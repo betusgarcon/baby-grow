@@ -59,14 +59,10 @@ export default function JourneyMilestonesPage() {
   // 空态是独立业务状态，由数据条件驱动，而不是写死一张截图。
   const state: SectionState = visibleMilestones.length > 0 ? 'content' : 'empty'
 
-  const resetFilters = () => {
-    setMonth(ALL_MONTHS)
-    // 年份也要一起还原，且还原成**页面默认值**（当年）而不是空。
-    // 此前漏了这一行：选了别的年份把列表滤空之后，点「重置筛选」月份和关键词都回来了，
-    // 列表却仍然是空的，看起来像重置无效。
-    setYear(String(new Date().getFullYear()))
-    setKeyword('')
-  }
+  // 这里原先有一个 resetFilters，只被空态里的「Reset filters」按钮调用。
+  // 那个按钮是多余的：空态最常见的情形就是**什么都没筛**（月=All、年=当年、关键词为空）
+  // 而宝宝还没有里程碑——此时点「重置筛选」不做任何事，反而让人以为「是筛选条件挡住了数据」。
+  // 按钮和这个函数一并删掉。月份/年份/关键词在顶部筛选卡里本来就能逐个改回。
 
   return (
     <PageContainer
@@ -112,8 +108,6 @@ export default function JourneyMilestonesPage() {
               icon="star"
               title="No milestones yet"
               description="Try a different month or keyword, or record a moment to see it here."
-              actionText="Reset filters"
-              onAction={resetFilters}
             />
           )}
         </View>

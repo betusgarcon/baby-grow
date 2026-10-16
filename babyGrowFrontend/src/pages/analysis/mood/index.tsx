@@ -48,7 +48,10 @@ export default function AnalysisMoodPage() {
         skeletonBlocks={1}
         skeletonHeight={120}
       >
-        {checkin.data ? <MoodCheckinCard options={checkin.data.options} /> : null}
+        {checkin.data ? (
+          // 打卡写完之后重新取一次日历，否则刚记的那天不会立刻出现在格子里
+          <MoodCheckinCard options={checkin.data.options} onSaved={calendar.retry} />
+        ) : null}
       </AsyncSection>
     </AnalysisLayout>
   )

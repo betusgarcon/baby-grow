@@ -195,6 +195,20 @@ export default function BabyProfilePage() {
     setMode('view')
   }
 
+  /**
+   * 一条偏好都没有时，「Add Preference」要直接出现在查看态。
+   *
+   * 原先它只在偏好管理态渲染，而进入管理态只能靠右上角的「Edit All」——
+   * 于是「没有偏好」这个最需要「添加」的状态下，页面上反而没有任何添加入口。
+   */
+  const showAddPreference = isManagingPreferences || preferences.length === 0
+
+  /** 空列表时没有「Edit All」可点，所以这里顺带把页面切进偏好管理态，编辑器才渲染得出来 */
+  const startAddPreference = () => {
+    if (!isManagingPreferences) beginEditing('preferences')
+    setDraft({ label: '', value: '' })
+  }
+
   const renderPreference = (preference: ProfilePreference, probe: boolean) => (
     <View id={probe ? 'preference-probe' : undefined}>
       <PreferenceCard
@@ -276,12 +290,16 @@ export default function BabyProfilePage() {
         <View className="flex flex-col gap-3">
           <View className="flex items-center justify-between px-1 pt-2">
             <Text className="text-xl font-semibold text-on-surface">Preferences</Text>
-            <Text
-              className="text-sm font-semibold text-on-surface-variant"
-              onClick={() => (isManagingPreferences ? cancel() : beginEditing('preferences'))}
-            >
-              {isManagingPreferences ? 'Done' : 'Edit All'}
-            </Text>
+            {/* 一条偏好都没有时不显示 Edit All：那种状态下唯一该做的动作是「添加」，
+                而「进入管理态」本身没有可管理的东西。有偏好时才需要它来做排序/编辑/删除。 */}
+            {preferences.length > 0 ? (
+              <Text
+                className="text-sm font-semibold text-on-surface-variant"
+                onClick={() => (isManagingPreferences ? cancel() : beginEditing('preferences'))}
+              >
+                {isManagingPreferences ? 'Done' : 'Edit All'}
+              </Text>
+            ) : null}
           </View>
 
           {isManagingPreferences && slotHeight > 0 ? (
@@ -323,7 +341,7 @@ export default function BabyProfilePage() {
             </View>
           )}
 
-          {isManagingPreferences ? (
+          {showAddPreference ? (
             draft ? (
               <View className="w-full box-border p-4 rounded-3xl border border-outline-variant flex flex-col gap-3">
                 {/* 输入框给足高度，否则 hint 文字会被上下裁掉 */}
@@ -356,22 +374,31 @@ export default function BabyProfilePage() {
                   }
                 />
 
-                <View className="flex items-center justify-end gap-4">
-                  <Text
-                    className="text-base font-semibold text-on-surface-variant"
+                {/* 保存 / 取消做成两个真按钮，而不是两个文字链接。
+                    取消用 bg-surface-container-high 与页面底色区分开——它此前完全没有
+                    背景色，和页面一样，看上去不像一个可点的操作。 */}
+                <View className="flex items-center gap-3">
+                  <View
+                    className="flex-1 py-3 rounded-full bg-surface-container-high flex items-center justify-center"
                     onClick={() => setDraft(null)}
                   >
-                    取消
-                  </Text>
-                  <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
-                    {draft.id ? '保存' : '添加'}
-                  </Text>
+                    <Text className="text-base font-semibold text-on-surface">取消</Text>
+                  </View>
+
+                  <View
+                    className="flex-1 py-3 rounded-full bg-tertiary flex items-center justify-center"
+                    onClick={commitDraft}
+                  >
+                    <Text className="text-base font-semibold text-[#ffffff]">
+                      {draft.id ? '保存' : '添加'}
+                    </Text>
+                  </View>
                 </View>
               </View>
             ) : (
               <View
                 className="w-full box-border py-4 rounded-full border border-dashed border-outline flex items-center justify-center gap-2"
-                onClick={() => setDraft({ label: '', value: '' })}
+                onClick={startAddPreference}
               >
                 <Icon name="add-circle" className="w-5 h-5" />
                 <Text className="text-base font-semibold text-on-surface-variant">
@@ -388,8 +415,13 @@ export default function BabyProfilePage() {
               Save Changes
             </PrimaryButton>
 
-            <View className="py-3 flex items-center justify-center" onClick={cancel}>
-              <Text className="text-base font-semibold text-on-surface-variant">Cancel</Text>
+            {/* 取消要与页面底色区分开。此前它没有任何背景色、和页面一样，
+                看上去不像一个可点的操作（也是用户反馈的问题）。 */}
+            <View
+              className="py-3 rounded-full bg-surface-container-high flex items-center justify-center"
+              onClick={cancel}
+            >
+              <Text className="text-base font-semibold text-on-surface">Cancel</Text>
             </View>
           </View>
         ) : null}

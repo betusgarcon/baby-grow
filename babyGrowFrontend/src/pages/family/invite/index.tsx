@@ -29,19 +29,31 @@ export default function FamilyInvitePage() {
   return (
     <PageContainer
       header={
-        <PageHeader
-          showBack
-          title="成员加入设置"
-          right={
-            <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
-              <Text className="text-caption font-semibold text-on-surface">长辈视角</Text>
-              <Icon name="eye" className="w-4 h-4" />
-            </View>
-          }
-        />
+        // 这里原先在 right 里挂了一个「长辈视角」胶囊。两个问题：把居中的长标题
+        // 「成员加入设置」挤到重叠，而且它压根没有 onClick——点了没有任何反应。
+        // 已把它移到内容区，做成真正可点的入口（见下方）。
+        <PageHeader showBack title="成员加入设置" />
       }
     >
       <View className="flex flex-col gap-6">
+        {/* 长辈视角：这一页是管理视角，那边是受邀亲友看到的样子，属于预览入口。 */}
+        <View
+          className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex items-center justify-between"
+          onClick={() => navigateToRoute('family-invited-view')}
+        >
+          <View className="flex items-center gap-3">
+            <View className="w-10 h-10 shrink-0 rounded-full bg-tertiary-fixed flex items-center justify-center">
+              <Icon name="eye" className="w-5 h-5" />
+            </View>
+            <View className="flex flex-col">
+              <Text className="text-base font-bold text-on-surface">长辈视角</Text>
+              <Text className="text-caption text-on-surface-variant">预览受邀亲友看到的界面</Text>
+            </View>
+          </View>
+
+          <Icon name="chevron-right" className="w-2 h-3" />
+        </View>
+
         <View className="flex flex-col gap-3">
           <Text className="text-sm font-semibold text-on-surface-variant px-1">预设亲友身份</Text>
 

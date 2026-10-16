@@ -32,7 +32,18 @@ export default function ProfileInfoCard({
   const isAge = item.key === 'age'
   const valueIndex = Math.max(item.options?.indexOf(item.value) ?? 0, 0)
 
-  const valueNode = <Text className="text-base font-semibold text-on-surface">{item.value}</Text>
+  // 取值为空时把这一行的名称当提示显示出来。
+  //
+  // 这一行平时只显示取值、不显示文字标签（图标本身已经说明了是什么），但**空值**时
+  // 就只剩一个图标了——用户看不出这是哪一项，更不知道该怎么填。所以只在空值时补上
+  // label，有值时仍按原设计只留取值。
+  const hasValue = Boolean(item.value && item.value.trim())
+
+  const valueNode = hasValue ? (
+    <Text className="text-base font-semibold text-on-surface">{item.value}</Text>
+  ) : (
+    <Text className="text-base text-on-surface-variant">{item.label}（未填写）</Text>
+  )
 
   return (
     <View
