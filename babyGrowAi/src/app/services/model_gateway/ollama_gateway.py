@@ -14,7 +14,12 @@ import ollama
 from pydantic import BaseModel
 
 from app.config import get_settings
-from app.services.model_gateway.base import BaseModelGateway, ModelRequest, ModelResponse
+from app.services.model_gateway.base import (
+    BaseModelGateway,
+    ModelOutputTruncatedError,
+    ModelRequest,
+    ModelResponse,
+)
 from app.telemetry import get_tracer
 
 tracer = get_tracer("model_gateway.ollama")
@@ -78,6 +83,10 @@ class OllamaModelGateway(BaseModelGateway):
             "top_p": settings.ai_top_p,
             "num_ctx": settings.ai_num_ctx,
         }
+        # 输出上限由路由层按 task 解析后传进来（见 router._resolve_max_tokens）。
+        # 放在 request.options 之前，让调用方仍能覆盖。
+        if request.max_tokens is not None:
+            opts["num_predict"] = request.max_tokens
         if request.options:
             opts.update(request.options)
 
@@ -131,6 +140,18 @@ class OllamaModelGateway(BaseModelGateway):
                 )
 
             response_dict = raw.model_dump() if hasattr(raw, "model_dump") else dict(raw)
+
+            # 截断检测：Ollama 用 done_reason == "length" 表示撞到了 num_predict。
+            # 与 OpenAI 侧同理——响应是「成功」的，正文却断在半句上。
+            # done_reason 在较老的 Ollama 版本上可能不存在，取不到就不判定。
+            if response_dict.get("done_reason") == "length":
+                span.set_attribute("error", True)
+                span.set_attribute("error.message", "output truncated (done_reason=length)")
+                raise ModelOutputTruncatedError(
+                    f"输出被 num_predict={request.max_tokens} 截断"
+                    f"（model={model}, task={request.task}）"
+                )
+
             msg = _extract_message_from_ollama_response(response_dict)
             content = msg.get("content", "")
             tool_calls = msg.get("tool_calls", [])

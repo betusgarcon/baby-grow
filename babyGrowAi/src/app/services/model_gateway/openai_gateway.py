@@ -13,7 +13,12 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 
 from app.config import get_settings
-from app.services.model_gateway.base import BaseModelGateway, ModelRequest, ModelResponse
+from app.services.model_gateway.base import (
+    BaseModelGateway,
+    ModelOutputTruncatedError,
+    ModelRequest,
+    ModelResponse,
+)
 from app.telemetry import get_tracer
 
 tracer = get_tracer("model_gateway.openai")
@@ -167,6 +172,9 @@ class OpenAIModelGateway(BaseModelGateway):
         }
         if schema:
             kwargs["response_format"] = self._response_format(schema)
+        # 输出上限由路由层按 task 解析后传进来（见 router._resolve_max_tokens）。
+        if request.max_tokens is not None:
+            kwargs["max_tokens"] = request.max_tokens
         if request.tools:
             kwargs["tools"] = request.tools
             kwargs["tool_choice"] = "auto"
@@ -193,6 +201,19 @@ class OpenAIModelGateway(BaseModelGateway):
             # For non-streaming, extract usage and content.
             if not request.stream:
                 choice = raw.choices[0] if raw.choices else None
+
+                # 截断检测。finish_reason == "length" 表示撞到了 max_tokens：HTTP 200，
+                # 但正文断在半句上——对 JSON 约束的输出几乎必然解析失败。
+                # 抛出去让路由层加倍预算重试，比把坏 JSON 交给下游清楚得多。
+                # （推理模型尤其容易走到这里：思考过程先把预算吃光。）
+                if choice is not None and getattr(choice, "finish_reason", None) == "length":
+                    span.set_attribute("error", True)
+                    span.set_attribute("error.message", "output truncated (finish_reason=length)")
+                    raise ModelOutputTruncatedError(
+                        f"输出被 max_tokens={request.max_tokens} 截断"
+                        f"（model={model}, task={request.task}）"
+                    )
+
                 # `or ""`：工具调用型的响应里 message.content 是 None（内容都在
                 # tool_calls 上），后面 `len(content) // 4` 会直接抛 TypeError。
                 # 同时 ModelResponse.content 声明为 str，None 会在下游各处漏出去。

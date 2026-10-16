@@ -29,6 +29,22 @@ class ModelRequest:
     preferred_provider: str | None = None
     preferred_model: str | None = None
     max_latency_ms: int | None = None
+    # 输出上限（token）。None 表示由路由层按 task 解析；调用方一般不要设它——
+    # 它存在的意义是让路由层在**输出被截断时能加倍重试**，见 ModelOutputTruncatedError。
+    max_tokens: int | None = None
+
+
+class ModelOutputTruncatedError(RuntimeError):
+    """模型输出撞到了 max_tokens 上限，正文被截断。
+
+    为什么值得单独一个异常类型：被截断的响应**看起来是成功的**——HTTP 200、
+    finish_reason 是 "length" 而不是 "stop"，正文是一个断在半句上的 JSON。
+    交给下游就是一次莫名其妙的 JSON 解析失败；而对 JSON schema 约束的输出，
+    截断几乎必然导致解析失败。
+
+    有了这个类型，路由层可以把它和「网络抖动」区分开：网络问题用退避重试，
+    而截断**重试同样的请求只会再截断一次**——必须加大预算才有意义。
+    """
 
 
 @dataclass

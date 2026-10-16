@@ -36,6 +36,11 @@ class RoutingRule(BaseModel):
     primary: RoutingTarget
     fallback: list[RoutingTarget] = []
     timeout_ms: int = 60_000
+    # 该 task 的输出上限。None 表示回落到全局的 AI_MAX_TOKENS。
+    #
+    # 上限必须挂在 task 上而不是全局一个数：抽取要几百个 token 就够，食谱生成
+    # 要两千多——一个全局值必然要么截断食谱、要么管不住抽取。
+    max_tokens: int | None = None
 
 
 class RoutingConfig(BaseModel):

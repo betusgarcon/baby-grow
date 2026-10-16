@@ -51,6 +51,12 @@ class Settings(BaseSettings):
     # LLM behavior
     # -----------------------------------------------------------------------
     ai_timeout: int = Field(default=60, alias="AI_TIMEOUT")
+    # 输出上限的**兜底值**：只有没在路由规则里指定 max_tokens 的 task 才会用到它。
+    # 各 task 的上限现在挂在 RoutingRule 上（见 model_gateway/router.py），因为抽取和
+    # 食谱的输出量差一个数量级，一个全局数按不住。
+    #
+    # 撞到这个上限时不会被静默截断：provider 会抛 ModelOutputTruncatedError，
+    # 路由层再把上限加倍重试（最多两次）。所以它是一道成本闸门，不是正确性风险。
     ai_max_tokens: int = Field(default=1024, alias="AI_MAX_TOKENS")
     ai_temperature: float = Field(default=0.1, alias="AI_TEMPERATURE")
     ai_top_p: float = Field(default=0.8, alias="AI_TOP_P")

@@ -2,10 +2,16 @@ package com.babygrow.backend.family;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.domain.BabyEntity;
+import com.babygrow.backend.domain.FamilyEntity;
 import com.babygrow.backend.domain.FamilyMemberEntity;
 import com.babygrow.backend.domain.UserEntity;
+import com.babygrow.backend.family.FamilyDtos.CreateFamilyRequest;
+import com.babygrow.backend.family.FamilyDtos.CreatedFamilyResponse;
 import com.babygrow.backend.family.FamilyDtos.MemberView;
+import com.babygrow.backend.repository.BabyRepository;
 import com.babygrow.backend.repository.FamilyMemberRepository;
+import com.babygrow.backend.repository.FamilyRepository;
 import com.babygrow.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +38,12 @@ public class FamilyService {
     /** family_members.display_name 是 VARCHAR(64) */
     private static final int DISPLAY_NAME_MAX_LENGTH = 64;
 
+    /** babies.name 是 VARCHAR(64) */
+    private static final int BABY_NAME_MAX_LENGTH = 64;
+
+    /** 家庭名不专门收集：用户关心的是宝宝，家庭只是权限容器 */
+    private static final String DEFAULT_FAMILY_NAME = "我的家庭";
+
     /** 头像底色轮换。展示层的东西，但契约要求接口下发 */
     private static final String[] AVATAR_CLASSES = {
             "bg-family-clay", "bg-family-sage", "bg-family-lilac", "bg-family-poster"};
@@ -40,13 +54,73 @@ public class FamilyService {
     private final FamilyAccessService accessService;
     private final FamilyMemberRepository memberRepository;
     private final UserRepository userRepository;
+    private final FamilyRepository familyRepository;
+    private final BabyRepository babyRepository;
 
     public FamilyService(FamilyAccessService accessService,
                          FamilyMemberRepository memberRepository,
-                         UserRepository userRepository) {
+                         UserRepository userRepository,
+                         FamilyRepository familyRepository,
+                         BabyRepository babyRepository) {
         this.accessService = accessService;
         this.memberRepository = memberRepository;
         this.userRepository = userRepository;
+        this.familyRepository = familyRepository;
+        this.babyRepository = babyRepository;
+    }
+
+    /**
+     * 创建家庭并开好宝宝档案。**真实用户首次进入应用时走这条路。**
+     *
+     * <p>此前家庭是登录时自动建的，见 {@code AuthService.login} 的说明：那会让首次登录
+     * 必然产出一个孤儿家庭，并把被邀请的人永远挡在 {@link #accept} 之外。现在创建是
+     * 一个显式动作，用户在这里第一次给档案命名。
+     *
+     * <p>不做「已有家庭也能再建一个」：一个用户同时只能在一个家庭里 active（数据库有
+     * 部分唯一索引兜着），允许多建只会得到一个说不清状态的账号。
+     */
+    @Transactional
+    public CreatedFamilyResponse create(Long userId, CreateFamilyRequest request) {
+        if (!memberRepository.findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE).isEmpty()) {
+            throw BizException.badRequest("你已经有家庭了");
+        }
+
+        String babyName = request.babyName() == null ? "" : request.babyName().trim();
+        if (babyName.isEmpty()) {
+            throw BizException.badRequest("请填写宝宝的名字");
+        }
+        // babies.name 是 VARCHAR(64)
+        if (babyName.length() > BABY_NAME_MAX_LENGTH) {
+            throw BizException.badRequest("宝宝名字最多 " + BABY_NAME_MAX_LENGTH + " 个字");
+        }
+
+        FamilyEntity family = familyRepository.save(
+                FamilyEntity.ownedBy(userId, DEFAULT_FAMILY_NAME));
+        memberRepository.save(FamilyMemberEntity.active(
+                family.getId(), userId, FamilyMemberEntity.ROLE_ADMIN));
+
+        BabyEntity baby = BabyEntity.inFamily(family.getId(), babyName);
+        baby.setBirthday(parseBirthday(request.birthday()));
+        BabyEntity saved = babyRepository.save(baby);
+
+        log.info("用户 {} 创建了家庭 {}（宝宝 {}）", userId, family.getId(), saved.getId());
+
+        return new CreatedFamilyResponse(family.getId(), saved.getId());
+    }
+
+    /**
+     * 生日选填。格式不对时按「没填」处理而不是报错——创建家庭这一步不该因为一个
+     * 可选字段把用户卡住，他之后可以在画像页补。
+     */
+    private static LocalDate parseBirthday(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(raw.trim());
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
     }
 
     @Transactional(readOnly = true)

@@ -23,6 +23,9 @@ export default defineAppConfig({
     'pages/analysis/diet-week/index',
     'pages/analysis/diet-month/index',
     'pages/analysis/mood/index',
+    // 引导页刻意**不放在第一位**：pages 的第一项是小程序的启动页，
+    // 这里必须保持 journey 作首屏，引导页由 app.ts 在「没有家庭」时 reLaunch 过去。
+    'pages/onboarding/index',
   ],
   window: {
     backgroundTextStyle: 'light',

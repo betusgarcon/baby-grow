@@ -3,6 +3,8 @@ package com.babygrow.backend.family;
 import com.babygrow.backend.common.ApiResponse;
 import com.babygrow.backend.family.FamilyDtos.AcceptInviteRequest;
 import com.babygrow.backend.family.FamilyDtos.AcceptedResponse;
+import com.babygrow.backend.family.FamilyDtos.CreateFamilyRequest;
+import com.babygrow.backend.family.FamilyDtos.CreatedFamilyResponse;
 import com.babygrow.backend.family.FamilyDtos.InviteRequest;
 import com.babygrow.backend.family.FamilyDtos.MemberIdRequest;
 import com.babygrow.backend.family.FamilyDtos.MemberView;
@@ -28,6 +30,18 @@ public class FamilyController {
     public FamilyController(FamilyService familyService, PosterService posterService) {
         this.familyService = familyService;
         this.posterService = posterService;
+    }
+
+    /**
+     * 创建家庭（含宝宝档案）。
+     *
+     * <p>这是**没有家庭的新用户**的第一站：此前家庭是登录时自动建好的，现在需要用户
+     * 显式创建，并在这一步给出宝宝的名字。
+     */
+    @PostMapping
+    public ApiResponse<CreatedFamilyResponse> create(@AuthenticationPrincipal Long userId,
+                                                     @RequestBody CreateFamilyRequest request) {
+        return ApiResponse.ok(familyService.create(userId, request));
     }
 
     @GetMapping("/members")
