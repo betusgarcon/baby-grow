@@ -150,6 +150,11 @@ public class FamilyMemberEntity {
         return inviteExpiresAt;
     }
 
+    /** 邀请人（创建这条 pending 行的用户）。凭口令预览邀请时要据此取邀请人昵称 */
+    public Long getInvitedBy() {
+        return invitedBy;
+    }
+
     public String getAvatarClass() {
         return avatarClass;
     }

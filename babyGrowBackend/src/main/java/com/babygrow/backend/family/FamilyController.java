@@ -5,6 +5,7 @@ import com.babygrow.backend.family.FamilyDtos.AcceptInviteRequest;
 import com.babygrow.backend.family.FamilyDtos.AcceptedResponse;
 import com.babygrow.backend.family.FamilyDtos.CreateFamilyRequest;
 import com.babygrow.backend.family.FamilyDtos.CreatedFamilyResponse;
+import com.babygrow.backend.family.FamilyDtos.InvitePreview;
 import com.babygrow.backend.family.FamilyDtos.InviteRequest;
 import com.babygrow.backend.family.FamilyDtos.MemberIdRequest;
 import com.babygrow.backend.family.FamilyDtos.MemberView;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -67,6 +69,17 @@ public class FamilyController {
     public ApiResponse<MemberView> invite(@AuthenticationPrincipal Long userId,
                                           @RequestBody InviteRequest request) {
         return ApiResponse.ok(familyService.invite(userId, request.name(), request.role()));
+    }
+
+    /**
+     * 凭口令预览邀请。
+     *
+     * <p>受邀者在接受之前用它看到「这是哪个宝宝的空间 / 给的是什么权限 / 口令还有没有效」。
+     * 与下面的接受接口分开，是因为预览必须是只读的、而且不能建立任何关系。
+     */
+    @GetMapping("/invite")
+    public ApiResponse<InvitePreview> previewInvite(@RequestParam String code) {
+        return ApiResponse.ok(familyService.previewInvite(code));
     }
 
     /** 受邀者凭口令加入 */

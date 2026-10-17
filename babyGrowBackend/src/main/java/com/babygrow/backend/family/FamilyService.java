@@ -8,6 +8,7 @@ import com.babygrow.backend.domain.FamilyMemberEntity;
 import com.babygrow.backend.domain.UserEntity;
 import com.babygrow.backend.family.FamilyDtos.CreateFamilyRequest;
 import com.babygrow.backend.family.FamilyDtos.CreatedFamilyResponse;
+import com.babygrow.backend.family.FamilyDtos.InvitePreview;
 import com.babygrow.backend.family.FamilyDtos.MemberView;
 import com.babygrow.backend.repository.BabyRepository;
 import com.babygrow.backend.repository.FamilyMemberRepository;
@@ -200,11 +201,7 @@ public class FamilyService {
     /** 受邀者凭口令加入。此时才把这条 pending 行挂到自己的账号上。 */
     @Transactional
     public FamilyDtos.AcceptedResponse accept(Long userId, String code) {
-        if (code == null || code.isBlank()) {
-            throw BizException.badRequest("请填写邀请口令");
-        }
-
-        FamilyMemberEntity invite = memberRepository.findByInviteTokenForUpdate(code.trim().toUpperCase())
+        FamilyMemberEntity invite = memberRepository.findByInviteTokenForUpdate(normalizeCode(code))
                 .filter(member -> FamilyMemberEntity.STATUS_PENDING.equals(member.getStatus()))
                 .orElseThrow(() -> BizException.notFound("邀请口令无效或已被使用"));
 
@@ -225,6 +222,56 @@ public class FamilyService {
         log.info("用户 {} 凭口令加入家庭 {}", userId, invite.getFamilyId());
 
         return new FamilyDtos.AcceptedResponse(invite.getFamilyId(), invite.getRole());
+    }
+
+    /**
+     * 凭口令预览一条邀请，供受邀者在接受之前确认。
+     *
+     * <p>刻意**不要求成员身份**——这正是它的用途；但要求登录（口令是凭据，而这里
+     * 只回展示信息，不建立任何关系）。
+     *
+     * <p>不加写锁：预览是只读的，没有必要和接受路径争同一把锁。
+     */
+    @Transactional(readOnly = true)
+    public InvitePreview previewInvite(String code) {
+        FamilyMemberEntity invite = memberRepository.findByInviteToken(normalizeCode(code))
+                .filter(member -> FamilyMemberEntity.STATUS_PENDING.equals(member.getStatus()))
+                .orElseThrow(() -> BizException.notFound("邀请口令无效或已被使用"));
+
+        String babyName = babyRepository.findFirstByFamilyIdOrderByIdAsc(invite.getFamilyId())
+                .map(BabyEntity::getName)
+                .orElse("");
+
+        Instant expiresAt = invite.getInviteExpiresAt();
+        boolean expired = expiresAt != null && expiresAt.isBefore(Instant.now());
+
+        return new InvitePreview(
+                babyName,
+                invite.getDisplayName(),
+                invite.getRole(),
+                inviterNickname(invite.getInvitedBy()),
+                expiresAt == null ? null : expiresAt.toString(),
+                expired);
+    }
+
+    /** 口令大小写不敏感：后端按大写存，用户手抄时经常写成小写 */
+    private static String normalizeCode(String code) {
+        if (code == null || code.isBlank()) {
+            throw BizException.badRequest("请填写邀请口令");
+        }
+        return code.trim().toUpperCase();
+    }
+
+    /** 邀请人的昵称。目前通常为 null，见 {@link InvitePreview} 的说明 */
+    private String inviterNickname(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+
+        return userRepository.findById(userId)
+                .map(UserEntity::getNickname)
+                .filter(name -> name != null && !name.isBlank())
+                .orElse(null);
     }
 
     /* ------------------------------------------------------------------ */

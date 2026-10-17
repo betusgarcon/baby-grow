@@ -39,6 +39,25 @@ public final class FamilyDtos {
     public record AcceptedResponse(Long familyId, String role) {
     }
 
+    /**
+     * 凭口令预览一条邀请。
+     *
+     * <p>受邀者在**接受之前**就该看清这是谁的空间、给的是哪种权限、口令还有没有效。
+     * 没有这份数据时，落地页只能拿本机的宝宝名去渲染——而在受邀者的设备上他还没有
+     * 家庭，那个名字是空的，于是显示成「宝宝」的通用欢迎页，看不出是谁发的。
+     *
+     * <p>{@code inviterName} 目前**通常为 null**：{@code users.nickname} 从未被采集过
+     * （采集微信昵称需要在隐私指引里声明「用户信息」类型，本项目刻意没有声明）。
+     * 保留字段而不是省略，是为了等昵称采集补上之后它自动开始有值。
+     */
+    public record InvitePreview(String babyName,
+                                String inviteeName,
+                                String role,
+                                String inviterName,
+                                String expiresAt,
+                                boolean expired) {
+    }
+
     public record MemberListResponse(List<MemberView> members) {
     }
 

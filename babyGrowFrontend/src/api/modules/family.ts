@@ -36,6 +36,33 @@ export function acceptInvite(code: string) {
   return http.post<{ familyId: number; role: string }>('/api/family/invite/accept', { code })
 }
 
+/**
+ * 凭口令预览邀请（接受之前就能看到这条邀请是什么）。
+ *
+ * 没有它的时候，受邀落地页只能拿**本机的**宝宝名渲染——而受邀者此时还没有家庭，
+ * 那个名字是空的，于是显示成「宝宝」的通用欢迎页，看不出是谁发的。
+ */
+export interface InvitePreview {
+  /** 对方家庭里的宝宝名字 */
+  babyName: string
+  /** 邀请人给受邀者预设的称呼，如「外婆」 */
+  inviteeName: string | null
+  role: FamilyRole
+  /**
+   * 邀请人的昵称。
+   *
+   * **目前几乎总是 null**：`users.nickname` 从未被采集过（采集微信昵称需要在隐私指引里
+   * 声明「用户信息」类型，本项目刻意没有声明）。字段留着是为了昵称采集补上后自动有值。
+   */
+  inviterName: string | null
+  expiresAt: string | null
+  expired: boolean
+}
+
+export function getInvitePreview(code: string) {
+  return http.get<InvitePreview>('/api/family/invite', { code })
+}
+
 /** 分享海报：内容由后端按宝宝档案与最近一条记录推导 */
 export interface PosterData {
   title: string
