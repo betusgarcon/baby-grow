@@ -3,6 +3,7 @@ package com.babygrow.backend.record;
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.analysis.RecordProjectionService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.RecordEntity;
 import com.babygrow.backend.domain.TimelineEntryEntity;
@@ -29,15 +30,18 @@ public class TimelineService {
     private final RecordRepository recordRepository;
     private final TimelineEntryRepository timelineRepository;
     private final RecordProjectionService projectionService;
+    private final Messages messages;
 
     public TimelineService(FamilyAccessService accessService,
                            RecordRepository recordRepository,
                            TimelineEntryRepository timelineRepository,
-                           RecordProjectionService projectionService) {
+                           RecordProjectionService projectionService,
+                           Messages messages) {
         this.accessService = accessService;
         this.recordRepository = recordRepository;
         this.timelineRepository = timelineRepository;
         this.projectionService = projectionService;
+        this.messages = messages;
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +85,7 @@ public class TimelineService {
                 type,
                 request.filterKey() == null ? "health" : request.filterKey(),
                 TimelineEntries.formatTime(occurredAt),
-                request.badge() == null ? "LOG" : request.badge(),
+                request.badge() == null ? messages.get("ui.record.badge.log") : request.badge(),
                 request.title(),
                 request.description(),
                 request.image(),

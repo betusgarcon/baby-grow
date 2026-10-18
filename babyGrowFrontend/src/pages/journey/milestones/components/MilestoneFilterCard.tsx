@@ -61,7 +61,7 @@ export default function MilestoneFilterCard({
           <Input
             className="w-full text-label-md text-on-surface"
             value={keyword}
-            placeholder="Search milestones..."
+            placeholder={t('milestones.searchPlaceholder')}
             placeholderClass="text-on-surface-variant"
             onInput={(event) => onKeywordChange(event.detail.value)}
           />

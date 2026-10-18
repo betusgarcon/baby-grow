@@ -2,6 +2,7 @@ package com.babygrow.backend.vaccine;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.BabyVaccinationEntity;
 import com.babygrow.backend.repository.BabyVaccinationRepository;
@@ -32,13 +33,16 @@ public class VaccineService {
     private final FamilyAccessService accessService;
     private final BabyVaccinationRepository vaccinationRepository;
     private final MediaAssetRepository mediaRepository;
+    private final Messages messages;
 
     public VaccineService(FamilyAccessService accessService,
                           BabyVaccinationRepository vaccinationRepository,
-                          MediaAssetRepository mediaRepository) {
+                          MediaAssetRepository mediaRepository,
+                          Messages messages) {
         this.accessService = accessService;
         this.vaccinationRepository = vaccinationRepository;
         this.mediaRepository = mediaRepository;
+        this.messages = messages;
     }
 
     /**
@@ -61,7 +65,7 @@ public class VaccineService {
 
         if (target == null) {
             // 还没有任何记录时，第一次编辑就开一条；否则用户会对着一个保存不了的页面发愣
-            target = BabyVaccinationEntity.scheduled(baby.getId(), "Vaccination");
+            target = BabyVaccinationEntity.scheduled(baby.getId(), messages.get("ui.journey.vaccine.defaultName"));
         }
 
         if (patch.title() != null && !patch.title().isBlank()) {

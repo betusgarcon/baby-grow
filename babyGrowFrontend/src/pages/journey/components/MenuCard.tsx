@@ -30,6 +30,7 @@ const MEAL_LABEL_KEYS: Record<string, MessageKey> = {
   lunch: 'menu.meal.lunch',
   dinner: 'menu.meal.dinner',
   snack: 'menu.meal.snack',
+  meal: 'menu.meal.other',
 }
 
 export default function MenuCard({ icon, mealType, title, description }: MenuCardProps) {

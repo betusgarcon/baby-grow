@@ -207,9 +207,9 @@ public class JourneyService {
     private List<MetricSummaryView> metrics(List<GrowthMeasurementEntity> measurements,
                                             LocalDate weekStart, LocalDate today) {
         List<MetricSummaryView> result = new ArrayList<>();
-        result.add(metric(measurements, "weight", "Weight", "metric-weight", "kg",
+        result.add(metric(measurements, "weight", messages.get("ui.metric.weight"), "metric-weight", "kg",
                 GrowthMeasurementEntity::getWeightKg, weekStart, today));
-        result.add(metric(measurements, "height", "Height", "metric-height", "cm",
+        result.add(metric(measurements, "height", messages.get("ui.metric.height"), "metric-height", "cm",
                 GrowthMeasurementEntity::getHeightCm, weekStart, today));
         return result;
     }

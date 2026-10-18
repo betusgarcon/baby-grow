@@ -125,8 +125,8 @@ export default function JourneyCalendarPage() {
           ) : (
             <EmptyState
               icon="calendar"
-              title="Nothing on this day"
-              description="No vaccines or milestones were recorded for the selected date."
+              title={t('calendar.empty')}
+              description={t('calendar.emptyDesc')}
             />
           )}
         </View>

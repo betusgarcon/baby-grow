@@ -6,14 +6,8 @@ interface MilestoneCardProps {
   image: string
 }
 
-const milestoneStyles: Record<string, string> = {
-  'First Smile': 'bg-rose-100',
-  'Grasping': 'bg-stone-50',
-  'Rolling Over': 'bg-rose-100',
-}
-
 export default function MilestoneCard({ title, date, image }: MilestoneCardProps) {
-  const bgColor = milestoneStyles[title] || 'bg-rose-100'
+  const bgColor = 'bg-rose-100'
 
   return (
     <View className={`flex-1 p-3 ${bgColor} rounded-[28px] flex flex-col items-center gap-2 shrink-0`}>

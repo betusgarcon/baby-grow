@@ -1,5 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import { t } from '@/i18n'
 import { splitEmphasis } from '@/store/wishes'
 
 /**
@@ -12,7 +13,7 @@ export default function ExpertTipCard({ tip }: { tip: string }) {
       <View className="flex items-center gap-2">
         <Icon name="expert-tip" className="w-5 h-5" />
         <Text className="text-caption font-semibold text-analysis-metric-label" style={{ letterSpacing: '0.08em' }}>
-          EXPERT TIP
+          {t('wishes.expertTip')}
         </Text>
       </View>
 

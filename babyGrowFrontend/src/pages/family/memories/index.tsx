@@ -10,7 +10,13 @@ import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadMemories, setPosterMemories } from '@/store'
 import { t } from '@/i18n'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
-import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './memoriesData'
+import {
+  TONE_CLASS,
+  defaultFilters,
+  memoryCategoryLabel,
+  type FilterKey,
+  type MemoryItem,
+} from './memoriesData'
 
 /**
  * 判断一条记忆是否落在所选时间范围内。
@@ -75,7 +81,7 @@ export default function FamilyMemoriesPage() {
       if (filters.media && item.media !== filters.media) return false
 
       if (query) {
-        const haystack = `${item.title} ${item.category} ${tags.join(' ')}`.toLowerCase()
+        const haystack = `${item.title} ${memoryCategoryLabel(item.category)} ${tags.join(' ')}`.toLowerCase()
         if (!haystack.includes(query)) return false
       }
 
@@ -149,7 +155,7 @@ export default function FamilyMemoriesPage() {
         </View>
 
         <View className={`self-start py-1 px-3 rounded-full ${tone.pill}`}>
-          <Text className="text-caption font-semibold">{item.category}</Text>
+          <Text className="text-caption font-semibold">{memoryCategoryLabel(item.category)}</Text>
         </View>
 
         <Text className="text-card-title text-on-surface">{item.title}</Text>
@@ -164,7 +170,7 @@ export default function FamilyMemoriesPage() {
       header={
         <PageHeader
           showBack
-          title="Memories"
+          title={t('memories.title')}
           right={
             <View
               className="w-9 h-9 flex items-center justify-center"

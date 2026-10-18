@@ -71,7 +71,7 @@ export default function JourneyMilestonesPage() {
       header={
         <PageHeader
           showBack
-          title="Milestones"
+          title={t('milestones.title')}
           profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
         />
       }
@@ -107,8 +107,8 @@ export default function JourneyMilestonesPage() {
           ) : (
             <EmptyState
               icon="star"
-              title="No milestones yet"
-              description="Try a different month or keyword, or record a moment to see it here."
+              title={t('milestones.empty')}
+              description={t('milestones.emptyDesc')}
             />
           )}
         </View>

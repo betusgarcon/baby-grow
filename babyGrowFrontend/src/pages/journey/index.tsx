@@ -18,6 +18,7 @@ import AsyncSection from '@/components/AsyncSection'
 import RecordSheet from '@/components/RecordSheet'
 import { getTodayMenu, type MenuTodayResponse } from '@/api/modules/menu'
 import { t } from '@/i18n'
+import { monthDayLabel } from '@/i18n/formatters'
 import {
   useAppState,
   loadTimeline,
@@ -34,8 +35,6 @@ const LOG_ICON: Record<string, string> = {
   sleep: 'moon',
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
 /**
  * 今天（本地时区的 YYYY-MM-DD）。
  *
@@ -48,10 +47,8 @@ function localToday(): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
 }
 
-/** '2026-10-28' → 'Scheduled for Oct 28' */
 function scheduledLabel(iso: string): string {
-  const [, month, day] = iso.split('-')
-  return `Scheduled for ${MONTHS[Number(month) - 1] ?? ''} ${Number(day)}`
+  return t('journey.scheduledFor', { date: monthDayLabel(iso) })
 }
 
 export default function Journey() {
@@ -99,7 +96,7 @@ export default function Journey() {
       
       {/* 2. 顶部 Header：改走公共 PageHeader，不再自己量一遍系统信息 */}
       <PageHeader
-        title="Journey"
+        title={t('journey.title')}
         profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
         onProfilePress={() => navigateToRoute('baby-profile-view')}
         right={

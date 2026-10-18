@@ -121,18 +121,18 @@ export default function AnalysisGrowthPage() {
             </View>
 
             <ChartCard
-              title="Monthly Diet Composition"
-              subtitle="Monthly dietary ratio summary"
-              extra="Solids Exploring"
+              title={t('analysis.monthlyDietComposition')}
+              subtitle={t('analysis.monthlyDietSubtitle')}
+              extra={t('analysis.solidsExploring')}
             >
               <DietDonutSummary
                 ratio={pageData.monthlyDiet.ratio}
-                title="Formula"
+                title={t('analysis.formula')}
                 legends={pageData.monthlyDiet.legends}
               />
               <IngredientToleranceCard
                 title={pageData.monthlyDiet.badge}
-                badge={`${pageData.monthlyDiet.ingredientCount} items`}
+                badge={t(pageData.monthlyDiet.ingredientCount === 1 ? 'analysis.itemsCount.one' : 'analysis.itemsCount.other', { count: pageData.monthlyDiet.ingredientCount })}
                 ingredients={pageData.monthlyDiet.ingredients}
               />
             </ChartCard>

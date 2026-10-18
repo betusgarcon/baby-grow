@@ -90,9 +90,9 @@ export default function JourneyListPage() {
         ) : (
           <EmptyState
             icon="calendar"
-            title="No records here"
-            description="This month has no events of the selected type yet."
-            actionText="Show all events"
+            title={t('list.empty')}
+            description={t('list.emptyDesc')}
+            actionText={t('list.showAll')}
             onAction={() => setActiveFilter('all')}
           />
         )}

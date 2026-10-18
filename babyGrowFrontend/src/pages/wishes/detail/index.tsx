@@ -68,7 +68,7 @@ export default function WishChecklistDetailPage() {
   // hooks 必须先于任何提前 return 调用，所以「找不到心愿」的判断放在这之后
   if (!wish) {
     return (
-      <PageContainer header={<PageHeader showBack title="Wishes" />}>
+      <PageContainer header={<PageHeader showBack title={t('wishes.title')} />}>
         {/* 可能还在加载、可能加载失败、也可能真的不存在，交给 AsyncSection 区分 */}
         <AsyncSection status={status.wishes} onRetry={loadWishes}>
           <EmptyState
@@ -170,7 +170,7 @@ export default function WishChecklistDetailPage() {
 
   return (
     <PageContainer
-      header={<PageHeader showBack title="Wishes" />}
+      header={<PageHeader showBack title={t('wishes.title')} />}
     >
       <View className="flex flex-col gap-6">
         <WishHero wish={wish} onRetryCover={retryCover} />
@@ -180,12 +180,12 @@ export default function WishChecklistDetailPage() {
             className="text-caption font-medium text-on-surface-variant"
             style={{ letterSpacing: '0.08em' }}
           >
-            CURRENT PROGRESS
+            {t('wishes.currentProgress')}
           </Text>
 
           <View className="flex items-end gap-2">
             <Text className="text-page-title text-on-surface">
-              {Math.round(progress * 100)}% Completed
+              {t('wishes.completedPercent', { percent: Math.round(progress * 100) })}
             </Text>
             <Text className="text-caption text-on-surface-variant">
               ({doneCount} of {wishTarget(wish)})
@@ -205,7 +205,7 @@ export default function WishChecklistDetailPage() {
             >
               <Icon name="edit-muted" className="w-3.5 h-3.5" />
               <Text className="text-label font-semibold text-on-tertiary-container">
-                {isManaging ? 'Done' : 'Edit List'}
+                {isManaging ? t('common.done') : t('wishes.editList')}
               </Text>
             </View>
           </View>
@@ -290,7 +290,7 @@ export default function WishChecklistDetailPage() {
               )}
 
               <Text className="px-1 text-caption text-on-surface-variant">
-                Drag items to change their priority in your wish list.
+                {t('wishes.dragHint')}
               </Text>
             </>
           ) : null}

@@ -32,7 +32,7 @@ export default function WishCounterDetailPage() {
 
   if (!wish || !wish.counter) {
     return (
-      <PageContainer header={<PageHeader showBack title="Wishes" />}>
+      <PageContainer header={<PageHeader showBack title={t('wishes.title')} />}>
         {/* 可能还在加载、可能加载失败、也可能真的不存在 */}
         <AsyncSection status={status.wishes} onRetry={loadWishes}>
           <EmptyState
@@ -87,7 +87,7 @@ export default function WishCounterDetailPage() {
 
   return (
     <PageContainer
-      header={<PageHeader showBack title="Wishes" />}
+      header={<PageHeader showBack title={t('wishes.title')} />}
     >
       <View className="flex flex-col gap-6">
         {/* 与详情页共用同一个头图组件；这里原本也有一份逐字重复的渐变占位 */}
@@ -103,7 +103,7 @@ export default function WishCounterDetailPage() {
             </View>
 
             <Text className="text-card-title text-secondary">
-              {Math.round(progress * 100)}% Completed
+              {t('wishes.completedPercent', { percent: Math.round(progress * 100) })}
             </Text>
           </View>
 
@@ -122,7 +122,7 @@ export default function WishCounterDetailPage() {
                 className="text-caption text-on-surface-variant"
                 style={{ letterSpacing: '0.1em' }}
               >
-                QUICK ADD
+                {t('wishes.quickAdd')}
               </Text>
 
               <View
@@ -149,7 +149,7 @@ export default function WishCounterDetailPage() {
         {mode === 'edit' ? (
           <>
             <PrimaryButton block onClick={saveEdit}>
-              Save Changes
+              {t('common.saveChanges')}
             </PrimaryButton>
 
             <View className="py-3 flex items-center justify-center" onClick={cancelEdit}>

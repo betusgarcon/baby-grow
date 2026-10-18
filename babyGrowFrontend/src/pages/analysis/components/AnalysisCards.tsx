@@ -152,8 +152,8 @@ export function ChartCard({
 
 export function GrowthTrendChart({
   points,
-  chartLabel = 'Weight (kg)',
-  comparisonLabel = 'WHO Boy Standard',
+  chartLabel = t('analysis.chart.weight'),
+  comparisonLabel = t('analysis.whoBoyStandard'),
 }: {
   points: Array<GrowthChartPoint | GrowthComparisonChartPoint>
   chartLabel?: string
@@ -209,11 +209,11 @@ export function MetricFooter({
     <View className="w-full p-4 rounded-[24px] flex flex-row items-center justify-between" style={{ backgroundColor: '#F3F5EE' }}>
       <View className="flex-1 flex-col gap-1 pr-2">
           <View className="pr-2">
-            <Text className="text-sm text-[#8C827A]">Age:</Text>
+            <Text className="text-sm text-[#8C827A]">{t('analysis.agePrefix')}</Text>
             <Text className="text-[11px] font-medium text-[#2E2822]">{age}</Text>
           </View>
           <View className="pr-2">
-            <Text className="text-sm text-[#8C827A]">Value: </Text>
+            <Text className="text-sm text-[#8C827A]">{t('analysis.valuePrefix')}</Text>
             <Text className="text-[11px] font-medium text-[#2E2822]">{value}</Text>   
           </View>
       </View>
@@ -379,7 +379,7 @@ export function MilestoneProgressCard({ items }: { items: MilestoneItem[] }) {
       <View className="flex items-center justify-between px-1">
         <Text className="text-label font-medium tracking-wide text-[#585A55]">{t('analysis.milestoneProgress')}</Text>
         <Text className="text-label font-semibold text-[#6B775F]">
-          {items.filter((item) => item.unlocked).length} Unlocked
+          {t('analysis.unlockedCount', { count: items.filter((item) => item.unlocked).length })}
         </Text>
       </View>
       <View className="flex items-start justify-between gap-3">
@@ -581,7 +581,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
         ...current,
         {
           id: `draft-${draftSequence.current}`,
-          title: current.length % 2 === 0 ? 'Late Nap' : 'Quick Snooze',
+          title: current.length % 2 === 0 ? t('analysis.draft.lateNap') : t('analysis.draft.quickSnooze'),
           start: current.length % 2 === 0 ? '18:10' : '10:20',
           end: current.length % 2 === 0 ? '18:45' : '10:50',
         },
@@ -624,7 +624,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
     // “同步”本质上就是把草稿转成正式日志项，再清空草稿区。
     const newLogs = drafts.map((draft) => ({
       id: `synced-${draft.id}`,
-      title: draft.title || 'Custom Nap',
+      title: draft.title || t('analysis.draft.customNap'),
       range: `${draft.start} — ${draft.end}`,
       duration: formatDuration(draft.start, draft.end),
       icon: 'nap',
@@ -917,7 +917,7 @@ export function MoodCalendarCard({
         <View>
           <Text className="block text-section-title text-[#2E2822]">{calendarTitle}</Text>
           <Text className="block text-sm text-[#8C857D] mt-1">
-            Click to view daily notes and AI diagnostics
+            {t('analysis.moodCalendarHint')}
           </Text>
         </View>
         <View className="relative">

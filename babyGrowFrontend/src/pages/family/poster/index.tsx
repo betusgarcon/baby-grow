@@ -7,6 +7,7 @@ import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.jpg'
 import { posterTemplates, privacyToggles } from '@/store/family'
 import { t } from '@/i18n'
+import { memoryCategoryLabel } from '@/pages/family/memories/memoriesData'
 import { TONE_CLASS } from '../memories/memoriesData'
 import { useAppState } from '@/store'
 import { getPoster } from '@/api/modules/family'
@@ -185,7 +186,7 @@ export default function FamilyPosterPage() {
                   className={`w-full box-border p-3 rounded-2xl flex flex-col gap-2 ${TONE_CLASS[memory.tone].photo}`}
                 >
                   <View className="self-start py-0.5 px-2 rounded-full bg-card">
-                    <Text className="text-caption font-semibold text-on-surface">{memory.category}</Text>
+                    <Text className="text-caption font-semibold text-on-surface">{memoryCategoryLabel(memory.category)}</Text>
                   </View>
 
                   <Text className="text-section-title text-on-surface">{memory.title}</Text>

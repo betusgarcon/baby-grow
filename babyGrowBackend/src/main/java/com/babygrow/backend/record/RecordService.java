@@ -121,7 +121,7 @@ public class RecordService {
                 resolveEntryType(request, media != null, text),
                 media == null ? "health" : "photos",
                 TimelineEntries.formatTime(occurredAt),
-                "AI LOG",
+                messages.get("ui.record.badge.aiLog"),
                 request.title() == null || request.title().isBlank()
                         ? messages.get(DEFAULT_TITLE_KEY) : request.title(),
                 resolveDescription(request, text),

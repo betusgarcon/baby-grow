@@ -82,7 +82,7 @@ export default function JourneyWeeklyInsightPage() {
 
         <View className="flex flex-col gap-3">
           <Text className="text-section-title text-secondary px-1">
-            Developmental Highlights
+            {t('weekly.highlights')}
           </Text>
 
           {data.highlights.map((highlight) => (

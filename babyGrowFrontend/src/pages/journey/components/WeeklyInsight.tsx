@@ -1,5 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import { t } from '@/i18n'
 
 interface WeeklyInsightProps {
   icon?: string // 1. 声明 icon可先属性
@@ -19,7 +20,7 @@ export default function WeeklyInsight({ icon, title, content }: WeeklyInsightPro
           <Icon name={icon || 'star'} className="w-4 h-4" />          
           <Text className="text-eyebrow uppercase">{title}</Text>
         </View>
-        <Text className="text-label font-medium text-secondary underline">More</Text>
+        <Text className="text-label font-medium text-secondary underline">{t('journey.more')}</Text>
       </View>
       <Text className="text-body text-on-surface-variant">{content}</Text>
     </View>

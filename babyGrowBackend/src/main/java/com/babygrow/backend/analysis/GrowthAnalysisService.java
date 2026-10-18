@@ -41,11 +41,6 @@ import java.util.stream.Collectors;
 @Service
 public class GrowthAnalysisService {
 
-    private static final List<TimeRange> TIME_RANGES = List.of(
-            new TimeRange("last3m", "Last 3 Months"),
-            new TimeRange("last6m", "Last 6 Months"),
-            new TimeRange("birth", "Since Birth"));
-
     /** 辅食构成的配色，与情绪图例同一套色板 */
     private static final List<String> CATEGORY_COLORS = List.of(
             "bg-[#CFD8C7]", "bg-[#E7C9B7]", "bg-[#C1CDD3]", "bg-[#D9CFE0]", "bg-[#E6DCC0]");

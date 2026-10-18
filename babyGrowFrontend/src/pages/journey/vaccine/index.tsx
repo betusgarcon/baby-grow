@@ -102,7 +102,7 @@ export default function JourneyVaccinePage() {
 
   const confirmDelete = async () => {
     const result = await Taro.showModal({
-      title: 'Delete this record?',
+      title: t('vaccine.deleteTitle'),
       content: t('vaccine.deleteDesc'),
       confirmText: t('common.delete'),
       confirmColor: '#ba1a1a',
@@ -126,7 +126,7 @@ export default function JourneyVaccinePage() {
   // 而编辑态的「保存」在内容区已经有一份，属重复。分享改到内容底部，
   // 与编辑 / 删除并列——三者都是一个页面级动作，放一起更合理。
   return (
-    <PageContainer header={<PageHeader showBack title="Event Details" />}>
+    <PageContainer header={<PageHeader showBack title={t('vaccine.title')} />}>
       <View className="flex flex-col gap-4">
         <View className="w-full box-border p-6 rounded-3xl bg-surface-container flex flex-col items-center gap-3">
           <View className="w-14 h-14 rounded-full bg-tertiary-fixed flex items-center justify-center">
@@ -218,7 +218,7 @@ export default function JourneyVaccinePage() {
               <Text className="text-caption text-on-secondary-container">{detail.nextNote}</Text>
             </EventSectionCard>
 
-            <EventSectionCard icon="event-notes" title="Notes">
+            <EventSectionCard icon="event-notes" title={t('vaccine.notes')}>
               <View className="flex gap-3">
                 <View className="w-1 rounded-full bg-tertiary" />
                 <Text className="flex-1 text-base text-on-surface-variant">{detail.notes}</Text>

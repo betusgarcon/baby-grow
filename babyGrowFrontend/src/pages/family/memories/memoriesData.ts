@@ -1,3 +1,5 @@
+import { t, type MessageKey } from '@/i18n'
+
 /**
  * 家庭分享·记忆检索的视图数据。
  * 版式与文案取自 design_sources/stitch/family_share/，属上一轮 AI 产物。
@@ -19,6 +21,25 @@ export interface MemoryItem {
   /** 供筛选面板匹配的分类标签，与卡片上展示的 category 不一定同名 */
   tags: string[]
   media: 'Media' | 'Text'
+}
+
+/**
+ * 分类角标。后端存的是规范码（MOMENT / MILESTONE…），显示时才翻译；
+ * 未知取值（用户自定义）保持原样。
+ */
+const CATEGORY_KEYS: Record<string, MessageKey> = {
+  MOMENT: 'memories.catMoment',
+  MEMORY: 'memories.catMemory',
+  PHOTO: 'memories.catPhoto',
+  MILESTONE: 'memories.catMilestone',
+  DIET: 'memories.catDiet',
+  SMILES: 'memories.catSmile',
+  OUTDOOR: 'memories.catOutdoor',
+}
+
+export const memoryCategoryLabel = (category: string): string => {
+  const key = CATEGORY_KEYS[category.trim().toUpperCase()]
+  return key ? t(key) : category
 }
 
 export const TONE_CLASS: Record<MemoryTone, { pill: string; photo: string }> = {
