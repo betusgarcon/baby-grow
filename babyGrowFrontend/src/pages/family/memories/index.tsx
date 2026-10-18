@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadMemories, setPosterMemories } from '@/store'
+import { t } from '@/i18n'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
 import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './memoriesData'
 
@@ -90,7 +91,7 @@ export default function FamilyMemoriesPage() {
 
   const copyLink = async () => {
     await Taro.setClipboardData({ data: 'https://nurture-bloom.app/s/leo-space' })
-    Taro.showToast({ title: '已复制分享链接', icon: 'none' })
+    Taro.showToast({ title: t('memories.linkCopied'), icon: 'none' })
   }
 
   const actionBar =
@@ -101,14 +102,14 @@ export default function FamilyMemoriesPage() {
             <Text className="text-base font-bold text-[#ffffff]">{selected.length}</Text>
           </View>
 
-          <Text className="flex-1 text-base font-semibold text-[#ffffff]">Selected</Text>
+          <Text className="flex-1 text-base font-semibold text-[#ffffff]">{t('memories.selected')}</Text>
 
           <View
             className="py-2 px-4 rounded-full bg-surface-container-high flex items-center gap-1"
             onClick={copyLink}
           >
             <Icon name="link" className="w-4 h-4" />
-            <Text className="text-sm font-semibold text-on-surface">Link</Text>
+            <Text className="text-sm font-semibold text-on-surface">{t('memories.link')}</Text>
           </View>
 
           <View
@@ -120,7 +121,7 @@ export default function FamilyMemoriesPage() {
             }}
           >
             <Icon name="photo-gallery" className="w-4 h-4" />
-            <Text className="text-sm font-semibold text-[#ffffff]">Poster</Text>
+            <Text className="text-sm font-semibold text-[#ffffff]">{t('memories.poster')}</Text>
           </View>
         </View>
       </View>
@@ -184,7 +185,7 @@ export default function FamilyMemoriesPage() {
           <Input
             className="flex-1 text-base text-on-surface"
             value={keyword}
-            placeholder="搜索记忆标题或分类…"
+            placeholder={t('memories.searchPlaceholder')}
             placeholderClass="text-on-surface-variant"
             onInput={(event) => setKeyword(event.detail.value)}
           />
@@ -198,8 +199,8 @@ export default function FamilyMemoriesPage() {
         ) : (
           <EmptyState
             icon="search"
-            title="No memories found"
-            description="Try adjusting your filters to find those special moments."
+            title={t('memories.empty')}
+            description={t('memories.emptyDesc')}
           />
         )}
         </AsyncSection>

@@ -4,6 +4,8 @@ import Taro from '@tarojs/taro'
 import AnalysisChart from '@/components/AnalysisChart'
 import Icon from '@/components/Icon'
 import { moodCheckin } from '@/api/modules/mood'
+import { t } from '@/i18n'
+import { weekdayLabelsMondayFirst } from '@/i18n/formatters'
 import BaseAnalysisCard from './BaseAnalysisCard'
 import {
   DailySleepLogItem,
@@ -164,7 +166,7 @@ export function GrowthTrendChart({
       <View className="flex items-end justify-between text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>
         <View className="flex items-baseline gap-3">
           <Text>{chartLabel}</Text>
-          <Text className="text-xs font-medium text-[#8C857D]">Age (months)</Text>
+          <Text className="text-xs font-medium text-[#8C857D]">{t('analysis.ageMonths')}</Text>
         </View>
         <Text>{comparisonLabel}</Text>
       </View>
@@ -182,11 +184,11 @@ export function GrowthTrendChart({
       <View className="flex items-center gap-5 px-1">
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: analysisColors.highlightOrange }} />
-          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>Baby Trend</Text>
+          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>{t('analysis.babyTrend')}</Text>
         </View>
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: analysisColors.highlightOlive }} />
-          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>WHO Median</Text>
+          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>{t('analysis.whoMedian')}</Text>
         </View>
       </View>
     </View>
@@ -340,14 +342,14 @@ export function IngredientToleranceCard({
           className="px-3 py-1 bg-[#EBE7E2] rounded-full border border-dashed border-[#BFB7AE]"
           onClick={() => setShowComposer(true)}
         >
-          <Text className="text-sm text-[#6D6761]">+ More</Text>
+          <Text className="text-sm text-[#6D6761]">{t('analysis.addMore')}</Text>
         </View>
       </View>
       {showComposer ? (
         <View className="mt-1 p-3 rounded-[24px] bg-white border border-[#DDD7CF] flex flex-col gap-2 shadow-sm">
           <Input
             className="w-full text-sm text-[#2E2822]"
-            placeholder="输入新的食物，比如 Blueberry"
+            placeholder={t('mood.newFoodPlaceholder')}
             value={draftIngredient}
             onInput={(event) => setDraftIngredient(event.detail.value)}
           />
@@ -375,7 +377,7 @@ export function MilestoneProgressCard({ items }: { items: MilestoneItem[] }) {
   return (
     <View className="w-full flex flex-col gap-4">
       <View className="flex items-center justify-between px-1">
-        <Text className="text-sm tracking-wide font-bold text-[#585A55]">MILESTONE PROGRESS</Text>
+        <Text className="text-sm tracking-wide font-bold text-[#585A55]">{t('analysis.milestoneProgress')}</Text>
         <Text className="text-sm font-bold text-[#6B775F]">
           {items.filter((item) => item.unlocked).length} Unlocked
         </Text>
@@ -418,7 +420,7 @@ export function WeeklyMilkChart({
   return (
     <View className="w-full flex flex-col gap-4">
       <View className="flex flex-col gap-1">
-        <Text className="text-base text-[#2E2822]">日均喂养奶量趋势</Text>
+        <Text className="text-base text-[#2E2822]">{t('analysis.dietTrend')}</Text>
         <Text className="text-base text-[#6F6760]">{averageLabel}</Text>
         <Text className="text-base font-bold uppercase text-[#D57C69]">{standardLabel}</Text>
       </View>
@@ -457,8 +459,11 @@ export function CircadianRingCard({
   // 小程序没有错误边界——整页白屏。
   const segments = summary.segments ?? []
   const totalHours = segments.reduce((sum, segment) => sum + segment.value, 0)
-  const nightSegment = segments.find((segment) => segment.label === 'Night Sleep')
-  const napSegment = segments.find((segment) => segment.label === 'Nap Sleep')
+  // 后端（SleepAnalysisService）发的是 "Night" / "Nap"，而这里原先按
+  // "Night Sleep" / "Nap Sleep" 查——所以两段占比一直是 0。两个都认：
+  // 只改前端的话，后端换回长名也不会再坏。
+  const nightSegment = segments.find((segment) => segment.label === 'Night Sleep' || segment.label === 'Night')
+  const napSegment = segments.find((segment) => segment.label === 'Nap Sleep' || segment.label === 'Nap')
 
   // 各段都是 0 时 totalHours 也是 0，0/0 得到 NaN，会原样渲染成 "NaN%"
   const percentOf = (value: number | undefined) =>
@@ -468,12 +473,12 @@ export function CircadianRingCard({
     <BaseAnalysisCard className="overflow-hidden" elevated padded={false}>
       <View className="px-5 pt-4 flex items-start justify-between gap-3">
         <View>
-          <Text className="text-[#8C857D] text-sm font-bold uppercase tracking-[0.2em]">TODAY&apos;S CIRCADIAN RING</Text>
-          <Text className="block text-base text-[#2E2822] mt-1">24-Hour Rhythm</Text>
+          <Text className="text-[#8C857D] text-sm font-bold uppercase tracking-[0.2em]">{t('analysis.circadianRing')}</Text>
+          <Text className="block text-base text-[#2E2822] mt-1">{t('analysis.rhythm')}</Text>
         </View>
         <View className="px-4 py-2 rounded-full flex items-center gap-1.5" style={{ backgroundColor: analysisColors.pillGreenBg }}>
           <Icon name="polar-guide" className="w-4 h-4" />
-          <Text className="text-base whitespace-nowrap" style={{ color: analysisColors.activeText }}>Polar Guide</Text>
+          <Text className="text-base whitespace-nowrap" style={{ color: analysisColors.activeText }}>{t('analysis.sleepGuide')}</Text>
         </View>
       </View>
 
@@ -509,7 +514,7 @@ export function CircadianRingCard({
           {/* 中心内容 */}
           <View className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <View className="text-center w-24 flex flex-col items-center">
-              <Text className="block text-[#8C857D] text-base">Total Sleep</Text>
+              <Text className="block text-[#8C857D] text-base">{t('analysis.totalSleep')}</Text>
               <Text className="block text-[#2E2822] text-lg leading-7 font-semibold">
                 {summary.totalSleepLabel}
               </Text>
@@ -527,7 +532,7 @@ export function CircadianRingCard({
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full bg-[#97A8AF]" />
           <View>
-            <Text className="block text-base text-[#2E2822]">Night</Text>
+            <Text className="block text-base text-[#2E2822]">{t('analysis.night')}</Text>
             <Text className="block text-base text-[#6F6760]">
               {summary.nightLabel} · {percentOf(nightSegment?.value)}%
             </Text>
@@ -537,7 +542,7 @@ export function CircadianRingCard({
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full bg-[#D2C9BC]" />
           <View>
-            <Text className="block text-base text-[#2E2822]">Naps</Text>
+            <Text className="block text-base text-[#2E2822]">{t('analysis.naps')}</Text>
             <Text className="block text-base text-[#6F6760]">
               {summary.napLabel} · {percentOf(napSegment?.value)}%
             </Text>
@@ -631,7 +636,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
       <View className="flex items-center justify-between">
         <View className="flex items-center gap-2">
           <Icon name="daily-sleep-log" className="w-5 h-5" />
-          <Text className="text-lg leading-7 text-[#2E2822]">Daily Sleep Log</Text>
+          <Text className="text-lg leading-7 text-[#2E2822]">{t('analysis.sleepLog')}</Text>
         </View>
         <Text className="text-base text-[#8C857D]">{syncedLogs.length} Records</Text>
       </View>
@@ -664,7 +669,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
       <View className="w-full p-6 bg-card rounded-[32px] border-2 border-dashed border-[#D8DDD8] flex flex-col gap-5">
         <View className="flex items-center gap-2" onClick={handleAddDraft}>
           <Icon name="add-circle" className="w-5 h-5" />
-          <Text className="text-base text-[#2E2822]">Quick Add Log</Text>
+          <Text className="text-base text-[#2E2822]">{t('analysis.quickAdd')}</Text>
         </View>
 
         {drafts.length ? (
@@ -688,7 +693,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
 
                 <View className="flex items-start gap-3">
                   <View className="flex-1 flex flex-col gap-1">
-                    <Text className="text-[#8C857D] text-base">Start</Text>
+                    <Text className="text-[#8C857D] text-base">{t('analysis.start')}</Text>
                     <View className="px-3 py-2 bg-white rounded-md flex items-center justify-between">
                       <Input
                         className="text-base text-[#2E2822]"
@@ -700,7 +705,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
                   </View>
 
                   <View className="flex-1 flex flex-col gap-1">
-                    <Text className="text-[#8C857D] text-base">End</Text>
+                    <Text className="text-[#8C857D] text-base">{t('analysis.end')}</Text>
                     <View className="px-3 py-2 bg-white rounded-md flex items-center justify-between">
                       <Input
                         className="text-base text-[#2E2822]"
@@ -722,7 +727,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
           }`}
           onClick={handleSync}
         >
-          <Text className="text-base text-white">Sync to 24h Rhythm</Text>
+          <Text className="text-base text-white">{t('analysis.syncRhythm')}</Text>
         </View>
       </View>
     </View>
@@ -745,8 +750,8 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
       {/* 标题区域 */}
       <View className="flex items-start justify-between gap-3">
         <View>
-          <Text className="block text-lg leading-7 font-semibold text-[#2E2822]">24h 昼夜睡眠规律演变</Text>
-          <Text className="block text-base text-[#8C857D] mt-1">横轴代表一天 24 小时进程</Text>
+          <Text className="block text-lg leading-7 font-semibold text-[#2E2822]">{t('analysis.sleepEvolution')}</Text>
+          <Text className="block text-base text-[#8C857D] mt-1">{t('analysis.sleepEvolutionHint')}</Text>
         </View>
         {/* 这里原本有一个写死的徽章，文案是「节律趋于合流」。它是一句关于自家宝宝
             睡眠状态的判断，却与任何接口数据无关——每个用户看到的都是同一句话。
@@ -758,9 +763,9 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
         {/* 统一的X轴刻度：首尾标签使用边缘对齐，中间标签使用居中对齐 */}
         <View className="relative h-5">
           {[
-            { hour: 0, label: '0h', sub: '(深夜)', align: 'left' },
+            { hour: 0, label: '0h', sub: t('analysis.deepNight'), align: 'left' },
             { hour: 6, label: '6h', sub: '', align: 'center' },
-            { hour: 12, label: '12h', sub: '(中午)', align: 'center' },
+            { hour: 12, label: '12h', sub: t('analysis.noon'), align: 'center' },
             { hour: 18, label: '18h', sub: '', align: 'center' },
             { hour: 24, label: '24h', sub: '', align: 'right' },
           ].map((item) => {
@@ -830,15 +835,15 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
       <View className="flex items-center justify-center gap-4 flex-wrap">
         <View className="flex items-center gap-1.5">
           <View className="w-3 h-3 rounded-full bg-[#485F65]" />
-          <Text className="text-xs font-medium text-[#4A423B]">长夜觉 (Night)</Text>
+          <Text className="text-xs font-medium text-[#4A423B]">{t('analysis.nightSleep')}</Text>
         </View>
         <View className="flex items-center gap-1.5">
           <View className="w-3 h-3 rounded-full bg-[#8EA584]" />
-          <Text className="text-xs font-medium text-[#4A423B]">白日小睡 (Nap)</Text>
+          <Text className="text-xs font-medium text-[#4A423B]">{t('analysis.napSleep')}</Text>
         </View>
         <View className="flex items-center gap-1.5">
           <View className="w-3 h-3 rounded-full bg-[#E5DFD8] border border-[#D8D2CB]" />
-          <Text className="text-xs font-medium text-[#4A423B]">清醒 (Awake)</Text>
+          <Text className="text-xs font-medium text-[#4A423B]">{t('analysis.awake')}</Text>
         </View>
       </View>
     </View>
@@ -859,18 +864,21 @@ export function MoodCalendarCard({
   // 所以这里把交互状态和视觉映射都集中放在组件内部。
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'happy' | 'clingy' | 'discomfort'>('all')
   const [filterOpen, setFilterOpen] = useState(false)
-  const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日']
+  const weekdayLabels = weekdayLabelsMondayFirst()
 
   // 标题按本地日期算，不写死。原先是「2026/6 情绪日历」——下个月就变成错的，
   // 而且与后端返回的数据没有任何关系（日历渲染的就是当前月）。
   const now = new Date()
-  const calendarTitle = `${now.getFullYear()}/${now.getMonth() + 1} 情绪日历`
+  const calendarTitle = t('mood.calendarTitle', {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+  })
 
   const filterOptions = [
-    { key: 'all', label: '所有' },
-    { key: 'happy', label: '开心' },
-    { key: 'clingy', label: '黏人烦躁' },
-    { key: 'discomfort', label: '身体不适' },
+    { key: 'all', label: t('mood.filter.all') },
+    { key: 'happy', label: t('mood.filter.happy') },
+    { key: 'clingy', label: t('mood.filter.clingy') },
+    { key: 'discomfort', label: t('mood.filter.discomfort') },
   ] as const
 
   const dayStyleMap = {
@@ -1034,7 +1042,7 @@ export function MoodCheckinCard({
     if (saving) return
 
     if (!selectedKey) {
-      Taro.showToast({ title: '请先选择一种情绪', icon: 'none' })
+      Taro.showToast({ title: t('mood.pickFirst'), icon: 'none' })
       return
     }
 
@@ -1047,13 +1055,13 @@ export function MoodCheckinCard({
 
       if (response.code !== 0) throw new Error(response.message)
 
-      Taro.showToast({ title: '已记录', icon: 'none' })
+      Taro.showToast({ title: t('mood.recorded'), icon: 'none' })
       setSelectedKey(null)
       setNote('')
       onSaved?.()
     } catch (error) {
       console.error('[mood] 情绪打卡失败', error)
-      Taro.showToast({ title: '记录失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('common.recordFailed'), icon: 'none' })
     } finally {
       // 成败都要放开，否则一次失败会让按钮永久失效
       setSaving(false)
@@ -1065,9 +1073,9 @@ export function MoodCheckinCard({
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
           <Icon name="more" className="w-5 h-5" />
-          <Text className="text-lg leading-8 font-semibold text-[#2E2822]">情绪打卡</Text>
+          <Text className="text-lg leading-8 font-semibold text-[#2E2822]">{t('mood.checkin')}</Text>
         </View>
-        <Text className="text-sm text-[#8C857D]">选择今日心情并轻松录入</Text>
+        <Text className="text-sm text-[#8C857D]">{t('mood.checkinHint')}</Text>
       </View>
 
       <View className="grid grid-cols-3 gap-3">
@@ -1106,13 +1114,13 @@ export function MoodCheckinCard({
       </View>
 
       <View className="flex flex-col gap-2">
-        <Text className="text-base font-semibold text-[#5F5A53]">手账心情记录（选填）</Text>
+        <Text className="text-base font-semibold text-[#5F5A53]">{t('mood.noteLabel')}</Text>
         <View className="rounded-[28px] bg-[#F4F1EC] p-4">
           <Textarea
             className="w-full min-h-[96px] text-sm leading-5 text-[#2E2822]"
             value={note}
             maxlength={160}
-            placeholder="想补充的话可以写在这里（选填）"
+            placeholder={t('mood.notePlaceholder')}
             placeholderClass="text-[#A9A29B]"
             onInput={(event) => setNote(event.detail.value)}
           />
@@ -1129,7 +1137,7 @@ export function MoodCheckinCard({
         onClick={submit}
       >
         <Text className="text-base text-[#ffffff] font-semibold">
-          {saving ? '记录中…' : '记录今日心情'}
+          {saving ? t('common.saving') : t('mood.submit')}
         </Text>
       </View>
     </View>

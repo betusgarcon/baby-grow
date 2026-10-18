@@ -34,7 +34,7 @@ export default function SleepConsistencyCard({ sleep }: { sleep: SleepConsistenc
       </View>
 
       <View className="w-full flex justify-between">
-        {weekdayLabels.map((label, index) => (
+        {weekdayLabels().map((label, index) => (
           <View key={`${label}-${index}`} className="flex-1 flex justify-center">
             <Text className="text-caption text-on-surface-variant">{label}</Text>
           </View>

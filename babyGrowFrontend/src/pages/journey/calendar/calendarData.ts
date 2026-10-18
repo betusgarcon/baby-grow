@@ -1,5 +1,6 @@
 import type { RouteId } from '@/utils/routes'
 import { daysAgo } from '@/store/timeline'
+import { dayHeadingLabel, monthShortNames, monthYearLabel } from '@/i18n/formatters'
 
 /**
  * 日历页的视图数据。
@@ -30,22 +31,11 @@ export interface CalendarCell {
   dotClasses: string[]
 }
 
-export const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-
-const MONTH_LABELS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
+/**
+ * 表头与月份标签都要按语言生成——所以导出**函数**而不是数组。
+ * 模块级常量会在模块加载时固化成当时的语言，切换语言后不会更新。
+ */
+export { weekdayLabelsSundayFirst as weekdayLabels } from '@/i18n/formatters'
 
 const TONE_DOT_CLASS: Record<CalendarEventTone, string> = {
   vaccine: 'bg-secondary',
@@ -58,7 +48,8 @@ const TONE_DOT_CLASS: Record<CalendarEventTone, string> = {
  */
 const CURRENT_YEAR = new Date().getFullYear()
 
-export const monthLabels = MONTH_LABELS
+/** 月份候选：显示用本地化短名，选择结果仍是 1..12 的序数（不依赖文案） */
+export const monthLabels = () => monthShortNames()
 export const yearOptions = Array.from({ length: 6 }, (_, index) =>
   String(CURRENT_YEAR - 5 + index),
 )
@@ -69,13 +60,9 @@ export const toIsoDate = (year: number, month: number, day: number) =>
   `${year}-${pad(month)}-${pad(day)}`
 
 export const formatMonthLabel = (year: number, month: number) =>
-  `${MONTH_LABELS[month - 1]} ${year}`
+  monthYearLabel(new Date(year, month - 1, 1))
 
-export const formatDayHeading = (isoDate: string) => {
-  const [, month, day] = isoDate.split('-')
-
-  return `${MONTH_LABELS[Number(month) - 1].toUpperCase()} ${Number(day)} HIGHLIGHTS`
-}
+export const formatDayHeading = (isoDate: string) => dayHeadingLabel(isoDate)
 
 /**
  * 生成 6x7 的月历网格。固定 42 格，避免切换月份时高度跳动。

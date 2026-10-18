@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro'
+import { t } from '@/i18n'
 
 /**
  * 全站路由图。
@@ -113,7 +114,7 @@ export const navigateToRoute = (id: RouteId) => {
   const url = routePathMap[id]
 
   if (!url) {
-    Taro.showToast({ title: '该页面待开发', icon: 'none' })
+    Taro.showToast({ title: t('common.comingSoon'), icon: 'none' })
     return
   }
 
@@ -128,7 +129,7 @@ export const switchTabRoute = (id: RouteId) => {
   const url = routePathMap[id]
 
   if (!url) {
-    Taro.showToast({ title: '该页面待开发', icon: 'none' })
+    Taro.showToast({ title: t('common.comingSoon'), icon: 'none' })
     return
   }
 

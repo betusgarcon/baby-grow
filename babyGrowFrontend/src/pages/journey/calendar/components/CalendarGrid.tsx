@@ -10,7 +10,7 @@ export default function CalendarGrid({ cells, onSelectDate }: CalendarGridProps)
   return (
     <View className="w-full box-border p-6 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-card-soft flex flex-col gap-4">
       <View className="w-full flex items-center">
-        {weekdayLabels.map((label, index) => (
+        {weekdayLabels().map((label, index) => (
           <View key={`${label}-${index}`} className="flex-1 flex justify-center">
             <Text className="text-caption text-on-surface-variant">{label}</Text>
           </View>

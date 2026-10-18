@@ -7,6 +7,7 @@ import type { SectionState } from '@/types/common'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
 import { useAppState, loadTimeline } from '@/store'
+import { t } from '@/i18n'
 import AsyncSection from '@/components/AsyncSection'
 import { defaultMonth, groupTimelineByDate, type EventFilterKey } from '@/store/timeline'
 
@@ -103,7 +104,7 @@ export default function JourneyListPage() {
         */}
         {state === 'content' ? (
           <View className="py-4 flex items-center justify-center">
-            <Text className="text-caption text-on-surface-variant">已加载全部记录</Text>
+            <Text className="text-caption text-on-surface-variant">{t('list.allLoaded')}</Text>
           </View>
         ) : null}
         </AsyncSection>

@@ -40,7 +40,8 @@ export interface WeeklyInsight {
   advice: { title: string; content: string }
 }
 
-export const weekdayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+/** 周一开头的七天标签；函数而非数组，避免语言在模块加载时被固化 */
+export { weekdayLabelsMondayFirst as weekdayLabels } from '@/i18n/formatters'
 
 export const weeklyInsight: WeeklyInsight = {
   rangeLabel: 'Oct 12 - Oct 18',

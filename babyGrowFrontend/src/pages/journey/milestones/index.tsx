@@ -6,6 +6,7 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadMilestones } from '@/store'
+import { t } from '@/i18n'
 import type { SectionState } from '@/types/common'
 import babyAvatar from '@/assets/images/baby-journey-img.jpg'
 import MilestoneCard from './components/MilestoneCard'
@@ -114,7 +115,7 @@ export default function JourneyMilestonesPage() {
 
         {/* 同 journey 列表：数据一次取全，没有分页，就不该摆一个假按钮 */}
         <View className="py-md flex items-center justify-center">
-          <Text className="text-body-sm text-on-surface-variant">已加载全部里程碑</Text>
+          <Text className="text-body-sm text-on-surface-variant">{t('milestones.allLoaded')}</Text>
         </View>
       </View>
       </AsyncSection>

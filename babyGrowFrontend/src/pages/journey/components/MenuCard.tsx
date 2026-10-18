@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon' // 引入通用 Icon 组件
+import { t, getLanguage } from '@/i18n'
 
 interface MenuCardProps {
   icon?: string      // 1. 声明可选的 icon 属性
@@ -32,8 +33,10 @@ export default function MenuCard({ icon, mealType, title, description }: MenuCar
    */
   const [expanded, setExpanded] = useState(false)
 
-  // 两行大约放得下这么多字；比这短就没被截断，不用摆「展开」提示
-  const truncated = description.length > 28
+  // 两行大约放得下这么多字；比这短就没被截断，不用摆「展开」提示。
+  // 阈值必须按语言分：中文 28 字的信息量约等于英文 60 个字符，
+  // 用同一个数字会让英文卡片要么永远显示「展开」，要么永远不显示。
+  const truncated = description.length > (getLanguage() === 'en' ? 60 : 28)
 
   return (
     /*
@@ -59,7 +62,9 @@ export default function MenuCard({ icon, mealType, title, description }: MenuCar
       </Text>
 
       {truncated ? (
-        <Text className="text-[10px] text-stone-500">{expanded ? '收起' : '展开全部'}</Text>
+        <Text className="text-[10px] text-stone-500">
+          {expanded ? t('menu.collapse') : t('menu.expand')}
+        </Text>
       ) : null}
     </View>
   )

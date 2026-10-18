@@ -7,6 +7,7 @@ import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import { useAppState, loadCalendarEvents } from '@/store'
+import { t } from '@/i18n'
 import CalendarGrid from './components/CalendarGrid'
 import HighlightCard from './components/HighlightCard'
 import {
@@ -68,7 +69,7 @@ export default function JourneyCalendarPage() {
   return (
     <PageContainer
       background="bg-surface-container-lowest"
-      header={<PageHeader showBack title="日历" />}
+      header={<PageHeader showBack title={t('calendar.title')} />}
     >
       <AsyncSection status={status.calendar} onRetry={loadCalendarEvents} skeletonBlocks={2} skeletonHeight={200}>
       <View className="flex flex-col gap-6">
@@ -81,7 +82,7 @@ export default function JourneyCalendarPage() {
 
           <Picker
             mode="multiSelector"
-            range={[monthLabels, yearOptions]}
+            range={[monthLabels(), yearOptions]}
             value={[month - 1, Math.max(yearOptions.indexOf(String(year)), 0)]}
             onChange={(event) => {
               const [monthIndex, yearIndex] = event.detail.value
