@@ -11,7 +11,10 @@ export interface MemoryItem {
   id: string
   category: string
   title: string
+  /** 展示串，随语言变化；不要拿它做解析或比较 */
   date: string
+  /** 稳定 ISO 日期，时间筛选只认它 */
+  dateIso?: string
   tone: MemoryTone
   /** 供筛选面板匹配的分类标签，与卡片上展示的 category 不一定同名 */
   tags: string[]

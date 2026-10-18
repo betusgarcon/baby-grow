@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * 记忆接口的请求/响应体，与前端 {@code memoriesData.ts} 的 {@code MemoryItem} 对齐。
  *
- * <p>{@code date} 是展示串（"Oct 12, 2023"）——这是前端契约要求的形状；数据库里存的是
- * 真实日期，返回时再格式化。
+ * <p>{@code date} 是展示串（中文「2023年10月12日」/ 英文 "Oct 12, 2023"）；{@code dateIso}
+ * 是稳定的 ISO 日期，前端做时间筛选只能用它——展示串随语言变，解析会静默失效。
  */
 public final class MemoryDtos {
 
@@ -17,6 +17,7 @@ public final class MemoryDtos {
                              String category,
                              String title,
                              String date,
+                             String dateIso,
                              String tone,
                              List<String> tags,
                              String media) {

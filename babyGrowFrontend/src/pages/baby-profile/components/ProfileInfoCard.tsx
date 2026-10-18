@@ -14,6 +14,28 @@ const LABEL_KEYS: Record<ProfileInfoKey, MessageKey> = {
   constellation: 'profile.constellation',
 }
 
+/**
+ * 选项的**提交值**是规范英文（Boy / Aries…），后端按它写库；显示时才翻译。
+ * 不能把翻译后的值当载荷，否则英文界面一保存性别就会变成 null。
+ */
+const OPTION_LABEL_KEYS: Record<string, Record<string, MessageKey>> = {
+  gender: { Boy: 'profile.boy', Girl: 'profile.girl' },
+  constellation: {
+    Aries: 'profile.constellation.aries',
+    Taurus: 'profile.constellation.taurus',
+    Gemini: 'profile.constellation.gemini',
+    Cancer: 'profile.constellation.cancer',
+    Leo: 'profile.constellation.leo',
+    Virgo: 'profile.constellation.virgo',
+    Libra: 'profile.constellation.libra',
+    Scorpio: 'profile.constellation.scorpio',
+    Sagittarius: 'profile.constellation.sagittarius',
+    Capricorn: 'profile.constellation.capricorn',
+    Aquarius: 'profile.constellation.aquarius',
+    Pisces: 'profile.constellation.pisces',
+  },
+}
+
 interface ProfileInfoCardProps {
   item: ProfileInfoItem
   /** 该行是否处于可编辑状态 */
@@ -52,9 +74,14 @@ export default function ProfileInfoCard({
   const hasValue = Boolean(item.value && item.value.trim())
 
   const label = t(LABEL_KEYS[item.key])
+  const optionLabel = (value: string) => {
+    const key = OPTION_LABEL_KEYS[item.key]?.[value]
+    return key ? t(key) : value
+  }
+  const optionLabels = (item.options ?? []).map(optionLabel)
 
   const valueNode = hasValue ? (
-    <Text className="text-base font-semibold text-on-surface">{item.value}</Text>
+    <Text className="text-base font-semibold text-on-surface">{optionLabel(item.value)}</Text>
   ) : (
     <Text className="text-base text-on-surface-variant">
       {t('profile.valueUnset', { label })}
@@ -104,7 +131,7 @@ export default function ProfileInfoCard({
         ) : (
           <Picker
             mode="selector"
-            range={item.options ?? []}
+            range={optionLabels}
             value={valueIndex}
             onChange={(event) => onSelect?.(item.options?.[Number(event.detail.value)] ?? item.value)}
           >

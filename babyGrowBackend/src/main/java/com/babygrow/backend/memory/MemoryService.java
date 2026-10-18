@@ -2,6 +2,7 @@ package com.babygrow.backend.memory;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.FamilyMemberEntity;
 import com.babygrow.backend.domain.MemoryEntity;
 import com.babygrow.backend.memory.MemoryDtos.MemoryCreateRequest;
@@ -22,9 +23,11 @@ import java.util.Set;
 @Service
 public class MemoryService {
 
-    /** 前端契约要的是 "Oct 12, 2023" 这种展示串 */
-    private static final DateTimeFormatter DISPLAY_DATE =
-            DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US);
+    /** 展示串随语言变化；筛选请用 dateIso */
+    private static final DateTimeFormatter EN_DATE =
+            DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter ZH_DATE =
+            DateTimeFormatter.ofPattern("yyyy年M月d日", Locale.SIMPLIFIED_CHINESE);
 
     private static final Set<String> TONES = Set.of("green", "peach", "grey", "blue");
     private static final Set<String> MEDIA_TYPES = Set.of("Media", "Text");
@@ -39,13 +42,16 @@ public class MemoryService {
     private final FamilyAccessService accessService;
     private final MemoryRepository memoryRepository;
     private final ObjectMapper objectMapper;
+    private final Messages messages;
 
     public MemoryService(FamilyAccessService accessService,
                          MemoryRepository memoryRepository,
-                         ObjectMapper objectMapper) {
+                         ObjectMapper objectMapper,
+                         Messages messages) {
         this.accessService = accessService;
         this.memoryRepository = memoryRepository;
         this.objectMapper = objectMapper;
+        this.messages = messages;
     }
 
     /**
@@ -99,10 +105,16 @@ public class MemoryService {
                 String.valueOf(memory.getId()),
                 memory.getCategory(),
                 memory.getTitle(),
-                DISPLAY_DATE.format(memory.getMemoryDate()),
+                displayDate(memory.getMemoryDate()),
+                memory.getMemoryDate().toString(),
                 memory.getTone(),
                 readTags(memory.getTags()),
                 memory.getMedia());
+    }
+
+    private String displayDate(LocalDate date) {
+        return Locale.ENGLISH.getLanguage().equals(messages.locale().getLanguage())
+                ? EN_DATE.format(date) : ZH_DATE.format(date);
     }
 
     private String writeTags(List<String> tags) {
