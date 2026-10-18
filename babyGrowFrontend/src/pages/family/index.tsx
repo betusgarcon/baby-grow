@@ -13,6 +13,7 @@ import highlightImage from '@/assets/images/first-smile-img.jpg'
 import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
 import { useAppState, loadMembers, setMemberRole, removeMember } from '@/store'
+import { t } from '@/i18n'
 import { shareHighlight, withBabyName, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
@@ -42,18 +43,18 @@ export default function FamilyHomePage() {
     // 而界面上的新权限会在下次刷新时变回去。store 现在会在失败时回滚，
     // 所以这里的文案也要跟着说清「已恢复」。
     const saved = await setMemberRole(member.id, draftRole)
-    Taro.showToast({ title: saved ? '已保存' : '保存失败，已恢复原权限', icon: 'none' })
+    Taro.showToast({ title: saved ? t('common.saved') : t('family.roleSaveFailed'), icon: 'none' })
   }
 
   const confirmRemoveMember = async () => {
     if (!editingMember) return
 
     const result = await Taro.showModal({
-      title: `移出「${editingMember.name}」？`,
-      content: '移出后该成员将无法再查看这个空间的内容。',
-      confirmText: '移出',
+      title: t('family.removeTitle', { name: editingMember.name }),
+      content: t('family.removeDesc'),
+      confirmText: t('common.remove'),
       confirmColor: '#ba1a1a',
-      cancelText: '取消',
+      cancelText: t('common.cancel'),
     })
 
     if (!result.confirm) return
@@ -65,7 +66,7 @@ export default function FamilyHomePage() {
     // 他「删了又自己回来了」。
     const removed = await removeMember(member.id)
     if (!removed) {
-      Taro.showToast({ title: '移出失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('common.removeFailed'), icon: 'none' })
     }
   }
 
@@ -80,12 +81,12 @@ export default function FamilyHomePage() {
     const pending = members.find((member) => member.inviteCode)
 
     if (!pending?.inviteCode) {
-      Taro.showToast({ title: '还没有待接受的邀请口令，请先邀请成员', icon: 'none' })
+      Taro.showToast({ title: t('family.noInviteCode'), icon: 'none' })
       return
     }
 
     await Taro.setClipboardData({ data: pending.inviteCode })
-    Taro.showToast({ title: '邀请口令已复制', icon: 'none' })
+    Taro.showToast({ title: t('family.inviteCodeCopied'), icon: 'none' })
   }
 
   return (
@@ -93,21 +94,21 @@ export default function FamilyHomePage() {
       bottomBar={<BottomTabBar activeKey="family" onTabChange={handleBottomTabNavigation} />}
       header={
         <PageHeader
-          title="Family"
+          title={t('family.title')}
           profile={{ avatar: babyHeader.avatar, ageLabel: babyHeader.ageLabel }}
         />
       }
     >
       <View className="flex flex-col gap-6">
         <View className="flex items-center justify-between">
-          <Text className="text-xl font-bold text-on-surface">Family Circle</Text>
+          <Text className="text-xl font-bold text-on-surface">{t('family.circle')}</Text>
 
           <View
             className="py-2 px-4 rounded-full bg-surface-container-high flex items-center gap-2"
             onClick={() => navigateToRoute('family-invite')}
           >
             <Icon name="member-invite" className="w-5 h-5" />
-            <Text className="text-sm font-semibold text-on-surface">Invite</Text>
+            <Text className="text-sm font-semibold text-on-surface">{t('family.invite')}</Text>
           </View>
         </View>
 
@@ -121,9 +122,9 @@ export default function FamilyHomePage() {
             <View className="bg-card rounded-[24px]">
               <EmptyState
                 icon="family-active"
-                title="还没有家人加入"
-                description="邀请家人一起记录，大家的记录会汇总到同一个宝宝下。"
-                actionText="邀请家人"
+                title={t('family.empty')}
+                description={t('family.emptyDesc')}
+                actionText={t('family.inviteFamily')}
                 onAction={() => navigateToRoute('family-invite')}
               />
             </View>
@@ -141,7 +142,7 @@ export default function FamilyHomePage() {
         </AsyncSection>
 
         <View className="flex items-center justify-between">
-          <Text className="text-xl font-bold text-on-surface">What to Share?</Text>
+          <Text className="text-xl font-bold text-on-surface">{t('family.whatToShare')}</Text>
 
           <View
             className="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center"
@@ -176,7 +177,7 @@ export default function FamilyHomePage() {
             </View>
           </View>
 
-          <Text className="text-center text-sm text-on-surface-variant">Long press to share</Text>
+          <Text className="text-center text-sm text-on-surface-variant">{t('family.longPressToShare')}</Text>
 
           <View className="flex items-center gap-3">
             <View
@@ -184,7 +185,7 @@ export default function FamilyHomePage() {
               onClick={copySecureLink}
             >
               <Icon name="link" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-on-surface">Secure Link</Text>
+              <Text className="text-base font-semibold text-on-surface">{t('family.secureLink')}</Text>
             </View>
 
             <View
@@ -192,7 +193,7 @@ export default function FamilyHomePage() {
               onClick={() => navigateToRoute('family-poster')}
             >
               <Icon name="photo-gallery" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-[#ffffff]">Long Image</Text>
+              <Text className="text-base font-semibold text-[#ffffff]">{t('family.longImage')}</Text>
             </View>
           </View>
         </View>

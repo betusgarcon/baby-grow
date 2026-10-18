@@ -7,6 +7,7 @@ import PrimaryButton from '@/components/PrimaryButton'
 import Icon from '@/components/Icon'
 import { createFamily, acceptInvite } from '@/api/modules/family'
 import { enterApp } from '@/utils/enterApp'
+import { t } from '@/i18n'
 import { todayIsoDate } from '@/store/profile'
 
 /**
@@ -32,7 +33,7 @@ export default function OnboardingPage() {
 
     const name = babyName.trim()
     if (!name) {
-      Taro.showToast({ title: '请填写宝宝的名字', icon: 'none' })
+      Taro.showToast({ title: t('onboarding.babyNameRequired'), icon: 'none' })
       return
     }
 
@@ -41,11 +42,11 @@ export default function OnboardingPage() {
       const response = await createFamily(name, birthday || undefined)
       if (response.code !== 0) throw new Error(response.message)
 
-      Taro.showToast({ title: '已创建', icon: 'none' })
+      Taro.showToast({ title: t('onboarding.created'), icon: 'none' })
       await enterApp()
     } catch (error) {
       console.error('[onboarding] 创建家庭失败', error)
-      Taro.showToast({ title: '创建失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('common.createFailed'), icon: 'none' })
     } finally {
       setCreating(false)
     }
@@ -57,7 +58,7 @@ export default function OnboardingPage() {
     // 口令是大小写不敏感的：后端按大写查找，用户手抄时经常写成小写
     const token = code.trim().toUpperCase()
     if (!token) {
-      Taro.showToast({ title: '请填写邀请口令', icon: 'none' })
+      Taro.showToast({ title: t('onboarding.codeRequired'), icon: 'none' })
       return
     }
 
@@ -66,37 +67,35 @@ export default function OnboardingPage() {
       const response = await acceptInvite(token)
       if (response.code !== 0) throw new Error(response.message)
 
-      Taro.showToast({ title: '已加入', icon: 'none' })
+      Taro.showToast({ title: t('common.joined'), icon: 'none' })
       await enterApp()
     } catch (error) {
       console.error('[onboarding] 加入家庭失败', error)
       // 服务端会区分「口令无效 / 已过期 / 你已经有家庭了」，原样带出来，
       // 而不是用一句笼统的「口令可能已失效」把人引到错误的排查方向。
       const message = error instanceof Error ? error.message : ''
-      Taro.showToast({ title: message || '加入失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: message || t('common.joinFailed'), icon: 'none' })
     } finally {
       setJoining(false)
     }
   }
 
   return (
-    <PageContainer header={<PageHeader title="欢迎" />}>
+    <PageContainer header={<PageHeader title={t('onboarding.title')} />}>
       <View className="flex flex-col gap-5 pb-6">
         <View className="flex flex-col gap-2 px-1">
-          <Text className="text-2xl font-bold text-on-surface">先给宝宝安个家</Text>
-          <Text className="text-sm leading-6 text-on-surface-variant">
-            创建一个属于你们的成长空间，或者用家人发来的邀请口令，加入他已经建好的空间。
-          </Text>
+          <Text className="text-2xl font-bold text-on-surface">{t('onboarding.heading')}</Text>
+          <Text className="text-sm leading-6 text-on-surface-variant">{t('onboarding.intro')}</Text>
         </View>
 
         <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex flex-col gap-3">
-          <Text className="text-base font-bold text-on-surface">创建成长空间</Text>
+          <Text className="text-base font-bold text-on-surface">{t('onboarding.createTitle')}</Text>
 
           <View className="flex flex-col gap-1">
-            <Text className="text-caption text-on-surface-variant px-1">宝宝的名字</Text>
+            <Text className="text-caption text-on-surface-variant px-1">{t('onboarding.babyName')}</Text>
             <Input
               className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-              placeholder="如：小满"
+              placeholder={t('onboarding.babyNamePlaceholder')}
               placeholderClass="text-on-surface-variant"
               value={babyName}
               maxlength={20}
@@ -105,7 +104,7 @@ export default function OnboardingPage() {
           </View>
 
           <View className="flex flex-col gap-1">
-            <Text className="text-caption text-on-surface-variant px-1">宝宝生日（选填）</Text>
+            <Text className="text-caption text-on-surface-variant px-1">{t('onboarding.birthday')}</Text>
             <Picker
               mode="date"
               value={birthday || todayIsoDate()}
@@ -118,7 +117,7 @@ export default function OnboardingPage() {
                     birthday ? 'text-base text-on-surface' : 'text-base text-on-surface-variant'
                   }
                 >
-                  {birthday || '选择日期'}
+                  {birthday || t('onboarding.pickDate')}
                 </Text>
               </View>
             </Picker>
@@ -126,34 +125,32 @@ export default function OnboardingPage() {
                 「4 个月以下不建议添加辅食」）与生长曲线的输入，缺了它那些建议只能
                 走最保守的分支。所以问一句，但不拦着用户先跳过。 */}
             <Text className="text-caption text-on-surface-variant px-1">
-              填了才能按准确月龄给喂养建议；也可以之后在画像页补
+              {t('onboarding.birthdayHint')}
             </Text>
           </View>
 
           <PrimaryButton block disabled={creating} onClick={submitCreate}>
-            {creating ? '创建中…' : '创建并开始'}
+            {creating ? t('common.creating') : t('onboarding.createAndStart')}
           </PrimaryButton>
         </View>
 
         <View className="flex items-center gap-3 px-1">
           <View className="flex-1 h-px bg-outline-variant" />
-          <Text className="text-caption text-on-surface-variant">或</Text>
+          <Text className="text-caption text-on-surface-variant">{t('onboarding.or')}</Text>
           <View className="flex-1 h-px bg-outline-variant" />
         </View>
 
         <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex flex-col gap-3">
           <View className="flex items-center gap-2">
             <Icon name="member-invite" className="w-5 h-5" />
-            <Text className="text-base font-bold text-on-surface">加入家人的空间</Text>
+            <Text className="text-base font-bold text-on-surface">{t('onboarding.joinTitle')}</Text>
           </View>
 
-          <Text className="text-caption text-on-surface-variant">
-            邀请你的人会给你一串口令，形如 7K2M-9QX4
-          </Text>
+          <Text className="text-caption text-on-surface-variant">{t('onboarding.joinHint')}</Text>
 
           <Input
             className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-            placeholder="填写邀请口令"
+            placeholder={t('onboarding.codePlaceholder')}
             placeholderClass="text-on-surface-variant"
             value={code}
             maxlength={16}
@@ -161,7 +158,7 @@ export default function OnboardingPage() {
           />
 
           <PrimaryButton block variant="outline" disabled={joining} onClick={submitJoin}>
-            {joining ? '加入中…' : '加入'}
+            {joining ? t('common.joining') : t('onboarding.join')}
           </PrimaryButton>
         </View>
       </View>

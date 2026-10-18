@@ -5,6 +5,7 @@ import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import type { AnalysisCategoryKey, AnalysisSubtabKey } from '@/types/analysis'
 import { useAppState } from '@/store'
+import { t, type MessageKey } from '@/i18n'
 import { handleBottomTabNavigation, navigateToAnalysisPage } from '@/utils/analysisNavigation'
 import SegmentedTabs from './SegmentedTabs'
 import { analysisColors } from './analysisTokens'
@@ -12,36 +13,36 @@ import { analysisColors } from './analysisTokens'
 interface AnalysisLayoutProps extends PropsWithChildren {
   activeCategory: AnalysisCategoryKey
   activeSubtab?: AnalysisSubtabKey
-  subtabOptions?: Array<{ key: AnalysisSubtabKey; label: string; iconActive?: string; iconInactive?: string }>
+  subtabOptions?: Array<{ key: AnalysisSubtabKey; labelKey: MessageKey; iconActive?: string; iconInactive?: string }>
 }
 
 const categoryConfigs: Array<{
   key: AnalysisCategoryKey
-  label: string
+  labelKey: MessageKey
   icon: string
   iconInactive: string
 }> = [
   {
     key: 'growth',
-    label: 'Grow',
+    labelKey: 'analysis.tab.grow',
     icon: 'tab-grow-active',
     iconInactive: 'tab-grow-inactive',
   },
   {
     key: 'sleep',
-    label: 'Sleep',
+    labelKey: 'analysis.tab.sleep',
     icon: 'tab-sleep-active',
     iconInactive: 'tab-sleep-inactive',
   },
   {
     key: 'diet',
-    label: 'Diet',
+    labelKey: 'analysis.tab.diet',
     icon: 'tab-diet-active',
     iconInactive: 'tab-diet-inactive',
   },
   {
     key: 'mood',
-    label: 'Mood',
+    labelKey: 'analysis.tab.mood',
     icon: 'tab-mood-active',
     iconInactive: 'tab-mood-inactive',
   },
@@ -63,7 +64,7 @@ export default function AnalysisLayout({
           导致其余页面各写各的。收敛之后全站头部只有一处实现。 */}
       <PageHeader
         translucent
-        title="Analysis"
+        title={t('analysis.title')}
         profile={{
           avatar: babyHeader.avatar,
           ageLabel: babyHeader.ageLabel,
@@ -91,7 +92,7 @@ export default function AnalysisLayout({
                     style={!isActive ? { opacity: 0.5 } : undefined}
                   />
                   <Text className={`text-base leading-6 ${isActive ? 'font-semibold' : 'font-normal'}`}>
-                    {category.label}
+                    {t(category.labelKey)}
                   </Text>
                 </View>
               )

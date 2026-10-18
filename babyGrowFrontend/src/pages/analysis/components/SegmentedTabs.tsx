@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react'
 import { Text, View } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import { t, type MessageKey } from '@/i18n'
 import { analysisColors } from './analysisTokens'
 
 interface SegmentedTabItem<T extends string> {
   key: T
-  label: string
+  /**
+   * 文案键而不是文案本身：这些 tab 数组是**模块级常量**，在模块加载时就求值了。
+   * 若在那里直接调 t()，切换语言后不会更新（reLaunch 不会重新执行模块）。
+   */
+  labelKey: MessageKey
   iconActive?: string
   iconInactive?: string
 }
@@ -73,7 +78,7 @@ export default function SegmentedTabs<T extends string>({
                     color: isActive ? analysisColors.activeText : analysisColors.inactiveText,
                   }}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Text>
               </View>
             )}

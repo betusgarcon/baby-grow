@@ -9,10 +9,11 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { getMonthlyDiet } from '@/api/modules/diet'
+import { t } from '@/i18n'
 
 const dietSubtabs = [
-  { key: 'dietWeek' as const, label: '本周奶量', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
-  { key: 'dietMonth' as const, label: '本月膳食', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
+  { key: 'dietWeek' as const, labelKey: 'analysis.subtab.dietWeek' as const, iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'dietMonth' as const, labelKey: 'analysis.subtab.dietMonth' as const, iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 export default function AnalysisDietMonthPage() {
@@ -35,8 +36,8 @@ export default function AnalysisDietMonthPage() {
         emptyState={
           <EmptyState
             icon="fork_knife"
-            title="还没有辅食记录"
-            description="点下面中间的 + 记下宝宝吃了什么，这里会按类别显示构成与已尝试的食材。"
+            title={t('analysis.dietMonth.empty')}
+            description={t('analysis.dietMonth.emptyDesc')}
           />
         }
       >
@@ -54,7 +55,7 @@ export default function AnalysisDietMonthPage() {
               />
               <IngredientToleranceCard
                 title={pageData.ingredients.badge}
-                badge="已成功建立耐受"
+                badge={t('analysis.toleranceEstablished')}
                 ingredients={pageData.ingredients.list}
               />
             </ChartCard>

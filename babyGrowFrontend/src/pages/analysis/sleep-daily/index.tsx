@@ -8,12 +8,13 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { getSleepCircadian, getDailySleepLogs } from '@/api/modules/sleep'
+import { t } from '@/i18n'
 import type { ApiResponse } from '@/types/common'
 import type { GetSleepCircadianResponse, GetDailySleepLogsResponse } from '@/types/sleep'
 
 const sleepSubtabs = [
-  { key: 'sleepDaily' as const, label: 'Daily Ring', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
-  { key: 'sleepMonthly' as const, label: 'Monthly Evolution', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
+  { key: 'sleepDaily' as const, labelKey: 'analysis.subtab.sleepDaily' as const, iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'sleepMonthly' as const, labelKey: 'analysis.subtab.sleepMonthly' as const, iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 /** 这一页要两个接口，合成一个取数函数交给 useAsyncData */
@@ -51,8 +52,8 @@ export default function AnalysisSleepDailyPage() {
         emptyState={
           <EmptyState
             icon="moon"
-            title="还没有睡眠记录"
-            description="点下面中间的 + 记下宝宝几点睡着、几点醒来，这里会按夜觉和小睡分开统计。"
+            title={t('analysis.sleep.empty')}
+            description={t('analysis.sleepDaily.emptyDesc')}
           />
         }
       >

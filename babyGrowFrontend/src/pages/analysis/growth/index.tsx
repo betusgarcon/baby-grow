@@ -16,6 +16,7 @@ import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { analysisColors } from '@/pages/analysis/components/analysisTokens'
 import { getGrowthPage } from '@/api/modules/growth'
+import { t } from '@/i18n'
 import type { GrowthMetricKey, GrowthRangeKey } from '@/types/analysis'
 
 export default function AnalysisGrowthPage() {
@@ -52,8 +53,8 @@ export default function AnalysisGrowthPage() {
         emptyState={
           <EmptyState
             icon="metric-weight"
-            title="还没有生长记录"
-            description="点下面中间的 + 记一次身高、体重或头围，这里会画出成长曲线。"
+            title={t('analysis.growth.empty')}
+            description={t('analysis.growth.emptyDesc')}
           />
         }
       >

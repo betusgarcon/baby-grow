@@ -7,10 +7,11 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { getSleepEvolution } from '@/api/modules/sleep'
+import { t } from '@/i18n'
 
 const sleepSubtabs = [
-  { key: 'sleepDaily' as const, label: 'Daily Ring', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
-  { key: 'sleepMonthly' as const, label: 'Monthly Evolution', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
+  { key: 'sleepDaily' as const, labelKey: 'analysis.subtab.sleepDaily' as const, iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'sleepMonthly' as const, labelKey: 'analysis.subtab.sleepMonthly' as const, iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 export default function AnalysisSleepMonthlyPage() {
@@ -33,8 +34,8 @@ export default function AnalysisSleepMonthlyPage() {
         emptyState={
           <EmptyState
             icon="moon"
-            title="还没有睡眠记录"
-            description="点下面中间的 + 记录几天的入睡与醒来时间，这里会按月龄对比睡眠节律的变化。"
+            title={t('analysis.sleep.empty')}
+            description={t('analysis.sleepMonthly.emptyDesc')}
           />
         }
       >

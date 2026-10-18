@@ -9,10 +9,11 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { getWeeklyDiet } from '@/api/modules/diet'
+import { t } from '@/i18n'
 
 const dietSubtabs = [
-  { key: 'dietWeek' as const, label: '本周奶量', iconActive: 'clock-active', iconInactive: 'clock-inactive' },
-  { key: 'dietMonth' as const, label: '本月膳食', iconActive: 'summary-active', iconInactive: 'summary-inactive' },
+  { key: 'dietWeek' as const, labelKey: 'analysis.subtab.dietWeek' as const, iconActive: 'clock-active', iconInactive: 'clock-inactive' },
+  { key: 'dietMonth' as const, labelKey: 'analysis.subtab.dietMonth' as const, iconActive: 'summary-active', iconInactive: 'summary-inactive' },
 ]
 
 export default function AnalysisDietWeekPage() {
@@ -35,8 +36,8 @@ export default function AnalysisDietWeekPage() {
         emptyState={
           <EmptyState
             icon="fork_knife"
-            title="还没有奶量记录"
-            description="点下面中间的 + 记下每天喝了多少，这里会按天显示并与建议区间对照。"
+            title={t('analysis.dietWeek.empty')}
+            description={t('analysis.dietWeek.emptyDesc')}
           />
         }
       >

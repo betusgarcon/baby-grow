@@ -8,6 +8,7 @@ import AsyncSection from '@/components/AsyncSection'
 import EmptyState from '@/components/EmptyState'
 import { useAsyncData } from '@/hooks/useAsyncData'
 import { getMoodCalendar, getMoodCheckinOptions } from '@/api/modules/mood'
+import { t } from '@/i18n'
 
 export default function AnalysisMoodPage() {
   // 两个请求**各自独立**取数、各自独立失败。
@@ -29,8 +30,8 @@ export default function AnalysisMoodPage() {
         emptyState={
           <EmptyState
             icon="star"
-            title="还没有情绪记录"
-            description="点下面中间的 + 记录宝宝今天的心情，这里会按日历显示变化。"
+            title={t('analysis.mood.empty')}
+            description={t('analysis.mood.emptyDesc')}
           />
         }
       >
