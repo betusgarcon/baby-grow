@@ -132,6 +132,7 @@ class ExtractRequest(BaseModel):
     media_base64: Optional[str] = Field(default=None, description="图片的 base64 内容（不含 data URI 前缀）")
     media_mime: Optional[str] = Field(default=None, description="图片的 MIME 类型")
     population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
+    language: str = Field(default="zh", description="输出语言: zh/en（枚举字段始终用规范值）")
 
     @model_validator(mode="after")
     def require_some_input(self) -> "ExtractRequest":
@@ -207,6 +208,7 @@ class RecipeRecommendRequest(BaseModel):
     # Orchestration switch: True (default) → ReAct agent; False → fixed pipeline.
     use_agent: bool = Field(default=True, description="是否走 ReAct Agent 链路")
     population: str = Field(default="baby", description="人群: baby/pregnant/worker/elderly")
+    language: str = Field(default="zh", description="输出语言: zh/en（枚举字段始终用规范值）")
 
 
 class RecipeRecommendResponse(BaseModel):

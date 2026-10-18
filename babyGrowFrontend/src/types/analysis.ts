@@ -136,6 +136,8 @@ export interface SleepCircadianSummary {
     label: string
     value: number
     color: string
+    /** night / nap / awake；label 随语言变，判断只能用这个 */
+    type?: 'night' | 'nap' | 'awake'
   }>
 }
 

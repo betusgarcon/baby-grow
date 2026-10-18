@@ -1,6 +1,7 @@
 package com.babygrow.backend.journey;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.BabyMilestoneEntity;
 import com.babygrow.backend.domain.BabyVaccinationEntity;
@@ -20,6 +21,7 @@ import com.babygrow.backend.repository.BabyVaccinationRepository;
 import com.babygrow.backend.repository.FeedingRepository;
 import com.babygrow.backend.repository.GrowthMeasurementRepository;
 import com.babygrow.backend.repository.SleepSessionRepository;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,20 +41,23 @@ import java.util.Map;
 @Service
 public class JourneyService {
 
-    private static final DateTimeFormatter RANGE_DATE = DateTimeFormatter.ofPattern("MMM d", Locale.US);
-    private static final DateTimeFormatter SHORT_DATE = DateTimeFormatter.ofPattern("MMM d", Locale.US);
+    private static DateTimeFormatter shortDate() {
+        return Locale.ENGLISH.equals(LocaleContextHolder.getLocale())
+                ? DateTimeFormatter.ofPattern("MMM d", Locale.ENGLISH)
+                : DateTimeFormatter.ofPattern("M月d日", Locale.SIMPLIFIED_CHINESE);
+    }
 
-    /** 里程碑类型 → 分类标签。AI 抽出来的是中文四类。 */
+    /** 里程碑类型 → 分类标签键与配色。AI 抽出来的是中文四类。 */
     private static final Map<String, String[]> TYPE_TAG = Map.of(
-            "语言", new String[]{"Speech", "neutral"},
-            "运动", new String[]{"Physical", "tertiary"},
-            "社交", new String[]{"Social", "secondary"},
-            "认知", new String[]{"Cognitive", "primary"});
+            "语言", new String[]{"ui.journey.type.language", "neutral"},
+            "运动", new String[]{"ui.journey.type.physical", "tertiary"},
+            "社交", new String[]{"ui.journey.type.social", "secondary"},
+            "认知", new String[]{"ui.journey.type.cognitive", "primary"});
 
     private static final Map<String, String[]> TIER_TAG = Map.of(
-            "gold", new String[]{"Major Leap", "secondary"},
-            "silver", new String[]{"New Skill", "neutral"},
-            "bronze", new String[]{"First Try", "primary"});
+            "gold", new String[]{"ui.journey.tier.gold", "secondary"},
+            "silver", new String[]{"ui.journey.tier.silver", "neutral"},
+            "bronze", new String[]{"ui.journey.tier.bronze", "primary"});
 
     private final FamilyAccessService accessService;
     private final BabyMilestoneRepository milestoneRepository;
@@ -60,19 +65,22 @@ public class JourneyService {
     private final GrowthMeasurementRepository growthRepository;
     private final SleepSessionRepository sleepRepository;
     private final FeedingRepository feedingRepository;
+    private final Messages messages;
 
     public JourneyService(FamilyAccessService accessService,
                           BabyMilestoneRepository milestoneRepository,
                           BabyVaccinationRepository vaccinationRepository,
                           GrowthMeasurementRepository growthRepository,
                           SleepSessionRepository sleepRepository,
-                          FeedingRepository feedingRepository) {
+                          FeedingRepository feedingRepository,
+                          Messages messages) {
         this.accessService = accessService;
         this.milestoneRepository = milestoneRepository;
         this.vaccinationRepository = vaccinationRepository;
         this.growthRepository = growthRepository;
         this.sleepRepository = sleepRepository;
         this.feedingRepository = feedingRepository;
+        this.messages = messages;
     }
 
     // ── 里程碑列表 ──────────────────────────────────────────
@@ -91,12 +99,12 @@ public class JourneyService {
 
         String[] typeTag = TYPE_TAG.get(milestone.getType() == null ? "" : milestone.getType().trim());
         if (typeTag != null) {
-            tags.add(new MilestoneTagView(typeTag[0], typeTag[1]));
+            tags.add(new MilestoneTagView(messages.get(typeTag[0]), typeTag[1]));
         }
 
         String[] tierTag = TIER_TAG.get(milestone.getTier() == null ? "" : milestone.getTier());
         if (tierTag != null) {
-            tags.add(new MilestoneTagView(tierTag[0], tierTag[1]));
+            tags.add(new MilestoneTagView(messages.get(tierTag[0]), tierTag[1]));
         }
 
         return new MilestoneView(
@@ -133,11 +141,13 @@ public class JourneyService {
             events.add(new CalendarEventView(
                     "vaccine-" + vaccination.getId(),
                     date.toString(),
-                    vaccination.getName() == null ? "Vaccination" : vaccination.getName(),
+                    vaccination.getName() == null
+                            ? messages.get("ui.journey.vaccine.defaultName") : vaccination.getName(),
                     done
                             ? (nullSafe(vaccination.getDoseLabel()).isBlank()
-                                    ? "已接种" : "已接种 · " + vaccination.getDoseLabel())
-                            : "待接种",
+                                    ? messages.get("ui.journey.vaccine.done")
+                                    : messages.get("ui.journey.vaccine.doneWithDose", vaccination.getDoseLabel()))
+                            : messages.get("ui.journey.vaccine.pending"),
                     "vaccine",
                     "journey-vaccine"));
         }
@@ -187,7 +197,7 @@ public class JourneyService {
                         .toList();
 
         return new WeeklyInsightView(
-                RANGE_DATE.format(weekStart) + " - " + RANGE_DATE.format(today),
+                shortDate().format(weekStart) + " - " + shortDate().format(today),
                 metrics(measurements, weekStart, today),
                 sleep(weekSleep, weekStart),
                 highlights(weekMilestones),
@@ -255,12 +265,13 @@ public class JourneyService {
                 : dailyHours.stream().mapToDouble(Double::doubleValue).sum() / recordedDays;
 
         String status = recordedDays == 0
-                ? "还没有睡眠记录"
-                : String.format(Locale.US, "平均 %.1f 小时/天（%d 天有记录）", average, recordedDays);
+                ? messages.get("ui.journey.sleep.empty")
+                : messages.get("ui.journey.sleep.status",
+                        String.format(Locale.US, "%.1f", average), recordedDays);
 
         return new SleepConsistencyView(
-                "Sleep Consistency",
-                "过去七天的每日睡眠时长",
+                messages.get("ui.journey.sleep.title"),
+                messages.get("ui.journey.sleep.subtitle"),
                 status,
                 dailyHours);
     }
@@ -270,7 +281,7 @@ public class JourneyService {
                 .map(item -> new DevelopmentHighlightView(
                         item.getMilestoneKey(),
                         item.getTitle(),
-                        SHORT_DATE.format(localDateOf(item.getUnlockedAt())),
+                        shortDate().format(localDateOf(item.getUnlockedAt())),
                         item.getType() == null ? "" : item.getType(),
                         item.getIcon() == null ? "star" : item.getIcon(),
                         "gold".equals(item.getTier()) ? "secondary" : "tertiary"))
@@ -291,8 +302,8 @@ public class JourneyService {
             int totalMinutes = weekSleep.stream()
                     .mapToInt(item -> item.getDurationMin() == null ? 0 : item.getDurationMin())
                     .sum();
-            points.add(String.format(Locale.US, "这周记录了 %d 天睡眠，平均每天 %.1f 小时",
-                    sleepDays, totalMinutes / (double) sleepDays / 60.0));
+            points.add(messages.get("ui.journey.advice.sleep", sleepDays,
+                    String.format(Locale.US, "%.1f", totalMinutes / (double) sleepDays / 60.0)));
         }
 
         List<String> newFoods = weekFeedings.stream()
@@ -302,19 +313,22 @@ public class JourneyService {
                 .distinct()
                 .toList();
         if (!newFoods.isEmpty()) {
-            points.add("新尝试了 " + String.join("、", newFoods));
+            points.add(messages.get("ui.journey.advice.newFoods",
+                    String.join(messages.get("ui.common.listSeparator"), newFoods)));
         }
 
         if (!weekMilestones.isEmpty()) {
-            points.add("达成了 " + weekMilestones.size() + " 个里程碑");
+            points.add(messages.get("ui.journey.advice.milestones", weekMilestones.size()));
         }
 
         if (points.isEmpty()) {
-            return new AdviceView("This Week",
-                    "这周还没有足够的数据可以总结。随手记几次，下周这里就会有内容。");
+            return new AdviceView(messages.get("ui.journey.advice.title"),
+                    messages.get("ui.journey.advice.empty"));
         }
 
-        return new AdviceView("This Week", String.join("；", points) + "。这里只做记录汇总，不构成建议。");
+        return new AdviceView(messages.get("ui.journey.advice.title"),
+                messages.get("ui.journey.advice.summary",
+                        String.join(messages.get("ui.common.clauseSeparator"), points)));
     }
 
     // ── 共用 ────────────────────────────────────────────────

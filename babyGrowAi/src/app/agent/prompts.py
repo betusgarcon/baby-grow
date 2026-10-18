@@ -8,6 +8,7 @@ Lifespan:
     as the agent matures.
 """
 
+from app.prompts.language import apply_language
 from app.prompts.registry import get_rendered_prompt
 
 
@@ -20,6 +21,7 @@ def build_agent_messages(
     texture_level: str | None,
     baby_id: str,
     population: str | None = None,
+    language: str | None = None,
 ) -> list[dict[str, str]]:
     """Build the initial conversation for the agent."""
     # Combine the baby profile and parent intent into a single user message.
@@ -39,6 +41,7 @@ def build_agent_messages(
     )
     if population and population != "baby":
         system = f"[{population} 人群辅食推荐 Agent]\n{system}"
+    system = apply_language(system, language)
     return [
         {"role": "system", "content": system},
         {"role": "user", "content": user},

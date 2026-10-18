@@ -2,6 +2,7 @@ package com.babygrow.backend.ai;
 
 import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.common.ErrorCode;
+import com.babygrow.backend.common.Messages;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -32,12 +33,15 @@ public class AiClient {
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private final Messages messages;
 
     public AiClient(@Value("${ai.service.url}") String aiServiceUrl,
                     RestClient.Builder builder,
-                    ObjectMapper objectMapper) {
+                    ObjectMapper objectMapper,
+                    Messages messages) {
         this.restClient = builder.baseUrl(aiServiceUrl).build();
         this.objectMapper = objectMapper;
+        this.messages = messages;
     }
 
     /** 原样转发，供不需要注入业务上下文的情形使用 */
@@ -52,7 +56,8 @@ public class AiClient {
                     .body(Map.class);
 
             if (response == null) {
-                throw new BizException(ErrorCode.UPSTREAM_UNAVAILABLE, "AI 服务返回空响应");
+                throw new BizException(ErrorCode.UPSTREAM_UNAVAILABLE,
+                        messages.get("error.aiEmptyResponse"));
             }
             return response;
         } catch (BizException ex) {
@@ -63,7 +68,8 @@ public class AiClient {
             throw new BizException(ErrorCode.UPSTREAM_UNAVAILABLE, extractDetail(ex));
         } catch (Exception ex) {
             log.error("调用 AI 服务失败 path={}", path, ex);
-            throw new BizException(ErrorCode.UPSTREAM_UNAVAILABLE, "AI 服务不可用：" + ex.getMessage());
+            throw new BizException(ErrorCode.UPSTREAM_UNAVAILABLE,
+                    messages.get("error.aiUnreachable", ex.getMessage()));
         }
     }
 
@@ -77,7 +83,7 @@ public class AiClient {
         } catch (Exception ignored) {
             // 响应体不是 JSON，退回状态码
         }
-        return "AI 服务返回 " + ex.getStatusCode().value();
+        return messages.get("error.aiHttpStatus", ex.getStatusCode().value());
     }
 
     /** 文本识别：同步，预期 5s 内返回 */
@@ -108,11 +114,12 @@ public class AiClient {
         return post("/api/baby/records/extract", body);
     }
 
-    private static Map<String, Object> baseBody(Long babyId, int ageMonths) {
+    private Map<String, Object> baseBody(Long babyId, int ageMonths) {
         Map<String, Object> body = new HashMap<>();
         body.put("baby_id", String.valueOf(babyId));
         body.put("baby_age_months", ageMonths);
         body.put("population", "baby");
+        body.put("language", messages.locale().getLanguage());
         return body;
     }
 

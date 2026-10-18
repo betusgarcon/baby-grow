@@ -3,6 +3,7 @@ package com.babygrow.backend.record;
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.analysis.RecordProjectionService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.menu.MenuService;
 import com.babygrow.backend.media.MediaService;
 import com.babygrow.backend.domain.BabyEntity;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class RecordService {
 
     /** 提取出的内容一条都没有时，也不该产生一条空记录 */
-    private static final String DEFAULT_TITLE = "AI 记录";
+    private static final String DEFAULT_TITLE_KEY = "ui.default.aiRecord";
 
     private final FamilyAccessService accessService;
     private final RecordRepository recordRepository;
@@ -44,6 +45,7 @@ public class RecordService {
     private final RecordProjectionService projectionService;
     private final MenuService menuService;
     private final ObjectMapper objectMapper;
+    private final Messages messages;
 
     public RecordService(FamilyAccessService accessService,
                          RecordRepository recordRepository,
@@ -51,7 +53,8 @@ public class RecordService {
                          MediaService mediaService,
                          RecordProjectionService projectionService,
                          MenuService menuService,
-                         ObjectMapper objectMapper) {
+                         ObjectMapper objectMapper,
+                         Messages messages) {
         this.accessService = accessService;
         this.recordRepository = recordRepository;
         this.timelineRepository = timelineRepository;
@@ -59,6 +62,7 @@ public class RecordService {
         this.projectionService = projectionService;
         this.menuService = menuService;
         this.objectMapper = objectMapper;
+        this.messages = messages;
     }
 
     /** 这次提交是否新增了饮食记录——只有它才影响食谱推荐 */
@@ -118,7 +122,8 @@ public class RecordService {
                 media == null ? "health" : "photos",
                 TimelineEntries.formatTime(occurredAt),
                 "AI LOG",
-                request.title() == null || request.title().isBlank() ? DEFAULT_TITLE : request.title(),
+                request.title() == null || request.title().isBlank()
+                        ? messages.get(DEFAULT_TITLE_KEY) : request.title(),
                 resolveDescription(request, text),
                 media == null ? null : media.getUrl(),
                 occurredAt.toEpochMilli());

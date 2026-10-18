@@ -70,7 +70,9 @@ public class SecurityConfig {
                                 write(response, ErrorCode.FORBIDDEN, HttpServletResponse.SC_FORBIDDEN)))
                 // 语言过滤器必须在 JWT 之前：鉴权失败时由安全链直接写响应，
                 // 那条路径也要能拿到正确的语言。
-                .addFilterBefore(localeFilter, JwtAuthenticationFilter.class)
+                // 注意锚点只能用 Security 已注册的过滤器；JwtAuthenticationFilter 是自定义的，
+                // 拿它当锚点会在启动时抛 "does not have a registered order"。
+                .addFilterBefore(localeFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

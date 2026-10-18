@@ -36,7 +36,13 @@ class BabyRecordExtractor:
         self.model = model or settings.ollama_model
         self.vision_model = settings.vision_model
 
-    async def extract(self, text: str, baby_age_months: int, population: str | None = None) -> ExtractResponse:
+    async def extract(
+        self,
+        text: str,
+        baby_age_months: int,
+        population: str | None = None,
+        language: str | None = None,
+    ) -> ExtractResponse:
         """Extract records from `text` for a baby of the given age.
 
         Args:
@@ -47,7 +53,9 @@ class BabyRecordExtractor:
         Returns:
             ExtractResponse with status ok/error, structured data, and timing info.
         """
-        messages = extraction_prompts.build_messages(text, baby_age_months, population=population)
+        messages = extraction_prompts.build_messages(
+            text, baby_age_months, population=population, language=language
+        )
         return await self._run(
             messages=messages,
             task="extraction",
@@ -62,6 +70,7 @@ class BabyRecordExtractor:
         baby_age_months: int,
         note: str = "",
         population: str | None = None,
+        language: str | None = None,
     ) -> ExtractResponse:
         """Extract records from a photo via the vision-language model.
 
@@ -76,6 +85,7 @@ class BabyRecordExtractor:
             baby_age_months=baby_age_months,
             note=note,
             population=population,
+            language=language,
         )
         return await self._run(
             messages=messages,

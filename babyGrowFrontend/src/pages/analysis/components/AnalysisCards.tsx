@@ -459,11 +459,14 @@ export function CircadianRingCard({
   // 小程序没有错误边界——整页白屏。
   const segments = summary.segments ?? []
   const totalHours = segments.reduce((sum, segment) => sum + segment.value, 0)
-  // 后端（SleepAnalysisService）发的是 "Night" / "Nap"，而这里原先按
-  // "Night Sleep" / "Nap Sleep" 查——所以两段占比一直是 0。两个都认：
-  // 只改前端的话，后端换回长名也不会再坏。
-  const nightSegment = segments.find((segment) => segment.label === 'Night Sleep' || segment.label === 'Night')
-  const napSegment = segments.find((segment) => segment.label === 'Nap Sleep' || segment.label === 'Nap')
+  // 后端现在会给稳定的 type；label 只是展示文案，随语言变化。
+  // 旧的 label 兜底保留，兼容尚未升级的接口。
+  const nightSegment = segments.find(
+    (segment) => segment.type === 'night' || segment.label === 'Night Sleep' || segment.label === 'Night',
+  )
+  const napSegment = segments.find(
+    (segment) => segment.type === 'nap' || segment.label === 'Nap Sleep' || segment.label === 'Nap',
+  )
 
   // 各段都是 0 时 totalHours 也是 0，0/0 得到 NaN，会原样渲染成 "NaN%"
   const percentOf = (value: number | undefined) =>

@@ -32,7 +32,8 @@ public class ReferenceDataRepository {
                                   String source, String version) {
     }
 
-    public record MilestoneCatalogEntry(String key, String title, String description, String icon,
+    public record MilestoneCatalogEntry(String key, String title, String titleEn,
+                                        String description, String descriptionEn, String icon,
                                         String tier, Integer expectedAgeMinMonth,
                                         Integer expectedAgeMaxMonth, int sort) {
     }
@@ -113,7 +114,7 @@ public class ReferenceDataRepository {
     public List<MilestoneCatalogEntry> findMilestoneCatalog() {
         return jdbc.query(
                 """
-                SELECT key, title, description, icon, tier,
+                SELECT key, title, title_en, description, description_en, icon, tier,
                        expected_age_min_month, expected_age_max_month, sort
                   FROM milestone_catalog
                  ORDER BY sort
@@ -121,7 +122,9 @@ public class ReferenceDataRepository {
                 (rs, rowNum) -> new MilestoneCatalogEntry(
                         rs.getString("key"),
                         rs.getString("title"),
+                        rs.getString("title_en"),
                         rs.getString("description"),
+                        rs.getString("description_en"),
                         rs.getString("icon"),
                         rs.getString("tier"),
                         (Integer) rs.getObject("expected_age_min_month"),

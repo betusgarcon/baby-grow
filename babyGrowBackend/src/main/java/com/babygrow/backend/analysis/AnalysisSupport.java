@@ -1,5 +1,6 @@
 package com.babygrow.backend.analysis;
 
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.profile.AgeLabelCalculator;
 
 import java.math.BigDecimal;
@@ -43,6 +44,29 @@ public final class AnalysisSupport {
         return rest == 0 ? hours + "h" : hours + "h " + rest + "m";
     }
 
+    /**
+     * 食物类别的展示文案。
+     *
+     * <p>AI 输出的类别是规范中文值（见提示词），落库与分组都用它；英文界面只在
+     * 展示时翻译，不能把翻译后的值写回数据。
+     */
+    public static String foodCategoryLabel(Messages messages, String category) {
+        if (category == null) {
+            return "";
+        }
+        String key = switch (category) {
+            case "蔬菜" -> "ui.food.category.vegetable";
+            case "水果" -> "ui.food.category.fruit";
+            case "谷物" -> "ui.food.category.grain";
+            case "蛋类" -> "ui.food.category.egg";
+            case "肉类" -> "ui.food.category.meat";
+            case "豆制品" -> "ui.food.category.soy";
+            case "奶制品" -> "ui.food.category.dairy";
+            default -> null;
+        };
+        return key == null ? category : messages.get(key);
+    }
+
     /** 分钟 → 小时数（保留一位小数），供图表用 */
     public static double minutesToHours(Integer minutes) {
         return minutes == null ? 0d : Math.round(minutes / 6.0) / 10.0;
@@ -58,20 +82,20 @@ public final class AnalysisSupport {
      * <p>刻意只说落在哪一段，不给任何医学判断——参考值本身还是占位数据，
      * 在这种基础上给结论是不负责任的。
      */
-    public static String percentileBand(double value, Double p3, Double p50, Double p97) {
+    public static String percentileBandKey(double value, Double p3, Double p50, Double p97) {
         if (p3 == null || p50 == null || p97 == null) {
             return "";
         }
         if (value < p3) {
-            return "Low (<3%)";
+            return "ui.percentile.low";
         }
         if (value < p50) {
-            return "Stable (3%~50%)";
+            return "ui.percentile.stableLow";
         }
         if (value < p97) {
-            return "Stable (50%~97%)";
+            return "ui.percentile.stableHigh";
         }
-        return "High (>97%)";
+        return "ui.percentile.high";
     }
 
     /** 当前时间往前推 n 个月 */

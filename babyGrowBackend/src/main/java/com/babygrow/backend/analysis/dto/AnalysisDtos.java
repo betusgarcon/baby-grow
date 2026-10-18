@@ -98,7 +98,8 @@ public final class AnalysisDtos {
 
     // ── 睡眠 ──────────────────────────────────────────────
 
-    public record SleepSegment(String label, double value, String color) {
+    /** label 是展示文案（随语言变）；type 是稳定标识（night/nap/awake），逻辑判断只能用它。 */
+    public record SleepSegment(String label, double value, String color, String type) {
     }
 
     public record CircadianSummary(String totalSleepLabel, String goalLabel,

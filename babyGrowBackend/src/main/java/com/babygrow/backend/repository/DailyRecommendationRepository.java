@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface DailyRecommendationRepository extends JpaRepository<DailyRecommendationEntity, Long> {
 
-    Optional<DailyRecommendationEntity> findByBabyIdAndDate(Long babyId, LocalDate date);
+    Optional<DailyRecommendationEntity> findByBabyIdAndDateAndLanguage(Long babyId, LocalDate date, String language);
+
+    List<DailyRecommendationEntity> findByBabyIdAndDate(Long babyId, LocalDate date);
 
     /** 定时预生成用：全部宝宝 */
     List<DailyRecommendationEntity> findByDate(LocalDate date);

@@ -2,6 +2,7 @@ package com.babygrow.backend.ai;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.config.AsyncConfig;
 import com.babygrow.backend.domain.AiTaskEntity;
 import com.babygrow.backend.domain.BabyEntity;
@@ -46,19 +47,22 @@ public class AiTaskService {
     private final AiClient aiClient;
     private final ObjectMapper objectMapper;
     private final Executor executor;
+    private final Messages messages;
 
     public AiTaskService(AiTaskRepository taskRepository,
                          FamilyAccessService accessService,
                          MediaService mediaService,
                          AiClient aiClient,
                          ObjectMapper objectMapper,
-                         @Qualifier(AsyncConfig.AI_EXECUTOR) Executor executor) {
+                         @Qualifier(AsyncConfig.AI_EXECUTOR) Executor executor,
+                         Messages messages) {
         this.taskRepository = taskRepository;
         this.accessService = accessService;
         this.mediaService = mediaService;
         this.aiClient = aiClient;
         this.objectMapper = objectMapper;
         this.executor = executor;
+        this.messages = messages;
     }
 
     public RecognizeResponse submitRecognize(Long userId, RecognizeRequest request) {
@@ -114,7 +118,7 @@ public class AiTaskService {
             try {
                 task.markSucceeded(objectMapper.writeValueAsString(payload));
             } catch (Exception ex) {
-                task.markFailed("结果序列化失败：" + ex.getMessage());
+                task.markFailed(messages.get("error.taskSerializeFailed", ex.getMessage()));
             }
             taskRepository.save(task);
         });
@@ -122,7 +126,7 @@ public class AiTaskService {
 
     private void markFailed(Long taskId, String message) {
         taskRepository.findById(taskId).ifPresent(task -> {
-            task.markFailed(message == null ? "未知错误" : message);
+            task.markFailed(message == null ? messages.get("error.unknownError") : message);
             taskRepository.save(task);
         });
     }
@@ -160,7 +164,7 @@ public class AiTaskService {
         if (orphans.isEmpty()) {
             return;
         }
-        orphans.forEach(task -> task.markFailed("服务重启，任务已中断"));
+        orphans.forEach(task -> task.markFailed(messages.get("error.taskInterrupted")));
         taskRepository.saveAll(orphans);
         log.warn("已把 {} 个中断的 AI 任务标记为失败", orphans.size());
     }

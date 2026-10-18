@@ -1,6 +1,7 @@
 package com.babygrow.backend.family;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.BabyMilestoneEntity;
 import com.babygrow.backend.domain.FamilyMemberEntity;
@@ -35,28 +36,31 @@ public class PosterService {
     private static final DateTimeFormatter META_DATE =
             DateTimeFormatter.ofPattern("yyyy.MM.dd", Locale.US);
 
-    private static final List<TemplateView> TEMPLATES = List.of(
-            new TemplateView("warm", "温馨手账", "edit"),
-            new TemplateView("magazine", "成长杂志", "photo-gallery"),
-            new TemplateView("timeline", "极简时光轴", "trend-up"));
+    private static final List<String[]> TEMPLATE_KEYS = List.of(
+            new String[]{"warm", "ui.poster.template.warm", "edit"},
+            new String[]{"magazine", "ui.poster.template.magazine", "photo-gallery"},
+            new String[]{"timeline", "ui.poster.template.timeline", "trend-up"});
 
-    private static final List<PrivacyToggleView> TOGGLES = List.of(
-            new PrivacyToggleView("growth", "隐藏生长数据", "数字转换为可爱足迹", true),
-            new PrivacyToggleView("face", "智能眼镜贴纸", "一键防窥保护面部", false));
+    private static final List<String[]> TOGGLE_KEYS = List.of(
+            new String[]{"growth", "ui.poster.toggle.growth.label", "ui.poster.toggle.growth.note", "true"},
+            new String[]{"face", "ui.poster.toggle.face.label", "ui.poster.toggle.face.note", "false"});
 
     private final FamilyAccessService accessService;
     private final MemoryRepository memoryRepository;
     private final BabyMilestoneRepository milestoneRepository;
     private final GrowthMeasurementRepository growthRepository;
+    private final Messages messages;
 
     public PosterService(FamilyAccessService accessService,
                          MemoryRepository memoryRepository,
                          BabyMilestoneRepository milestoneRepository,
-                         GrowthMeasurementRepository growthRepository) {
+                         GrowthMeasurementRepository growthRepository,
+                         Messages messages) {
         this.accessService = accessService;
         this.memoryRepository = memoryRepository;
         this.milestoneRepository = milestoneRepository;
         this.growthRepository = growthRepository;
+        this.messages = messages;
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +68,8 @@ public class PosterService {
         FamilyMemberEntity me = accessService.requireMembership(userId);
         BabyEntity baby = accessService.findBaby(me.getFamilyId()).orElse(null);
 
-        String babyName = baby == null || baby.getName() == null ? "宝宝" : baby.getName();
+        String babyName = baby == null || baby.getName() == null
+                ? messages.get("ui.default.babyName") : baby.getName();
 
         MemoryEntity latestMemory = memoryRepository
                 .findByFamilyIdOrderByMemoryDateDescIdDesc(me.getFamilyId())
@@ -77,35 +82,54 @@ public class PosterService {
         String heading = latestMemory != null ? latestMemory.getTitle()
                 : latestMilestone != null ? latestMilestone.getTitle() : "";
         String badge = latestMemory != null ? latestMemory.getCategory()
-                : latestMilestone != null ? "MILESTONE" : "MEMORY";
+                : latestMilestone != null
+                        ? messages.get("ui.poster.badge.milestone")
+                        : messages.get("ui.poster.badge.memory");
 
         return new PosterView(
-                babyName + " 的成长手账",
-                "GENIUS TRACK · MEMORY CAPSULE",
+                messages.get("ui.poster.heading", babyName),
+                messages.get("ui.poster.brand"),
                 badge,
                 heading,
                 buildBody(baby, latestMemory, latestMilestone),
                 buildMeta(latestMemory),
-                TEMPLATES,
-                TOGGLES);
+                templates(),
+                toggles());
+    }
+
+    private List<TemplateView> templates() {
+        List<TemplateView> views = new ArrayList<>();
+        for (String[] entry : TEMPLATE_KEYS) {
+            views.add(new TemplateView(entry[0], messages.get(entry[1]), entry[2]));
+        }
+        return views;
+    }
+
+    private List<PrivacyToggleView> toggles() {
+        List<PrivacyToggleView> views = new ArrayList<>();
+        for (String[] entry : TOGGLE_KEYS) {
+            views.add(new PrivacyToggleView(entry[0], messages.get(entry[1]),
+                    messages.get(entry[2]), Boolean.parseBoolean(entry[3])));
+        }
+        return views;
     }
 
     private String buildBody(BabyEntity baby, MemoryEntity memory, BabyMilestoneEntity milestone) {
         if (baby == null) {
-            return "还没有宝宝档案，先去完善资料吧。";
+            return messages.get("ui.poster.body.noProfile");
         }
 
         List<String> parts = new ArrayList<>();
         String age = AgeLabelCalculator.compute(baby.getBirthday(), LocalDate.now());
         if (!age.isBlank()) {
-            parts.add(age + " 了");
+            parts.add(messages.get("ui.poster.body.age", age));
         }
 
         if (memory != null) {
-            parts.add("最近记录了「" + memory.getTitle() + "」");
+            parts.add(messages.get("ui.poster.body.memory", memory.getTitle()));
         }
         if (milestone != null && (memory == null || !milestone.getTitle().equals(memory.getTitle()))) {
-            parts.add("达成了「" + milestone.getTitle() + "」");
+            parts.add(messages.get("ui.poster.body.milestone", milestone.getTitle()));
         }
 
         growthRepository.findByBabyIdOrderByMeasuredAtAsc(baby.getId()).stream()
@@ -119,20 +143,20 @@ public class PosterService {
                         numbers.add(latest.getHeightCm().stripTrailingZeros().toPlainString() + "cm");
                     }
                     if (!numbers.isEmpty()) {
-                        parts.add("最近一次测量 " + String.join("、", numbers));
+                        parts.add(messages.get("ui.poster.body.measurement",
+                                String.join(messages.get("ui.common.listSeparator"), numbers)));
                     }
                 });
 
         if (parts.size() <= 1) {
-            return "还没有足够的内容可以做成海报，先去记几条吧。";
+            return messages.get("ui.poster.body.empty");
         }
-        return String.join("，", parts) + "。";
+        return String.join(messages.get("ui.common.listSeparator"), parts)
+                + messages.get("ui.common.sentenceEnd");
     }
 
     private String buildMeta(MemoryEntity memory) {
-        if (memory == null) {
-            return META_DATE.format(LocalDate.now()) + " · 家属记录";
-        }
-        return META_DATE.format(memory.getMemoryDate()) + " · 家属记录";
+        String date = META_DATE.format(memory == null ? LocalDate.now() : memory.getMemoryDate());
+        return messages.get("ui.poster.meta", date);
     }
 }

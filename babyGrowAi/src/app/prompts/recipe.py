@@ -4,6 +4,7 @@ This module is kept for backward compatibility. New callers should prefer
 ``prompts.registry.get_rendered_prompt``.
 """
 
+from app.prompts.language import apply_language
 from app.prompts.registry import get_rendered_prompt
 
 
@@ -16,6 +17,7 @@ def build_recipe_prompt(
     texture_level: str | None,
     rule_result: dict,
     knowledge_context: str,
+    language: str | None = None,
 ) -> list[dict[str, str]]:
     """Build the user message that combines profile, rules, and retrieved context."""
     avoid = ", ".join(rule_result.get("avoid_items", [])) or "无"
@@ -38,6 +40,7 @@ def build_recipe_prompt(
             "knowledge_context": knowledge_context,
         },
     )
+    system = apply_language(system, language)
 
     return [
         {"role": "system", "content": system},

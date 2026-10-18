@@ -1,5 +1,6 @@
 package com.babygrow.backend.analysis;
 
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyMilestoneEntity;
 import com.babygrow.backend.domain.FeedingEntity;
 import com.babygrow.backend.domain.GrowthMeasurementEntity;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -45,9 +47,16 @@ public class RecordProjectionService {
     private static final int NIGHT_SLEEP_MIN_MINUTES = 300;
 
     /** 情绪自由文本 → 前端三档。映射不到的**不落库**，原文仍在 records.payload 里。 */
-    private static final Set<String> HAPPY_WORDS = Set.of("开心", "高兴", "愉快", "快乐", "平静", "放松", "很好", "活泼");
-    private static final Set<String> CLINGY_WORDS = Set.of("黏人", "粘人", "烦躁", "不安", "难哄", "闹脾气", "依赖");
-    private static final Set<String> DISCOMFORT_WORDS = Set.of("不适", "不舒服", "难受", "疼痛", "疼", "发热", "发烧", "哭闹", "闹");
+    private static final Set<String> HAPPY_WORDS = Set.of(
+            "开心", "高兴", "愉快", "快乐", "平静", "放松", "很好", "活泼",
+            "happy", "cheerful", "content", "calm", "relaxed", "playful", "giggly", "smiling");
+    private static final Set<String> CLINGY_WORDS = Set.of(
+            "黏人", "粘人", "烦躁", "不安", "难哄", "闹脾气", "依赖",
+            "clingy", "fussy", "irritable", "restless", "uneasy", "whiny", "cranky");
+    private static final Set<String> DISCOMFORT_WORDS = Set.of(
+            "不适", "不舒服", "难受", "疼痛", "疼", "发热", "发烧", "哭闹", "闹",
+            "uncomfortable", "discomfort", "pain", "hurting", "fever", "crying",
+            "colicky", "gassy", "teething", "unhappy");
 
     private final RecordRepository recordRepository;
     private final SleepSessionRepository sleepRepository;
@@ -57,6 +66,7 @@ public class RecordProjectionService {
     private final BabyMilestoneRepository milestoneRepository;
     private final ReferenceDataRepository referenceData;
     private final ObjectMapper objectMapper;
+    private final Messages messages;
 
     public RecordProjectionService(RecordRepository recordRepository,
                                    SleepSessionRepository sleepRepository,
@@ -65,7 +75,8 @@ public class RecordProjectionService {
                                    MoodEntryRepository moodRepository,
                                    BabyMilestoneRepository milestoneRepository,
                                    ReferenceDataRepository referenceData,
-                                   ObjectMapper objectMapper) {
+                                   ObjectMapper objectMapper,
+                                   Messages messages) {
         this.recordRepository = recordRepository;
         this.sleepRepository = sleepRepository;
         this.feedingRepository = feedingRepository;
@@ -74,6 +85,7 @@ public class RecordProjectionService {
         this.milestoneRepository = milestoneRepository;
         this.referenceData = referenceData;
         this.objectMapper = objectMapper;
+        this.messages = messages;
     }
 
     /** 重建某个宝宝的全部分析投影 */
@@ -155,7 +167,10 @@ public class RecordProjectionService {
      * 两边都归一到「翻身」，才能对上。
      */
     private static final List<String> MILESTONE_NOISE = List.of(
-            "第一次", "首次", "学会", "会", "能", "可以", "开始", "成功", "自己", "已经", "了");
+            "第一次", "首次", "学会", "会", "能", "可以", "开始", "成功", "自己", "已经", "了",
+            "first", "learned to", "learns to", "learning to", "started to", "started",
+            "able to", "successfully", "by herself", "by himself", "on her own", "on his own",
+            "now", "the", "a ");
 
     private void projectMilestone(RecordEntity record, JsonNode payload,
                                   List<ReferenceDataRepository.MilestoneCatalogEntry> catalog,
@@ -166,7 +181,8 @@ public class RecordProjectionService {
         }
 
         var matched = catalog.stream()
-                .filter(entry -> matchesMilestone(event, entry.title()))
+                .filter(entry -> matchesMilestone(event, entry.title())
+                        || matchesMilestone(event, entry.titleEn()))
                 .findFirst();
 
         String key;
@@ -178,7 +194,9 @@ public class RecordProjectionService {
             tier = matched.get().tier();
             icon = matched.get().icon();
             // 目录里有这个里程碑的说明，带过来给列表页用
-            description = matched.get().description();
+            description = messages.locale().getLanguage().equals(Locale.ENGLISH.getLanguage())
+                    && matched.get().descriptionEn() != null
+                    ? matched.get().descriptionEn() : matched.get().description();
         } else {
             // 命不中目录也要落库，否则 AI 抽出来的事件就丢了
             key = customKey(event);
@@ -250,7 +268,7 @@ public class RecordProjectionService {
         if (raw == null || raw.isBlank()) {
             return null;
         }
-        String value = raw.trim();
+        String value = raw.trim().toLowerCase(Locale.ROOT);
         if (containsAny(value, DISCOMFORT_WORDS)) {
             return MoodEntryEntity.MOOD_DISCOMFORT;
         }
@@ -275,6 +293,9 @@ public class RecordProjectionService {
 
     /** 去修饰词后双向包含即认为同一个里程碑；归一化后为空则不匹配，避免误吞。包级可见以便单测。 */
     static boolean matchesMilestone(String event, String title) {
+        if (event == null || title == null) {
+            return false;
+        }
         String normalizedEvent = normalizeMilestone(event);
         String normalizedTitle = normalizeMilestone(title);
 
@@ -285,7 +306,7 @@ public class RecordProjectionService {
     }
 
     static String normalizeMilestone(String text) {
-        String result = text;
+        String result = text.toLowerCase(Locale.ROOT);
         for (String noise : MILESTONE_NOISE) {
             result = result.replace(noise, "");
         }

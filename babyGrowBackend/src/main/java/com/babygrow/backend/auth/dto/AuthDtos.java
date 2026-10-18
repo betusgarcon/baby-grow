@@ -14,7 +14,7 @@ public final class AuthDtos {
      * <p>{@code code} 来自小程序 {@code Taro.login()}。dev-mode 下该值不被校验，
      * 传任意非空字符串即可。
      */
-    public record LoginRequest(@NotBlank(message = "code 不能为空") String code) {
+    public record LoginRequest(@NotBlank(message = "error.codeRequired") String code) {
     }
 
     public record LoginResponse(String token, MeResponse user) {

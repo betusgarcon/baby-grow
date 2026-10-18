@@ -37,6 +37,10 @@ public class DailyRecommendationEntity {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    /** 内容语言：同一宝宝同一天，中英各存一份 */
+    @Column(name = "language", nullable = false, length = 8)
+    private String language = "zh";
+
     @Column(name = "status", nullable = false, length = 16)
     private String status = STATUS_PENDING;
 
@@ -79,10 +83,11 @@ public class DailyRecommendationEntity {
         // JPA
     }
 
-    public static DailyRecommendationEntity pending(Long babyId, LocalDate date) {
+    public static DailyRecommendationEntity pending(Long babyId, LocalDate date, String language) {
         DailyRecommendationEntity entity = new DailyRecommendationEntity();
         entity.babyId = babyId;
         entity.date = date;
+        entity.language = language;
         entity.status = STATUS_PENDING;
         return entity;
     }
@@ -127,6 +132,10 @@ public class DailyRecommendationEntity {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 
     public String getStatus() {

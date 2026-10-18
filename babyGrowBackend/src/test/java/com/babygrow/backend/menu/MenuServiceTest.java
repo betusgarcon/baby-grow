@@ -2,6 +2,7 @@ package com.babygrow.backend.menu;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.ai.AiClient;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.DailyRecommendationEntity;
 import com.babygrow.backend.menu.MenuDtos.MenuTodayResponse;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -57,6 +59,8 @@ class MenuServiceTest {
     private MenuContextRepository contextRepository;
     @Mock
     private AiClient aiClient;
+    @Mock
+    private Messages messages;
 
     /** 用同步收集代替线程池：测试要断言「投递了几次」，而不是让任务真的跑起来 */
     private final List<Runnable> dispatched = new ArrayList<>();
@@ -68,7 +72,17 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         menuService = new MenuService(accessService, babyRepository, recommendationRepository,
-                contextRepository, aiClient, new ObjectMapper(), capturingExecutor);
+                contextRepository, aiClient, new ObjectMapper(), capturingExecutor, messages);
+
+        lenient().when(messages.locale()).thenReturn(Locale.SIMPLIFIED_CHINESE);
+        lenient().when(messages.get(any(String.class))).thenAnswer(call -> call.getArgument(0));
+        lenient().when(messages.get(any(String.class), any())).thenAnswer(call -> {
+            String key = call.getArgument(0);
+            if ("ui.menu.dishIngredients".equals(key)) {
+                return "食材：" + call.getArgument(1);
+            }
+            return key;
+        });
 
         // BabyEntity 的 id 由数据库生成，工厂方法不会设置它；测试里用 mock 把 id 固定下来，
         // 否则 findByBabyIdAndDate(null, ...) 会和 stub 的参数对不上。
@@ -79,7 +93,7 @@ class MenuServiceTest {
 
     @Test
     void returnsEmptyPlaceholderAndDispatchesWhenNothingCached() {
-        when(recommendationRepository.findByBabyIdAndDate(BABY_ID, TODAY)).thenReturn(Optional.empty());
+        when(recommendationRepository.findByBabyIdAndDateAndLanguage(BABY_ID, TODAY, "zh")).thenReturn(Optional.empty());
         when(recommendationRepository.save(any())).thenAnswer(call -> call.getArgument(0));
 
         MenuTodayResponse response = menuService.today(USER_ID);
@@ -99,7 +113,7 @@ class MenuServiceTest {
     @Test
     void servesFreshCacheWithoutTouchingTheModel() {
         DailyRecommendationEntity row = readyRow();
-        when(recommendationRepository.findByBabyIdAndDate(BABY_ID, TODAY)).thenReturn(Optional.of(row));
+        when(recommendationRepository.findByBabyIdAndDateAndLanguage(BABY_ID, TODAY, "zh")).thenReturn(Optional.of(row));
 
         MenuTodayResponse response = menuService.today(USER_ID);
 
@@ -119,7 +133,7 @@ class MenuServiceTest {
     void servesStaleCacheAndRedispatchesWhenInvalidated() {
         DailyRecommendationEntity row = readyRow();
         row.markPending(); // 有新饮食记录时就是这样
-        when(recommendationRepository.findByBabyIdAndDate(BABY_ID, TODAY)).thenReturn(Optional.of(row));
+        when(recommendationRepository.findByBabyIdAndDateAndLanguage(BABY_ID, TODAY, "zh")).thenReturn(Optional.of(row));
         when(recommendationRepository.save(any())).thenAnswer(call -> call.getArgument(0));
 
         MenuTodayResponse response = menuService.today(USER_ID);
@@ -139,7 +153,7 @@ class MenuServiceTest {
         lenient().when(row.isFresh()).thenReturn(false);
         lenient().when(row.getDate()).thenReturn(TODAY);
 
-        when(recommendationRepository.findByBabyIdAndDate(BABY_ID, TODAY)).thenReturn(Optional.of(row));
+        when(recommendationRepository.findByBabyIdAndDateAndLanguage(BABY_ID, TODAY, "zh")).thenReturn(Optional.of(row));
 
         menuService.today(USER_ID);
 
@@ -149,16 +163,16 @@ class MenuServiceTest {
 
     @Test
     void regenerateMapsAgentItemsOntoMenuItemShape() {
-        DailyRecommendationEntity row = DailyRecommendationEntity.pending(BABY_ID, TODAY);
+        DailyRecommendationEntity row = DailyRecommendationEntity.pending(BABY_ID, TODAY, "zh");
 
         when(babyRepository.findById(BABY_ID)).thenReturn(Optional.of(baby));
-        when(recommendationRepository.findByBabyIdAndDate(BABY_ID, TODAY)).thenReturn(Optional.of(row));
+        when(recommendationRepository.findByBabyIdAndDateAndLanguage(BABY_ID, TODAY, "zh")).thenReturn(Optional.of(row));
         when(recommendationRepository.save(any())).thenAnswer(call -> call.getArgument(0));
         when(contextRepository.findAllergens(BABY_ID)).thenReturn(List.of("鸡蛋"));
         when(contextRepository.findRecentSolidFoods(anyLong(), anyInt())).thenReturn(List.of());
         when(aiClient.post(any(), any())).thenReturn(agentResponse());
 
-        menuService.regenerate(BABY_ID);
+        menuService.regenerate(BABY_ID, "zh");
 
         assertThat(row.getStatus()).isEqualTo(DailyRecommendationEntity.STATUS_READY);
         assertThat(row.getPayload()).contains("鸡肉南瓜粥").contains("Breakfast");
@@ -174,7 +188,7 @@ class MenuServiceTest {
 
     /** 一条已生成好的缓存行 */
     private DailyRecommendationEntity readyRow() {
-        DailyRecommendationEntity row = DailyRecommendationEntity.pending(BABY_ID, TODAY);
+        DailyRecommendationEntity row = DailyRecommendationEntity.pending(BABY_ID, TODAY, "zh");
         row.markReady(
                 """
                 [{"id":"1","mealType":"Lunch","title":"鸡肉南瓜粥","description":"富含蛋白质 · 食材：鸡胸肉、南瓜",

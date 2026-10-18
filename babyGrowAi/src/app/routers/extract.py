@@ -75,9 +75,12 @@ async def extract_records(data: ExtractRequest):
             baby_age_months=data.baby_age_months,
             note=data.text,
             population=data.population,
+            language=data.language,
         )
     else:
-        result = await extractor.extract(data.text, data.baby_age_months, population=data.population)
+        result = await extractor.extract(
+            data.text, data.baby_age_months, population=data.population, language=data.language
+        )
 
     # Persist decision log synchronously; acceptable for low concurrency.
     _persist_log(data, result)

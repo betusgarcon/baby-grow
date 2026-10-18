@@ -52,7 +52,9 @@ public class GlobalExceptionHandler {
         if (raw != null && raw.startsWith("error.")) {
             return messages.get(raw);
         }
-        if (raw == null || raw.isBlank()) {
+        // BizException 只用错误码构造时，getMessage() 是枚举里的中文默认值；
+        // 它同样要按请求语言翻译，而不是原样透出。
+        if (raw == null || raw.isBlank() || raw.equals(errorCode.getMessage())) {
             return messages.get(errorKey(errorCode));
         }
         return raw;
@@ -70,7 +72,8 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
         log.warn("参数校验失败 {}", detail);
         return ResponseEntity.status(ErrorCode.BAD_REQUEST.getHttpStatus())
-                .body(ApiResponse.fail(ErrorCode.BAD_REQUEST, detail.isEmpty() ? ErrorCode.BAD_REQUEST.getMessage() : detail));
+                .body(ApiResponse.fail(ErrorCode.BAD_REQUEST,
+                        detail.isEmpty() ? messages.get(errorKey(ErrorCode.BAD_REQUEST)) : detail));
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
@@ -107,7 +110,12 @@ public class GlobalExceptionHandler {
                         messages.get(errorKey(ErrorCode.INTERNAL_ERROR))));
     }
 
-    private static String defaultMessage(FieldError field) {
-        return field.getDefaultMessage() == null ? "取值不合法" : field.getDefaultMessage();
+    private String defaultMessage(FieldError field) {
+        String raw = field.getDefaultMessage();
+        if (raw == null || raw.isBlank()) {
+            return messages.get("error.invalidValue");
+        }
+        // 校验注解里写的是文案键（约定 error. 前缀），这里统一翻译
+        return raw.startsWith("error.") ? messages.get(raw) : raw;
     }
 }

@@ -2,6 +2,7 @@ package com.babygrow.backend.auth;
 
 import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.common.ErrorCode;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.config.AppProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -26,11 +27,14 @@ public class WechatApiClient {
     private final AppProperties properties;
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private final Messages messages;
 
-    public WechatApiClient(AppProperties properties, RestClient.Builder builder, ObjectMapper objectMapper) {
+    public WechatApiClient(AppProperties properties, RestClient.Builder builder,
+                           ObjectMapper objectMapper, Messages messages) {
         this.properties = properties;
         this.restClient = builder.baseUrl(ENDPOINT).build();
         this.objectMapper = objectMapper;
+        this.messages = messages;
     }
 
     public String exchangeOpenid(String code) {
@@ -38,8 +42,7 @@ public class WechatApiClient {
 
         if (isBlank(wechat.appId()) || isBlank(wechat.appSecret())) {
             throw new BizException(ErrorCode.INTERNAL_ERROR,
-                    "未配置微信凭据。请设置 WX_APPID / WX_SECRET 环境变量，"
-                            + "或开启 APP_AUTH_DEV_MODE=true 使用本地直通登录。");
+                    messages.get("error.wechatNotConfigured"));
         }
 
         // **先取字符串，再自己解析，不要直接 .body(Map.class)。**
@@ -72,7 +75,8 @@ public class WechatApiClient {
         } catch (Exception ex) {
             // 只截断后记日志：正常响应里含 session_key，不该原样落盘
             log.warn("jscode2session 返回了无法解析的内容：{}", raw.substring(0, Math.min(raw.length(), 200)));
-            throw new BizException(ErrorCode.UNAUTHORIZED, "微信登录失败：返回内容无法解析");
+            throw new BizException(ErrorCode.UNAUTHORIZED,
+                    messages.get("error.wechatLoginUnparseable"));
         }
 
         Object openid = body.get("openid");
@@ -81,7 +85,8 @@ public class WechatApiClient {
             Object errmsg = body.get("errmsg");
             log.warn("jscode2session 未返回 openid, errcode={} errmsg={}", body.get("errcode"), errmsg);
             throw new BizException(ErrorCode.UNAUTHORIZED,
-                    "微信登录失败：" + (errmsg == null ? "未知原因" : errmsg.toString()));
+                    messages.get("error.wechatLoginFailed",
+                            errmsg == null ? messages.get("error.wechatUnknownReason") : errmsg.toString()));
         }
         return openid.toString();
     }

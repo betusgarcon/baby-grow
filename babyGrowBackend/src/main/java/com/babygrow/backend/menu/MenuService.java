@@ -2,6 +2,7 @@ package com.babygrow.backend.menu;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.ai.AiClient;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.config.AsyncConfig;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.DailyRecommendationEntity;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -41,7 +44,8 @@ public class MenuService {
     private static final Logger log = LoggerFactory.getLogger(MenuService.class);
 
     private static final int RECENT_DIET_DAYS = 3;
-    private static final String DEFAULT_QUERY = "今天吃什么";
+    private static final String LANGUAGE_ZH = "zh";
+    private static final String LANGUAGE_EN = "en";
 
     /** pending 超过这个时长就认为上一次没跑完（进程被杀），允许重新投递 */
     private static final Duration STUCK_PENDING = Duration.ofMinutes(3);
@@ -60,6 +64,7 @@ public class MenuService {
     private final AiClient aiClient;
     private final ObjectMapper objectMapper;
     private final Executor executor;
+    private final Messages messages;
 
     public MenuService(FamilyAccessService accessService,
                        BabyRepository babyRepository,
@@ -67,7 +72,8 @@ public class MenuService {
                        MenuContextRepository contextRepository,
                        AiClient aiClient,
                        ObjectMapper objectMapper,
-                       @Qualifier(AsyncConfig.AI_EXECUTOR) Executor executor) {
+                       @Qualifier(AsyncConfig.AI_EXECUTOR) Executor executor,
+                       Messages messages) {
         this.accessService = accessService;
         this.babyRepository = babyRepository;
         this.recommendationRepository = recommendationRepository;
@@ -75,6 +81,7 @@ public class MenuService {
         this.aiClient = aiClient;
         this.objectMapper = objectMapper;
         this.executor = executor;
+        this.messages = messages;
     }
 
     /**
@@ -87,14 +94,15 @@ public class MenuService {
     public MenuTodayResponse today(Long userId) {
         BabyEntity baby = accessService.requireBaby(userId);
         LocalDate today = LocalDate.now();
+        String language = requestLanguage();
 
         DailyRecommendationEntity row = recommendationRepository
-                .findByBabyIdAndDate(baby.getId(), today)
+                .findByBabyIdAndDateAndLanguage(baby.getId(), today, language)
                 .orElse(null);
 
         if (row == null) {
-            recommendationRepository.save(DailyRecommendationEntity.pending(baby.getId(), today));
-            enqueue(baby.getId());
+            recommendationRepository.save(DailyRecommendationEntity.pending(baby.getId(), today, language));
+            enqueue(baby.getId(), language);
             return MenuTodayResponse.empty(today.toString(), null);
         }
 
@@ -105,29 +113,34 @@ public class MenuService {
         if (needsRegeneration(row)) {
             row.markPending();
             recommendationRepository.save(row);
-            enqueue(baby.getId());
+            enqueue(baby.getId(), language);
         }
         return toResponse(row, true);
     }
 
-    /** 有新的饮食记录时调用：把今天的推荐标记为过期，下次读取会触发重算 */
-    @Transactional
-    public void invalidateToday(Long babyId) {
-        recommendationRepository.findByBabyIdAndDate(babyId, LocalDate.now())
-                .ifPresent(row -> {
-                    if (row.getInvalidatedAt() == null) {
-                        row.markPending();
-                        recommendationRepository.save(row);
-                        log.debug("宝宝 {} 今日食谱推荐已标记过期", babyId);
-                    }
-                });
+    private String requestLanguage() {
+        return messages.locale().getLanguage().equals(Locale.ENGLISH.getLanguage())
+                ? LANGUAGE_EN : LANGUAGE_ZH;
     }
 
-    /** 定时预生成：为所有宝宝算好今天的推荐，让早上的首次打开也是瞬间的 */
+    /** 有新的饮食记录时调用：把今天各语言的推荐都标记为过期，下次读取会触发重算 */
+    @Transactional
+    public void invalidateToday(Long babyId) {
+        for (DailyRecommendationEntity row : recommendationRepository
+                .findByBabyIdAndDate(babyId, LocalDate.now())) {
+            if (row.getInvalidatedAt() == null) {
+                row.markPending();
+                recommendationRepository.save(row);
+                log.debug("宝宝 {} 今日食谱推荐已标记过期", babyId);
+            }
+        }
+    }
+
+    /** 定时预生成：为所有宝宝算好今天的中文推荐，让早上的首次打开也是瞬间的 */
     public void pregenerateForAllBabies() {
         List<BabyEntity> babies = babyRepository.findAll();
         log.info("开始预生成 {} 个宝宝的今日食谱推荐", babies.size());
-        babies.forEach(baby -> enqueue(baby.getId()));
+        babies.forEach(baby -> enqueue(baby.getId(), LANGUAGE_ZH));
     }
 
     private boolean needsRegeneration(DailyRecommendationEntity row) {
@@ -139,8 +152,8 @@ public class MenuService {
                 || row.getUpdatedAt().isBefore(Instant.now().minus(STUCK_PENDING));
     }
 
-    private void enqueue(Long babyId) {
-        executor.execute(() -> regenerate(babyId));
+    private void enqueue(Long babyId, String language) {
+        executor.execute(() -> regenerate(babyId, language));
     }
 
     /**
@@ -149,7 +162,9 @@ public class MenuService {
      * <p>刻意不加 {@code @Transactional}：整段包含一次十几秒的 LLM 调用，
      * 用事务包住会长时间占着连接。状态写入各自成事务。
      */
-    public void regenerate(Long babyId) {
+    public void regenerate(Long babyId, String language) {
+        // 生成线程不一定继承请求线程的语言（定时任务更是没有），这里显式指定
+        LocaleContextHolder.setLocale(LANGUAGE_EN.equals(language) ? Locale.ENGLISH : Locale.SIMPLIFIED_CHINESE);
         try {
             BabyEntity baby = babyRepository.findById(babyId).orElse(null);
             if (baby == null) {
@@ -158,16 +173,17 @@ public class MenuService {
 
             LocalDate today = LocalDate.now();
             DailyRecommendationEntity row = recommendationRepository
-                    .findByBabyIdAndDate(babyId, today)
+                    .findByBabyIdAndDateAndLanguage(babyId, today, language)
                     .orElseGet(() -> recommendationRepository.save(
-                            DailyRecommendationEntity.pending(babyId, today)));
+                            DailyRecommendationEntity.pending(babyId, today, language)));
 
             int ageMonths = AgeLabelCalculator.monthsBetween(baby.getBirthday(), today);
 
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("baby_id", String.valueOf(babyId));
             body.put("baby_age_months", ageMonths);
-            body.put("query", DEFAULT_QUERY);
+            body.put("query", messages.get("ui.menu.query"));
+            body.put("language", language);
             body.put("allergens", contextRepository.findAllergens(babyId));
             body.put("recent_diet", buildRecentDiet(babyId));
             body.put("population", "baby");
@@ -186,12 +202,14 @@ public class MenuService {
             log.info("宝宝 {} 的今日食谱推荐已生成", babyId);
         } catch (Exception ex) {
             log.error("生成宝宝 {} 的食谱推荐失败", babyId, ex);
-            recommendationRepository.findByBabyIdAndDate(babyId, LocalDate.now())
+            recommendationRepository.findByBabyIdAndDateAndLanguage(babyId, LocalDate.now(), language)
                     .ifPresent(row -> {
                         // 失败的只是「今天的新建议」；旧结果仍在，读路径会带 stale 返回
                         row.markFailed(ex.getMessage());
                         recommendationRepository.save(row);
                     });
+        } finally {
+            LocaleContextHolder.resetLocaleContext();
         }
     }
 
@@ -241,7 +259,7 @@ public class MenuService {
     }
 
     /** 卡片上只放一句话，所以把「推荐理由」和「食材」合并成一段 */
-    private static String buildDescription(Map<String, Object> item) {
+    private String buildDescription(Map<String, Object> item) {
         List<String> parts = new ArrayList<>();
         String reason = stringOrNull(item.get("reason"));
         if (reason != null && !reason.isBlank()) {
@@ -249,7 +267,8 @@ public class MenuService {
         }
         List<String> ingredients = toStringList(item.get("ingredients"));
         if (!ingredients.isEmpty()) {
-            parts.add("食材：" + String.join("、", ingredients));
+            parts.add(messages.get("ui.menu.dishIngredients",
+                    String.join(messages.get("ui.common.listSeparator"), ingredients)));
         }
         return String.join(" · ", parts);
     }

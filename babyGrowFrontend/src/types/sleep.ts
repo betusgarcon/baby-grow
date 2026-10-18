@@ -11,6 +11,8 @@ export interface SleepSegment {
   label: string
   value: number
   color: string
+  /** 稳定标识；label 会随语言变化，判断逻辑只能用 type */
+  type?: SleepSegmentType
 }
 
 /** 昼夜节律摘要 */

@@ -1,6 +1,7 @@
 package com.babygrow.backend.analysis;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.DietBarItem;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.DietRatioItem;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.Insight;
@@ -30,7 +31,9 @@ import java.util.stream.Collectors;
 @Service
 public class DietAnalysisService {
 
-    private static final String[] DAY_LABELS = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    private static final String[] DAY_KEYS = {
+            "ui.diet.day.mon", "ui.diet.day.tue", "ui.diet.day.wed", "ui.diet.day.thu",
+            "ui.diet.day.fri", "ui.diet.day.sat", "ui.diet.day.sun"};
 
     private static final List<String> SLICE_COLORS = List.of(
             "bg-[#CFD8C7]", "bg-[#E7C9B7]", "bg-[#C1CDD3]", "bg-[#D9CFE0]", "bg-[#E6DCC0]");
@@ -38,13 +41,16 @@ public class DietAnalysisService {
     private final FamilyAccessService accessService;
     private final FeedingRepository feedingRepository;
     private final ReferenceDataRepository referenceData;
+    private final Messages messages;
 
     public DietAnalysisService(FamilyAccessService accessService,
                                FeedingRepository feedingRepository,
-                               ReferenceDataRepository referenceData) {
+                               ReferenceDataRepository referenceData,
+                               Messages messages) {
         this.accessService = accessService;
         this.feedingRepository = feedingRepository;
         this.referenceData = referenceData;
+        this.messages = messages;
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +76,7 @@ public class DietAnalysisService {
                     .sum();
 
             dailyMilk.add(total);
-            bars.add(new DietBarItem(DAY_LABELS[offset], total, day.equals(today) ? Boolean.TRUE : null));
+            bars.add(new DietBarItem(messages.get(DAY_KEYS[offset]), total, day.equals(today) ? Boolean.TRUE : null));
         }
 
         // 只对「有记录的天」求平均：把没记录的天当作 0 会把平均值拉得毫无意义
@@ -82,21 +88,27 @@ public class DietAnalysisService {
 
         String standardLabel = standard == null
                 ? ""
-                : "Recommended " + standard.recommendedMin() + "-" + standard.recommendedMax() + " " + standard.unit();
+                : messages.get("ui.diet.standard",
+                        String.valueOf(standard.recommendedMin()),
+                        String.valueOf(standard.recommendedMax()), standard.unit());
 
         String narrativeNote = recorded.isEmpty()
-                ? "这一周还没有奶量记录。"
-                : "已记录 " + recorded.size() + " 天，平均 " + average + " ml。";
+                ? messages.get("ui.diet.week.note.empty")
+                : messages.get("ui.diet.week.note.recorded",
+                        recorded.size(), String.valueOf(average));
 
         Insight insight = recorded.isEmpty()
-                ? new Insight("还没有奶量记录", "记录每天的奶量后，这里会按天显示并与建议区间对照。")
-                : new Insight("Feeding",
+                ? new Insight(messages.get("ui.diet.week.emptyTitle"), messages.get("ui.diet.week.emptyContent"))
+                : new Insight(messages.get("ui.diet.week.title"),
                         standard == null
-                                ? "参考区间缺失，图表仅显示实际摄入。"
-                                : "本周平均 " + average + standard.unit() + "，建议区间为 "
-                                        + standard.recommendedMin() + "-" + standard.recommendedMax() + standard.unit() + "。");
+                                ? messages.get("ui.diet.week.noStandard")
+                                : messages.get("ui.diet.week.content",
+                                        String.valueOf(average), standard.unit(),
+                                        String.valueOf(standard.recommendedMin()),
+                                        String.valueOf(standard.recommendedMax())));
 
-        return new WeeklyDietResponse(bars, "Average " + average + " ml", standardLabel, narrativeNote, insight,
+        return new WeeklyDietResponse(bars, messages.get("ui.diet.averageLabel", String.valueOf(average)),
+                standardLabel, narrativeNote, insight,
                 standard == null ? null : new ReferenceRange(
                         standard.recommendedMin(), standard.recommendedMax(), standard.axisMax(),
                         standard.unit(), standard.source(), standard.version()),
@@ -120,15 +132,15 @@ public class DietAnalysisService {
         Map<String, Long> byCategory = solids.stream()
                 .collect(Collectors.groupingBy(
                         item -> item.getFoodCategory() == null || item.getFoodCategory().isBlank()
-                                ? "其他" : item.getFoodCategory(),
+                                ? messages.get("ui.common.other") : item.getFoodCategory(),
                         LinkedHashMap::new,
                         Collectors.counting()));
 
         List<DietRatioItem> legends = new ArrayList<>();
         int index = 0;
         for (Map.Entry<String, Long> entry : byCategory.entrySet()) {
-            legends.add(new DietRatioItem(entry.getKey(), entry.getValue(),
-                    SLICE_COLORS.get(index % SLICE_COLORS.size())));
+            legends.add(new DietRatioItem(AnalysisSupport.foodCategoryLabel(messages, entry.getKey()),
+                    entry.getValue(), SLICE_COLORS.get(index % SLICE_COLORS.size())));
             index++;
         }
 
@@ -148,16 +160,18 @@ public class DietAnalysisService {
         }
 
         Insight insight = solids.isEmpty()
-                ? new Insight("这个月还没有辅食记录", "记录宝宝吃了什么，这里会按类别显示构成与已尝试的食材。")
-                : new Insight("Diet",
-                        "本月记录了 " + total + " 次辅食，涉及 " + ingredients.size() + " 种食材。");
+                ? new Insight(messages.get("ui.diet.month.emptyTitle"), messages.get("ui.diet.month.emptyContent"))
+                : new Insight(messages.get("ui.diet.month.title"),
+                        messages.get("ui.diet.month.content", total, ingredients.size()));
 
         return new MonthlyDietResponse(
-                target.getYear() + "年" + target.getMonthValue() + "月",
-                "Monthly dietary ratio summary",
-                "Solids Exploring",
-                new MonthlyDietDonut(topRatio, "Solids", legends),
-                new MonthlyDietIngredients("Ingredients", ingredients.size() + " items", ingredients),
+                // 年份按字符串传：MessageFormat 会把 {0} 当数字加千分位，2026 会变成 2,026
+                messages.get("ui.monthYear", String.valueOf(target.getYear()), target.getMonthValue()),
+                messages.get("ui.diet.month.subtitle"),
+                messages.get("ui.diet.month.badge"),
+                new MonthlyDietDonut(topRatio, messages.get("ui.diet.month.donutCenter"), legends),
+                new MonthlyDietIngredients(messages.get("ui.diet.month.ingredientsLabel"),
+                        messages.get("ui.diet.month.items", ingredients.size()), ingredients),
                 insight,
                 feedingRepository.existsByBabyId(baby.getId()));
     }

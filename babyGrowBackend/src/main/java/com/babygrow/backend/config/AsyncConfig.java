@@ -2,6 +2,9 @@ package com.babygrow.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.i18n.SimpleLocaleContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -31,6 +34,23 @@ public class AsyncConfig {
         executor.setMaxPoolSize(4);
         executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("ai-task-");
+        // 请求线程的语言要跟着任务走，否则 AI 生成会在后台线程上退回默认语言
+        executor.setTaskDecorator(runnable -> {
+            LocaleContext submitted = LocaleContextHolder.getLocaleContext();
+            return () -> {
+                if (submitted == null) {
+                    LocaleContextHolder.resetLocaleContext();
+                } else {
+                    LocaleContextHolder.setLocaleContext(
+                            new SimpleLocaleContext(submitted.getLocale()));
+                }
+                try {
+                    runnable.run();
+                } finally {
+                    LocaleContextHolder.resetLocaleContext();
+                }
+            };
+        });
         executor.initialize();
         return executor;
     }

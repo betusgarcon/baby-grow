@@ -129,6 +129,7 @@ class RecipeRAGService:
                 texture_level=request.texture_level,
                 rule_result=rule_result,
                 knowledge_context=context,
+                language=request.language,
             )
 
             # Schema enforces the exact JSON shape returned by the LLM.

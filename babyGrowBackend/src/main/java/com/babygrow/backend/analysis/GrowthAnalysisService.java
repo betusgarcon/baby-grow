@@ -1,6 +1,7 @@
 package com.babygrow.backend.analysis;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.DietLegendItem;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.GrowthComparisonPoint;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.GrowthDataPoint;
@@ -51,22 +52,30 @@ public class GrowthAnalysisService {
 
     private static final int DIET_WINDOW_DAYS = 30;
 
+    private static final String[][] TIME_RANGE_KEYS = {
+            {"last3m", "ui.growth.range.last3m"},
+            {"last6m", "ui.growth.range.last6m"},
+            {"birth", "ui.growth.range.birth"}};
+
     private final FamilyAccessService accessService;
     private final GrowthMeasurementRepository growthRepository;
     private final FeedingRepository feedingRepository;
     private final BabyMilestoneRepository milestoneRepository;
     private final ReferenceDataRepository referenceData;
+    private final Messages messages;
 
     public GrowthAnalysisService(FamilyAccessService accessService,
                                  GrowthMeasurementRepository growthRepository,
                                  FeedingRepository feedingRepository,
                                  BabyMilestoneRepository milestoneRepository,
-                                 ReferenceDataRepository referenceData) {
+                                 ReferenceDataRepository referenceData,
+                                 Messages messages) {
         this.accessService = accessService;
         this.growthRepository = growthRepository;
         this.feedingRepository = feedingRepository;
         this.milestoneRepository = milestoneRepository;
         this.referenceData = referenceData;
+        this.messages = messages;
     }
 
     @Transactional(readOnly = true)
@@ -76,7 +85,8 @@ public class GrowthAnalysisService {
 
         Map<String, Map<String, GrowthTrendSnapshot>> trends = new LinkedHashMap<>();
         Instant now = Instant.now();
-        for (TimeRange range : TIME_RANGES) {
+        List<TimeRange> timeRanges = timeRanges();
+        for (TimeRange range : timeRanges) {
             Instant from = switch (range.key()) {
                 case "last3m" -> now.minus(java.time.Duration.ofDays(90));
                 case "last6m" -> now.minus(java.time.Duration.ofDays(180));
@@ -93,7 +103,7 @@ public class GrowthAnalysisService {
         return new GrowthPageResponse(
                 insight(measurements),
                 metricOverviews(baby, measurements),
-                TIME_RANGES,
+                timeRanges,
                 trends,
                 monthlyDiet(baby),
                 milestones(baby),
@@ -123,6 +133,27 @@ public class GrowthAnalysisService {
         return new GrowthTrendResponse(snapshot(baby, measurements, metric, from), metricPoints, insight(measurements));
     }
 
+    private List<TimeRange> timeRanges() {
+        List<TimeRange> ranges = new ArrayList<>();
+        for (String[] entry : TIME_RANGE_KEYS) {
+            ranges.add(new TimeRange(entry[0], messages.get(entry[1])));
+        }
+        return ranges;
+    }
+
+    private String metricLabel(Metric metric) {
+        return messages.get("ui.metric." + metric.key());
+    }
+
+    private String metricChartLabel(Metric metric) {
+        return messages.get("ui.metric.chart." + metric.key());
+    }
+
+    private String bandLabel(double value, Double p3, Double p50, Double p97) {
+        String key = AnalysisSupport.percentileBandKey(value, p3, p50, p97);
+        return key.isEmpty() ? "" : messages.get(key);
+    }
+
     private GrowthTrendSnapshot snapshot(BabyEntity baby, List<GrowthMeasurementEntity> measurements,
                                          Metric metric, Instant from) {
         List<GrowthComparisonPoint> points = measurements.stream()
@@ -138,7 +169,7 @@ public class GrowthAnalysisService {
                 .toList();
 
         if (points.isEmpty()) {
-            return new GrowthTrendSnapshot(List.of(), metric.chartLabel(),
+            return new GrowthTrendSnapshot(List.of(), metricChartLabel(metric),
                     comparisonLabel(baby, metric), new TrendFooter("", "", ""));
         }
 
@@ -152,12 +183,12 @@ public class GrowthAnalysisService {
 
         return new GrowthTrendSnapshot(
                 points,
-                metric.chartLabel(),
+                metricChartLabel(metric),
                 comparisonLabel(baby, metric),
                 new TrendFooter(
-                        latestAge + " mo",
+                        messages.get("ui.growth.latestAge", latestAge),
                         formatNumber(latestValue) + " " + metric.unit(),
-                        AnalysisSupport.percentileBand(latestValue,
+                        bandLabel(latestValue,
                                 boundValue(baby, metric, latestAge, "p3"),
                                 boundValue(baby, metric, latestAge, "p50"),
                                 boundValue(baby, metric, latestAge, "p97"))));
@@ -172,7 +203,7 @@ public class GrowthAnalysisService {
                     .max(Comparator.comparing(GrowthMeasurementEntity::getMeasuredAt));
 
             if (latest.isEmpty()) {
-                overviews.add(new GrowthMetricOverview(metric.key(), metric.label(), "", metric.unit(), "", null));
+                overviews.add(new GrowthMetricOverview(metric.key(), metricLabel(metric), "", metric.unit(), "", null));
                 continue;
             }
 
@@ -181,10 +212,10 @@ public class GrowthAnalysisService {
 
             overviews.add(new GrowthMetricOverview(
                     metric.key(),
-                    metric.label(),
+                    metricLabel(metric),
                     formatNumber(value),
                     metric.unit(),
-                    AnalysisSupport.percentileBand(value,
+                    bandLabel(value,
                             boundValue(baby, metric, ageMonths, "p3"),
                             boundValue(baby, metric, ageMonths, "p50"),
                             boundValue(baby, metric, ageMonths, "p97")),
@@ -203,7 +234,7 @@ public class GrowthAnalysisService {
                 .filter(item -> FeedingEntity.KIND_SOLID.equals(item.getKind()))
                 .collect(Collectors.groupingBy(
                         item -> item.getFoodCategory() == null || item.getFoodCategory().isBlank()
-                                ? "其他" : item.getFoodCategory(),
+                                ? messages.get("ui.common.other") : item.getFoodCategory(),
                         LinkedHashMap::new,
                         Collectors.counting()));
 
@@ -212,12 +243,12 @@ public class GrowthAnalysisService {
 
         List<DietLegendItem> legends = new ArrayList<>();
         if (milkCount > 0) {
-            legends.add(new DietLegendItem("奶", milkCount, CATEGORY_COLORS.get(0)));
+            legends.add(new DietLegendItem(messages.get("ui.growth.diet.milk"), milkCount, CATEGORY_COLORS.get(0)));
         }
         int colorIndex = 1;
         for (Map.Entry<String, Long> entry : byCategory.entrySet()) {
-            legends.add(new DietLegendItem(entry.getKey(), entry.getValue(),
-                    CATEGORY_COLORS.get(colorIndex % CATEGORY_COLORS.size())));
+            legends.add(new DietLegendItem(AnalysisSupport.foodCategoryLabel(messages, entry.getKey()),
+                    entry.getValue(), CATEGORY_COLORS.get(colorIndex % CATEGORY_COLORS.size())));
             colorIndex++;
         }
 
@@ -233,11 +264,13 @@ public class GrowthAnalysisService {
 
         return new MonthlyDiet(
                 ratio,
-                "Milk",
+                messages.get("ui.growth.diet.milk"),
                 legends,
                 ingredients,
                 ingredients.size(),
-                ingredients.isEmpty() ? "还没有食材记录" : "已尝试 " + ingredients.size() + " 种食材");
+                ingredients.isEmpty()
+                        ? messages.get("ui.growth.diet.none")
+                        : messages.get("ui.growth.diet.tried", ingredients.size()));
     }
 
     private List<MilestoneItem> milestones(BabyEntity baby) {
@@ -248,9 +281,13 @@ public class GrowthAnalysisService {
                 .map(BabyMilestoneEntity::getMilestoneKey)
                 .collect(Collectors.toSet());
 
+        boolean english = messages.locale().getLanguage().equals(java.util.Locale.ENGLISH.getLanguage());
+
         List<MilestoneItem> items = new ArrayList<>();
         for (ReferenceDataRepository.MilestoneCatalogEntry entry : catalog) {
-            items.add(new MilestoneItem(entry.title(), unlockedKeys.contains(entry.key()),
+            String title = english && entry.titleEn() != null && !entry.titleEn().isBlank()
+                    ? entry.titleEn() : entry.title();
+            items.add(new MilestoneItem(title, unlockedKeys.contains(entry.key()),
                     entry.icon() == null ? "star" : entry.icon()));
         }
 
@@ -269,25 +306,25 @@ public class GrowthAnalysisService {
 
     private Insight insight(List<GrowthMeasurementEntity> measurements) {
         if (measurements.isEmpty()) {
-            return new Insight("还没有生长记录",
-                    "在「记录」里写下身高体重，例如「今天量了体重 8 公斤、身高 68 厘米」，这里就会出现生长曲线。");
+            return new Insight(messages.get("ui.growth.insight.emptyTitle"),
+                    messages.get("ui.growth.insight.emptyContent"));
         }
 
         GrowthMeasurementEntity latest = measurements.stream()
                 .max(Comparator.comparing(GrowthMeasurementEntity::getMeasuredAt))
                 .orElseThrow();
 
-        return new Insight("Growth",
-                "已记录 " + measurements.size() + " 次测量，最近一次在 "
-                        + AnalysisSupport.localDateOf(latest.getMeasuredAt())
-                        + "。曲线上的参考值来自标准表，仅供对照，不构成医学判断。");
+        return new Insight(messages.get("ui.growth.insight.title"),
+                messages.get("ui.growth.insight.content",
+                        measurements.size(),
+                        AnalysisSupport.localDateOf(latest.getMeasuredAt())));
     }
 
     private String comparisonLabel(BabyEntity baby, Metric metric) {
         if (BabyEntity.GENDER_FEMALE.equals(baby.getGender())) {
-            return "WHO Girl " + metric.label();
+            return messages.get("ui.growth.reference.girl", metricLabel(metric));
         }
-        return "WHO Boy " + metric.label();
+        return messages.get("ui.growth.reference.boy", metricLabel(metric));
     }
 
     /** 该月龄的 P50。没有备份性别或超出标准表范围时返回 0（图表不画参考线） */

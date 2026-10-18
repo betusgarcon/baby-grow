@@ -2,6 +2,7 @@ package com.babygrow.backend.family;
 
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.FamilyEntity;
 import com.babygrow.backend.domain.FamilyMemberEntity;
@@ -43,7 +44,6 @@ public class FamilyService {
     private static final int BABY_NAME_MAX_LENGTH = 64;
 
     /** 家庭名不专门收集：用户关心的是宝宝，家庭只是权限容器 */
-    private static final String DEFAULT_FAMILY_NAME = "我的家庭";
 
     /** 头像底色轮换。展示层的东西，但契约要求接口下发 */
     private static final String[] AVATAR_CLASSES = {
@@ -57,17 +57,20 @@ public class FamilyService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final BabyRepository babyRepository;
+    private final Messages messages;
 
     public FamilyService(FamilyAccessService accessService,
                          FamilyMemberRepository memberRepository,
                          UserRepository userRepository,
                          FamilyRepository familyRepository,
-                         BabyRepository babyRepository) {
+                         BabyRepository babyRepository,
+                         Messages messages) {
         this.accessService = accessService;
         this.memberRepository = memberRepository;
         this.userRepository = userRepository;
         this.familyRepository = familyRepository;
         this.babyRepository = babyRepository;
+        this.messages = messages;
     }
 
     /**
@@ -96,7 +99,7 @@ public class FamilyService {
         }
 
         FamilyEntity family = familyRepository.save(
-                FamilyEntity.ownedBy(userId, DEFAULT_FAMILY_NAME));
+                FamilyEntity.ownedBy(userId, messages.get("ui.default.familyName")));
         memberRepository.save(FamilyMemberEntity.active(
                 family.getId(), userId, FamilyMemberEntity.ROLE_ADMIN));
 
@@ -315,16 +318,17 @@ public class FamilyService {
                 }
             }
         }
-        return "家庭成员";
+        return messages.get("ui.default.memberName");
     }
 
-    private static String roleLabel(String role, String status) {
+    private String roleLabel(String role, String status) {
         String base = switch (role) {
-            case FamilyMemberEntity.ROLE_ADMIN -> "Admin · Full Access";
-            case FamilyMemberEntity.ROLE_CONTRIBUTOR -> "Contributor · Can Record";
-            default -> "Viewer · Read Only";
+            case FamilyMemberEntity.ROLE_ADMIN -> messages.get("ui.family.role.admin");
+            case FamilyMemberEntity.ROLE_CONTRIBUTOR -> messages.get("ui.family.role.contributor");
+            default -> messages.get("ui.family.role.viewer");
         };
-        return FamilyMemberEntity.STATUS_PENDING.equals(status) ? base + " · Pending" : base;
+        return FamilyMemberEntity.STATUS_PENDING.equals(status)
+                ? messages.get("ui.family.role.pending", base) : base;
     }
 
     private static String initialOf(String name) {

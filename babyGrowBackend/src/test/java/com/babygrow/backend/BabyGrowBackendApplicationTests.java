@@ -22,7 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
         "spring.flyway.enabled=false",
         "spring.jpa.hibernate.ddl-auto=create-drop",
         // 演示数据默认开着，会让这个测试也去灌 28 天记录。这里关掉，保持它只验 bean 图。
-        "app.demo-data.enabled=false"
+        "app.demo-data.enabled=false",
+        // 非 dev-mode 下不能用仓库里的占位密钥；这里给一个仅用于测试的随机值
+        "app.jwt.secret=test-only-secret-value-not-used-outside-context-loads"
 })
 class BabyGrowBackendApplicationTests {
 

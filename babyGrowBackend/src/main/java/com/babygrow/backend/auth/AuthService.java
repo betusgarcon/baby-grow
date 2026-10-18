@@ -4,6 +4,7 @@ import com.babygrow.backend.auth.dto.AuthDtos.LoginResponse;
 import com.babygrow.backend.auth.dto.AuthDtos.MeResponse;
 import com.babygrow.backend.common.BizException;
 import com.babygrow.backend.common.ErrorCode;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.config.AppProperties;
 import com.babygrow.backend.config.JwtService;
 import com.babygrow.backend.domain.BabyEntity;
@@ -26,8 +27,6 @@ public class AuthService {
 
     /** dev-mode 下所有请求都归到这一个账号，便于反复调同一份数据 */
     private static final String DEV_OPENID = "dev-openid-local";
-    private static final String DEFAULT_FAMILY_NAME = "我的家庭";
-    private static final String DEFAULT_BABY_NAME = "宝宝";
 
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
@@ -36,6 +35,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final WechatApiClient wechatApiClient;
     private final AppProperties properties;
+    private final Messages messages;
 
     public AuthService(UserRepository userRepository,
                        FamilyRepository familyRepository,
@@ -43,7 +43,8 @@ public class AuthService {
                        BabyRepository babyRepository,
                        JwtService jwtService,
                        WechatApiClient wechatApiClient,
-                       AppProperties properties) {
+                       AppProperties properties,
+                       Messages messages) {
         this.userRepository = userRepository;
         this.familyRepository = familyRepository;
         this.familyMemberRepository = familyMemberRepository;
@@ -51,6 +52,7 @@ public class AuthService {
         this.jwtService = jwtService;
         this.wechatApiClient = wechatApiClient;
         this.properties = properties;
+        this.messages = messages;
     }
 
     /**
@@ -130,10 +132,10 @@ public class AuthService {
         }
 
         FamilyEntity family = familyRepository.save(
-                FamilyEntity.ownedBy(user.getId(), DEFAULT_FAMILY_NAME));
+                FamilyEntity.ownedBy(user.getId(), messages.get("ui.default.familyName")));
         familyMemberRepository.save(
                 FamilyMemberEntity.active(family.getId(), user.getId(), FamilyMemberEntity.ROLE_ADMIN));
-        babyRepository.save(BabyEntity.inFamily(family.getId(), DEFAULT_BABY_NAME));
+        babyRepository.save(BabyEntity.inFamily(family.getId(), messages.get("ui.default.babyName")));
         log.info("已为开发账号开好家庭与宝宝 userId={} familyId={}", user.getId(), family.getId());
     }
 

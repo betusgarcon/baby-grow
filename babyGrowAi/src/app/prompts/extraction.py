@@ -10,6 +10,7 @@ Lifespan:
 """
 
 from app.models import ExtractionResult
+from app.prompts.language import apply_language
 from app.prompts.registry import get_rendered_prompt
 
 # Few-shot examples help the model understand the exact JSON shape expected.
@@ -82,12 +83,18 @@ FEW_SHOT_EXAMPLES = [
 ]
 
 
-def build_messages(text: str, baby_age_months: int, population: str | None = None) -> list[dict[str, str]]:
+def build_messages(
+    text: str,
+    baby_age_months: int,
+    population: str | None = None,
+    language: str | None = None,
+) -> list[dict[str, str]]:
     """Build the full message list for the extraction task."""
     system, user = get_rendered_prompt(
         "extraction",
         {"baby_age_months": baby_age_months, "text": text},
     )
+    system = apply_language(system, language)
     if population and population != "baby":
         system = f"[{population} 人群记录提取]\n{system}"
     messages: list[dict[str, str]] = [{"role": "system", "content": system}]
@@ -112,6 +119,7 @@ def build_vision_messages(
     baby_age_months: int,
     note: str = "",
     population: str | None = None,
+    language: str | None = None,
 ) -> list[dict]:
     """Build a message list carrying an image for the VLM extraction path.
 
@@ -121,6 +129,7 @@ def build_vision_messages(
         "extraction",
         {"baby_age_months": baby_age_months, "text": note or ""},
     )
+    system = apply_language(system, language)
     if population and population != "baby":
         system = f"[{population} 人群记录提取]\n{system}"
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon' // 引入通用 Icon 组件
 import { t, getLanguage } from '@/i18n'
+import type { MessageKey } from '@/i18n'
 
 interface MenuCardProps {
   icon?: string      // 1. 声明可选的 icon 属性
@@ -24,8 +25,17 @@ const MEAL_BACKGROUND: Record<string, string> = {
   snack: 'bg-card',
 }
 
+const MEAL_LABEL_KEYS: Record<string, MessageKey> = {
+  breakfast: 'menu.meal.breakfast',
+  lunch: 'menu.meal.lunch',
+  dinner: 'menu.meal.dinner',
+  snack: 'menu.meal.snack',
+}
+
 export default function MenuCard({ icon, mealType, title, description }: MenuCardProps) {
-  const background = MEAL_BACKGROUND[mealType.trim().toLowerCase()] ?? 'bg-card'
+  const mealKey = mealType.trim().toLowerCase()
+  const background = MEAL_BACKGROUND[mealKey] ?? 'bg-card'
+  const mealLabel = MEAL_LABEL_KEYS[mealKey] ? t(MEAL_LABEL_KEYS[mealKey]) : mealType
 
   /**
    * 描述默认只露两行——带配料的文案很长，全展开会把卡片撑得没法横向浏览。
@@ -51,7 +61,7 @@ export default function MenuCard({ icon, mealType, title, description }: MenuCar
       {/* 第一行：Icon 与 mealType 在同一行，且左对齐 */}
       <View className="flex flex-row items-center gap-1.5">
         <Icon name={icon || 'breakfast'} className="w-4 h-4 text-stone-700" />
-        <Text className="text-neutral-600 text-xs font-semibold uppercase">{mealType}</Text>
+        <Text className="text-neutral-600 text-xs font-semibold uppercase">{mealLabel}</Text>
       </View>
 
       <Text className="text-stone-900 text-base font-semibold">{title}</Text>

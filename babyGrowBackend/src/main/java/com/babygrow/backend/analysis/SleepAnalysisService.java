@@ -1,6 +1,7 @@
 package com.babygrow.backend.analysis;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.CircadianSummary;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.DailySleepLog;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.DailySleepLogsResponse;
@@ -54,10 +55,13 @@ public class SleepAnalysisService {
 
     private final FamilyAccessService accessService;
     private final SleepSessionRepository sleepRepository;
+    private final Messages messages;
 
-    public SleepAnalysisService(FamilyAccessService accessService, SleepSessionRepository sleepRepository) {
+    public SleepAnalysisService(FamilyAccessService accessService, SleepSessionRepository sleepRepository,
+                                Messages messages) {
         this.accessService = accessService;
         this.sleepRepository = sleepRepository;
+        this.messages = messages;
     }
 
     @Transactional(readOnly = true)
@@ -75,13 +79,16 @@ public class SleepAnalysisService {
 
         CircadianSummary summary = new CircadianSummary(
                 AnalysisSupport.formatDuration(totalMinutes),
-                "Goal " + goalHours(ageMonths) + "h",
+                messages.get("ui.sleep.goal", goalHours(ageMonths)),
                 AnalysisSupport.formatDuration(nightMinutes),
                 AnalysisSupport.formatDuration(napMinutes),
                 List.of(
-                        new SleepSegment("Night", minutesToHours(nightMinutes), COLOR_NIGHT),
-                        new SleepSegment("Nap", minutesToHours(napMinutes), COLOR_NAP),
-                        new SleepSegment("Awake", minutesToHours(awakeMinutes), COLOR_AWAKE)));
+                        new SleepSegment(messages.get("ui.sleep.segment.night"), minutesToHours(nightMinutes),
+                                COLOR_NIGHT, SleepSessionEntity.TYPE_NIGHT),
+                        new SleepSegment(messages.get("ui.sleep.segment.nap"), minutesToHours(napMinutes),
+                                COLOR_NAP, SleepSessionEntity.TYPE_NAP),
+                        new SleepSegment(messages.get("ui.sleep.segment.awake"), minutesToHours(awakeMinutes),
+                                COLOR_AWAKE, "awake")));
 
         return new SleepCircadianResponse(summary, sleepRepository.existsByBabyId(baby.getId()));
     }
@@ -95,7 +102,8 @@ public class SleepAnalysisService {
         List<DailySleepLog> logs = sessions.stream()
                 .map(session -> new DailySleepLog(
                         String.valueOf(session.getId()),
-                        SleepSessionEntity.TYPE_NIGHT.equals(session.getSessionType()) ? "Night Sleep" : "Nap",
+                        SleepSessionEntity.TYPE_NIGHT.equals(session.getSessionType())
+                                ? messages.get("ui.sleep.logs.night") : messages.get("ui.sleep.logs.nap"),
                         rangeLabel(session),
                         AnalysisSupport.formatDuration(session.getDurationMin()),
                         session.getSessionType(),
@@ -103,10 +111,10 @@ public class SleepAnalysisService {
                 .toList();
 
         Insight insight = logs.isEmpty()
-                ? new Insight("这天还没有睡眠记录", "记录宝宝几点睡着、几点醒来，这里会按夜觉和小睡分开统计。")
-                : new Insight("Sleep",
-                        "这一天共记录了 " + logs.size() + " 段睡眠，合计 "
-                                + AnalysisSupport.formatDuration(sumMinutes(sessions, null)) + "。");
+                ? new Insight(messages.get("ui.sleep.logs.emptyTitle"), messages.get("ui.sleep.logs.emptyContent"))
+                : new Insight(messages.get("ui.sleep.logs.title"),
+                        messages.get("ui.sleep.logs.content", logs.size(),
+                                AnalysisSupport.formatDuration(sumMinutes(sessions, null))));
 
         return new DailySleepLogsResponse(logs, insight, sleepRepository.existsByBabyId(baby.getId()));
     }
@@ -129,8 +137,8 @@ public class SleepAnalysisService {
 
         boolean empty = rows.stream().allMatch(row -> row.segments().isEmpty());
         Insight insight = empty
-                ? new Insight("还没有睡眠记录", "记录几天的入睡与醒来时间后，这里会按月龄对比睡眠节律的变化。")
-                : new Insight("Sleep Rhythm", "每一行是该月龄段内所有记录的典型一天，按小时覆盖统计得出。");
+                ? new Insight(messages.get("ui.sleep.evolution.emptyTitle"), messages.get("ui.sleep.evolution.emptyContent"))
+                : new Insight(messages.get("ui.sleep.evolution.title"), messages.get("ui.sleep.evolution.content"));
 
         return new SleepEvolutionResponse(rows, insight, !empty);
     }
@@ -194,10 +202,11 @@ public class SleepAnalysisService {
 
         // 平均同样只除以「有记录的天」，不然稀疏数据会被日历天稀释成毫无意义的极小值
         String summary = recordedDays == 0
-                ? "暂无记录"
-                : "平均 " + Math.round(totalMinutes / (double) recordedDays / 60.0 * 10) / 10.0 + " h/天";
+                ? messages.get("ui.sleep.evolution.empty")
+                : messages.get("ui.sleep.evolution.summary",
+                        Math.round(totalMinutes / (double) recordedDays / 60.0 * 10) / 10.0);
 
-        return new SleepEvolutionRow(ageMonths + "M", summary, segments);
+        return new SleepEvolutionRow(messages.get("ui.sleep.evolution.age", ageMonths), summary, segments);
     }
 
     private List<SleepSessionEntity> sessionsOn(Long babyId, LocalDate day) {

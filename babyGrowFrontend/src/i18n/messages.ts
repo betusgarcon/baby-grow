@@ -137,6 +137,11 @@ export const messages = {
   ],
   'menu.expand': ['展开全部', 'Show all'],
   'menu.collapse': ['收起', 'Show less'],
+  'menu.meal.breakfast': ['早餐', 'Breakfast'],
+  'menu.meal.lunch': ['午餐', 'Lunch'],
+  'menu.meal.dinner': ['晚餐', 'Dinner'],
+  'menu.meal.snack': ['加餐', 'Snack'],
+  'menu.meal.other': ['一餐', 'Meal'],
 
   // ── 里程碑 / 列表 / 日历 ─────────────────────────────────
   'milestones.title': ['里程碑', 'Milestones'],
