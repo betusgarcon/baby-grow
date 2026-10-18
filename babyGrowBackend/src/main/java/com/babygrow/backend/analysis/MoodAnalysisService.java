@@ -10,6 +10,7 @@ import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinRequest;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodCheckinResponse;
 import com.babygrow.backend.analysis.dto.AnalysisDtos.MoodLegendItem;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.MoodEntryEntity;
 import com.babygrow.backend.repository.MoodEntryRepository;
@@ -40,10 +41,24 @@ public class MoodAnalysisService {
     private static final Set<String> CHECKIN_MOODS = Set.of(
             MoodEntryEntity.MOOD_HAPPY, MoodEntryEntity.MOOD_CLINGY, MoodEntryEntity.MOOD_DISCOMFORT);
 
-    private static final List<MoodLegendItem> LEGENDS = List.of(
-            new MoodLegendItem("开心", "bg-[#CFD8C7]"),
-            new MoodLegendItem("黏人烦躁", "bg-[#E7C9B7]"),
-            new MoodLegendItem("身体不适", "bg-[#C1CDD3]"));
+    private final FamilyAccessService accessService;
+    private final MoodEntryRepository moodRepository;
+    private final Messages messages;
+
+    public MoodAnalysisService(FamilyAccessService accessService, MoodEntryRepository moodRepository,
+                               Messages messages) {
+        this.accessService = accessService;
+        this.moodRepository = moodRepository;
+        this.messages = messages;
+    }
+
+    /** 图例。按请求语言生成——不能放成 static final，那会在类加载时固化语言 */
+    private List<MoodLegendItem> legends() {
+        return List.of(
+                new MoodLegendItem(messages.get("ui.mood.legend.happy"), "bg-[#CFD8C7]"),
+                new MoodLegendItem(messages.get("ui.mood.legend.clingy"), "bg-[#E7C9B7]"),
+                new MoodLegendItem(messages.get("ui.mood.legend.discomfort"), "bg-[#C1CDD3]"));
+    }
 
     /**
      * 打卡选项。
@@ -52,20 +67,14 @@ public class MoodAnalysisService {
      * 前端既有契约（{@code MoodCheckinOption} 要求这些字段）。与宝宝画像的
      * icon/circleClass 是同一处已知耦合，后续统一收拢。
      */
-    private static final List<MoodCheckinOption> CHECKIN_OPTIONS = List.of(
-            new MoodCheckinOption("happy", "开心能量", "☺", "happy-mood",
-                    "#68825f", "#edf5e7", "#f4f2ee"),
-            new MoodCheckinOption("clingy", "黏人烦躁", "☹", "unhappy-mood",
-                    "#9a6947", "#f5e3d8", "#f4f2ee"),
-            new MoodCheckinOption("discomfort", "身体不适", "☹", "uncomfortable-mood",
-                    "#68828d", "#e8eff2", "#f4f2ee"));
-
-    private final FamilyAccessService accessService;
-    private final MoodEntryRepository moodRepository;
-
-    public MoodAnalysisService(FamilyAccessService accessService, MoodEntryRepository moodRepository) {
-        this.accessService = accessService;
-        this.moodRepository = moodRepository;
+    private List<MoodCheckinOption> checkinOptionList() {
+        return List.of(
+                new MoodCheckinOption("happy", messages.get("ui.mood.option.happy"), "☺", "happy-mood",
+                        "#68825f", "#edf5e7", "#f4f2ee"),
+                new MoodCheckinOption("clingy", messages.get("ui.mood.option.clingy"), "☹", "unhappy-mood",
+                        "#9a6947", "#f5e3d8", "#f4f2ee"),
+                new MoodCheckinOption("discomfort", messages.get("ui.mood.option.discomfort"), "☹", "uncomfortable-mood",
+                        "#68828d", "#e8eff2", "#f4f2ee"));
     }
 
     @Transactional(readOnly = true)
@@ -87,13 +96,13 @@ public class MoodAnalysisService {
 
         List<MoodCalendarDay> days = buildGrid(target, moodByDay);
 
-        return new MoodCalendarResponse(days, LEGENDS, insight(target, moodByDay),
+        return new MoodCalendarResponse(days, legends(), insight(target, moodByDay),
                 moodRepository.existsByBabyId(baby.getId()));
     }
 
     @Transactional(readOnly = true)
     public MoodCheckinOptionsResponse checkinOptions() {
-        return new MoodCheckinOptionsResponse(CHECKIN_OPTIONS);
+        return new MoodCheckinOptionsResponse(checkinOptionList());
     }
 
     /**
@@ -199,16 +208,16 @@ public class MoodAnalysisService {
 
     private Insight insight(YearMonth target, Map<Integer, String> moodByDay) {
         if (moodByDay.isEmpty()) {
-            return new Insight("这个月还没有情绪记录",
-                    "打卡或记录宝宝当天的状态后，这里会显示一整个月的情绪分布。");
+            return new Insight(messages.get("ui.mood.insight.emptyTitle"),
+                    messages.get("ui.mood.insight.emptyContent"));
         }
 
         long discomfort = moodByDay.values().stream().filter(MoodEntryEntity.MOOD_DISCOMFORT::equals).count();
         long clingy = moodByDay.values().stream().filter(MoodEntryEntity.MOOD_CLINGY::equals).count();
 
-        return new Insight("Mood",
-                target.getMonthValue() + " 月共记录 " + moodByDay.size() + " 天，其中身体不适 "
-                        + discomfort + " 天、黏人烦躁 " + clingy + " 天。这里只做分布统计，不做任何判断。");
+        return new Insight(messages.get("ui.mood.insight.title"),
+                messages.get("ui.mood.insight.content",
+                        target.getMonthValue(), moodByDay.size(), discomfort, clingy));
     }
 
     private static YearMonth resolveMonth(Integer year, Integer month) {
