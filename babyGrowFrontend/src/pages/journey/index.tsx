@@ -17,6 +17,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import AsyncSection from '@/components/AsyncSection'
 import RecordSheet from '@/components/RecordSheet'
 import { getTodayMenu, type MenuTodayResponse } from '@/api/modules/menu'
+import { t } from '@/i18n'
 import {
   useAppState,
   loadTimeline,
@@ -124,7 +125,7 @@ export default function Journey() {
             <View onClick={() => navigateToRoute(upcomingEvent.route)}>
               <VaccineReminder
                 icon="injection"
-                title={`Upcoming: ${upcomingEvent.title}`}
+                title={t('journey.upcoming', { title: upcomingEvent.title })}
                 date={scheduledLabel(upcomingEvent.date)}
               />
             </View>
@@ -132,19 +133,19 @@ export default function Journey() {
 
           {insightLine ? (
             <View onClick={() => navigateToRoute('journey-weekly-insight')}>
-              <WeeklyInsight icon="star" title="WEEKLY INSIGHT" content={insightLine} />
+              <WeeklyInsight icon="star" title={t('journey.weeklyInsight')} content={insightLine} />
             </View>
           ) : null}
 
           {/* Recent Milestones */}
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
-              <Text className="text-stone-900 text-xl font-semibold">Recent Milestones</Text>
+              <Text className="text-stone-900 text-xl font-semibold">{t('journey.recentMilestones')}</Text>
               <Text
                 className="text-neutral-600 text-sm font-semibold"
                 onClick={() => navigateToRoute('journey-milestones')}
               >
-                More
+                {t('journey.more')}
               </Text>
             </View>
             <AsyncSection
@@ -157,9 +158,9 @@ export default function Journey() {
                 <View className="bg-card rounded-[24px]">
                   <EmptyState
                     icon="star"
-                    title="还没有里程碑"
-                    description="记录宝宝的每一个「第一次」，这里会按时间排开。"
-                    actionText="去记录一条"
+                    title={t('journey.emptyMilestones')}
+                    description={t('journey.emptyMilestonesDesc')}
+                    actionText={t('journey.addRecord')}
                     onAction={() => setRecordOpen(true)}
                   />
                 </View>
@@ -182,12 +183,12 @@ export default function Journey() {
           {/* Latest Journey */}
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
-              <Text className="text-stone-900 text-xl font-semibold">Latest Journey</Text>
+              <Text className="text-stone-900 text-xl font-semibold">{t('journey.latest')}</Text>
               <Text
                 className="text-neutral-600 text-sm font-semibold"
                 onClick={() => navigateToRoute('journey-list')}
               >
-                More
+                {t('journey.more')}
               </Text>
             </View>
             {/* 走 AsyncSection：此前 error 被当成"还在加载"，骨架会一直转、没有重试入口 */}
@@ -201,9 +202,9 @@ export default function Journey() {
                 <View className="bg-card rounded-[24px]">
                   <EmptyState
                     icon="star"
-                    title="还没有成长记录"
-                    description="记录下今天的第一件小事，时间线就会从这里铺开。"
-                    actionText="去记录一条"
+                    title={t('journey.emptyTimeline')}
+                    description={t('journey.emptyTimelineDesc')}
+                    actionText={t('journey.addRecord')}
                     onAction={() => setRecordOpen(true)}
                   />
                 </View>
@@ -229,7 +230,7 @@ export default function Journey() {
           {/* Today's Menu —— 内容由后端预生成，首页只读缓存 */}
           <View className="w-full flex flex-col gap-4 overflow-hidden">
             <View className="flex justify-between items-center px-1">
-              <Text className="text-stone-900 text-xl font-semibold">Today's Menu</Text>
+              <Text className="text-stone-900 text-xl font-semibold">{t('journey.todaysMenu')}</Text>
               {/* 说明文字改成点击弹出。
                   后端给的 reason 常常是一整段（例如「4个月以下宝宝不建议添加辅食…
                   知识库检索当前不可用…因此不生成辅食推荐」），直接铺在标题右边既把
@@ -243,10 +244,10 @@ export default function Journey() {
                   className="p-2 -m-2"
                   onClick={() =>
                     Taro.showModal({
-                      title: '今日推荐说明',
+                      title: t('journey.menuWhyTitle'),
                       content: menuReason,
                       showCancel: false,
-                      confirmText: '知道了',
+                      confirmText: t('journey.menuWhyConfirm'),
                     })
                   }
                 >
@@ -276,11 +277,11 @@ export default function Journey() {
               <View className="bg-card rounded-[24px]">
                 <EmptyState
                   icon="fork_knife"
-                  title={menu?.stale ? '推荐正在准备中' : '还没有推荐'}
+                  title={menu?.stale ? t('journey.menuPreparing') : t('journey.menuEmpty')}
                   description={
                     menu?.error
-                      ? '生成推荐时出了点问题，稍后会自动重试。'
-                      : '记录宝宝最近吃了什么，这里会按饮食记录和喂养指南给出建议。'
+                      ? t('journey.menuError')
+                      : t('journey.menuEmptyDesc')
                   }
                 />
               </View>

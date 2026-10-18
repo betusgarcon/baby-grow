@@ -8,6 +8,8 @@
  * 后端接口未实现，先用本地 mock。
  */
 
+import { t } from '@/i18n'
+
 /** 勾选式（博物馆 / 游泳 / 徒步 / 攀岩）与计数式（读书）两种详情形态 */
 export type WishKind = 'checklist' | 'counter'
 
@@ -95,13 +97,11 @@ export const wishProgress = (wish: Wish) => {
 }
 
 export const wishProgressLabel = (wish: Wish) =>
-  `${wishDoneCount(wish)} of ${wishTarget(wish)} ${wish.unitLabel}`
-
-export const wishesEmptyCopy = {
-  title: 'No wishes yet.',
-  description:
-    "Start planning your baby's first adventures together! Capture every dream and milestone.",
-}
+  t('wishes.progress', {
+    done: wishDoneCount(wish),
+    target: wishTarget(wish),
+    unit: wish.unitLabel,
+  })
 
 export const wishes: Wish[] = [
   {

@@ -67,6 +67,8 @@ export const messages = {
     'Log one small thing today, and your timeline starts here.',
   ],
   'journey.addRecord': ['去记录一条', 'Add a record'],
+  'journey.weeklyInsight': ['每周小记', 'WEEKLY INSIGHT'],
+  'journey.upcoming': ['即将到来：{title}', 'Upcoming: {title}'],
   'journey.menuWhyTitle': ['今日推荐说明', "About today's menu"],
   'journey.menuWhyConfirm': ['知道了', 'Got it'],
   'journey.menuPreparing': ['推荐正在准备中', 'Preparing your menu'],
@@ -132,6 +134,9 @@ export const messages = {
   'wishes.namePlaceholderShort': ['名称，如 City Aquarium', 'Name, e.g. City Aquarium'],
   'wishes.notePlaceholder': ['补充说明，可留空', 'Notes (optional)'],
   'wishes.readingProgress': ['阅读进度', 'Reading Progress'],
+  'wishes.progress': ['{done} / {target} {unit}', '{done} of {target} {unit}'],
+  'wishes.unitTimes': ['次', 'Times'],
+  'wishes.unitSteps': ['步', 'Steps'],
 
   // ── 家庭 ───────────────────────────────────────────────
   'family.title': ['家庭', 'Family'],
