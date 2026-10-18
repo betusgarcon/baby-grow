@@ -359,10 +359,10 @@ export function IngredientToleranceCard({
               className="px-3 py-1.5 rounded-full bg-[#EBE7E2]"
               onClick={handleCancelIngredient}
             >
-              <Text className="text-sm font-semibold text-[#6D6761]">取消</Text>
+              <Text className="text-sm font-semibold text-[#6D6761]">{t('common.cancel')}</Text>
             </View>
             <View className="px-3 py-1.5 rounded-full bg-[#D9E7CE]" onClick={handleAddIngredient}>
-              <Text className="text-sm font-semibold text-[#5B7358]">添加</Text>
+              <Text className="text-sm font-semibold text-[#5B7358]">{t('common.add')}</Text>
             </View>
           </View>
         </View>

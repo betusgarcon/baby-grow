@@ -10,6 +10,7 @@ import { babyProfile } from '@/store/profile'
 import { useAppState, loadBabyHeader } from '@/store'
 import { uploadMedia } from '@/api/modules/media'
 import { updateProfileAvatar } from '@/api/modules/profile'
+import { t } from '@/i18n'
 
 /**
  * 修改头像。
@@ -63,12 +64,12 @@ export default function BabyProfilePhotoPage() {
       // 导航栏与画像页读的是同一份数据，刷新一次两处一起变
       await loadBabyHeader()
 
-      Taro.showToast({ title: '头像已更新', icon: 'none' })
+      Taro.showToast({ title: t('common.photoUpdated'), icon: 'none' })
       navigateBack()
     } catch (error) {
       console.error('[profile-photo] 保存头像失败', error)
       const message = error instanceof Error ? error.message : ''
-      Taro.showToast({ title: message || '保存失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: message || t('common.saveFailed'), icon: 'none' })
     } finally {
       setSaving(false)
     }
@@ -78,11 +79,11 @@ export default function BabyProfilePhotoPage() {
     if (busy) return
 
     const result = await Taro.showModal({
-      title: '移除当前头像？',
-      content: '移除后将回退到默认头像。',
-      confirmText: '移除',
+      title: t('photo.removeTitle'),
+      content: t('photo.removeDesc'),
+      confirmText: t('common.remove'),
       confirmColor: '#ba1a1a',
-      cancelText: '取消',
+      cancelText: t('common.cancel'),
     })
 
     if (!result.confirm) return
@@ -93,19 +94,19 @@ export default function BabyProfilePhotoPage() {
       await updateProfileAvatar('')
       await loadBabyHeader()
 
-      Taro.showToast({ title: '已恢复默认头像', icon: 'none' })
+      Taro.showToast({ title: t('common.photoReset'), icon: 'none' })
       navigateBack()
     } catch (error) {
       console.error('[profile-photo] 移除头像失败', error)
       const message = error instanceof Error ? error.message : ''
-      Taro.showToast({ title: message || '移除失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: message || t('common.removeFailed'), icon: 'none' })
     } finally {
       setRemoving(false)
     }
   }
 
   return (
-    <PageContainer header={<PageHeader showBack title="修改头像" />}>
+    <PageContainer header={<PageHeader showBack title={t('photo.title')} />}>
       <View className="flex flex-col gap-6">
         <View className="pt-2 flex items-center justify-center">
           {/* 虚线外圈表示头像可更换；编辑按钮叠在右下角 */}
@@ -126,9 +127,9 @@ export default function BabyProfilePhotoPage() {
         </View>
 
         <View className="flex flex-col items-center gap-2">
-          <Text className="text-xl font-bold text-on-surface">Capture a new memory</Text>
+          <Text className="text-xl font-bold text-on-surface">{t('photo.heading')}</Text>
           <Text className="text-base text-on-surface-variant text-center px-4">
-            Update the profile picture for your little one's timeline.
+            {t('photo.intro')}
           </Text>
         </View>
 
@@ -142,8 +143,8 @@ export default function BabyProfilePhotoPage() {
             </View>
 
             <View className="flex-1 flex flex-col">
-              <Text className="text-base font-semibold text-on-surface">Take Photo</Text>
-              <Text className="text-caption text-on-surface-variant">Use your camera now</Text>
+              <Text className="text-base font-semibold text-on-surface">{t('photo.takePhoto')}</Text>
+              <Text className="text-caption text-on-surface-variant">{t('photo.takePhotoHint')}</Text>
             </View>
 
             <Icon name="chevron-right" className="w-2 h-3" />
@@ -158,8 +159,8 @@ export default function BabyProfilePhotoPage() {
             </View>
 
             <View className="flex-1 flex flex-col">
-              <Text className="text-base font-semibold text-on-surface">Choose from Gallery</Text>
-              <Text className="text-caption text-on-surface-variant">Select from your library</Text>
+              <Text className="text-base font-semibold text-on-surface">{t('photo.fromAlbum')}</Text>
+              <Text className="text-caption text-on-surface-variant">{t('photo.fromAlbumHint')}</Text>
             </View>
 
             <Icon name="chevron-right" className="w-2 h-3" />
@@ -169,20 +170,20 @@ export default function BabyProfilePhotoPage() {
         {/* 保存按钮只在选了新图时出现：没有改动就没有可保存的东西 */}
         {photo ? (
           <PrimaryButton block disabled={busy} onClick={save}>
-            {saving ? '保存中…' : '保存头像'}
+            {saving ? t('common.saving') : t('photo.save')}
           </PrimaryButton>
         ) : null}
 
         <View className="py-2 flex items-center justify-center gap-2" onClick={confirmRemove}>
           <Icon name="event-delete" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-error">Remove current photo</Text>
+          <Text className="text-base font-semibold text-error">{t('photo.remove')}</Text>
         </View>
 
         <View
           className="w-full box-border py-4 rounded-full bg-surface-container flex items-center justify-center"
           onClick={navigateBack}
         >
-          <Text className="text-lg font-semibold text-on-surface-variant">Cancel</Text>
+          <Text className="text-lg font-semibold text-on-surface-variant">{t('common.cancel')}</Text>
         </View>
       </View>
     </PageContainer>

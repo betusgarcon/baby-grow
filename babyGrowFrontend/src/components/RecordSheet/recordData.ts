@@ -33,16 +33,10 @@ export interface RecordRecognition {
   tags: RecordTag[]
 }
 
-export const recordSheetCopy = {
-  inputTitle: 'Record a Moment',
-  placeholder: 'What happened today?',
-  analyzeCta: 'Analyze & Save',
-  analyzingText: 'AI is organizing your moment...',
-  saveCta: 'Save to Timeline',
-  editCta: 'Edit',
-  summaryLabel: 'AI SUMMARY',
-  tagsLabel: 'DETECTED TAGS',
-} as const
+/*
+ * 记录弹层的文案已移到 `i18n/messages.ts`（`record.*`）。
+ * 这里原本是一个模块级对象：模块加载时求值，切语言不会更新。
+ */
 
 /** 由当前输入判断属于哪种形态：有图有字、有图无字、纯文字 */
 export const resolveInputType = (text: string, hasPhoto: boolean): RecordInputType => {

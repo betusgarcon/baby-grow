@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, Picker } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { eventFilters, monthOptions, type EventFilterKey } from '@/store/timeline'
+import { eventFilters, monthOptions, monthOptionLabel, type EventFilterKey } from '@/store/timeline'
+import { t } from '@/i18n'
 
 interface EventFilterCardProps {
   month: string
@@ -31,13 +32,13 @@ export default function EventFilterCard({
     <View className="w-full box-border p-3 rounded-lg bg-surface-container-lowest shadow-card-soft flex flex-col gap-3">
       <Picker
         mode="selector"
-        range={monthOptions}
+        range={monthOptions.map(monthOptionLabel)}
         value={monthIndex}
         onChange={(event) => onMonthChange(monthOptions[Number(event.detail.value)])}
       >
         <View className="self-start py-2 px-4 rounded-full bg-surface border border-outline-variant flex items-center gap-2">
           <Icon name="calendar" className="w-4 h-4" />
-          <Text className="text-sm font-semibold text-on-surface">{month}</Text>
+          <Text className="text-sm font-semibold text-on-surface">{monthOptionLabel(month)}</Text>
           <Icon name="chevron-down" className="w-3 h-2" />
         </View>
       </Picker>
@@ -57,7 +58,7 @@ export default function EventFilterCard({
                 }`}
                 onClick={() => onFilterChange(filter.key)}
               >
-                <Text className="text-sm font-semibold">{filter.label}</Text>
+                <Text className="text-sm font-semibold">{t(filter.labelKey)}</Text>
               </View>
             )
           })}

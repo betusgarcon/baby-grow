@@ -21,6 +21,7 @@
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "type-check": "pnpm -r type-check",
+    "i18n:check": "node scripts/check-i18n.mjs",
     "lint": "pnpm -r lint"
   },
   "pnpm": {

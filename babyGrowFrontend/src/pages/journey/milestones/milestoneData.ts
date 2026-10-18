@@ -6,6 +6,8 @@
  */
 
 import { daysAgo } from '@/store/timeline'
+import { t } from '@/i18n'
+import { monthNames, monthShortNames } from '@/i18n/formatters'
 
 /** 卡片档位，决定图标圆底与右上角光晕的渐变配色 */
 export type MilestoneTier = 'gold' | 'silver' | 'bronze'
@@ -32,11 +34,28 @@ export interface Milestone {
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-/** 把 ISO 日期格式化成设计稿里的 "Oct 12, 2023" */
+/** 把 ISO 日期格式化成设计稿里的日期文案（按语言） */
 export const formatMilestoneDate = (isoDate: string) => {
-  const [year, month, day] = isoDate.split('-')
+  const [year, month, day] = isoDate.split('-').map(Number)
 
-  return `${MONTH_LABELS[Number(month) - 1]} ${Number(day)}, ${year}`
+  return t('date.monthDayYear', {
+    year,
+    month,
+    day,
+    monthName: monthNames()[month - 1],
+  })
+}
+
+/**
+ * 月份的**显示**文案。筛选值仍是 MONTH_LABELS 里的英文短名——
+ * 它是与 `milestoneMonth()` 比较的键，不能换成翻译后的文案。
+ */
+export const milestoneMonthLabel = (value: string) => {
+  if (value === 'All') return t('milestones.all')
+
+  const index = MONTH_LABELS.indexOf(value)
+
+  return index >= 0 ? monthShortNames()[index] : value
 }
 
 export const milestoneMonth = (isoDate: string) => MONTH_LABELS[Number(isoDate.split('-')[1]) - 1]

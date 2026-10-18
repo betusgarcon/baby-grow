@@ -1,4 +1,5 @@
 import { View, Text } from '@tarojs/components'
+import { t } from '@/i18n'
 import { filterGroups, type FilterKey } from '../memoriesData'
 
 interface MemoryFilterSheetProps {
@@ -30,31 +31,31 @@ export default function MemoryFilterSheet({
         <View className="self-center w-10 h-1 rounded-full bg-outline-variant" />
 
         <View className="flex items-center justify-between pt-1">
-          <Text className="text-2xl font-bold text-on-surface">Filter Memories</Text>
+          <Text className="text-2xl font-bold text-on-surface">{t('memories.filterTitle')}</Text>
           <Text className="text-sm font-semibold text-on-surface-variant" onClick={onReset}>
-            Reset
+            {t('memories.reset')}
           </Text>
         </View>
 
         {filterGroups.map((group) => (
           <View key={group.key} className="flex flex-col gap-3">
-            <Text className="text-sm font-semibold text-on-surface-variant">{group.label}</Text>
+            <Text className="text-sm font-semibold text-on-surface-variant">{t(group.labelKey)}</Text>
 
             <View className="flex flex-wrap gap-2">
               {group.options.map((option) => {
-                const selected = filters[group.key] === option
+                const selected = filters[group.key] === option.value
 
                 return (
                   <View
-                    key={option}
+                    key={option.value}
                     className={`py-2 px-4 rounded-full border ${
                       selected
                         ? 'bg-tertiary-fixed border-on-tertiary-container'
                         : 'bg-surface-container border-transparent'
                     }`}
-                    onClick={() => onChange(group.key, selected ? '' : option)}
+                    onClick={() => onChange(group.key, selected ? '' : option.value)}
                   >
-                    <Text className="text-sm font-semibold text-on-surface">{option}</Text>
+                    <Text className="text-sm font-semibold text-on-surface">{t(option.labelKey)}</Text>
                   </View>
                 )
               })}
@@ -74,7 +75,7 @@ export default function MemoryFilterSheet({
             className="flex-1 py-4 rounded-full bg-primary flex items-center justify-center"
             onClick={onApply}
           >
-            <Text className="text-base font-semibold text-[#ffffff]">Apply</Text>
+            <Text className="text-base font-semibold text-[#ffffff]">{t('memories.apply')}</Text>
           </View>
         </View>
       </View>

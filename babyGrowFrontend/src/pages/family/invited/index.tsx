@@ -109,7 +109,7 @@ export default function FamilyInvitedViewPage() {
           right={
             isInvitee ? undefined : (
               <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
-                <Text className="text-caption font-semibold text-on-surface">管理视角</Text>
+                <Text className="text-caption font-semibold text-on-surface">{t('family.managementView')}</Text>
                 <Icon name="chevron-right" className="w-2 h-3" />
               </View>
             )
@@ -200,7 +200,7 @@ export default function FamilyInvitedViewPage() {
             <Text className="text-base font-semibold text-[#ffffff]">
               {isInvitee
                 ? accepting
-                  ? '加入中…'
+                  ? t('common.joining')
                   : t('invited.accept')
                 : t('invite.goInvite')}
             </Text>

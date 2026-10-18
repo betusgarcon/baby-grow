@@ -88,17 +88,47 @@ export const memoryItems: MemoryItem[] = [
   },
 ]
 
-/** 筛选面板的候选组，按设计稿的三个维度 */
+/**
+ * 筛选面板的候选组。
+ *
+ * **取值与显示分开**：`value` 是与数据比较的稳定键（`item.tags` / `item.media` /
+ * `matchesTimeRange` 都比它），`labelKey` 才是给人看的文案。
+ * 此前两者是同一个字符串，一翻译筛选就会静默失效。
+ */
 export const filterGroups = [
-  { key: 'time', label: 'Time Range', options: ['All Time', 'Last 7 Days', 'This Month'] },
-  { key: 'category', label: 'Categories', options: ['Milestone', 'Diet', 'Smiles', 'Outdoor'] },
-  { key: 'media', label: 'Media Type', options: ['Media', 'Text'] },
+  {
+    key: 'time',
+    labelKey: 'memories.timeRange',
+    options: [
+      { value: 'all', labelKey: 'memories.allTime' },
+      { value: 'last7', labelKey: 'memories.last7Days' },
+      { value: 'month', labelKey: 'memories.thisMonth' },
+    ],
+  },
+  {
+    key: 'category',
+    labelKey: 'memories.categories',
+    options: [
+      { value: 'Milestone', labelKey: 'memories.catMilestone' },
+      { value: 'Diet', labelKey: 'memories.catDiet' },
+      { value: 'Smiles', labelKey: 'memories.catSmile' },
+      { value: 'Outdoor', labelKey: 'memories.catOutdoor' },
+    ],
+  },
+  {
+    key: 'media',
+    labelKey: 'memories.mediaType',
+    options: [
+      { value: 'Media', labelKey: 'memories.mediaMedia' },
+      { value: 'Text', labelKey: 'memories.mediaText' },
+    ],
+  },
 ] as const
 
 export type FilterKey = (typeof filterGroups)[number]['key']
 
 export const defaultFilters: Record<FilterKey, string> = {
-  time: 'All Time',
+  time: 'all',
   category: '',
   media: '',
 }

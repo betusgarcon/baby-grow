@@ -3,6 +3,7 @@ import Taro from '@tarojs/taro'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Icon from '@/components/Icon'
 import { loadTimeline, saveRecordToTimeline } from '@/store'
+import { t } from '@/i18n'
 import { getConfig } from '@/api/config'
 import {
   commitRecord,
@@ -16,7 +17,6 @@ import RecordInputView from './RecordInputView'
 import RecordResultView from './RecordResultView'
 import {
   recognitionFromExtraction,
-  recordSheetCopy,
   resolveInputType,
   resolveRecognition,
   type RecordInputType,
@@ -93,12 +93,12 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
       const { data } = await pollAiTask(id)
 
       if (data.status === 'succeeded') return data.result?.data ?? undefined
-      if (data.status === 'failed') throw new Error(data.error || '识别失败')
+      if (data.status === 'failed') throw new Error(data.error || t('record.recognizeFailed'))
 
       await delay(POLL_INTERVAL_MS)
     }
 
-    throw new Error('识别超时，请稍后重试')
+    throw new Error(t('record.recognizeTimeout'))
   }
 
   const analyze = async () => {
@@ -137,7 +137,7 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
       setRecognition(recognitionFromExtraction(result))
       setStage('result')
     } catch (err) {
-      setError(err instanceof Error ? err.message : '识别失败，请稍后重试')
+      setError(err instanceof Error ? err.message : t('record.recognizeFailedRetry'))
       setStage('error')
     }
   }
@@ -153,13 +153,14 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
 
       recorder.current.onStop(() => {
         setRecording(false)
-        setText((previous) => (previous ? `${previous}\n[语音记录]` : '[语音记录]'))
-        Taro.showToast({ title: '已录音，转文字待后端', icon: 'none' })
+        const marker = t('record.voiceMarker')
+        setText((previous) => (previous ? `${previous}\n${marker}` : marker))
+        Taro.showToast({ title: t('record.voiceRecorded'), icon: 'none' })
       })
 
       recorder.current.onError(() => {
         setRecording(false)
-        Taro.showToast({ title: '录音失败，请检查麦克风权限', icon: 'none' })
+        Taro.showToast({ title: t('record.voiceFailed'), icon: 'none' })
       })
     }
 
@@ -207,12 +208,12 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
         await loadTimeline()
       }
 
-      Taro.showToast({ title: '已保存到时间线', icon: 'none' })
+      Taro.showToast({ title: t('record.savedToTimeline'), icon: 'none' })
       onSaved?.(inputType)
       onClose()
     } catch (err) {
       Taro.showToast({
-        title: err instanceof Error ? err.message : '保存失败',
+        title: err instanceof Error ? err.message : t('record.saveFailed'),
         icon: 'none',
       })
     } finally {
@@ -249,7 +250,7 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
               <View className="w-14 h-14 rounded-full bg-primary flex items-center justify-center animate-pulse">
                 <Icon name="sparkle-light" className="w-6 h-6" />
               </View>
-              <Text className="text-base text-on-surface-variant">{recordSheetCopy.analyzingText}</Text>
+              <Text className="text-base text-on-surface-variant">{t('record.analyzing')}</Text>
             </View>
           ) : stage === 'error' ? (
             <View className="w-full py-12 flex flex-col items-center gap-4">
@@ -263,14 +264,14 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
                   className="px-6 h-12 rounded-full bg-surface-container flex items-center justify-center"
                   onClick={() => setStage('input')}
                 >
-                  <Text className="text-base font-semibold text-secondary">{recordSheetCopy.editCta}</Text>
+                  <Text className="text-base font-semibold text-secondary">{t('record.editCta')}</Text>
                 </View>
 
                 <View
                   className="px-6 h-12 rounded-full bg-primary flex items-center justify-center"
                   onClick={analyze}
                 >
-                  <Text className="text-base font-semibold text-[#ffffff]">重试</Text>
+                  <Text className="text-base font-semibold text-[#ffffff]">{t('common.retry')}</Text>
                 </View>
               </View>
             </View>

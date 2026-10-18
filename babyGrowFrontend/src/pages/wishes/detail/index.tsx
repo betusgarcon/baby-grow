@@ -20,6 +20,7 @@ import {
   regenerateWishCover,
 } from '@/store'
 import { wishProgress, wishTarget, type WishChecklistItem } from '@/store/wishes'
+import { t } from '@/i18n'
 
 /** 拖拽落点按「行高 + 间距」推进，间距要与下面的 gap-3 对齐 */
 const ITEM_GAP = 12
@@ -72,9 +73,9 @@ export default function WishChecklistDetailPage() {
         <AsyncSection status={status.wishes} onRetry={loadWishes}>
           <EmptyState
             icon="star"
-            title="找不到这个心愿"
-            description="链接里的心愿可能已被删除。"
-            actionText="回到心愿清单"
+            title={t('wishes.notFound')}
+            description={t('wishes.notFoundDesc')}
+            actionText={t('wishes.backToList')}
             onAction={() => navigateToRoute('wishes-list')}
           />
         </AsyncSection>
@@ -109,7 +110,7 @@ export default function WishChecklistDetailPage() {
   const saveEdit = () => {
     // 勾选、增删、拖拽期间只写进了本地，到这里才提交一次
     commitWishChecklist(wish.id)
-    Taro.showToast({ title: '已保存', icon: 'none' })
+    Taro.showToast({ title: t('common.saved'), icon: 'none' })
     setSnapshot(null)
     setDraft(null)
     setDirty(false)
@@ -119,7 +120,7 @@ export default function WishChecklistDetailPage() {
   const retryCover = () => {
     regenerateWishCover(wish.id).catch((error) => {
       console.error('[wish] 重新生成头图失败', error)
-      Taro.showToast({ title: '头图生成失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('wishes.coverFailed'), icon: 'none' })
     })
   }
 
@@ -137,7 +138,7 @@ export default function WishChecklistDetailPage() {
     const title = draft?.title.trim()
 
     if (!title) {
-      Taro.showToast({ title: '请填写名称', icon: 'none' })
+      Taro.showToast({ title: t('wishes.nameRequiredShort'), icon: 'none' })
       return
     }
 
@@ -243,7 +244,7 @@ export default function WishChecklistDetailPage() {
                   {/* 输入框给足高度，否则 hint 文字会被上下裁掉 */}
                   <Input
                     className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                    placeholder="名称，如 City Aquarium"
+                    placeholder={t('wishes.namePlaceholderShort')}
                     placeholderClass="text-on-surface-variant"
                     value={draft.title}
                     onInput={(event) =>
@@ -255,7 +256,7 @@ export default function WishChecklistDetailPage() {
                   />
                   <Input
                     className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                    placeholder="补充说明，可留空"
+                    placeholder={t('wishes.notePlaceholder')}
                     placeholderClass="text-on-surface-variant"
                     value={draft.note}
                     onInput={(event) =>
@@ -271,10 +272,10 @@ export default function WishChecklistDetailPage() {
                       className="text-base font-semibold text-on-surface-variant"
                       onClick={() => setDraft(null)}
                     >
-                      取消
+                      {t('common.cancel')}
                     </Text>
                     <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
-                      添加
+                      {t('common.add')}
                     </Text>
                   </View>
                 </View>
@@ -284,7 +285,7 @@ export default function WishChecklistDetailPage() {
                   onClick={() => setDraft({ title: '', note: '' })}
                 >
                   <Icon name="add-circle" className="w-5 h-5" />
-                  <Text className="text-base font-semibold text-on-surface-variant">Add</Text>
+                  <Text className="text-base font-semibold text-on-surface-variant">{t('common.add')}</Text>
                 </View>
               )}
 
@@ -302,14 +303,14 @@ export default function WishChecklistDetailPage() {
               className="flex-1 py-3 rounded-full bg-tertiary-fixed flex items-center justify-center"
               onClick={cancelEdit}
             >
-              <Text className="text-base font-semibold text-on-tertiary-container">Cancel</Text>
+              <Text className="text-base font-semibold text-on-tertiary-container">{t('common.cancel')}</Text>
             </View>
 
             <View
               className="flex-1 py-3 rounded-full bg-primary flex items-center justify-center"
               onClick={saveEdit}
             >
-              <Text className="text-base font-semibold text-[#ffffff]">Done</Text>
+              <Text className="text-base font-semibold text-[#ffffff]">{t('common.done')}</Text>
             </View>
           </View>
         ) : null}

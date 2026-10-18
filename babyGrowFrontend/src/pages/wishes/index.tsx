@@ -37,9 +37,9 @@ export default function WishesListPage() {
     const result = await Taro.showModal({
       title: t('wishes.deleteTitle', { title: wish.title }),
       content: t('wishes.deleteDesc'),
-      confirmText: '删除',
+      confirmText: t('common.delete'),
       confirmColor: '#ba1a1a',
-      cancelText: '取消',
+      cancelText: t('common.cancel'),
     })
 
     if (!result.confirm) return
@@ -151,7 +151,7 @@ export default function WishesListPage() {
                   }
                 />
                 <Text className="px-1 text-caption text-on-surface-variant">
-                  写得具体些。这段描述会用作生成头图的提示词
+                  {t('wishes.descHint')}
                 </Text>
               </View>
 
@@ -168,12 +168,12 @@ export default function WishesListPage() {
                     }
                   />
                   <Text className="px-1 text-caption text-on-surface-variant">
-                    这个心愿一共要完成几次，进度按「已完成 / 目标次数」显示
+                    {t('wishes.goalHint')}
                   </Text>
                 </View>
               ) : (
                 <Text className="px-1 text-caption text-on-surface-variant">
-                  清单式的进度按清单实际条数算，不用另填目标数
+                  {t('wishes.checklistGoalHint')}
                 </Text>
               )}
 

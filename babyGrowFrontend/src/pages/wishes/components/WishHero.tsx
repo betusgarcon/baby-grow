@@ -1,4 +1,5 @@
 import { View, Text, Image } from '@tarojs/components'
+import { t } from '@/i18n'
 import type { Wish } from '@/store/wishes'
 
 /**
@@ -55,7 +56,7 @@ export default function WishHero({ wish, onRetryCover }: WishHeroProps) {
 
         {coverStatus === 'pending' ? (
           <Text className={`text-caption ${hasCover ? 'text-[#f4f4f4]' : 'text-on-surface-variant'}`}>
-            头图生成中…
+            {t('wishes.coverGenerating')}
           </Text>
         ) : null}
 
@@ -64,7 +65,7 @@ export default function WishHero({ wish, onRetryCover }: WishHeroProps) {
             className="self-start py-1 px-3 rounded-full bg-surface-container"
             onClick={onRetryCover}
           >
-            <Text className="text-caption font-semibold text-on-surface">重新生成头图</Text>
+            <Text className="text-caption font-semibold text-on-surface">{t('wishes.regenerateCover')}</Text>
           </View>
         ) : null}
       </View>

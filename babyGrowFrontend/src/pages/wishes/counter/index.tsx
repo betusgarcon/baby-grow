@@ -12,6 +12,7 @@ import ProgressBar from '../components/ProgressBar'
 import ExpertTipCard from '../components/ExpertTipCard'
 import WishHero from '../components/WishHero'
 import { useAppState, setWishCounter, commitWishCounter, loadWishes, regenerateWishCover } from '@/store'
+import { t } from '@/i18n'
 
 export default function WishCounterDetailPage() {
   const router = useRouter()
@@ -36,9 +37,9 @@ export default function WishCounterDetailPage() {
         <AsyncSection status={status.wishes} onRetry={loadWishes}>
           <EmptyState
             icon="star"
-            title="找不到这个心愿"
-            description="链接里的心愿可能已被删除。"
-            actionText="回到心愿清单"
+            title={t('wishes.notFound')}
+            description={t('wishes.notFoundDesc')}
+            actionText={t('wishes.backToList')}
             onAction={() => navigateToRoute('wishes-list')}
           />
         </AsyncSection>
@@ -72,7 +73,7 @@ export default function WishCounterDetailPage() {
   const saveEdit = () => {
     // 加减号期间只写进了本地，到这里才提交一次——连点十下也只有一个请求
     commitWishCounter(wish.id)
-    Taro.showToast({ title: '已保存', icon: 'none' })
+    Taro.showToast({ title: t('common.saved'), icon: 'none' })
     setSavedCurrent(null)
     setMode('view')
   }
@@ -80,7 +81,7 @@ export default function WishCounterDetailPage() {
   const retryCover = () => {
     regenerateWishCover(wish.id).catch((error) => {
       console.error('[wish] 重新生成头图失败', error)
-      Taro.showToast({ title: '头图生成失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('wishes.coverFailed'), icon: 'none' })
     })
   }
 
@@ -93,7 +94,7 @@ export default function WishCounterDetailPage() {
         <WishHero wish={wish} onRetryCover={retryCover} />
 
         <View className="w-full box-border p-6 rounded-xl bg-surface-container-lowest shadow-card-soft flex flex-col gap-4">
-          <Text className="text-base text-on-surface-variant">Reading Progress</Text>
+          <Text className="text-base text-on-surface-variant">{t('wishes.readingProgress')}</Text>
 
           <View className="flex items-end justify-between">
             <View className="flex items-end gap-1">
@@ -152,7 +153,7 @@ export default function WishCounterDetailPage() {
             </PrimaryButton>
 
             <View className="py-3 flex items-center justify-center" onClick={cancelEdit}>
-              <Text className="text-base font-semibold text-on-surface-variant">Cancel</Text>
+              <Text className="text-base font-semibold text-on-surface-variant">{t('common.cancel')}</Text>
             </View>
           </>
         ) : null}

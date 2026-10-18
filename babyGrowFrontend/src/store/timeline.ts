@@ -8,6 +8,8 @@
  */
 
 import firstSmileImg from '@/assets/images/first-smile-img.jpg'
+import { t, type MessageKey } from '@/i18n'
+import { monthDayLabel, monthYearLabel, relativeDayLabel } from '@/i18n/formatters'
 
 /** 卡片形态。决定标记图标与卡片内部的排版方式 */
 export type JourneyEntryType = 'memory' | 'feeding' | 'sleep'
@@ -45,14 +47,12 @@ export interface TimelineGroup {
   entries: JourneyEntry[]
 }
 
-export const eventFilters: Array<{ key: EventFilterKey; label: string }> = [
-  { key: 'all', label: 'All Events' },
-  { key: 'milestones', label: 'Milestones' },
-  { key: 'photos', label: 'Photos' },
-  { key: 'health', label: 'Health' },
+export const eventFilters: Array<{ key: EventFilterKey; labelKey: MessageKey }> = [
+  { key: 'all', labelKey: 'list.filter.all' },
+  { key: 'milestones', labelKey: 'list.filter.milestones' },
+  { key: 'photos', labelKey: 'list.filter.photos' },
+  { key: 'health', labelKey: 'list.filter.health' },
 ]
-
-const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
@@ -85,26 +85,15 @@ const diffDaysFromToday = (isoDate: string) => {
 }
 
 /** 「几天前」这种口语化标签，首页的 Recent Milestones 用 */
-export const relativeLabelOf = (isoDate: string) => {
-  const days = diffDaysFromToday(isoDate)
-
-  if (days <= 0) return 'Today'
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return `${days} days ago`
-  if (days < 14) return '1 week ago'
-  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-
-  return `${Math.floor(days / 30)} months ago`
-}
+export const relativeLabelOf = (isoDate: string) => relativeDayLabel(diffDaysFromToday(isoDate))
 
 /** 分组标题：今天 / 昨天 / 具体日期 */
 export const formatDayLabel = (isoDate: string) => {
-  const [, month, day] = isoDate.split('-').map(Number)
-  const formatted = `${MONTH_LABELS[month - 1]} ${day}`
+  const formatted = monthDayLabel(isoDate)
   const days = diffDaysFromToday(isoDate)
 
-  if (days === 0) return `Today • ${formatted}`
-  if (days === 1) return `Yesterday • ${formatted}`
+  if (days === 0) return t('date.todayWith', { date: formatted })
+  if (days === 1) return t('date.yesterdayWith', { date: formatted })
 
   return formatted
 }
@@ -122,14 +111,25 @@ export const groupTimelineByDate = (entries: JourneyEntry[]): TimelineGroup[] =>
     .map(([date, list]) => ({ date, label: formatDayLabel(date), entries: list }))
 }
 
-/** 月份切换的可选项：从当月往前推 4 个月。接入接口后改为按实际记录区间生成 */
+/**
+ * 月份切换的可选项：从当月往前推 4 个月。
+ *
+ * 值是 `YYYY-MM`（稳定的比较键），显示走 `monthOptionLabel()`——
+ * 不能把本地化文案当值，否则换语言后选择器就认不出当前选中项了。
+ */
 export const monthOptions = Array.from({ length: 4 }, (_, index) => {
   const date = new Date()
 
   date.setMonth(date.getMonth() - index)
 
-  return `${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`
 })
+
+export const monthOptionLabel = (value: string) => {
+  const [year, month] = value.split('-').map(Number)
+
+  return monthYearLabel(new Date(year, month - 1, 1))
+}
 
 export const defaultMonth = monthOptions[0]
 

@@ -1,5 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
+import { t } from '@/i18n'
 import { familyRoleOptions, type FamilyMember, type FamilyRole } from '@/store/family'
 
 interface MemberPermissionSheetProps {
@@ -37,10 +38,10 @@ export default function MemberPermissionSheet({
         <View className="self-center w-10 h-1 rounded-full bg-outline-variant" />
 
         <Text className="text-2xl font-bold text-on-surface pt-2">
-          管理 {member.name} 的权限
+          {t('family.managePermission', { name: member.name })}
         </Text>
         <Text className="text-sm text-on-surface-variant">
-          更改该成员在空间内的数据访问与记录范围
+          {t('family.managePermissionDesc')}
         </Text>
 
         <View className="flex flex-col gap-3 pt-2">
@@ -72,7 +73,7 @@ export default function MemberPermissionSheet({
           className="w-full py-4 rounded-full bg-primary flex items-center justify-center mt-2"
           onClick={onConfirm}
         >
-          <Text className="text-base font-semibold text-[#ffffff]">确认更改</Text>
+          <Text className="text-base font-semibold text-[#ffffff]">{t('common.confirm')}</Text>
         </View>
 
         <View
@@ -80,7 +81,7 @@ export default function MemberPermissionSheet({
           onClick={onRemove}
         >
           <Icon name="heart" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-error">移出该家庭空间</Text>
+          <Text className="text-base font-semibold text-error">{t('family.removeFromCircle')}</Text>
         </View>
       </View>
     </View>

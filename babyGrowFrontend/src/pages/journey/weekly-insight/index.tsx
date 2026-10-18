@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState'
 import RecordSheet from '@/components/RecordSheet'
 import Icon from '@/components/Icon'
 import { useAppState, loadWeeklyInsight } from '@/store'
+import { t } from '@/i18n'
 import MetricCard from './components/MetricCard'
 import SleepConsistencyCard from './components/SleepConsistencyCard'
 import HighlightCard from './components/HighlightCard'
@@ -16,7 +17,7 @@ export default function JourneyWeeklyInsightPage() {
   const { weeklyInsight: data, status, babyHeader } = useAppState()
   const [recordOpen, setRecordOpen] = useState(false)
   // 分享卡上此前写死了一个假名字。宝宝名在 babyHeader 里就有，没有时退回默认称呼
-  const babyName = babyHeader.name || '宝宝'
+  const babyName = babyHeader.name || t('common.babyFallback')
 
   // 右上角菜单里同时放出「发送给朋友」和「分享到朋友圈」。
   // 当前 Taro 版本的 showShareMenu 类型里没有 menus 字段，但小程序基础库支持，
@@ -33,19 +34,19 @@ export default function JourneyWeeklyInsightPage() {
   }, [])
 
   useShareAppMessage(() => ({
-    title: `${babyName} 的每周小记 · ${data?.rangeLabel ?? ''}`,
+    title: t('weekly.shareTitleWithRange', { name: babyName, range: data?.rangeLabel ?? '' }),
     path: '/pages/journey/weekly-insight/index',
   }))
 
   useShareTimeline(() => ({
-    title: `${babyName} 的每周小记 · ${data?.rangeLabel ?? ''}`,
+    title: t('weekly.shareTitleWithRange', { name: babyName, range: data?.rangeLabel ?? '' }),
   }))
 
   return (
     <PageContainer
       background="bg-surface-container-lowest"
       header={
-        <PageHeader showBack title="Weekly Insights" />
+        <PageHeader showBack title={t('weekly.pageTitle')} />
       }
     >
       <AsyncSection
@@ -58,9 +59,9 @@ export default function JourneyWeeklyInsightPage() {
           <View className="bg-card rounded-[24px]">
             <EmptyState
               icon="star"
-              title="这周还没有可总结的记录"
-              description="记录几天的喂养、睡眠和成长，这里会按周汇总成一份小记。"
-              actionText="去记录一条"
+              title={t('weekly.empty')}
+              description={t('weekly.emptyDesc')}
+              actionText={t('journey.addRecord')}
               onAction={() => setRecordOpen(true)}
             />
           </View>
@@ -116,7 +117,7 @@ export default function JourneyWeeklyInsightPage() {
           openType="share"
           className="share-button w-full box-border py-4 px-6 rounded-lg bg-primary flex items-center justify-center gap-2"
         >
-          <Text className="text-xl font-semibold text-[#ffffff]">Share Report</Text>
+          <Text className="text-xl font-semibold text-[#ffffff]">{t('weekly.share')}</Text>
           <Icon name="event-share" className="w-5 h-5" />
         </Button>
       </View>

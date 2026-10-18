@@ -1,6 +1,7 @@
 import { View, Text, Image } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { recordSheetCopy, type RecordRecognition, type RecordTag } from './recordData'
+import { t } from '@/i18n'
+import type { RecordRecognition, RecordTag } from './recordData'
 
 /** 金/银是「里程碑」档位本身的语义色，不是通用容器色，所以留作任意值 */
 const TAG_CLASS: Record<RecordTag['variant'], string> = {
@@ -64,14 +65,14 @@ export default function RecordResultView({
         <View className="flex items-center gap-2">
           <Icon name="ai-conclude" className="w-4 h-4" />
           <Text className="text-caption font-semibold text-on-surface-variant">
-            {recordSheetCopy.summaryLabel}
+            {t('record.summaryLabel')}
           </Text>
         </View>
 
         <Text className="text-base text-on-surface">{recognition.summary}</Text>
 
         <Text className="text-caption font-semibold text-on-surface-variant pt-1">
-          {recordSheetCopy.tagsLabel}
+          {t('record.tagsLabel')}
         </Text>
 
         <View className="flex flex-wrap gap-2">
@@ -96,7 +97,7 @@ export default function RecordResultView({
         >
           <Icon name="save-timeline" className="w-5 h-5" />
           <Text className="text-lg font-semibold text-[#ffffff]">
-            {saving ? 'Saving…' : recordSheetCopy.saveCta}
+            {saving ? t('record.savingShort') : t('record.saveCta')}
           </Text>
         </View>
 
@@ -105,7 +106,7 @@ export default function RecordResultView({
           onClick={saving ? undefined : onEdit}
         >
           <Icon name="pencil-teal" className="w-4 h-4" />
-          <Text className="text-lg font-semibold text-secondary">{recordSheetCopy.editCta}</Text>
+          <Text className="text-lg font-semibold text-secondary">{t('record.editCta')}</Text>
         </View>
       </View>
     </View>

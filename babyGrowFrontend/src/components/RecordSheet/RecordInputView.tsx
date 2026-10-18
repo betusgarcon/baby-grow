@@ -1,6 +1,6 @@
 import { View, Text, Textarea, Image } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import { recordSheetCopy } from './recordData'
+import { t } from '@/i18n'
 
 /**
  * 拍照识别是否可用。
@@ -41,7 +41,7 @@ export default function RecordInputView({
   return (
     <View className="flex flex-col gap-5">
       <View className="flex items-center justify-between">
-        <Text className="text-2xl font-bold text-secondary">{recordSheetCopy.inputTitle}</Text>
+        <Text className="text-2xl font-bold text-secondary">{t('record.inputTitle')}</Text>
 
         <View
           className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center"
@@ -55,7 +55,7 @@ export default function RecordInputView({
         <Textarea
           className="w-full h-32 text-base text-on-surface"
           value={text}
-          placeholder={recordSheetCopy.placeholder}
+          placeholder={t('record.placeholder')}
           placeholderClass="text-on-surface-variant"
           maxlength={500}
           onInput={(event) => onTextChange(event.detail.value)}
@@ -69,7 +69,7 @@ export default function RecordInputView({
 
         <View className="self-end flex items-center gap-3">
           {recording ? (
-            <Text className="text-caption text-error">录音中，点击结束</Text>
+            <Text className="text-caption text-error">{t('record.recordingTapToStop')}</Text>
           ) : null}
 
           <View
@@ -103,7 +103,7 @@ export default function RecordInputView({
             canAnalyze ? 'text-[#ffffff]' : 'text-on-surface-variant'
           }`}
         >
-          {recordSheetCopy.analyzeCta}
+          {t('record.analyzeCta')}
         </Text>
         <Icon name="sparkle-light" className="w-5 h-5" />
       </View>

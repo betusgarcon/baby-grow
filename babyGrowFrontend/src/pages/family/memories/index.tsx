@@ -23,21 +23,21 @@ import { TONE_CLASS, defaultFilters, type FilterKey, type MemoryItem } from './m
  * 不该出现的数据，比少显示一条更难被发现。
  */
 const matchesTimeRange = (date: string, range: string) => {
-  if (!range || range === 'All Time') return true
+  if (!range || range === 'all') return true
 
   const parsed = new Date(date)
   if (Number.isNaN(parsed.getTime())) return false
 
   const now = new Date()
 
-  if (range === 'Last 7 Days') {
+  if (range === 'last7') {
     const from = new Date(now)
     from.setDate(now.getDate() - 6)
     from.setHours(0, 0, 0, 0)
     return parsed.getTime() >= from.getTime()
   }
 
-  if (range === 'This Month') {
+  if (range === 'month') {
     return parsed.getFullYear() === now.getFullYear() && parsed.getMonth() === now.getMonth()
   }
 

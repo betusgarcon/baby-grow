@@ -46,7 +46,7 @@ export default function JourneyListPage() {
   return (
     <PageContainer
       background={PAGE_BACKGROUND}
-      header={<PageHeader showBack title="Journey" />}
+      header={<PageHeader showBack title={t('journey.title')} />}
     >
       <View className="flex flex-col gap-4">
         <EventFilterCard

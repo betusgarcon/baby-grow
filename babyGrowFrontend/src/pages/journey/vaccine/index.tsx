@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateBack, navigateToRoute } from '@/utils/routes'
 import { useAppState, loadVaccine, updateVaccine, removeVaccine } from '@/store'
+import { t, type MessageKey } from '@/i18n'
 import type { VaccineDetail } from '@/store/vaccine'
 import EventInfoRow from './components/EventInfoRow'
 import EventSectionCard from './components/EventSectionCard'
@@ -15,14 +16,14 @@ import EventSectionCard from './components/EventSectionCard'
 /** 可编辑的字段。附件单独处理，不走这里 */
 type EditableKey = 'title' | 'datetime' | 'location' | 'administeredBy' | 'doseLabel' | 'nextAppointment' | 'notes'
 
-const EDIT_FIELDS: Array<{ key: EditableKey; label: string }> = [
-  { key: 'title', label: 'Title' },
-  { key: 'datetime', label: 'Date & Time' },
-  { key: 'location', label: 'Location' },
-  { key: 'administeredBy', label: 'Administered by' },
-  { key: 'doseLabel', label: 'Dose Status' },
-  { key: 'nextAppointment', label: 'Next Appointment' },
-  { key: 'notes', label: 'Notes' },
+const EDIT_FIELDS: Array<{ key: EditableKey; labelKey: MessageKey }> = [
+  { key: 'title', labelKey: 'vaccine.fieldTitle' },
+  { key: 'datetime', labelKey: 'vaccine.fieldDatetime' },
+  { key: 'location', labelKey: 'vaccine.location' },
+  { key: 'administeredBy', labelKey: 'vaccine.administeredBy' },
+  { key: 'doseLabel', labelKey: 'vaccine.doseStatus' },
+  { key: 'nextAppointment', labelKey: 'vaccine.nextAppointment' },
+  { key: 'notes', labelKey: 'vaccine.notes' },
 ]
 
 export default function JourneyVaccinePage() {
@@ -36,14 +37,14 @@ export default function JourneyVaccinePage() {
   }, [])
 
   useShareAppMessage(() => ({
-    title: detail?.title ?? 'Event Details',
+    title: detail?.title ?? t('vaccine.title'),
     path: '/pages/journey/vaccine/index',
   }))
 
   // 还没加载完（或加载失败）时先给骨架屏 / 重试，不要误报成「记录已删除」
   if (status.vaccine !== 'ready') {
     return (
-      <PageContainer header={<PageHeader showBack title="Event Details" />}>
+      <PageContainer header={<PageHeader showBack title={t('vaccine.title')} />}>
         <AsyncSection status={status.vaccine} onRetry={loadVaccine} skeletonBlocks={3} skeletonHeight={120}>
           <View />
         </AsyncSection>
@@ -54,12 +55,12 @@ export default function JourneyVaccinePage() {
   // 记录被删除后停在这里没有意义，给空态和回退入口
   if (!detail) {
     return (
-      <PageContainer header={<PageHeader showBack title="Event Details" />}>
+      <PageContainer header={<PageHeader showBack title={t('vaccine.title')} />}>
         <EmptyState
           icon="event-medical"
-          title="记录已删除"
-          description="这条接种记录已被移除。"
-          actionText="回到日历"
+          title={t('vaccine.deletedToast')}
+          description={t('vaccine.deletedDesc')}
+          actionText={t('vaccine.backToCalendar')}
           onAction={() => navigateToRoute('journey-calendar')}
         />
       </PageContainer>
@@ -83,7 +84,7 @@ export default function JourneyVaccinePage() {
     updateVaccine(draft)
     setEditing(false)
     setDraft({})
-    Taro.showToast({ title: '已保存', icon: 'none' })
+    Taro.showToast({ title: t('common.saved'), icon: 'none' })
   }
 
   const pickPhoto = () => {
@@ -102,10 +103,10 @@ export default function JourneyVaccinePage() {
   const confirmDelete = async () => {
     const result = await Taro.showModal({
       title: 'Delete this record?',
-      content: '这条接种记录会被移除，且无法撤销。',
-      confirmText: '删除',
+      content: t('vaccine.deleteDesc'),
+      confirmText: t('common.delete'),
       confirmColor: '#ba1a1a',
-      cancelText: '取消',
+      cancelText: t('common.cancel'),
     })
 
     if (!result.confirm) return
@@ -117,7 +118,7 @@ export default function JourneyVaccinePage() {
     if (removed) {
       navigateBack()
     } else {
-      Taro.showToast({ title: '删除失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: t('common.deleteFailed'), icon: 'none' })
     }
   }
 
@@ -160,7 +161,7 @@ export default function JourneyVaccinePage() {
           <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex flex-col gap-3">
             {EDIT_FIELDS.slice(2).map((field) => (
               <View key={field.key} className="flex flex-col gap-1">
-                <Text className="text-caption text-on-surface-variant">{field.label}</Text>
+                <Text className="text-caption text-on-surface-variant">{t(field.labelKey)}</Text>
                 <Input
                   className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
                   value={(draft[field.key] as string) ?? ''}
@@ -179,22 +180,22 @@ export default function JourneyVaccinePage() {
                   setDraft({})
                 }}
               >
-                <Text className="text-base font-semibold text-on-surface">Cancel</Text>
+                <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
               </View>
               <View
                 className="flex-1 py-3 rounded-full bg-primary flex items-center justify-center"
                 onClick={commitEdit}
               >
-                <Text className="text-base font-semibold text-[#ffffff]">保存</Text>
+                <Text className="text-base font-semibold text-[#ffffff]">{t('common.save')}</Text>
               </View>
             </View>
           </View>
         ) : (
           <>
-            <EventInfoRow icon="event-location" label="Location" value={detail.location} />
-            <EventInfoRow icon="event-person" label="Administered by" value={detail.administeredBy} />
+            <EventInfoRow icon="event-location" label={t('vaccine.location')} value={detail.location} />
+            <EventInfoRow icon="event-person" label={t('vaccine.administeredBy')} value={detail.administeredBy} />
 
-            <EventSectionCard icon="event-medical" title="Dose Status">
+            <EventSectionCard icon="event-medical" title={t('vaccine.doseStatus')}>
               <Text className="text-xl font-bold text-on-surface">{detail.doseLabel}</Text>
 
               <View className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
@@ -208,7 +209,7 @@ export default function JourneyVaccinePage() {
 
             <EventSectionCard
               icon="event-repeat"
-              title="Next Appointment"
+              title={t('vaccine.nextAppointment')}
               className="bg-secondary-container"
             >
               <Text className="text-xl font-bold text-on-secondary-container">
@@ -230,14 +231,14 @@ export default function JourneyVaccinePage() {
           <View className="flex items-center justify-between">
             <View className="flex items-center gap-2">
               <Icon name="event-attachment" className="w-5 h-5" />
-              <Text className="text-lg font-semibold text-on-surface">Attachments</Text>
+              <Text className="text-lg font-semibold text-on-surface">{t('vaccine.attachments')}</Text>
             </View>
 
             <Text
               className="text-sm font-semibold text-on-surface-variant"
               onClick={pickPhoto}
             >
-              Add Photo
+              {t('vaccine.addPhoto')}
             </Text>
           </View>
 
@@ -265,7 +266,7 @@ export default function JourneyVaccinePage() {
               onClick={beginEdit}
             >
               <Icon name="event-edit" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-[#ffffff]">Edit Entry</Text>
+              <Text className="text-base font-semibold text-[#ffffff]">{t('vaccine.editEntry')}</Text>
             </View>
 
             {/* 分享与删除并排：两者都够不上主操作的分量，各占半行。
@@ -277,7 +278,7 @@ export default function JourneyVaccinePage() {
                 className="share-button flex-1 h-12 rounded-full border border-outline-variant bg-surface-container flex items-center justify-center gap-2 p-0"
               >
                 <Icon name="event-share" className="w-5 h-5" />
-                <Text className="text-base font-semibold text-on-surface">Share</Text>
+                <Text className="text-base font-semibold text-on-surface">{t('vaccine.share')}</Text>
               </Button>
 
               <View
@@ -285,7 +286,7 @@ export default function JourneyVaccinePage() {
                 onClick={confirmDelete}
               >
                 <Icon name="event-delete" className="w-5 h-5" />
-                <Text className="text-base font-semibold text-error">Delete</Text>
+                <Text className="text-base font-semibold text-error">{t('common.delete')}</Text>
               </View>
             </View>
           </View>
