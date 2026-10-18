@@ -50,18 +50,21 @@ export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarPro
       {/* 2. 外层使用 fixed 定位吸底，并使用 pb-[env(safe-area-inset-bottom)] 适配 iPhone 底部安全区 */}
       <View className="w-full fixed bottom-0 left-0 z-50 bg-white border-t border-stone-100 pb-[env(safe-area-inset-bottom)]">
 
-        {/* 3. 内容展示容器：固定 64px (h-16)，左右两侧使用 gap-8 隔开 */}
-        <View className="w-full h-16 px-6 flex justify-between items-center relative">
+        {/*
+          四等分列，中间留出悬浮按钮的位置。
+          之前是「左右两组 + justify-between」：每组内部 gap-8，两组贴住屏幕两侧，
+          结果是外侧两项挤在边缘、中间空出一大块；英文标签变长时右侧还会被裁掉。
+          用 flex-1 让四个 tab 各自占一列，间距随屏宽自适应。
+        */}
+        <View className="w-full h-16 px-4 flex items-center relative">
+          <View className="flex-1 flex justify-center">{renderTab(leftTabs[0])}</View>
+          <View className="flex-1 flex justify-center">{renderTab(leftTabs[1])}</View>
 
-          {/* 左侧 2 个菜单 */}
-          <View className="flex items-center gap-8">
-            {leftTabs.map(renderTab)}
-          </View>
+          {/* 悬浮按钮的占位：不参与点击，只负责把中间两列推开 */}
+          <View className="w-14 h-full shrink-0" />
 
-          {/* 右侧 2 个菜单 */}
-          <View className="flex items-center gap-8">
-            {rightTabs.map(renderTab)}
-          </View>
+          <View className="flex-1 flex justify-center">{renderTab(rightTabs[0])}</View>
+          <View className="flex-1 flex justify-center">{renderTab(rightTabs[1])}</View>
 
           {/* 中间悬浮加号按钮：使用明确的 w-12 h-12 宽高，避免 padding 挤压变形 */}
           <View
