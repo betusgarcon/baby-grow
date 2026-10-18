@@ -142,7 +142,8 @@ public class DemoDataSeeder {
                 new Preference("sleep", "profile-sleep", "Sleep Routine", "Loves white noise"),
                 new Preference("feeding", "fork_knife", "Feeding", "Just started solids"));
 
-        profileService.update(userId, new ProfilePatchRequest("Leo", birthday.toString(), info, preferences));
+        profileService.update(userId,
+                new ProfilePatchRequest("Leo", birthday.toString(), null, info, preferences));
     }
 
     /**

@@ -58,7 +58,7 @@ export default function BabyProfilePage() {
   )
 
   // 画像来自 store：改动在离开页面后依然生效
-  const { profile, status } = useAppState()
+  const { profile, status, babyHeader } = useAppState()
   const { name, birthday, info, preferences } = profile
 
   useEffect(() => {
@@ -240,7 +240,13 @@ export default function BabyProfilePage() {
           {/* 编辑按钮叠在头像右下角。局部图标覆盖是项目允许用 absolute 的场景之一 */}
           <View className="relative w-28 h-28">
             <View className="w-28 h-28 rounded-full border-4 border-surface-container-lowest overflow-hidden bg-surface-container">
-              <Image src={babyProfile.avatar} className="w-full h-full" mode="aspectFill" />
+              {/* 显示后端存着的头像；没设置过才回落到内置默认图。
+                  此前这里写死用示例图，所以改完头像回到这页看不出变化。 */}
+              <Image
+                src={babyHeader.avatar || babyProfile.avatar}
+                className="w-full h-full"
+                mode="aspectFill"
+              />
             </View>
 
             <View

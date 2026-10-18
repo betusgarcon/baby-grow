@@ -37,9 +37,16 @@ public final class ProfileDtos {
     public record Preference(String id, String icon, String label, String value) {
     }
 
-    /** 前端的 PUT 体是 Partial&lt;ProfileState&gt;，各字段都可缺省 */
+    /**
+     * 前端的 PUT 体是 Partial&lt;ProfileState&gt;，各字段都可缺省。
+     *
+     * <p>{@code avatarUrl} 是单独补的：头像走「先上传、再把这个 URL 记到档案上」两步，
+     * 而 {@code ProfileState} 里本来没有头像字段（导航栏那份来自精简档案
+     * {@code BabyProfile.avatar}）。传空串表示清除头像。
+     */
     public record ProfilePatchRequest(String name,
                                       String birthday,
+                                      String avatarUrl,
                                       List<InfoItem> info,
                                       List<Preference> preferences) {
     }

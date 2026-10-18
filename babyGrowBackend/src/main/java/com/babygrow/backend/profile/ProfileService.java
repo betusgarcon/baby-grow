@@ -12,6 +12,7 @@ import com.babygrow.backend.profile.dto.ProfileDtos.ProfilePatchRequest;
 import com.babygrow.backend.profile.dto.ProfileDtos.ProfileStateResponse;
 import com.babygrow.backend.repository.BabyPreferenceRepository;
 import com.babygrow.backend.repository.BabyRepository;
+import com.babygrow.backend.repository.MediaAssetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +37,22 @@ public class ProfileService {
             "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
             "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces");
 
+    /** babies.avatar_url 是 VARCHAR(512) */
+    private static final int AVATAR_URL_MAX_LENGTH = 512;
+
     private final FamilyAccessService accessService;
     private final BabyRepository babyRepository;
     private final BabyPreferenceRepository preferenceRepository;
+    private final MediaAssetRepository mediaRepository;
 
     public ProfileService(FamilyAccessService accessService,
                           BabyRepository babyRepository,
-                          BabyPreferenceRepository preferenceRepository) {
+                          BabyPreferenceRepository preferenceRepository,
+                          MediaAssetRepository mediaRepository) {
         this.accessService = accessService;
         this.babyRepository = babyRepository;
         this.preferenceRepository = preferenceRepository;
+        this.mediaRepository = mediaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -76,6 +83,10 @@ public class ProfileService {
             baby.setBirthday(parseBirthday(patch.birthday()));
         }
 
+        if (patch.avatarUrl() != null) {
+            applyAvatar(baby, userId, patch.avatarUrl());
+        }
+
         if (patch.info() != null) {
             patch.info().forEach(item -> applyInfoItem(baby, item));
         }
@@ -86,6 +97,33 @@ public class ProfileService {
 
         babyRepository.save(baby);
         return toState(baby, today());
+    }
+
+    /**
+     * 设置或清除头像。
+     *
+     * <p>**只接受当前用户自己上传过的媒体 URL。** 这个字段来自客户端，不校验就等于允许
+     * 任何人把头像指向任意地址——别人上传的图、外部站点，甚至一个之后再改内容的链接。
+     * 校验用的正是 {@code findByUrlAndOwnerUserId}，它本来就是为这条路径准备的。
+     *
+     * <p>空串表示清除，回落到默认头像。
+     */
+    private void applyAvatar(BabyEntity baby, Long userId, String avatarUrl) {
+        String url = avatarUrl.trim();
+
+        if (url.isEmpty()) {
+            baby.setAvatarUrl(null);
+            return;
+        }
+
+        if (url.length() > AVATAR_URL_MAX_LENGTH) {
+            throw BizException.badRequest("头像地址过长，请重新上传");
+        }
+
+        mediaRepository.findByUrlAndOwnerUserId(url, userId)
+                .orElseThrow(() -> BizException.badRequest("请先上传图片，再把它设为头像"));
+
+        baby.setAvatarUrl(url);
     }
 
     private void applyInfoItem(BabyEntity baby, InfoItem item) {
