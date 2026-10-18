@@ -37,7 +37,7 @@ export default function MemberPermissionSheet({
       >
         <View className="self-center w-10 h-1 rounded-full bg-outline-variant" />
 
-        <Text className="text-2xl font-bold text-on-surface pt-2">
+        <Text className="text-page-title text-on-surface pt-2">
           {t('family.managePermission', { name: member.name })}
         </Text>
         <Text className="text-sm text-on-surface-variant">
@@ -59,7 +59,7 @@ export default function MemberPermissionSheet({
                 onClick={() => onRoleChange(option.key)}
               >
                 <View className="flex-1 flex flex-col gap-1">
-                  <Text className="text-base font-bold text-on-surface">{option.title}</Text>
+                  <Text className="text-card-title text-on-surface">{option.title}</Text>
                   <Text className="text-caption text-on-surface-variant">{option.description}</Text>
                 </View>
 
@@ -73,7 +73,7 @@ export default function MemberPermissionSheet({
           className="w-full py-4 rounded-full bg-primary flex items-center justify-center mt-2"
           onClick={onConfirm}
         >
-          <Text className="text-base font-semibold text-[#ffffff]">{t('common.confirm')}</Text>
+          <Text className="text-card-title text-[#ffffff]">{t('common.confirm')}</Text>
         </View>
 
         <View
@@ -81,7 +81,7 @@ export default function MemberPermissionSheet({
           onClick={onRemove}
         >
           <Icon name="heart" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-error">{t('family.removeFromCircle')}</Text>
+          <Text className="text-card-title text-error">{t('family.removeFromCircle')}</Text>
         </View>
       </View>
     </View>

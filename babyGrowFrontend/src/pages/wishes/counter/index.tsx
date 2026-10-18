@@ -98,11 +98,11 @@ export default function WishCounterDetailPage() {
 
           <View className="flex items-end justify-between">
             <View className="flex items-end gap-1">
-              <Text className="text-4xl font-bold text-primary">{current}</Text>
+              <Text className="text-[2.5rem] leading-none font-semibold font-numeric tabular-nums text-primary">{current}</Text>
               <Text className="text-lg text-on-surface-variant">/{target}</Text>
             </View>
 
-            <Text className="text-base font-semibold text-secondary">
+            <Text className="text-card-title text-secondary">
               {Math.round(progress * 100)}% Completed
             </Text>
           </View>
@@ -129,7 +129,7 @@ export default function WishCounterDetailPage() {
                 className="py-3 px-6 rounded-full bg-wish-active"
                 onClick={() => step(1)}
               >
-                <Text className="text-base font-semibold text-[#ffffff]">
+                <Text className="text-card-title text-[#ffffff]">
                   +1 {unit}
                 </Text>
               </View>
@@ -153,7 +153,7 @@ export default function WishCounterDetailPage() {
             </PrimaryButton>
 
             <View className="py-3 flex items-center justify-center" onClick={cancelEdit}>
-              <Text className="text-base font-semibold text-on-surface-variant">{t('common.cancel')}</Text>
+              <Text className="text-label font-medium text-on-surface-variant">{t('common.cancel')}</Text>
             </View>
           </>
         ) : null}

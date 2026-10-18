@@ -259,7 +259,7 @@ export default function BabyProfilePage() {
           </View>
 
           {/* 名字直接读 store：改名保存后这里和导航栏会一起变 */}
-          <Text className="text-2xl font-bold text-on-surface">{name}</Text>
+          <Text className="text-page-title text-on-surface">{name}</Text>
         </View>
 
         <View className="flex flex-col gap-3">
@@ -296,12 +296,12 @@ export default function BabyProfilePage() {
 
         <View className="flex flex-col gap-3">
           <View className="flex items-center justify-between px-1 pt-2">
-            <Text className="text-xl font-semibold text-on-surface">{t('profile.preferences')}</Text>
+            <Text className="text-section-title text-on-surface">{t('profile.preferences')}</Text>
             {/* 一条偏好都没有时不显示 Edit All：那种状态下唯一该做的动作是「添加」，
                 而「进入管理态」本身没有可管理的东西。有偏好时才需要它来做排序/编辑/删除。 */}
             {preferences.length > 0 ? (
               <Text
-                className="text-sm font-semibold text-on-surface-variant"
+                className="text-label font-medium text-on-surface-variant"
                 onClick={() => (isManagingPreferences ? cancel() : beginEditing('preferences'))}
               >
                 {isManagingPreferences ? t('common.done') : t('profile.editAll')}
@@ -389,14 +389,14 @@ export default function BabyProfilePage() {
                     className="flex-1 py-3 rounded-full bg-surface-container-high flex items-center justify-center"
                     onClick={() => setDraft(null)}
                   >
-                    <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
+                    <Text className="text-card-title text-on-surface">{t('common.cancel')}</Text>
                   </View>
 
                   <View
                     className="flex-1 py-3 rounded-full bg-tertiary flex items-center justify-center"
                     onClick={commitDraft}
                   >
-                    <Text className="text-base font-semibold text-[#ffffff]">
+                    <Text className="text-card-title text-[#ffffff]">
                       {draft.id ? t('common.save') : t('common.add')}
                     </Text>
                   </View>
@@ -408,7 +408,7 @@ export default function BabyProfilePage() {
                 onClick={startAddPreference}
               >
                 <Icon name="add-circle" className="w-5 h-5" />
-                <Text className="text-base font-semibold text-on-surface-variant">
+                <Text className="text-card-title text-on-surface-variant">
                   {t('profile.addPreference')}
                 </Text>
               </View>
@@ -420,7 +420,7 @@ export default function BabyProfilePage() {
             所以不在编辑流程里提供。 */}
         {!isEditing ? (
           <View className="flex flex-col gap-3">
-            <Text className="px-1 pt-2 text-xl font-semibold text-on-surface">
+            <Text className="px-1 pt-2 text-section-title text-on-surface">
               {t('settings.title')}
             </Text>
 
@@ -430,7 +430,7 @@ export default function BabyProfilePage() {
               </View>
 
               <View className="flex-1 flex flex-col gap-1">
-                <Text className="text-base font-semibold text-on-surface">
+                <Text className="text-card-title text-on-surface">
                   {t('settings.language')}
                 </Text>
                 <Text className="text-caption text-on-surface-variant">
@@ -453,7 +453,7 @@ export default function BabyProfilePage() {
                     }`}
                     onClick={() => setLanguage(language)}
                   >
-                    <Text className="text-base font-semibold text-on-surface">
+                    <Text className="text-card-title text-on-surface">
                       {t(language === 'zh' ? 'settings.languageZh' : 'settings.languageEn')}
                     </Text>
                   </View>
@@ -475,7 +475,7 @@ export default function BabyProfilePage() {
               className="py-3 rounded-full bg-surface-container-high flex items-center justify-center"
               onClick={cancel}
             >
-              <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
+              <Text className="text-card-title text-on-surface">{t('common.cancel')}</Text>
             </View>
           </View>
         ) : null}

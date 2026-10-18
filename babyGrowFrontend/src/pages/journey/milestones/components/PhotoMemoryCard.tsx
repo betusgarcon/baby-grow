@@ -36,7 +36,7 @@ export default function PhotoMemoryCard({
           <View className="self-start py-base px-sm rounded-full bg-surface-container-lowest">
             <Text className="text-caption text-on-surface">{tag}</Text>
           </View>
-          <Text className="text-headline-lg font-semibold text-[#ffffff]">{title}</Text>
+          <Text className="text-headline-lg tracking-[-0.01em] text-[#ffffff]">{title}</Text>
         </View>
 
         <View

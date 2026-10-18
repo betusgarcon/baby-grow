@@ -26,7 +26,7 @@ export default function HighlightCard({ event, onClick }: HighlightCardProps) {
       </View>
 
       <View className="flex-1 flex flex-col">
-        <Text className="text-base font-semibold text-on-surface">{event.title}</Text>
+        <Text className="text-card-title text-on-surface">{event.title}</Text>
         <Text className="text-caption text-on-surface-variant">{event.subtitle}</Text>
       </View>
 

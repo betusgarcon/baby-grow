@@ -31,15 +31,15 @@ export default function MemoryFilterSheet({
         <View className="self-center w-10 h-1 rounded-full bg-outline-variant" />
 
         <View className="flex items-center justify-between pt-1">
-          <Text className="text-2xl font-bold text-on-surface">{t('memories.filterTitle')}</Text>
-          <Text className="text-sm font-semibold text-on-surface-variant" onClick={onReset}>
+          <Text className="text-page-title text-on-surface">{t('memories.filterTitle')}</Text>
+          <Text className="text-label font-medium text-on-surface-variant" onClick={onReset}>
             {t('memories.reset')}
           </Text>
         </View>
 
         {filterGroups.map((group) => (
           <View key={group.key} className="flex flex-col gap-3">
-            <Text className="text-sm font-semibold text-on-surface-variant">{t(group.labelKey)}</Text>
+            <Text className="text-label font-medium text-on-surface-variant">{t(group.labelKey)}</Text>
 
             <View className="flex flex-wrap gap-2">
               {group.options.map((option) => {
@@ -55,7 +55,7 @@ export default function MemoryFilterSheet({
                     }`}
                     onClick={() => onChange(group.key, selected ? '' : option.value)}
                   >
-                    <Text className="text-sm font-semibold text-on-surface">{t(option.labelKey)}</Text>
+                    <Text className="text-label font-medium text-on-surface">{t(option.labelKey)}</Text>
                   </View>
                 )
               })}
@@ -68,14 +68,14 @@ export default function MemoryFilterSheet({
             className="flex-1 py-4 rounded-full bg-surface-container-high flex items-center justify-center"
             onClick={onClose}
           >
-            <Text className="text-base font-semibold text-on-surface">Cancel</Text>
+            <Text className="text-card-title text-on-surface">{t('common.cancel')}</Text>
           </View>
 
           <View
             className="flex-1 py-4 rounded-full bg-primary flex items-center justify-center"
             onClick={onApply}
           >
-            <Text className="text-base font-semibold text-[#ffffff]">{t('memories.apply')}</Text>
+            <Text className="text-card-title text-[#ffffff]">{t('memories.apply')}</Text>
           </View>
         </View>
       </View>

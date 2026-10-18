@@ -60,19 +60,19 @@ export default function MenuCard({ icon, mealType, title, description }: MenuCar
     >
       {/* 第一行：Icon 与 mealType 在同一行，且左对齐 */}
       <View className="flex flex-row items-center gap-1.5">
-        <Icon name={icon || 'breakfast'} className="w-4 h-4 text-stone-700" />
-        <Text className="text-neutral-600 text-xs font-semibold uppercase">{mealLabel}</Text>
+        <Icon name={icon || 'breakfast'} className="w-4 h-4 text-on-surface-variant" />
+        <Text className="text-[11px] font-medium uppercase tracking-[0.08em] text-on-surface-variant">{mealLabel}</Text>
       </View>
 
-      <Text className="text-stone-900 text-base font-semibold">{title}</Text>
+      <Text className="text-card-title text-on-surface">{title}</Text>
 
       {/* 左对齐：描述是正文，居中会让长短不一的几行看起来散 */}
-      <Text className={`text-stone-700 text-xs leading-5 ${expanded ? '' : 'line-clamp-2'}`}>
+      <Text className={`text-on-surface-variant text-[13px] leading-5 font-normal ${expanded ? '' : 'line-clamp-2'}`}>
         {description}
       </Text>
 
       {truncated ? (
-        <Text className="text-[10px] text-stone-500">
+        <Text className="text-[11px] text-analysis-text-tertiary">
           {expanded ? t('menu.collapse') : t('menu.expand')}
         </Text>
       ) : null}

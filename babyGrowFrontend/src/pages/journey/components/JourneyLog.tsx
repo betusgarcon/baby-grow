@@ -19,16 +19,16 @@ export default function JourneyLog({ title, time, description, icon, bgColor, ic
       </View>
       <View className="flex-1 flex flex-col gap-1">
         <View className="flex justify-between items-start">
-          <Text className="text-stone-900 text-sm font-semibold">{title}</Text>
-          <Text className="text-stone-700/70 text-xs">{time}</Text>
+          <Text className="text-on-surface text-label font-semibold">{title}</Text>
+          <Text className="text-on-surface-variant text-caption">{time}</Text>
         </View>
         {description && (
-          <Text className="text-stone-700 text-xs">{description}</Text>
+          <Text className="text-on-surface-variant text-caption">{description}</Text>
         )}
         {tags && tags.length > 0 && (
           <View className="flex items-center gap-1 mt-1">
             {tags.map((tag, index) => (
-              <Text key={index} className="px-2 py-0.5 rounded-full bg-white text-stone-500 text-sm uppercase tracking-wider">
+              <Text key={index} className="px-2 py-0.5 rounded-full bg-white text-analysis-text-tertiary text-caption uppercase tracking-[0.08em]">
                 {tag}
               </Text>
             ))}

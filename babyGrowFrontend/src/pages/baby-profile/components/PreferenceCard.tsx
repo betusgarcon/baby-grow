@@ -30,7 +30,7 @@ export default function PreferenceCard({
       </View>
 
       <View className="flex-1 flex flex-col">
-        <Text className="text-base font-semibold text-on-surface">{preference.label}</Text>
+        <Text className="text-card-title text-on-surface">{preference.label}</Text>
         <Text className="text-caption text-on-surface-variant">{preference.value}</Text>
       </View>
 

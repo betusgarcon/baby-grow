@@ -84,12 +84,12 @@ export default function OnboardingPage() {
     <PageContainer header={<PageHeader title={t('onboarding.title')} />}>
       <View className="flex flex-col gap-5 pb-6">
         <View className="flex flex-col gap-2 px-1">
-          <Text className="text-2xl font-bold text-on-surface">{t('onboarding.heading')}</Text>
+          <Text className="text-page-title text-on-surface">{t('onboarding.heading')}</Text>
           <Text className="text-sm leading-6 text-on-surface-variant">{t('onboarding.intro')}</Text>
         </View>
 
         <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex flex-col gap-3">
-          <Text className="text-base font-bold text-on-surface">{t('onboarding.createTitle')}</Text>
+          <Text className="text-card-title text-on-surface">{t('onboarding.createTitle')}</Text>
 
           <View className="flex flex-col gap-1">
             <Text className="text-caption text-on-surface-variant px-1">{t('onboarding.babyName')}</Text>
@@ -143,7 +143,7 @@ export default function OnboardingPage() {
         <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest border border-outline-variant flex flex-col gap-3">
           <View className="flex items-center gap-2">
             <Icon name="member-invite" className="w-5 h-5" />
-            <Text className="text-base font-bold text-on-surface">{t('onboarding.joinTitle')}</Text>
+            <Text className="text-card-title text-on-surface">{t('onboarding.joinTitle')}</Text>
           </View>
 
           <Text className="text-caption text-on-surface-variant">{t('onboarding.joinHint')}</Text>

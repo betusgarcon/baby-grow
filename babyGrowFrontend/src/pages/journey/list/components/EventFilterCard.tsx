@@ -38,7 +38,7 @@ export default function EventFilterCard({
       >
         <View className="self-start py-2 px-4 rounded-full bg-surface border border-outline-variant flex items-center gap-2">
           <Icon name="calendar" className="w-4 h-4" />
-          <Text className="text-sm font-semibold text-on-surface">{monthOptionLabel(month)}</Text>
+          <Text className="text-label font-medium text-on-surface">{monthOptionLabel(month)}</Text>
           <Icon name="chevron-down" className="w-3 h-2" />
         </View>
       </Picker>
@@ -58,7 +58,7 @@ export default function EventFilterCard({
                 }`}
                 onClick={() => onFilterChange(filter.key)}
               >
-                <Text className="text-sm font-semibold">{t(filter.labelKey)}</Text>
+                <Text className="text-label font-medium">{t(filter.labelKey)}</Text>
               </View>
             )
           })}

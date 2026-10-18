@@ -1,7 +1,8 @@
 page {
   background-color: theme('colors.surface');
   color: theme('colors.on-surface');
-  font-family: theme('fontFamily.plus-jakarta');
+  /* 系统字体栈：中文阅读最稳，也不依赖任何未加载的字体文件 */
+  font-family: theme('fontFamily.sans');
   -webkit-font-smoothing: antialiased;
 }
 

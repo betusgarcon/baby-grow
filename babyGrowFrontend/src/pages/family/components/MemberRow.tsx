@@ -19,7 +19,7 @@ export default function MemberRow({ member, onMore }: MemberRowProps) {
       </View>
 
       <View className="flex-1 flex flex-col">
-        <Text className="text-base font-semibold text-on-surface">{member.name}</Text>
+        <Text className="text-card-title text-on-surface">{member.name}</Text>
         <Text className="text-caption text-on-surface-variant">{member.roleLabel}</Text>
       </View>
 

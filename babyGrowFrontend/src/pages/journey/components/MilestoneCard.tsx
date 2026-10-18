@@ -25,12 +25,12 @@ export default function MilestoneCard({ title, date, image }: MilestoneCardProps
           否则长标题（如 Slept Through The Night）会换到三行，把这张卡连同整排都撑高；
           短标题则居中，几种情况下的卡片高度一致。 */}
       <View className="w-full h-10 flex items-center">
-        <Text className="w-full text-stone-900 text-sm font-semibold text-center leading-tight line-clamp-2">
+        <Text className="w-full text-on-surface text-label font-semibold text-center leading-tight line-clamp-2">
           {title}
         </Text>
       </View>
 
-      <Text className="text-stone-700/70 text-xs">{date}</Text>
+      <Text className="text-on-surface-variant text-caption">{date}</Text>
     </View>
   )
 }

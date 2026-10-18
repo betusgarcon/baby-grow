@@ -177,14 +177,14 @@ export default function WishChecklistDetailPage() {
 
         <View className="flex flex-col gap-2">
           <Text
-            className="text-caption font-bold text-on-surface-variant"
+            className="text-caption font-medium text-on-surface-variant"
             style={{ letterSpacing: '0.08em' }}
           >
             CURRENT PROGRESS
           </Text>
 
           <View className="flex items-end gap-2">
-            <Text className="text-2xl font-bold text-on-surface">
+            <Text className="text-page-title text-on-surface">
               {Math.round(progress * 100)}% Completed
             </Text>
             <Text className="text-caption text-on-surface-variant">
@@ -197,14 +197,14 @@ export default function WishChecklistDetailPage() {
 
         <View className="flex flex-col gap-3">
           <View className="flex items-center justify-between">
-            <Text className="text-2xl font-bold text-on-surface">{wish.checklistTitle}</Text>
+            <Text className="text-page-title text-on-surface">{wish.checklistTitle}</Text>
 
             <View
               className="py-2 px-4 rounded-full bg-tertiary-fixed flex items-center gap-2"
               onClick={() => (isManaging ? saveEdit() : enterEdit())}
             >
               <Icon name="edit-muted" className="w-3.5 h-3.5" />
-              <Text className="text-sm font-semibold text-on-tertiary-container">
+              <Text className="text-label font-semibold text-on-tertiary-container">
                 {isManaging ? 'Done' : 'Edit List'}
               </Text>
             </View>
@@ -269,12 +269,12 @@ export default function WishChecklistDetailPage() {
 
                   <View className="flex items-center justify-end gap-4">
                     <Text
-                      className="text-base font-semibold text-on-surface-variant"
+                      className="text-label font-medium text-on-surface-variant"
                       onClick={() => setDraft(null)}
                     >
                       {t('common.cancel')}
                     </Text>
-                    <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
+                    <Text className="text-label font-semibold text-tertiary" onClick={commitDraft}>
                       {t('common.add')}
                     </Text>
                   </View>
@@ -285,7 +285,7 @@ export default function WishChecklistDetailPage() {
                   onClick={() => setDraft({ title: '', note: '' })}
                 >
                   <Icon name="add-circle" className="w-5 h-5" />
-                  <Text className="text-base font-semibold text-on-surface-variant">{t('common.add')}</Text>
+                  <Text className="text-label font-medium text-on-surface-variant">{t('common.add')}</Text>
                 </View>
               )}
 
@@ -303,14 +303,14 @@ export default function WishChecklistDetailPage() {
               className="flex-1 py-3 rounded-full bg-tertiary-fixed flex items-center justify-center"
               onClick={cancelEdit}
             >
-              <Text className="text-base font-semibold text-on-tertiary-container">{t('common.cancel')}</Text>
+              <Text className="text-card-title text-on-tertiary-container">{t('common.cancel')}</Text>
             </View>
 
             <View
               className="flex-1 py-3 rounded-full bg-primary flex items-center justify-center"
               onClick={saveEdit}
             >
-              <Text className="text-base font-semibold text-[#ffffff]">{t('common.done')}</Text>
+              <Text className="text-card-title text-[#ffffff]">{t('common.done')}</Text>
             </View>
           </View>
         ) : null}

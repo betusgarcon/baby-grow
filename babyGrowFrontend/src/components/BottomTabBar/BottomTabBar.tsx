@@ -35,7 +35,7 @@ export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarPro
       <View
         key={tab.key}
         className={`flex flex-col items-center gap-1 ${
-          isActive ? 'text-neutral-800 font-bold' : 'text-neutral-400 font-normal'
+          isActive ? 'text-on-surface font-semibold' : 'text-on-surface-variant font-normal'
         } text-xs`}
         onClick={() => onTabChange(tab.key)}
       >

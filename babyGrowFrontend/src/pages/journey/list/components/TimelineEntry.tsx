@@ -24,7 +24,7 @@ const TYPE_STYLE: Record<JourneyEntryType, { icon: string; markerClass: string; 
 function Badge({ label, className }: { label: string; className: string }) {
   return (
     <View className={`shrink-0 py-1 px-3 rounded-full ${className}`}>
-      <Text className="text-caption font-semibold">{label}</Text>
+      <Text className="text-caption font-medium">{label}</Text>
     </View>
   )
 }
@@ -35,7 +35,7 @@ function CardBody({ entry }: { entry: JourneyEntry }) {
       <>
         <View className="flex items-center gap-2">
           <Badge label={entry.badge} className={TYPE_STYLE.memory.badgeClass} />
-          <Text className="text-base font-semibold text-on-surface">{entry.title}</Text>
+          <Text className="text-card-title text-on-surface">{entry.title}</Text>
         </View>
 
         {entry.image ? (
@@ -52,11 +52,11 @@ function CardBody({ entry }: { entry: JourneyEntry }) {
       <>
         <View className="flex items-center gap-2">
           <Badge label={entry.badge} className={TYPE_STYLE.feeding.badgeClass} />
-          <Text className="text-base font-semibold text-on-surface">{entry.title}</Text>
+          <Text className="text-card-title text-on-surface">{entry.title}</Text>
         </View>
 
         <View className="flex items-center gap-4">
-          <Text className="text-2xl font-bold text-on-surface">{entry.amount}</Text>
+          <Text className="text-metric-lg font-numeric tabular-nums text-on-surface">{entry.amount}</Text>
           <View className="w-px h-6 bg-outline-variant" />
           <Text className="text-base text-on-surface-variant">{entry.method}</Text>
         </View>
@@ -68,10 +68,10 @@ function CardBody({ entry }: { entry: JourneyEntry }) {
     <>
       <View className="flex items-center gap-2">
         <Badge label={entry.badge} className={TYPE_STYLE.sleep.badgeClass} />
-        <Text className="text-base font-semibold text-on-surface">{entry.title}</Text>
+        <Text className="text-card-title text-on-surface">{entry.title}</Text>
       </View>
 
-      <Text className="text-3xl font-bold text-on-surface">{entry.duration}</Text>
+      <Text className="text-metric-lg font-numeric tabular-nums text-on-surface">{entry.duration}</Text>
 
       <View className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
         <View

@@ -101,14 +101,14 @@ export default function FamilyHomePage() {
     >
       <View className="flex flex-col gap-6">
         <View className="flex items-center justify-between">
-          <Text className="text-xl font-bold text-on-surface">{t('family.circle')}</Text>
+          <Text className="text-section-title text-on-surface">{t('family.circle')}</Text>
 
           <View
             className="py-2 px-4 rounded-full bg-surface-container-high flex items-center gap-2"
             onClick={() => navigateToRoute('family-invite')}
           >
             <Icon name="member-invite" className="w-5 h-5" />
-            <Text className="text-sm font-semibold text-on-surface">{t('family.invite')}</Text>
+            <Text className="text-label font-semibold text-on-surface">{t('family.invite')}</Text>
           </View>
         </View>
 
@@ -142,7 +142,7 @@ export default function FamilyHomePage() {
         </AsyncSection>
 
         <View className="flex items-center justify-between">
-          <Text className="text-xl font-bold text-on-surface">{t('family.whatToShare')}</Text>
+          <Text className="text-section-title text-on-surface">{t('family.whatToShare')}</Text>
 
           <View
             className="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center"
@@ -167,10 +167,10 @@ export default function FamilyHomePage() {
             <View className="absolute left-0 right-0 bottom-0 p-5 flex flex-col gap-2">
               <View className="self-start py-1 px-3 rounded-full bg-surface-container-lowest flex items-center gap-1">
                 <Icon name="star" className="w-3.5 h-3.5" />
-                <Text className="text-caption font-bold text-on-surface">{t(shareHighlight.badgeKey)}</Text>
+                <Text className="text-caption font-semibold text-on-surface">{t(shareHighlight.badgeKey)}</Text>
               </View>
 
-              <Text className="text-2xl font-bold text-[#ffffff]">
+              <Text className="text-page-title text-[#ffffff]">
                 {t(shareHighlight.titleKey, { name: babyHeader.name || t('common.babyFallback') })}
               </Text>
               <Text className="text-sm text-[#ffffff]">{t(shareHighlight.subtitleKey)}</Text>
@@ -185,7 +185,7 @@ export default function FamilyHomePage() {
               onClick={copySecureLink}
             >
               <Icon name="link" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-on-surface">{t('family.secureLink')}</Text>
+              <Text className="text-card-title text-on-surface">{t('family.secureLink')}</Text>
             </View>
 
             <View
@@ -193,7 +193,7 @@ export default function FamilyHomePage() {
               onClick={() => navigateToRoute('family-poster')}
             >
               <Icon name="photo-gallery" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-[#ffffff]">{t('family.longImage')}</Text>
+              <Text className="text-card-title text-[#ffffff]">{t('family.longImage')}</Text>
             </View>
           </View>
         </View>

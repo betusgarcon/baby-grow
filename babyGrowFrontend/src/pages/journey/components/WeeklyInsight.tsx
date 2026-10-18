@@ -14,14 +14,14 @@ export default function WeeklyInsight({ icon, title, content }: WeeklyInsightPro
       style={{ background: 'radial-gradient(at 87% 3%, rgba(254, 226, 226, 0.4), rgba(231, 229, 228, 0.6))' }}
     >
       <View className="w-full flex justify-between items-center">
-        <View className="flex items-center gap-2 text-stone-600">
+        <View className="flex items-center gap-2 text-on-surface-variant">
           {/* 3. 使用动态传入的 icon，若未传则默认降级为 'star' */}
           <Icon name={icon || 'star'} className="w-4 h-4" />          
-          <Text className="text-sm font-semibold uppercase tracking-wide">{title}</Text>
+          <Text className="text-eyebrow uppercase">{title}</Text>
         </View>
-        <Text className="text-neutral-600 text-sm font-bold underline">More</Text>
+        <Text className="text-label font-medium text-secondary underline">More</Text>
       </View>
-      <Text className="text-stone-700 text-base leading-6">{content}</Text>
+      <Text className="text-body text-on-surface-variant">{content}</Text>
     </View>
   )
 }

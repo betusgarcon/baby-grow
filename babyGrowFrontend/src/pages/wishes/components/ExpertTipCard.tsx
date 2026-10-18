@@ -11,14 +11,14 @@ export default function ExpertTipCard({ tip }: { tip: string }) {
     <View className="relative w-full box-border p-6 rounded-xl bg-secondary-fixed overflow-hidden flex flex-col gap-3">
       <View className="flex items-center gap-2">
         <Icon name="expert-tip" className="w-5 h-5" />
-        <Text className="text-caption font-bold text-analysis-metric-label" style={{ letterSpacing: '0.08em' }}>
+        <Text className="text-caption font-semibold text-analysis-metric-label" style={{ letterSpacing: '0.08em' }}>
           EXPERT TIP
         </Text>
       </View>
 
       <Text className="relative text-base text-on-surface-variant">
         {splitEmphasis(tip).map((segment, index) => (
-          <Text key={index} className={segment.emphasis ? 'font-bold' : ''}>
+          <Text key={index} className={segment.emphasis ? 'font-semibold' : ''}>
             {segment.text}
           </Text>
         ))}

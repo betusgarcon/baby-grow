@@ -16,7 +16,7 @@ export default function EventInfoRow({ icon, label, value }: EventInfoRowProps) 
 
       <View className="flex-1 flex flex-col">
         <Text className="text-caption text-on-surface-variant">{label}</Text>
-        <Text className="text-base font-semibold text-on-surface">{value}</Text>
+        <Text className="text-card-title text-on-surface">{value}</Text>
       </View>
     </View>
   )

@@ -51,16 +51,16 @@ export default function WishCard({ wish, onClick, onRemove }: WishCardProps) {
         </View>
 
         <View className="flex flex-col gap-1">
-          <Text className="text-2xl font-bold text-on-surface">{wish.title}</Text>
+          <Text className="text-page-title text-on-surface">{wish.title}</Text>
           <Text className="text-base text-on-surface-variant">{wish.description}</Text>
         </View>
 
         <View className="flex flex-col gap-2 pt-1">
           <View className="flex items-center justify-between">
-            <Text className="text-sm font-semibold text-on-surface-variant">
+            <Text className="text-label font-medium text-on-surface-variant">
               {wishProgressLabel(wish)}
             </Text>
-            <Text className="text-sm font-bold text-secondary">
+            <Text className="text-label font-semibold text-secondary">
               {Math.round(wishProgress(wish) * 100)}%
             </Text>
           </View>

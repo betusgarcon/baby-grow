@@ -167,6 +167,27 @@ module.exports = {
         },
       },
       fontFamily: {
+        // 正文与标题都用系统字体：中文在 iOS 是苹方、Android 是系统黑体，
+        // 阅读最稳，也免去几 MB 的中文字体下载。
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'PingFang SC',
+          'Noto Sans CJK SC',
+          'Microsoft YaHei',
+          'sans-serif',
+        ],
+        // 展示层。现在与正文同一套；将来若加载展示字体子集，只改这里。
+        display: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'PingFang SC',
+          'Noto Sans CJK SC',
+          'sans-serif',
+        ],
+        // 数字与英文短标签。Plus Jakarta Sans 需要真机加载后才生效，
+        // 未加载时回落到系统字体，不影响排版。
+        numeric: ['Plus Jakarta Sans', 'SF Pro Rounded', 'PingFang SC', 'sans-serif'],
         'plus-jakarta': ['Plus Jakarta Sans', 'sans-serif'],
         'nunito-sans': ['Nunito Sans', 'sans-serif'],
         icons: ['Material Symbols Outlined', 'sans-serif'],
@@ -197,6 +218,19 @@ module.exports = {
       },
       fontSize: {
         // 同上，一律用 rem 表述设计尺寸（按 16px 基准换算），避免被转成 rpx 后减半。
+        //
+        // 语义字号：页面标题 / 区块标题 / 卡片标题 / 正文 / 标签 / 眉标 / 指标数字。
+        // 原则是「标题靠字号和字重，正文靠行高和颜色」——不要让正文也用 600。
+        'page-title': ['1.375rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'section-title': ['1.125rem', { lineHeight: '1.5rem', letterSpacing: '-0.005em', fontWeight: '600' }],
+        'card-title': ['1rem', { lineHeight: '1.375rem', fontWeight: '600' }],
+        body: ['0.9375rem', { lineHeight: '1.5rem', fontWeight: '400' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.375rem', fontWeight: '400' }],
+        label: ['0.8125rem', { lineHeight: '1.125rem', letterSpacing: '0.01em', fontWeight: '500' }],
+        eyebrow: ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.14em', fontWeight: '600' }],
+        metric: ['1.25rem', { lineHeight: '1.5rem', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'metric-lg': ['2rem', { lineHeight: '2.25rem', letterSpacing: '-0.02em', fontWeight: '600' }],
+
         'headline-md': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '600' }],
         caption: ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }],
         'headline-lg': ['1.75rem', { lineHeight: '2.25rem', fontWeight: '600' }],

@@ -14,7 +14,7 @@ export default function VaccineReminder({ icon, title, date }: VaccineReminderPr
         <Icon name={icon || 'injection'} className="w-5 h-5" />
       </View>
       <View className="flex-1 flex flex-col gap-1">
-        <Text className="text-red-800 text-sm font-semibold">{title}</Text>
+        <Text className="text-error text-label font-semibold">{title}</Text>
         <Text className="text-red-800/80 text-xs">{date}</Text>
       </View>
     </View>

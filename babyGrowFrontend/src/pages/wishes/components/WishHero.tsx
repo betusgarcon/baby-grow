@@ -43,11 +43,11 @@ export default function WishHero({ wish, onRetryCover }: WishHeroProps) {
       <View className="relative flex flex-col gap-2">
         {wish.badge ? (
           <View className="self-start py-1 px-3 rounded-full bg-secondary-container">
-            <Text className="text-caption font-bold text-on-secondary-container">{wish.badge}</Text>
+            <Text className="text-caption font-semibold text-on-secondary-container">{wish.badge}</Text>
           </View>
         ) : null}
 
-        <Text className={`text-2xl font-bold ${hasCover ? 'text-[#ffffff]' : 'text-on-surface'}`}>
+        <Text className={`text-page-title ${hasCover ? 'text-[#ffffff]' : 'text-on-surface'}`}>
           {wish.title}
         </Text>
         <Text className={`text-base ${hasCover ? 'text-[#f4f4f4]' : 'text-on-surface-variant'}`}>
@@ -65,7 +65,7 @@ export default function WishHero({ wish, onRetryCover }: WishHeroProps) {
             className="self-start py-1 px-3 rounded-full bg-surface-container"
             onClick={onRetryCover}
           >
-            <Text className="text-caption font-semibold text-on-surface">{t('wishes.regenerateCover')}</Text>
+            <Text className="text-caption font-medium text-on-surface">{t('wishes.regenerateCover')}</Text>
           </View>
         ) : null}
       </View>

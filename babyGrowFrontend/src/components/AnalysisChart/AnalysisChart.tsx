@@ -224,7 +224,7 @@ function renderLineChart(option: ChartOption) {
                         }}
                       >
                         <Text
-                          className={`absolute text-[13px] font-semibold whitespace-nowrap leading-none ${
+                          className={`absolute text-[12px] font-medium whitespace-nowrap leading-none ${
                             showAbove ? 'bottom-full mb-0.5' : 'top-full mt-0.5'
                           }`}
                           style={{ color: series.color }}
@@ -334,7 +334,7 @@ function renderStackedBarChart(option: ChartOption) {
 
         return (
           <View key={rowLabel} className="flex items-center gap-3">
-            <Text className="w-16 text-xs font-semibold" style={{ color: analysisColors.textSecondary }}>{rowLabel}</Text>
+            <Text className="w-16 text-[11px] font-medium" style={{ color: analysisColors.textSecondary }}>{rowLabel}</Text>
             <View className="flex-1 h-5 rounded-full overflow-hidden bg-[#efebe6] flex">
               {rowSegments.map((segment) => (
                 <View

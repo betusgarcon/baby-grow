@@ -99,17 +99,17 @@ export default function FamilyMemoriesPage() {
       <View className="w-full box-border px-4 pb-4 pt-2">
         <View className="w-full box-border px-4 py-3 rounded-full bg-primary flex items-center gap-3">
           <View className="w-9 h-9 shrink-0 rounded-full bg-family-clay flex items-center justify-center">
-            <Text className="text-base font-bold text-[#ffffff]">{selected.length}</Text>
+            <Text className="text-card-title font-semibold text-[#ffffff]">{selected.length}</Text>
           </View>
 
-          <Text className="flex-1 text-base font-semibold text-[#ffffff]">{t('memories.selected')}</Text>
+          <Text className="flex-1 text-card-title text-[#ffffff]">{t('memories.selected')}</Text>
 
           <View
             className="py-2 px-4 rounded-full bg-surface-container-high flex items-center gap-1"
             onClick={copyLink}
           >
             <Icon name="link" className="w-4 h-4" />
-            <Text className="text-sm font-semibold text-on-surface">{t('memories.link')}</Text>
+            <Text className="text-label font-semibold text-on-surface">{t('memories.link')}</Text>
           </View>
 
           <View
@@ -121,7 +121,7 @@ export default function FamilyMemoriesPage() {
             }}
           >
             <Icon name="photo-gallery" className="w-4 h-4" />
-            <Text className="text-sm font-semibold text-[#ffffff]">{t('memories.poster')}</Text>
+            <Text className="text-label font-semibold text-[#ffffff]">{t('memories.poster')}</Text>
           </View>
         </View>
       </View>
@@ -149,10 +149,10 @@ export default function FamilyMemoriesPage() {
         </View>
 
         <View className={`self-start py-1 px-3 rounded-full ${tone.pill}`}>
-          <Text className="text-caption font-bold">{item.category}</Text>
+          <Text className="text-caption font-semibold">{item.category}</Text>
         </View>
 
-        <Text className="text-base font-semibold text-on-surface">{item.title}</Text>
+        <Text className="text-card-title text-on-surface">{item.title}</Text>
         <Text className="text-caption text-on-surface-variant">{item.date}</Text>
       </View>
     )

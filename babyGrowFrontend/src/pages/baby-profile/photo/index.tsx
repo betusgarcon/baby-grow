@@ -127,7 +127,7 @@ export default function BabyProfilePhotoPage() {
         </View>
 
         <View className="flex flex-col items-center gap-2">
-          <Text className="text-xl font-bold text-on-surface">{t('photo.heading')}</Text>
+          <Text className="text-section-title text-on-surface">{t('photo.heading')}</Text>
           <Text className="text-base text-on-surface-variant text-center px-4">
             {t('photo.intro')}
           </Text>
@@ -143,7 +143,7 @@ export default function BabyProfilePhotoPage() {
             </View>
 
             <View className="flex-1 flex flex-col">
-              <Text className="text-base font-semibold text-on-surface">{t('photo.takePhoto')}</Text>
+              <Text className="text-card-title text-on-surface">{t('photo.takePhoto')}</Text>
               <Text className="text-caption text-on-surface-variant">{t('photo.takePhotoHint')}</Text>
             </View>
 
@@ -159,7 +159,7 @@ export default function BabyProfilePhotoPage() {
             </View>
 
             <View className="flex-1 flex flex-col">
-              <Text className="text-base font-semibold text-on-surface">{t('photo.fromAlbum')}</Text>
+              <Text className="text-card-title text-on-surface">{t('photo.fromAlbum')}</Text>
               <Text className="text-caption text-on-surface-variant">{t('photo.fromAlbumHint')}</Text>
             </View>
 
@@ -176,14 +176,14 @@ export default function BabyProfilePhotoPage() {
 
         <View className="py-2 flex items-center justify-center gap-2" onClick={confirmRemove}>
           <Icon name="event-delete" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-error">{t('photo.remove')}</Text>
+          <Text className="text-card-title text-error">{t('photo.remove')}</Text>
         </View>
 
         <View
           className="w-full box-border py-4 rounded-full bg-surface-container flex items-center justify-center"
           onClick={navigateBack}
         >
-          <Text className="text-lg font-semibold text-on-surface-variant">{t('common.cancel')}</Text>
+          <Text className="text-card-title text-on-surface-variant">{t('common.cancel')}</Text>
         </View>
       </View>
     </PageContainer>

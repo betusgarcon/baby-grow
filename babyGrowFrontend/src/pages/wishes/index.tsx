@@ -188,7 +188,7 @@ export default function WishesListPage() {
                     }`}
                     onClick={() => setDraft((p) => (p ? { ...p, kind } : p))}
                   >
-                    <Text className="text-sm font-semibold text-on-surface">
+                    <Text className="text-label font-medium text-on-surface">
                       {kind === 'checklist' ? t('wishes.kindChecklist') : t('wishes.kindCounter')}
                     </Text>
                   </View>
@@ -197,12 +197,12 @@ export default function WishesListPage() {
 
               <View className="flex items-center justify-end gap-4">
                 <Text
-                  className="text-base font-semibold text-on-surface-variant"
+                  className="text-card-title text-on-surface-variant"
                   onClick={() => setDraft(null)}
                 >
                   {t('common.cancel')}
                 </Text>
-                <Text className="text-base font-semibold text-tertiary" onClick={commitDraft}>
+                <Text className="text-label font-semibold text-tertiary" onClick={commitDraft}>
                   {t('common.create')}
                 </Text>
               </View>
@@ -213,7 +213,7 @@ export default function WishesListPage() {
               onClick={() => setDraft({ title: '', description: '', goal: '4', kind: 'checklist' })}
             >
               <Icon name="add-circle" className="w-5 h-5" />
-              <Text className="text-base font-semibold text-on-surface-variant">{t('wishes.new')}</Text>
+              <Text className="text-card-title text-on-surface-variant">{t('wishes.new')}</Text>
             </View>
           )}
         </AsyncSection>

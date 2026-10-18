@@ -22,7 +22,7 @@ export default function EventSectionCard({
     >
       <View className="flex items-center gap-2">
         <Icon name={icon} className="w-5 h-5" />
-        <Text className="text-sm font-semibold text-on-surface-variant">{title}</Text>
+        <Text className="text-label font-medium text-on-surface-variant">{title}</Text>
       </View>
 
       {children}

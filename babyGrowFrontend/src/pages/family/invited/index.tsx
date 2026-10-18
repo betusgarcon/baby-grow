@@ -109,7 +109,7 @@ export default function FamilyInvitedViewPage() {
           right={
             isInvitee ? undefined : (
               <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
-                <Text className="text-caption font-semibold text-on-surface">{t('family.managementView')}</Text>
+                <Text className="text-caption font-medium text-on-surface">{t('family.managementView')}</Text>
                 <Icon name="chevron-right" className="w-2 h-3" />
               </View>
             )
@@ -123,7 +123,7 @@ export default function FamilyInvitedViewPage() {
         ) : (
           <View className="w-full box-border p-6 rounded-3xl bg-surface-container-lowest flex flex-col items-center gap-5">
             <View className="py-2 px-5 rounded-full bg-tertiary-container">
-              <Text className="text-caption font-bold text-on-tertiary-container">
+              <Text className="text-caption font-semibold text-on-tertiary-container">
                 {invitedTitle.toUpperCase()}
               </Text>
             </View>
@@ -141,12 +141,12 @@ export default function FamilyInvitedViewPage() {
               </View>
 
               <View className="flex-1 flex flex-col gap-1">
-                <Text className="text-sm font-bold text-on-surface">{t('invited.badge')}</Text>
+                <Text className="text-label font-semibold text-on-surface">{t('invited.badge')}</Text>
                 <Text className="text-caption text-on-surface-variant">{invitedBody}</Text>
               </View>
             </View>
 
-            <Text className="text-2xl font-bold text-on-surface text-center">{t('invited.badge')}</Text>
+            <Text className="text-page-title text-on-surface text-center">{t('invited.badge')}</Text>
             <Text className="text-base text-on-surface-variant text-center">{invitedBody}</Text>
 
             {/* 邀请详情。这几行回答的是「这是谁的空间、给了我什么权限」——
@@ -156,7 +156,7 @@ export default function FamilyInvitedViewPage() {
                 {preview.inviteeName ? (
                   <View className="flex items-center justify-between">
                     <Text className="text-caption text-on-surface-variant">{t('invited.reservedFor')}</Text>
-                    <Text className="text-sm font-semibold text-on-surface">
+                    <Text className="text-label font-medium text-on-surface">
                       {preview.inviteeName}
                     </Text>
                   </View>
@@ -164,7 +164,7 @@ export default function FamilyInvitedViewPage() {
 
                 <View className="flex items-center justify-between">
                   <Text className="text-caption text-on-surface-variant">{t('invited.accessLevel')}</Text>
-                  <Text className="text-sm font-semibold text-on-surface">{roleLabel}</Text>
+                  <Text className="text-label font-medium text-on-surface">{roleLabel}</Text>
                 </View>
 
                 {/* 邀请人昵称目前几乎总是空的（从未采集过微信昵称），
@@ -172,7 +172,7 @@ export default function FamilyInvitedViewPage() {
                 {preview.inviterName ? (
                   <View className="flex items-center justify-between">
                     <Text className="text-caption text-on-surface-variant">{t('invited.invitedBy')}</Text>
-                    <Text className="text-sm font-semibold text-on-surface">
+                    <Text className="text-label font-medium text-on-surface">
                       {preview.inviterName}
                     </Text>
                   </View>
@@ -185,7 +185,7 @@ export default function FamilyInvitedViewPage() {
         {expired ? (
           // 已经过期就别再给一个点了必然失败的按钮，直接把原因说清楚
           <View className="w-full box-border py-4 rounded-full bg-surface-container-high flex items-center justify-center">
-            <Text className="text-base font-semibold text-on-surface-variant">
+            <Text className="text-label font-medium text-on-surface-variant">
               {t('invited.expired')}
             </Text>
           </View>
@@ -197,7 +197,7 @@ export default function FamilyInvitedViewPage() {
             onClick={accept}
           >
             <Icon name={isInvitee ? 'heart' : 'member-invite'} className="w-5 h-5" />
-            <Text className="text-base font-semibold text-[#ffffff]">
+            <Text className="text-card-title text-[#ffffff]">
               {isInvitee
                 ? accepting
                   ? t('common.joining')

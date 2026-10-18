@@ -19,8 +19,8 @@ export default function HighlightCard({ highlight }: { highlight: DevelopmentHig
 
         <View className="flex-1 flex flex-col gap-1">
           <View className="flex items-center justify-between">
-            <Text className="text-base font-semibold text-on-surface">{highlight.title}</Text>
-            <Text className="text-caption font-semibold text-on-surface-variant">
+            <Text className="text-card-title text-on-surface">{highlight.title}</Text>
+            <Text className="text-caption font-medium text-on-surface-variant">
               {highlight.date}
             </Text>
           </View>

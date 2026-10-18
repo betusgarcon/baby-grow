@@ -104,7 +104,7 @@ export default function Journey() {
         onProfilePress={() => navigateToRoute('baby-profile-view')}
         right={
           <View
-            className="w-9 h-9 flex items-center justify-center text-stone-600"
+            className="w-9 h-9 flex items-center justify-center text-on-surface-variant"
             onClick={() => navigateToRoute('journey-calendar')}
           >
             <Icon name="calendar" className="w-5 h-5" />
@@ -140,9 +140,9 @@ export default function Journey() {
           {/* Recent Milestones */}
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
-              <Text className="text-stone-900 text-xl font-semibold">{t('journey.recentMilestones')}</Text>
+              <Text className="text-section-title text-on-surface">{t('journey.recentMilestones')}</Text>
               <Text
-                className="text-neutral-600 text-sm font-semibold"
+                className="text-label text-on-surface-variant"
                 onClick={() => navigateToRoute('journey-milestones')}
               >
                 {t('journey.more')}
@@ -183,9 +183,9 @@ export default function Journey() {
           {/* Latest Journey */}
           <View className="w-full flex flex-col gap-4">
             <View className="flex justify-between items-end px-1">
-              <Text className="text-stone-900 text-xl font-semibold">{t('journey.latest')}</Text>
+              <Text className="text-section-title text-on-surface">{t('journey.latest')}</Text>
               <Text
-                className="text-neutral-600 text-sm font-semibold"
+                className="text-label text-on-surface-variant"
                 onClick={() => navigateToRoute('journey-list')}
               >
                 {t('journey.more')}
@@ -230,7 +230,7 @@ export default function Journey() {
           {/* Today's Menu —— 内容由后端预生成，首页只读缓存 */}
           <View className="w-full flex flex-col gap-4 overflow-hidden">
             <View className="flex justify-between items-center px-1">
-              <Text className="text-stone-900 text-xl font-semibold">{t('journey.todaysMenu')}</Text>
+              <Text className="text-section-title text-on-surface">{t('journey.todaysMenu')}</Text>
               {/* 说明文字改成点击弹出。
                   后端给的 reason 常常是一整段（例如「4个月以下宝宝不建议添加辅食…
                   知识库检索当前不可用…因此不生成辅食推荐」），直接铺在标题右边既把

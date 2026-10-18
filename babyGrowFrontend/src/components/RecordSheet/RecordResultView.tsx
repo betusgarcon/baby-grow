@@ -40,7 +40,7 @@ export default function RecordResultView({
         </View>
 
         <View className="flex-1 flex flex-col">
-          <Text className="text-2xl font-bold text-secondary">{recognition.title}</Text>
+          <Text className="text-page-title text-secondary">{recognition.title}</Text>
           <Text className="text-base text-on-surface-variant">{recognition.subtitle}</Text>
         </View>
       </View>
@@ -96,7 +96,7 @@ export default function RecordResultView({
           onClick={saving ? undefined : onSave}
         >
           <Icon name="save-timeline" className="w-5 h-5" />
-          <Text className="text-lg font-semibold text-[#ffffff]">
+          <Text className="text-card-title font-semibold text-[#ffffff]">
             {saving ? t('record.savingShort') : t('record.saveCta')}
           </Text>
         </View>
@@ -106,7 +106,7 @@ export default function RecordResultView({
           onClick={saving ? undefined : onEdit}
         >
           <Icon name="pencil-teal" className="w-4 h-4" />
-          <Text className="text-lg font-semibold text-secondary">{t('record.editCta')}</Text>
+          <Text className="text-card-title font-semibold text-secondary">{t('record.editCta')}</Text>
         </View>
       </View>
     </View>

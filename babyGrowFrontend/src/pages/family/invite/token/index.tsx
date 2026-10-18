@@ -106,7 +106,7 @@ export default function FamilyInviteTokenPage() {
         {/* 凭证本体：虚线外框示意「可撕下的入场券」 */}
         <View className="w-full box-border p-6 rounded-3xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center gap-5">
           <View className="py-1 px-4 rounded-full bg-secondary-container">
-            <Text className="text-caption font-bold text-on-secondary-container">
+            <Text className="text-caption font-semibold text-on-secondary-container">
               {t(
                 (latestInvite?.role ?? 'contributor') === 'viewer'
                   ? 'invite.roleViewer'
@@ -123,7 +123,7 @@ export default function FamilyInviteTokenPage() {
             </View>
 
             <View className="flex-1 flex flex-col gap-1">
-              <Text className="text-sm font-bold text-on-surface">
+              <Text className="text-label font-semibold text-on-surface">
                 {latestInvite?.name ?? inviteTitle}
               </Text>
               <Text className="text-caption text-on-surface-variant">
@@ -133,7 +133,7 @@ export default function FamilyInviteTokenPage() {
             </View>
           </View>
 
-          <Text className="text-2xl font-bold text-on-surface text-center">{inviteTitle}</Text>
+          <Text className="text-page-title text-on-surface text-center">{inviteTitle}</Text>
           <Text className="text-base text-on-surface-variant text-center">{inviteBody}</Text>
         </View>
 
@@ -145,7 +145,7 @@ export default function FamilyInviteTokenPage() {
           <View className="w-5 h-5 rounded-full bg-[#1AAD19] flex items-center justify-center">
             <Icon name="check-light" className="w-3 h-3" />
           </View>
-          <Text className="text-base font-semibold text-[#ffffff]">{t('invite.sendCard')}</Text>
+          <Text className="text-card-title text-[#ffffff]">{t('invite.sendCard')}</Text>
         </Button>
 
         <View
@@ -155,7 +155,7 @@ export default function FamilyInviteTokenPage() {
           onClick={copyToken}
         >
           <Icon name="event-attachment" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-on-surface">{t('invite.copyCodeOnly')}</Text>
+          <Text className="text-card-title text-on-surface">{t('invite.copyCodeOnly')}</Text>
         </View>
         </AsyncSection>
       </View>

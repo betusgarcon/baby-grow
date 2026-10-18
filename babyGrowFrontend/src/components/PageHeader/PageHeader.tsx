@@ -96,11 +96,11 @@ export default function PageHeader({
           {showBack ? backButton : null}
           {profileAvatar}
           {profile?.name ? (
-            <Text className="text-xl font-semibold text-slate-600 truncate">{profile.name}</Text>
+            <Text className="text-section-title text-on-surface truncate">{profile.name}</Text>
           ) : null}
           {leading}
           {!showCenteredTitle && title ? (
-            <Text className="text-2xl font-semibold text-slate-600 truncate">{title}</Text>
+            <Text className="text-page-title text-on-surface truncate">{title}</Text>
           ) : null}
         </View>
 
@@ -132,7 +132,7 @@ export default function PageHeader({
             style={{ pointerEvents: 'none' }}
           >
             <Text
-              className="text-2xl font-semibold text-slate-600 truncate"
+              className="text-page-title text-on-surface truncate"
               style={{ maxWidth: '56%' }}
             >
               {title}

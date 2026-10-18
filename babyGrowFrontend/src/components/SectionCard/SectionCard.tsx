@@ -34,7 +34,7 @@ export default function SectionCard({
       {title || extra ? (
         <View className={`flex items-center justify-between ${flush ? 'px-md pt-md' : 'mb-sm'}`}>
           {title ? (
-            <Text className="text-headline-md font-semibold text-on-surface">{title}</Text>
+            <Text className="text-section-title text-on-surface">{title}</Text>
           ) : (
             <View />
           )}

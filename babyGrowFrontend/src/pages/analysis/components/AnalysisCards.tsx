@@ -53,7 +53,7 @@ export function InsightCard({ data }: { data: InsightBlockData }) {
       <View className="flex items-center gap-2">
         <Icon name="ai-conclude" className="w-4 h-4" />
         <Text
-          className="text-base font-bold leading-5 tracking-wide"
+          className="text-card-title font-semibold leading-5 tracking-wide"
           style={{ color: analysisColors.titleAccent }}
         >
           {data.title}
@@ -94,9 +94,9 @@ export function MetricOverviewCard({
             className="px-1 py-1 flex flex-col items-center justify-between gap-1"
             onClick={() => onMetricChange?.(metric.key)}
           >
-            <Text className="text-[#92613A] text-sm font-bold tracking-wide text-center">{metric.label}</Text>
+            <Text className="text-[#92613A] text-[12px] font-medium tracking-wide text-center">{metric.label}</Text>
             <View className="flex items-baseline gap-1">
-              <Text className="text-[#8B5A2B] text-sm leading-5 font-semibold text-center">{metric.value}</Text>
+              <Text className="text-[#8B5A2B] text-base leading-5 font-semibold font-numeric tabular-nums text-center">{metric.value}</Text>
               <Text className="text-[#8B8A86] text-sm text-center">{metric.unit}</Text>
             </View>
             <View
@@ -126,7 +126,7 @@ export function ChartCard({
     <BaseAnalysisCard className="flex flex-col gap-4">
       <View className="flex items-start justify-between gap-3">
         <View className="flex-1">
-          <Text className="block text-lg leading-7 font-semibold" style={{ color: analysisColors.textPrimary }}>{title}</Text>
+          <Text className="block text-section-title" style={{ color: analysisColors.textPrimary }}>{title}</Text>
           {subtitle ? (
             <Text className="block text-sm leading-5 mt-1" style={{ color: analysisColors.textSecondary }}>{subtitle}</Text>
           ) : null}
@@ -137,7 +137,7 @@ export function ChartCard({
             style={{ backgroundColor: analysisColors.pillGreenBg }}
           >
             <Text
-              className="text-sm font-bold whitespace-nowrap"
+              className="text-label font-semibold whitespace-nowrap"
               style={{ color: analysisColors.activeText }}
             >
               {extra}
@@ -163,7 +163,7 @@ export function GrowthTrendChart({
   // 具体折线如何画，继续下沉给 AnalysisChart + option 工厂函数。
   return (
     <View className="flex flex-col gap-3">
-      <View className="flex items-end justify-between text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>
+      <View className="flex items-end justify-between text-[11px] font-medium" style={{ color: analysisColors.textSecondary }}>
         <View className="flex items-baseline gap-3">
           <Text>{chartLabel}</Text>
           <Text className="text-xs font-medium text-[#8C857D]">{t('analysis.ageMonths')}</Text>
@@ -184,11 +184,11 @@ export function GrowthTrendChart({
       <View className="flex items-center gap-5 px-1">
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: analysisColors.highlightOrange }} />
-          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>{t('analysis.babyTrend')}</Text>
+          <Text className="text-[11px] font-medium" style={{ color: analysisColors.textSecondary }}>{t('analysis.babyTrend')}</Text>
         </View>
         <View className="flex items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: analysisColors.highlightOlive }} />
-          <Text className="text-sm font-semibold" style={{ color: analysisColors.textSecondary }}>{t('analysis.whoMedian')}</Text>
+          <Text className="text-[11px] font-medium" style={{ color: analysisColors.textSecondary }}>{t('analysis.whoMedian')}</Text>
         </View>
       </View>
     </View>
@@ -210,16 +210,16 @@ export function MetricFooter({
       <View className="flex-1 flex-col gap-1 pr-2">
           <View className="pr-2">
             <Text className="text-sm text-[#8C827A]">Age:</Text>
-            <Text className="text-sm font-semibold text-[#2E2822]">{age}</Text>
+            <Text className="text-[11px] font-medium text-[#2E2822]">{age}</Text>
           </View>
           <View className="pr-2">
             <Text className="text-sm text-[#8C827A]">Value: </Text>
-            <Text className="text-sm font-semibold text-[#2E2822]">{value}</Text>   
+            <Text className="text-[11px] font-medium text-[#2E2822]">{value}</Text>   
           </View>
       </View>
 
       <View className="px-3 py-1.5 shrink-0 rounded-full" style={{ backgroundColor: analysisColors.activeBg }}>
-        <Text className="text-sm font-bold" style={{ color: analysisColors.activeText }}>
+        <Text className="text-[12px] font-semibold" style={{ color: analysisColors.activeText }}>
           {badge}
         </Text>
       </View>
@@ -251,8 +251,8 @@ export function DietDonutSummary({
         <AnalysisChart option={option} style={{ height: '112px', width: '112px' }} />
         <View className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <View className="text-center bg-white/85 rounded-full px-2 py-1">
-          <Text className="block text-xs text-[#6F6760] font-bold">{title}</Text>
-          <Text className="block text-base leading-7 font-bold text-[#2E2822]">{ratio}%</Text>
+          <Text className="block text-[11px] font-medium text-[#6F6760]">{title}</Text>
+          <Text className="block text-metric font-numeric tabular-nums text-[#2E2822]">{ratio}%</Text>
           </View>
         </View>
       </View>
@@ -264,7 +264,7 @@ export function DietDonutSummary({
               <View className={`w-3 h-3 rounded-full ${item.colorClass}`} />
               <Text className="text-sm text-[#2E2822]">{item.label}</Text>
             </View>
-            <Text className="text-sm font-bold text-[#2E2822]">{item.value}%</Text>
+            <Text className="text-sm font-semibold font-numeric tabular-nums text-[#2E2822]">{item.value}%</Text>
           </View>
         ))}
       </View>
@@ -312,9 +312,9 @@ export function IngredientToleranceCard({
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
           <Icon name="sunny" className="w-5 h-5" />
-          <Text className="text-sm font-bold text-[#2E2822]">{title}</Text>
+          <Text className="text-card-title text-[#2E2822]">{title}</Text>
         </View>
-        <Text className="text-xs font-bold text-[#6D6A64]">{badge}</Text>
+        <Text className="text-[11px] font-medium tracking-wide text-[#6D6A64]">{badge}</Text>
       </View>
       <View className="flex flex-wrap gap-2">
         {items.map((ingredient) => (
@@ -377,8 +377,8 @@ export function MilestoneProgressCard({ items }: { items: MilestoneItem[] }) {
   return (
     <View className="w-full flex flex-col gap-4">
       <View className="flex items-center justify-between px-1">
-        <Text className="text-sm tracking-wide font-bold text-[#585A55]">{t('analysis.milestoneProgress')}</Text>
-        <Text className="text-sm font-bold text-[#6B775F]">
+        <Text className="text-label font-medium tracking-wide text-[#585A55]">{t('analysis.milestoneProgress')}</Text>
+        <Text className="text-label font-semibold text-[#6B775F]">
           {items.filter((item) => item.unlocked).length} Unlocked
         </Text>
       </View>
@@ -394,7 +394,7 @@ export function MilestoneProgressCard({ items }: { items: MilestoneItem[] }) {
             </View>
             <Text
               className={`text-xs leading-4 text-center ${
-                item.unlocked ? 'text-[#2E2822] font-bold' : 'text-[#7A7671]'
+                item.unlocked ? 'text-[#2E2822] font-medium' : 'text-[#7A7671] font-normal'
               }`}
             >
               {item.label}
@@ -422,7 +422,7 @@ export function WeeklyMilkChart({
       <View className="flex flex-col gap-1">
         <Text className="text-base text-[#2E2822]">{t('analysis.dietTrend')}</Text>
         <Text className="text-base text-[#6F6760]">{averageLabel}</Text>
-        <Text className="text-base font-bold uppercase text-[#D57C69]">{standardLabel}</Text>
+        <Text className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#D57C69]">{standardLabel}</Text>
       </View>
 
       <View className="h-44 rounded-[24px] bg-[#F7F4EF] border border-[#ECE4DB] px-2 py-2 overflow-hidden">
@@ -476,7 +476,7 @@ export function CircadianRingCard({
     <BaseAnalysisCard className="overflow-hidden" elevated padded={false}>
       <View className="px-5 pt-4 flex items-start justify-between gap-3">
         <View>
-          <Text className="text-[#8C857D] text-sm font-bold uppercase tracking-[0.2em]">{t('analysis.circadianRing')}</Text>
+          <Text className="text-eyebrow text-[#8C857D]">{t('analysis.circadianRing')}</Text>
           <Text className="block text-base text-[#2E2822] mt-1">{t('analysis.rhythm')}</Text>
         </View>
         <View className="px-4 py-2 rounded-full flex items-center gap-1.5" style={{ backgroundColor: analysisColors.pillGreenBg }}>
@@ -518,7 +518,7 @@ export function CircadianRingCard({
           <View className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <View className="text-center w-24 flex flex-col items-center">
               <Text className="block text-[#8C857D] text-base">{t('analysis.totalSleep')}</Text>
-              <Text className="block text-[#2E2822] text-lg leading-7 font-semibold">
+              <Text className="block text-[#2E2822] text-section-title font-numeric tabular-nums">
                 {summary.totalSleepLabel}
               </Text>
               <View className="mt-2 px-3 py-1 rounded-full max-w-full" style={{ backgroundColor: analysisColors.activeBg }}>
@@ -651,7 +651,7 @@ export function DailySleepLogCard({ logs }: { logs: DailySleepLogItem[] }) {
               <Icon name={log.icon || 'nap'} className="w-5 h-5" />
             </View>
             <View>
-              <Text className="block text-base font-semibold text-[#2E2822]">{log.title}</Text>
+              <Text className="block text-card-title text-[#2E2822]">{log.title}</Text>
               <Text className="block text-base text-[#6F6760]">{log.range}</Text>
             </View>
           </View>
@@ -753,7 +753,7 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
       {/* 标题区域 */}
       <View className="flex items-start justify-between gap-3">
         <View>
-          <Text className="block text-lg leading-7 font-semibold text-[#2E2822]">{t('analysis.sleepEvolution')}</Text>
+          <Text className="block text-section-title text-[#2E2822]">{t('analysis.sleepEvolution')}</Text>
           <Text className="block text-base text-[#8C857D] mt-1">{t('analysis.sleepEvolutionHint')}</Text>
         </View>
         {/* 这里原本有一个写死的徽章，文案是「节律趋于合流」。它是一句关于自家宝宝
@@ -786,7 +786,7 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
                 className={`absolute flex items-baseline gap-0.5 ${isFirst ? 'text-left' : isLast ? 'text-right' : ''}`}
                 style={positionStyle}
               >
-                <Text className="text-xs font-semibold text-[#8C857D]">{item.label}</Text>
+                <Text className="text-[11px] font-medium text-[#8C857D]">{item.label}</Text>
                 {item.sub ? <Text className="text-xs text-[#A8A09A]">{item.sub}</Text> : null}
               </View>
             )
@@ -799,7 +799,7 @@ export function SleepEvolutionCard({ rows }: { rows: SleepEvolutionRow[] }) {
             <View key={row.label} className="flex flex-col gap-1.5">
               {/* 第一行：标签和说明 */}
               <View className="flex items-center justify-between">
-                <Text className="text-xs font-semibold text-[#2E2822]">{row.label}</Text>
+                <Text className="text-[11px] font-medium text-[#2E2822]">{row.label}</Text>
                 <Text className="text-xs font-medium text-[#86807A]">{row.summary}</Text>
               </View>
 
@@ -915,7 +915,7 @@ export function MoodCalendarCard({
     <View className="w-full p-6 bg-card rounded-[32px] border border-[#E4DFD9] flex flex-col gap-4">
       <View className="flex items-start justify-between gap-3">
         <View>
-          <Text className="block text-lg leading-8 font-semibold text-[#2E2822]">{calendarTitle}</Text>
+          <Text className="block text-section-title text-[#2E2822]">{calendarTitle}</Text>
           <Text className="block text-sm text-[#8C857D] mt-1">
             Click to view daily notes and AI diagnostics
           </Text>
@@ -966,7 +966,7 @@ export function MoodCalendarCard({
 
       <View className="grid grid-cols-7 gap-2">
         {weekdayLabels.map((label) => (
-          <Text key={label} className="text-center text-xs font-semibold text-[#8C857D]">
+          <Text key={label} className="text-center text-[11px] font-medium text-[#8C857D]">
             {label}
           </Text>
         ))}
@@ -983,7 +983,7 @@ export function MoodCalendarCard({
                 key={`${day.day}-${day.type}`}
                 className="h-12 rounded-[20px] border border-transparent bg-[#F5F2EE] flex items-center justify-center opacity-45"
               >
-                <Text className="text-base font-bold text-[#CBC3BA]">{day.day}</Text>
+                <Text className="text-[15px] font-medium text-[#CBC3BA]">{day.day}</Text>
               </View>
             )
           }
@@ -1002,7 +1002,7 @@ export function MoodCalendarCard({
                 day.highlighted ? 'shadow-sm' : ''
               }`}
             >
-              <Text className={`text-base font-bold ${style.text}`}>{day.day}</Text>
+              <Text className={`text-[15px] font-medium ${style.text}`}>{day.day}</Text>
               {day.type !== 'empty' ? <View className={`w-1.5 h-1.5 rounded-full mt-1 ${style.dot}`} /> : null}
             </View>
           )
@@ -1013,7 +1013,7 @@ export function MoodCalendarCard({
         {legends.map((legend) => (
           <View key={legend.label} className="flex items-center gap-2">
             <View className={`w-3 h-3 rounded-full ${legend.colorClass}`} />
-            <Text className="text-xs font-semibold text-[#6F6760]">{legend.label}</Text>
+            <Text className="text-[12px] font-medium text-[#6F6760]">{legend.label}</Text>
           </View>
         ))}
       </View>
@@ -1076,7 +1076,7 @@ export function MoodCheckinCard({
       <View className="flex items-center justify-between gap-3">
         <View className="flex items-center gap-2">
           <Icon name="more" className="w-5 h-5" />
-          <Text className="text-lg leading-8 font-semibold text-[#2E2822]">{t('mood.checkin')}</Text>
+          <Text className="text-section-title text-[#2E2822]">{t('mood.checkin')}</Text>
         </View>
         <Text className="text-sm text-[#8C857D]">{t('mood.checkinHint')}</Text>
       </View>
@@ -1106,7 +1106,7 @@ export function MoodCheckinCard({
                 />
               </View>
               <Text
-                className="text-sm font-semibold"
+                className="text-label font-medium"
                 style={{ color: isActive ? option.activeColor : '#5f5a53' }}
               >
                 {option.label}
@@ -1117,7 +1117,7 @@ export function MoodCheckinCard({
       </View>
 
       <View className="flex flex-col gap-2">
-        <Text className="text-base font-semibold text-[#5F5A53]">{t('mood.noteLabel')}</Text>
+        <Text className="text-card-title text-[#5F5A53]">{t('mood.noteLabel')}</Text>
         <View className="rounded-[28px] bg-[#F4F1EC] p-4">
           <Textarea
             className="w-full min-h-[96px] text-sm leading-5 text-[#2E2822]"

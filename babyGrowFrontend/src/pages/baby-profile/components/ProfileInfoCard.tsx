@@ -81,7 +81,7 @@ export default function ProfileInfoCard({
   const optionLabels = (item.options ?? []).map(optionLabel)
 
   const valueNode = hasValue ? (
-    <Text className="text-base font-semibold text-on-surface">{optionLabel(item.value)}</Text>
+    <Text className="text-card-title text-on-surface">{optionLabel(item.value)}</Text>
   ) : (
     <Text className="text-base text-on-surface-variant">
       {t('profile.valueUnset', { label })}

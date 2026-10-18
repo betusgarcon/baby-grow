@@ -62,7 +62,7 @@ export default function MilestoneCard({ milestone }: MilestoneCardProps) {
       </View>
 
       <View className="relative flex flex-col gap-xs">
-        <Text className="text-headline-md font-semibold text-on-surface">{milestone.title}</Text>
+        <Text className="text-section-title text-on-surface">{milestone.title}</Text>
         <Text className="text-body-md text-on-surface-variant">{milestone.description}</Text>
       </View>
 

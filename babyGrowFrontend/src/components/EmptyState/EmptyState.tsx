@@ -36,10 +36,10 @@ export default function EmptyState({
         </View>
       )}
 
-      <Text className="text-headline-md font-semibold text-on-surface">{title}</Text>
+      <Text className="text-section-title text-on-surface">{title}</Text>
 
       {description ? (
-        <Text className="mt-xs text-body-md text-on-surface-variant text-center px-lg">
+        <Text className="mt-xs text-body-sm text-on-surface-variant text-center px-lg">
           {description}
         </Text>
       ) : null}

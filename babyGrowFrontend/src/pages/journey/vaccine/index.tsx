@@ -148,7 +148,7 @@ export default function JourneyVaccinePage() {
             </>
           ) : (
             <>
-              <Text className="text-2xl font-bold text-on-surface">{detail.title}</Text>
+              <Text className="text-page-title text-on-surface">{detail.title}</Text>
               <View className="flex items-center gap-2">
                 <Icon name="calendar" className="w-4 h-4" />
                 <Text className="text-sm text-on-surface-variant">{detail.datetime}</Text>
@@ -196,7 +196,7 @@ export default function JourneyVaccinePage() {
             <EventInfoRow icon="event-person" label={t('vaccine.administeredBy')} value={detail.administeredBy} />
 
             <EventSectionCard icon="event-medical" title={t('vaccine.doseStatus')}>
-              <Text className="text-xl font-bold text-on-surface">{detail.doseLabel}</Text>
+              <Text className="text-metric font-numeric tabular-nums text-on-surface">{detail.doseLabel}</Text>
 
               <View className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
                 {/* doseProgress 缺失时 `undefined * 100` 是 NaN，会写成 width: "NaN%" */}
@@ -212,7 +212,7 @@ export default function JourneyVaccinePage() {
               title={t('vaccine.nextAppointment')}
               className="bg-secondary-container"
             >
-              <Text className="text-xl font-bold text-on-secondary-container">
+              <Text className="text-metric font-numeric tabular-nums text-on-secondary-container">
                 {detail.nextAppointment}
               </Text>
               <Text className="text-caption text-on-secondary-container">{detail.nextNote}</Text>
@@ -231,11 +231,11 @@ export default function JourneyVaccinePage() {
           <View className="flex items-center justify-between">
             <View className="flex items-center gap-2">
               <Icon name="event-attachment" className="w-5 h-5" />
-              <Text className="text-lg font-semibold text-on-surface">{t('vaccine.attachments')}</Text>
+              <Text className="text-section-title text-on-surface">{t('vaccine.attachments')}</Text>
             </View>
 
             <Text
-              className="text-sm font-semibold text-on-surface-variant"
+              className="text-label font-medium text-on-surface-variant"
               onClick={pickPhoto}
             >
               {t('vaccine.addPhoto')}

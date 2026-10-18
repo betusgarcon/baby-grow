@@ -70,7 +70,7 @@ export default function JourneyWeeklyInsightPage() {
       {data ? (
       <View className="flex flex-col gap-6">
         {/* 日期区间从导航栏移到正文顶部，字号放大并与标题同色；居中显示更稳 */}
-        <Text className="text-2xl font-bold text-secondary text-center">{data.rangeLabel}</Text>
+        <Text className="text-page-title text-secondary text-center">{data.rangeLabel}</Text>
 
         <View className="flex gap-3">
           {data.metrics.map((metric) => (
@@ -81,7 +81,7 @@ export default function JourneyWeeklyInsightPage() {
         <SleepConsistencyCard sleep={data.sleep} />
 
         <View className="flex flex-col gap-3">
-          <Text className="text-xl font-semibold text-secondary px-1">
+          <Text className="text-section-title text-secondary px-1">
             Developmental Highlights
           </Text>
 
@@ -106,7 +106,7 @@ export default function JourneyWeeklyInsightPage() {
               <Icon name="sparkle-light" className="w-4 h-4" />
             </View>
 
-            <Text className="text-base font-bold text-primary">{data.advice.title}</Text>
+            <Text className="text-card-title text-primary">{data.advice.title}</Text>
           </View>
 
           <Text className="relative text-base text-on-surface-variant">{data.advice.content}</Text>
@@ -117,7 +117,7 @@ export default function JourneyWeeklyInsightPage() {
           openType="share"
           className="share-button w-full box-border py-4 px-6 rounded-lg bg-primary flex items-center justify-center gap-2"
         >
-          <Text className="text-xl font-semibold text-[#ffffff]">{t('weekly.share')}</Text>
+          <Text className="text-card-title text-[#ffffff]">{t('weekly.share')}</Text>
           <Icon name="event-share" className="w-5 h-5" />
         </Button>
       </View>

@@ -14,12 +14,12 @@ export default function SleepConsistencyCard({ sleep }: { sleep: SleepConsistenc
     <View className="w-full box-border p-6 rounded-lg bg-card shadow-card-soft flex flex-col gap-4">
       <View className="flex items-start justify-between">
         <View className="flex flex-col">
-          <Text className="text-xl font-semibold text-on-surface">{sleep.title}</Text>
+          <Text className="text-section-title text-on-surface">{sleep.title}</Text>
           <Text className="text-caption text-on-surface-variant">{sleep.subtitle}</Text>
         </View>
 
         <View className="py-1 px-3 rounded-full bg-surface-container-high">
-          <Text className="text-caption font-bold text-secondary">{sleep.status}</Text>
+          <Text className="text-caption font-medium text-secondary">{sleep.status}</Text>
         </View>
       </View>
 

@@ -47,7 +47,7 @@ export default function FamilyInvitePage() {
               <Icon name="eye" className="w-5 h-5" />
             </View>
             <View className="flex flex-col">
-              <Text className="text-base font-bold text-on-surface">{t('family.elderView')}</Text>
+              <Text className="text-card-title text-on-surface">{t('family.elderView')}</Text>
               <Text className="text-caption text-on-surface-variant">{t('family.elderViewDesc')}</Text>
             </View>
           </View>
@@ -56,7 +56,7 @@ export default function FamilyInvitePage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('invite.presetRelation')}</Text>
+          <Text className="text-label font-medium text-on-surface-variant px-1">{t('invite.presetRelation')}</Text>
 
           <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest flex flex-col gap-3">
             <Input
@@ -83,7 +83,7 @@ export default function FamilyInvitePage() {
                   }`}
                   onClick={() => setNickname(label)}
                 >
-                  <Text className="text-sm font-semibold text-on-surface">{label}</Text>
+                  <Text className="text-label font-medium text-on-surface">{label}</Text>
                 </View>
                 )
               })}
@@ -92,7 +92,7 @@ export default function FamilyInvitePage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('invite.accessLevel')}</Text>
+          <Text className="text-label font-medium text-on-surface-variant px-1">{t('invite.accessLevel')}</Text>
 
           {inviteRoleOptions.map((option) => {
             const selected = option.key === role
@@ -113,7 +113,7 @@ export default function FamilyInvitePage() {
                 </View>
 
                 <View className="flex-1 flex flex-col gap-1">
-                  <Text className="text-base font-bold text-on-surface">{t(option.titleKey)}</Text>
+                  <Text className="text-card-title text-on-surface">{t(option.titleKey)}</Text>
                   <Text className="text-caption text-on-surface-variant">
                     {t(option.descriptionKey)}
                   </Text>
@@ -128,14 +128,14 @@ export default function FamilyInvitePage() {
             className="flex-1 py-4 rounded-full bg-surface-container-high flex items-center justify-center"
             onClick={navigateBack}
           >
-            <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
+            <Text className="text-card-title text-on-surface">{t('common.cancel')}</Text>
           </View>
 
           <View
             className="flex-1 py-4 rounded-full bg-secondary flex items-center justify-center gap-2"
             onClick={sendInvite}
           >
-            <Text className="text-base font-semibold text-[#ffffff]">{t('family.invite')}</Text>
+            <Text className="text-card-title text-[#ffffff]">{t('family.invite')}</Text>
             <Icon name="chevron-right" className="w-2 h-3" />
           </View>
         </View>

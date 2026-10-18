@@ -167,8 +167,8 @@ export default function FamilyPosterPage() {
         {/* 海报预览。底色与内页留白按设计稿，照片位没有资源用浅底占位 */}
         <View className={`w-full box-border p-5 rounded-3xl flex flex-col items-center gap-4 ${style.wrap}`}>
           <View className="flex flex-col items-center gap-1">
-            <Text className={`text-2xl font-bold ${style.title}`}>{poster.title}</Text>
-            <Text className={`text-caption font-semibold ${style.subtitle}`} style={{ letterSpacing: '0.12em' }}>
+            <Text className={`text-page-title ${style.title}`}>{poster.title}</Text>
+            <Text className={`text-caption font-medium ${style.subtitle}`} style={{ letterSpacing: '0.12em' }}>
               {poster.subtitle}
             </Text>
           </View>
@@ -185,10 +185,10 @@ export default function FamilyPosterPage() {
                   className={`w-full box-border p-3 rounded-2xl flex flex-col gap-2 ${TONE_CLASS[memory.tone].photo}`}
                 >
                   <View className="self-start py-0.5 px-2 rounded-full bg-card">
-                    <Text className="text-caption font-bold text-on-surface">{memory.category}</Text>
+                    <Text className="text-caption font-semibold text-on-surface">{memory.category}</Text>
                   </View>
 
-                  <Text className="text-xl font-bold text-on-surface">{memory.title}</Text>
+                  <Text className="text-section-title text-on-surface">{memory.title}</Text>
                   <Text className="text-caption text-on-surface-variant">{memory.date}</Text>
                 </View>
               ))
@@ -200,12 +200,12 @@ export default function FamilyPosterPage() {
 
                 <View className="self-start py-1 px-3 rounded-full bg-tertiary-fixed flex items-center gap-1">
                   <Icon name="fork_knife" className="w-3.5 h-3.5" />
-                  <Text className="text-caption font-bold text-on-tertiary-container">
+                  <Text className="text-caption font-semibold text-on-tertiary-container">
                     {poster.badge}
                   </Text>
                 </View>
 
-                <Text className="text-2xl font-bold text-on-surface">{poster.heading}</Text>
+                <Text className="text-page-title text-on-surface">{poster.heading}</Text>
                 <Text className="text-sm text-on-surface-variant">{poster.body}</Text>
               </>
             )}
@@ -226,7 +226,7 @@ export default function FamilyPosterPage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('poster.styleTitle')}</Text>
+          <Text className="text-label font-medium text-on-surface-variant px-1">{t('poster.styleTitle')}</Text>
 
           <View className="flex flex-wrap gap-2">
             {templateOptions.map((item) => {
@@ -243,7 +243,7 @@ export default function FamilyPosterPage() {
                   onClick={() => setTemplate(item.key)}
                 >
                   <Icon name={item.icon} className="w-4 h-4" />
-                  <Text className="text-sm font-semibold text-on-surface">{item.label}</Text>
+                  <Text className="text-label font-medium text-on-surface">{item.label}</Text>
                 </View>
               )
             })}
@@ -251,7 +251,7 @@ export default function FamilyPosterPage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('poster.privacy')}</Text>
+          <Text className="text-label font-medium text-on-surface-variant px-1">{t('poster.privacy')}</Text>
 
           <View className="flex gap-3">
             {toggleOptions.map((item) => {
@@ -264,7 +264,7 @@ export default function FamilyPosterPage() {
                   onClick={() => setToggles((previous) => ({ ...previous, [item.key]: !on }))}
                 >
                   <Icon name={item.key === 'growth' ? 'eye' : 'sunny'} className="w-5 h-5" />
-                  <Text className="text-sm font-semibold text-on-surface">{item.label}</Text>
+                  <Text className="text-label font-medium text-on-surface">{item.label}</Text>
                   <Text className="text-caption text-on-surface-variant">{item.note}</Text>
 
                   {/* 开关：小程序没有原生 switch 的样式自由，用色块自绘 */}
@@ -287,7 +287,7 @@ export default function FamilyPosterPage() {
             onClick={saveToAlbum}
           >
             <Icon name="photo-gallery" className="w-5 h-5" />
-            <Text className="text-base font-semibold text-on-surface">{t('poster.saveToAlbum')}</Text>
+            <Text className="text-card-title text-on-surface">{t('poster.saveToAlbum')}</Text>
           </View>
 
           {/* 必须用 openType="share" 才能拉起小程序的分享面板 */}
@@ -295,7 +295,7 @@ export default function FamilyPosterPage() {
             openType="share"
             className="share-button flex-1 py-4 rounded-full bg-tertiary flex items-center justify-center gap-2"
           >
-            <Text className="text-base font-semibold text-[#ffffff]">{t('poster.shareToWechat')}</Text>
+            <Text className="text-card-title text-[#ffffff]">{t('poster.shareToWechat')}</Text>
           </Button>
         </View>
       </View>

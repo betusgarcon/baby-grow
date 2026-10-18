@@ -264,14 +264,14 @@ export default function RecordSheet({ visible, onClose, onSaved }: RecordSheetPr
                   className="px-6 h-12 rounded-full bg-surface-container flex items-center justify-center"
                   onClick={() => setStage('input')}
                 >
-                  <Text className="text-base font-semibold text-secondary">{t('record.editCta')}</Text>
+                  <Text className="text-card-title text-secondary">{t('record.editCta')}</Text>
                 </View>
 
                 <View
                   className="px-6 h-12 rounded-full bg-primary flex items-center justify-center"
                   onClick={analyze}
                 >
-                  <Text className="text-base font-semibold text-[#ffffff]">{t('common.retry')}</Text>
+                  <Text className="text-card-title text-[#ffffff]">{t('common.retry')}</Text>
                 </View>
               </View>
             </View>

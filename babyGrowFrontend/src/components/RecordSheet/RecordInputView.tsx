@@ -41,7 +41,7 @@ export default function RecordInputView({
   return (
     <View className="flex flex-col gap-5">
       <View className="flex items-center justify-between">
-        <Text className="text-2xl font-bold text-secondary">{t('record.inputTitle')}</Text>
+        <Text className="text-page-title text-secondary">{t('record.inputTitle')}</Text>
 
         <View
           className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center"
@@ -99,7 +99,7 @@ export default function RecordInputView({
         onClick={canAnalyze ? onAnalyze : undefined}
       >
         <Text
-          className={`text-lg font-semibold ${
+          className={`text-card-title font-semibold ${
             canAnalyze ? 'text-[#ffffff]' : 'text-on-surface-variant'
           }`}
         >

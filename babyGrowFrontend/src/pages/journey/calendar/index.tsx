@@ -91,7 +91,7 @@ export default function JourneyCalendarPage() {
             }}
           >
             <View className="flex-1 h-full flex items-center justify-center">
-              <Text className="text-lg font-semibold text-on-surface">
+              <Text className="text-section-title text-on-surface">
                 {formatMonthLabel(year, month)}
               </Text>
             </View>
@@ -106,7 +106,7 @@ export default function JourneyCalendarPage() {
 
         <View className="flex flex-col gap-3">
           <Text
-            className="text-sm font-semibold text-on-surface-variant px-1"
+            className="text-label font-medium text-on-surface-variant px-1"
             style={{ letterSpacing: '0.06em' }}
           >
             {formatDayHeading(selectedDate)}
