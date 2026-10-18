@@ -83,16 +83,16 @@ public class FamilyService {
     @Transactional
     public CreatedFamilyResponse create(Long userId, CreateFamilyRequest request) {
         if (!memberRepository.findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE).isEmpty()) {
-            throw BizException.badRequest("你已经有家庭了");
+            throw BizException.badRequestKey("error.alreadyHasFamily");
         }
 
         String babyName = request.babyName() == null ? "" : request.babyName().trim();
         if (babyName.isEmpty()) {
-            throw BizException.badRequest("请填写宝宝的名字");
+            throw BizException.badRequestKey("error.babyNameRequired");
         }
         // babies.name 是 VARCHAR(64)
         if (babyName.length() > BABY_NAME_MAX_LENGTH) {
-            throw BizException.badRequest("宝宝名字最多 " + BABY_NAME_MAX_LENGTH + " 个字");
+            throw BizException.badRequestKey("error.babyNameTooLong", BABY_NAME_MAX_LENGTH);
         }
 
         FamilyEntity family = familyRepository.save(
@@ -140,12 +140,12 @@ public class FamilyService {
         FamilyMemberEntity target = requireMemberInFamily(me.getFamilyId(), memberId);
 
         if (!isValidRole(role)) {
-            throw BizException.badRequest("未知角色：" + role);
+            throw BizException.badRequestKey("error.unknownRole", role);
         }
         if (FamilyMemberEntity.ROLE_ADMIN.equals(target.getRole())
                 && !FamilyMemberEntity.ROLE_ADMIN.equals(role)
                 && isLastAdmin(me.getFamilyId(), target)) {
-            throw BizException.badRequest("至少要保留一名管理员");
+            throw BizException.badRequestKey("error.keepOneAdmin");
         }
 
         target.setRole(role);
@@ -159,11 +159,11 @@ public class FamilyService {
         FamilyMemberEntity target = requireMemberInFamily(me.getFamilyId(), memberId);
 
         if (target.getId().equals(me.getId())) {
-            throw BizException.badRequest("不能移除自己");
+            throw BizException.badRequestKey("error.cannotRemoveSelf");
         }
         if (FamilyMemberEntity.ROLE_ADMIN.equals(target.getRole())
                 && isLastAdmin(me.getFamilyId(), target)) {
-            throw BizException.badRequest("至少要保留一名管理员");
+            throw BizException.badRequestKey("error.keepOneAdmin");
         }
 
         memberRepository.delete(target);
@@ -180,15 +180,15 @@ public class FamilyService {
         FamilyMemberEntity me = requireWritable(userId);
 
         if (name == null || name.isBlank()) {
-            throw BizException.badRequest("请填写称呼");
+            throw BizException.badRequestKey("error.displayNameRequired");
         }
         // family_members.display_name 是 VARCHAR(64)，超长会在写库时才炸成 409
         if (name.trim().length() > DISPLAY_NAME_MAX_LENGTH) {
-            throw BizException.badRequest("称呼最多 " + DISPLAY_NAME_MAX_LENGTH + " 个字");
+            throw BizException.badRequestKey("error.displayNameTooLong", DISPLAY_NAME_MAX_LENGTH);
         }
         if (!isValidRole(role) || FamilyMemberEntity.ROLE_ADMIN.equals(role)) {
             // 邀请只能给 contributor / viewer：把管理员权限通过口令发出去太危险
-            throw BizException.badRequest("邀请只能选择协作者或只读看护者");
+            throw BizException.badRequestKey("error.inviteRoleInvalid");
         }
 
         FamilyMemberEntity member = FamilyMemberEntity.pending(
@@ -203,15 +203,15 @@ public class FamilyService {
     public FamilyDtos.AcceptedResponse accept(Long userId, String code) {
         FamilyMemberEntity invite = memberRepository.findByInviteTokenForUpdate(normalizeCode(code))
                 .filter(member -> FamilyMemberEntity.STATUS_PENDING.equals(member.getStatus()))
-                .orElseThrow(() -> BizException.notFound("邀请口令无效或已被使用"));
+                .orElseThrow(() -> BizException.notFoundKey("error.inviteInvalid"));
 
         if (invite.getInviteExpiresAt() != null && invite.getInviteExpiresAt().isBefore(Instant.now())) {
-            throw BizException.badRequest("邀请口令已过期，请让家人重新邀请");
+            throw BizException.badRequestKey("error.inviteExpired");
         }
 
         // 已经在别的家庭里就不加入第二个：当前阶段一个用户只对应一个家庭
         if (!memberRepository.findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE).isEmpty()) {
-            throw BizException.badRequest("你已经有家庭了");
+            throw BizException.badRequestKey("error.alreadyHasFamily");
         }
 
         invite.accept(userId);
@@ -236,7 +236,7 @@ public class FamilyService {
     public InvitePreview previewInvite(String code) {
         FamilyMemberEntity invite = memberRepository.findByInviteToken(normalizeCode(code))
                 .filter(member -> FamilyMemberEntity.STATUS_PENDING.equals(member.getStatus()))
-                .orElseThrow(() -> BizException.notFound("邀请口令无效或已被使用"));
+                .orElseThrow(() -> BizException.notFoundKey("error.inviteInvalid"));
 
         String babyName = babyRepository.findFirstByFamilyIdOrderByIdAsc(invite.getFamilyId())
                 .map(BabyEntity::getName)
@@ -257,7 +257,7 @@ public class FamilyService {
     /** 口令大小写不敏感：后端按大写存，用户手抄时经常写成小写 */
     private static String normalizeCode(String code) {
         if (code == null || code.isBlank()) {
-            throw BizException.badRequest("请填写邀请口令");
+            throw BizException.badRequestKey("error.inviteCodeRequired");
         }
         return code.trim().toUpperCase();
     }
@@ -347,7 +347,7 @@ public class FamilyService {
     private FamilyMemberEntity requireAdmin(Long userId) {
         FamilyMemberEntity me = accessService.requireMembership(userId);
         if (!me.isAdmin()) {
-            throw BizException.forbidden("只有管理员可以管理成员");
+            throw BizException.forbiddenKey("error.adminOnly");
         }
         return me;
     }
@@ -355,7 +355,7 @@ public class FamilyService {
     private FamilyMemberEntity requireWritable(Long userId) {
         FamilyMemberEntity me = accessService.requireMembership(userId);
         if (!me.canWrite()) {
-            throw BizException.forbidden("当前角色不能邀请成员");
+            throw BizException.forbiddenKey("error.contributorCannotInvite");
         }
         return me;
     }
@@ -364,14 +364,14 @@ public class FamilyService {
         Long id = parseId(memberId);
         return memberRepository.findById(id)
                 .filter(member -> member.getFamilyId().equals(familyId))
-                .orElseThrow(() -> BizException.notFound("成员不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.memberNotFound"));
     }
 
     private static Long parseId(String memberId) {
         try {
             return Long.valueOf(memberId);
         } catch (NumberFormatException ex) {
-            throw BizException.badRequest("成员标识不合法");
+            throw BizException.badRequestKey("error.invalidMemberId");
         }
     }
 
@@ -383,7 +383,7 @@ public class FamilyService {
                 return token;
             }
         }
-        throw BizException.badRequest("邀请口令生成失败，请重试");
+        throw BizException.badRequestKey("error.inviteGenerateFailed");
     }
 
     private static String randomGroup(int length) {

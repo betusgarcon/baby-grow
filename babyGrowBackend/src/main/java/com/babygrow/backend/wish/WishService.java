@@ -63,7 +63,7 @@ public class WishService {
         BabyEntity baby = accessService.requireWritableBaby(userId);
 
         if (request.title() == null || request.title().isBlank()) {
-            throw BizException.badRequest("请填写心愿名称");
+            throw BizException.badRequestKey("error.wishNameRequired");
         }
 
         String clientKey = request.id() == null || request.id().isBlank()
@@ -137,10 +137,10 @@ public class WishService {
     public WishView regenerateCover(Long userId, String wishId) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
         WishEntity wish = wishRepository.findByBabyIdAndClientKey(baby.getId(), requireKey(wishId))
-                .orElseThrow(() -> BizException.notFound("心愿不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.wishNotFound"));
 
         if (!coverService.enabled()) {
-            throw BizException.badRequest("头图生成功能未开启");
+            throw BizException.badRequestKey("error.coverDisabled");
         }
 
         // 先落 pending 再入队：前端立刻就能看到「生成中」，而不是等下一次刷新
@@ -170,7 +170,7 @@ public class WishService {
     public WishView updateChecklist(Long userId, String wishId, List<ChecklistItemView> checklist) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
         WishEntity wish = wishRepository.findByBabyIdAndClientKey(baby.getId(), requireKey(wishId))
-                .orElseThrow(() -> BizException.notFound("心愿不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.wishNotFound"));
 
         checklistRepository.deleteByWishId(wish.getId());
         int savedItems = saveChecklist(wish.getId(), checklist == null ? List.of() : checklist);
@@ -183,10 +183,10 @@ public class WishService {
     public WishView updateCounter(Long userId, String wishId, Integer current) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
         WishEntity wish = wishRepository.findByBabyIdAndClientKey(baby.getId(), requireKey(wishId))
-                .orElseThrow(() -> BizException.notFound("心愿不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.wishNotFound"));
 
         if (!WishEntity.KIND_COUNTER.equals(wish.getKind())) {
-            throw BizException.badRequest("这条心愿不是计数式的");
+            throw BizException.badRequestKey("error.wishNotCounter");
         }
         int target = wish.getCounterTarget() == null ? wish.getGoal() : wish.getCounterTarget();
         int value = current == null ? 0 : current;
@@ -291,12 +291,12 @@ public class WishService {
     private WishEntity requireWish(Long userId, String wishId) {
         BabyEntity baby = accessService.requireWritableBaby(userId);
         return wishRepository.findByBabyIdAndClientKey(baby.getId(), requireKey(wishId))
-                .orElseThrow(() -> BizException.notFound("心愿不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.wishNotFound"));
     }
 
     private static String requireKey(String wishId) {
         if (wishId == null || wishId.isBlank()) {
-            throw BizException.badRequest("缺少心愿标识");
+            throw BizException.badRequestKey("error.missingWishId");
         }
         return wishId;
     }

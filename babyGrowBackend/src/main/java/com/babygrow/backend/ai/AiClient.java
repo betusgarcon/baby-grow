@@ -97,7 +97,7 @@ public class AiClient {
     public Map<String, Object> extractMedia(Long babyId, int ageMonths, String sourceType,
                                             byte[] content, String mime, String note) {
         if (content.length > MAX_MEDIA_BYTES) {
-            throw BizException.badRequest("媒体文件过大（上限 " + (MAX_MEDIA_BYTES / 1024 / 1024) + "MB）");
+            throw BizException.badRequestKey("error.fileTooLarge", (MAX_MEDIA_BYTES / 1024 / 1024) + "MB");
         }
 
         Map<String, Object> body = baseBody(babyId, ageMonths);

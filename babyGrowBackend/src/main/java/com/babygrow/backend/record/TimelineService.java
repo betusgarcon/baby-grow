@@ -55,7 +55,7 @@ public class TimelineService {
         BabyEntity baby = accessService.requireWritableBaby(userId);
 
         if (request.title() == null || request.title().isBlank()) {
-            throw BizException.badRequest("title 不能为空");
+            throw BizException.badRequestKey("error.titleRequired");
         }
 
         Instant occurredAt = TimelineEntries.parseOccurredAt(request.date(), request.time());

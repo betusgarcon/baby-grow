@@ -63,7 +63,7 @@ public class LocalFileSystemMediaStorage implements MediaStorage {
     public byte[] read(String objectKey) {
         Path target = resolve(objectKey);
         if (!Files.isReadable(target)) {
-            throw BizException.notFound("媒体不存在");
+            throw BizException.notFoundKey("error.mediaNotFound");
         }
         try {
             return Files.readAllBytes(target);
@@ -84,11 +84,11 @@ public class LocalFileSystemMediaStorage implements MediaStorage {
     /** 只接受合法键；分两级目录存放，避免单目录下文件过多 */
     private Path resolve(String objectKey) {
         if (objectKey == null || !KEY_PATTERN.matcher(objectKey).matches()) {
-            throw BizException.badRequest("非法的媒体标识");
+            throw BizException.badRequestKey("error.invalidMediaId");
         }
         Path resolved = root.resolve(objectKey.substring(0, 2)).resolve(objectKey).normalize();
         if (!resolved.startsWith(root)) {
-            throw BizException.badRequest("非法的媒体标识");
+            throw BizException.badRequestKey("error.invalidMediaId");
         }
         return resolved;
     }

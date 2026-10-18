@@ -133,7 +133,7 @@ public class AiTaskService {
 
         AiTaskEntity task = taskRepository.findById(taskId)
                 .filter(item -> item.getBabyId().equals(baby.getId()))
-                .orElseThrow(() -> BizException.notFound("任务不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.taskNotFound"));
 
         return new AiTaskResponse(task.getId(), task.getStatus(), parseResult(task), task.getError());
     }

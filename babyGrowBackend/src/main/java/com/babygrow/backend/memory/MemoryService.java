@@ -66,14 +66,14 @@ public class MemoryService {
     public MemoryView create(Long userId, MemoryCreateRequest request) {
         FamilyMemberEntity me = accessService.requireMembership(userId);
         if (!me.canWrite()) {
-            throw BizException.forbidden("当前角色不能新增记忆");
+            throw BizException.forbiddenKey("error.viewerCannotAddMemory");
         }
 
         if (request.title() == null || request.title().isBlank()) {
-            throw BizException.badRequest("请填写记忆标题");
+            throw BizException.badRequestKey("error.memoryTitleRequired");
         }
         if (request.title().trim().length() > TITLE_MAX_LENGTH) {
-            throw BizException.badRequest("记忆标题最多 " + TITLE_MAX_LENGTH + " 个字");
+            throw BizException.badRequestKey("error.memoryTitleTooLong", TITLE_MAX_LENGTH);
         }
 
         Long babyId = accessService.findBabyId(me.getFamilyId()).orElse(null);
@@ -109,7 +109,7 @@ public class MemoryService {
         try {
             return objectMapper.writeValueAsString(tags == null ? List.of() : tags);
         } catch (Exception ex) {
-            throw BizException.badRequest("标签无法序列化");
+            throw BizException.badRequestKey("error.tagsSerializeFailed");
         }
     }
 
@@ -132,7 +132,7 @@ public class MemoryService {
         try {
             return LocalDate.parse(raw);
         } catch (Exception ex) {
-            throw BizException.badRequest("日期格式应为 YYYY-MM-DD：" + raw);
+            throw BizException.badRequestKey("error.dateFormatWithValue", raw);
         }
     }
 }

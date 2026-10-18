@@ -117,11 +117,11 @@ public class ProfileService {
         }
 
         if (url.length() > AVATAR_URL_MAX_LENGTH) {
-            throw BizException.badRequest("头像地址过长，请重新上传");
+            throw BizException.badRequestKey("error.avatarUrlTooLong");
         }
 
         mediaRepository.findByUrlAndOwnerUserId(url, userId)
-                .orElseThrow(() -> BizException.badRequest("请先上传图片，再把它设为头像"));
+                .orElseThrow(() -> BizException.badRequestKey("error.uploadAvatarFirst"));
 
         baby.setAvatarUrl(url);
     }
@@ -219,7 +219,7 @@ public class ProfileService {
         try {
             return LocalDate.parse(raw);
         } catch (DateTimeParseException ex) {
-            throw BizException.badRequest("生日格式应为 YYYY-MM-DD：" + raw);
+            throw BizException.badRequestKey("error.birthdayFormat", raw);
         }
     }
 

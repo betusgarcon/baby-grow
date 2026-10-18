@@ -24,12 +24,42 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private final Messages messages;
+
+    public GlobalExceptionHandler(Messages messages) {
+        this.messages = messages;
+    }
+
     @ExceptionHandler(BizException.class)
     public ResponseEntity<ApiResponse<Void>> handleBiz(BizException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-        log.warn("业务异常 code={} message={}", errorCode.getCode(), ex.getMessage());
+        String message = ex.getMessageKey() != null
+                ? messages.get(ex.getMessageKey(), ex.getMessageArgs())
+                : resolveMessage(ex.getMessage(), errorCode);
+
+        log.warn("业务异常 code={} message={}", errorCode.getCode(), message);
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiResponse.fail(errorCode, ex.getMessage()));
+                .body(ApiResponse.fail(errorCode, message));
+    }
+
+    /**
+     * 异常里带的是**文案键**（约定以 {@code error.} 开头）或已经拼好的人话。
+     *
+     * <p>第三方返回的错误（例如微信的 errmsg）本身就带可读信息，直接透出比换成
+     * 一句笼统的「请求失败」更有用，所以只有键才查表。
+     */
+    private String resolveMessage(String raw, ErrorCode errorCode) {
+        if (raw != null && raw.startsWith("error.")) {
+            return messages.get(raw);
+        }
+        if (raw == null || raw.isBlank()) {
+            return messages.get(errorKey(errorCode));
+        }
+        return raw;
+    }
+
+    private static String errorKey(ErrorCode errorCode) {
+        return "error." + errorCode.name().toLowerCase(java.util.Locale.ROOT);
     }
 
     /** @Valid 校验失败：把字段名带上，便于前端定位 */
@@ -47,7 +77,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception ex) {
         log.warn("请求参数有误 {}", ex.getMessage());
         return ResponseEntity.status(ErrorCode.BAD_REQUEST.getHttpStatus())
-                .body(ApiResponse.fail(ErrorCode.BAD_REQUEST));
+                .body(ApiResponse.fail(ErrorCode.BAD_REQUEST, messages.get(errorKey(ErrorCode.BAD_REQUEST))));
     }
 
     /**
@@ -65,7 +95,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(DataIntegrityViolationException ex) {
         log.warn("数据完整性约束冲突", ex);
         return ResponseEntity.status(ErrorCode.CONFLICT.getHttpStatus())
-                .body(ApiResponse.fail(ErrorCode.CONFLICT));
+                .body(ApiResponse.fail(ErrorCode.CONFLICT, messages.get(errorKey(ErrorCode.CONFLICT))));
     }
 
     /** 兜底。对外不暴露堆栈，详情只进日志 */
@@ -73,7 +103,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleUnexpected(Exception ex) {
         log.error("未预期异常", ex);
         return ResponseEntity.status(ErrorCode.INTERNAL_ERROR.getHttpStatus())
-                .body(ApiResponse.fail(ErrorCode.INTERNAL_ERROR));
+                .body(ApiResponse.fail(ErrorCode.INTERNAL_ERROR,
+                        messages.get(errorKey(ErrorCode.INTERNAL_ERROR))));
     }
 
     private static String defaultMessage(FieldError field) {

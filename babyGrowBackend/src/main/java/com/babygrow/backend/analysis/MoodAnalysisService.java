@@ -111,7 +111,7 @@ public class MoodAnalysisService {
 
         String mood = request.mood() == null ? "" : request.mood().trim();
         if (!CHECKIN_MOODS.contains(mood)) {
-            throw BizException.badRequest("请选择一种情绪：开心 / 黏人烦躁 / 身体不适");
+            throw BizException.badRequestKey("error.moodRequired");
         }
 
         LocalDate day = parseDay(request.date());
@@ -121,7 +121,7 @@ public class MoodAnalysisService {
             note = null;
         }
         if (note != null && note.length() > NOTE_MAX_LENGTH) {
-            throw BizException.badRequest("备注最多 " + NOTE_MAX_LENGTH + " 个字");
+            throw BizException.badRequestKey("error.noteTooLong", NOTE_MAX_LENGTH);
         }
 
         // 今天用「此刻」而不是当天 0 点：日历只按天聚合，两者落在同一格，
@@ -142,7 +142,7 @@ public class MoodAnalysisService {
         try {
             return LocalDate.parse(value.trim());
         } catch (DateTimeParseException ex) {
-            throw BizException.badRequest("日期格式应为 YYYY-MM-DD");
+            throw BizException.badRequestKey("error.dateFormat");
         }
     }
 

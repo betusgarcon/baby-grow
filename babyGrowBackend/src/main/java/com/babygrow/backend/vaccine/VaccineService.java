@@ -199,8 +199,8 @@ public class VaccineService {
             return java.time.LocalDateTime.parse(raw.trim(), DATE_TIME_FORMAT)
                     .atZone(ZoneId.systemDefault()).toInstant();
         } catch (Exception ex) {
-            throw BizException.badRequest("时间格式无法识别，请写成 "
-                    + DATE_TIME_FORMAT.format(Instant.now().atZone(ZoneId.systemDefault())) + " 这样的形式");
+            throw BizException.badRequestKey("error.timeUnparseable",
+                    DATE_TIME_FORMAT.format(Instant.now().atZone(ZoneId.systemDefault())));
         }
     }
 
@@ -216,7 +216,7 @@ public class VaccineService {
         try {
             return LocalDate.parse(raw.trim(), DATE_FORMAT);
         } catch (Exception ex) {
-            throw BizException.badRequest("日期格式无法识别，请写成 " + DATE_FORMAT.format(LocalDate.now()) + " 这样的形式");
+            throw BizException.badRequestKey("error.dateUnparseable", DATE_FORMAT.format(LocalDate.now()));
         }
     }
 

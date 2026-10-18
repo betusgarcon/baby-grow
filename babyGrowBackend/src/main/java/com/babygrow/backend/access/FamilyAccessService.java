@@ -37,14 +37,14 @@ public class FamilyAccessService {
                 .findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> BizException.forbidden("当前账号不属于任何家庭"));
+                .orElseThrow(() -> BizException.forbiddenKey("error.notInFamily"));
     }
 
     @Transactional(readOnly = true)
     public BabyEntity requireBaby(Long userId) {
         FamilyMemberEntity membership = requireMembership(userId);
         return babyRepository.findFirstByFamilyIdOrderByIdAsc(membership.getFamilyId())
-                .orElseThrow(() -> BizException.notFound("该家庭下还没有宝宝档案"));
+                .orElseThrow(() -> BizException.notFoundKey("error.noBabyProfile"));
     }
 
     /** 写操作前调用。viewer 角色只读。 */
@@ -52,10 +52,10 @@ public class FamilyAccessService {
     public BabyEntity requireWritableBaby(Long userId) {
         FamilyMemberEntity membership = requireMembership(userId);
         if (!membership.canWrite()) {
-            throw BizException.forbidden("当前角色没有修改权限");
+            throw BizException.forbiddenKey("error.noWritePermission");
         }
         return babyRepository.findFirstByFamilyIdOrderByIdAsc(membership.getFamilyId())
-                .orElseThrow(() -> BizException.notFound("该家庭下还没有宝宝档案"));
+                .orElseThrow(() -> BizException.notFoundKey("error.noBabyProfile"));
     }
 
     /**

@@ -43,7 +43,7 @@ public class AiProxyController {
     public ApiResponse<Map> extractRecord(@AuthenticationPrincipal Long userId,
                                           @RequestBody ExtractRequest request) {
         if (request.text() == null || request.text().isBlank()) {
-            throw BizException.badRequest("text 不能为空");
+            throw BizException.badRequestKey("error.textRequired");
         }
 
         BabyEntity baby = accessService.requireBaby(userId);

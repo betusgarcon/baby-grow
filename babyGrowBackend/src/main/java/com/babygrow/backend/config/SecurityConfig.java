@@ -2,6 +2,7 @@ package com.babygrow.backend.config;
 
 import com.babygrow.backend.common.ApiResponse;
 import com.babygrow.backend.common.ErrorCode;
+import com.babygrow.backend.common.Messages;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -32,13 +33,19 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final LocaleFilter localeFilter;
+    private final Messages messages;
     private final ObjectMapper objectMapper;
     private final AppProperties properties;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          LocaleFilter localeFilter,
+                          Messages messages,
                           ObjectMapper objectMapper,
                           AppProperties properties) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.localeFilter = localeFilter;
+        this.messages = messages;
         this.objectMapper = objectMapper;
         this.properties = properties;
     }
@@ -61,6 +68,9 @@ public class SecurityConfig {
                                 write(response, ErrorCode.UNAUTHORIZED, HttpServletResponse.SC_UNAUTHORIZED))
                         .accessDeniedHandler((request, response, ex) ->
                                 write(response, ErrorCode.FORBIDDEN, HttpServletResponse.SC_FORBIDDEN)))
+                // 语言过滤器必须在 JWT 之前：鉴权失败时由安全链直接写响应，
+                // 那条路径也要能拿到正确的语言。
+                .addFilterBefore(localeFilter, JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -86,6 +96,11 @@ public class SecurityConfig {
         response.setStatus(httpStatus);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), ApiResponse.fail(errorCode));
+        objectMapper.writeValue(response.getWriter(), ApiResponse.fail(errorCode, messages.get(errorKey(errorCode))));
+    }
+
+    /** ErrorCode 的文案键由枚举名派生，避免在枚举里再维护一列 */
+    private static String errorKey(ErrorCode errorCode) {
+        return "error." + errorCode.name().toLowerCase(java.util.Locale.ROOT);
     }
 }

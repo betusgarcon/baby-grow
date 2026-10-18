@@ -96,7 +96,7 @@ public class RecordService {
         }
 
         if (records.isEmpty()) {
-            throw BizException.badRequest("没有可保存的内容");
+            throw BizException.badRequestKey("error.nothingToSave");
         }
         // 一次落库。保存后 memoryRecord 才拿得到 id，因此顺序不能颠倒
         recordRepository.saveAll(records);
@@ -268,7 +268,7 @@ public class RecordService {
         try {
             return Instant.parse(raw);
         } catch (Exception ex) {
-            throw BizException.badRequest("occurredAt 应是 ISO-8601 时刻，例如 2026-10-10T12:30:00+08:00");
+            throw BizException.badRequestKey("error.occurredAtFormat");
         }
     }
 
@@ -276,7 +276,7 @@ public class RecordService {
         try {
             return objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException ex) {
-            throw BizException.badRequest("记录内容无法序列化");
+            throw BizException.badRequestKey("error.recordSerializeFailed");
         }
     }
 

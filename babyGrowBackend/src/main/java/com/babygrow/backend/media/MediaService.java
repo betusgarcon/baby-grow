@@ -38,7 +38,7 @@ public class MediaService {
     @Transactional
     public MediaAssetEntity upload(Long userId, Long babyId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw BizException.badRequest("文件为空");
+            throw BizException.badRequestKey("error.emptyFile");
         }
 
         String mime = file.getContentType() == null ? "" : file.getContentType().toLowerCase(Locale.ROOT);
@@ -46,13 +46,13 @@ public class MediaService {
                 .filter(entry -> mime.startsWith(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .findFirst()
-                .orElseThrow(() -> BizException.badRequest("不支持的文件类型：" + mime));
+                .orElseThrow(() -> BizException.badRequestKey("error.unsupportedFileType", mime));
 
         byte[] content;
         try {
             content = file.getBytes();
         } catch (IOException ex) {
-            throw BizException.badRequest("文件读取失败");
+            throw BizException.badRequestKey("error.fileReadFailed");
         }
 
         String objectKey = storage.store(content, extensionOf(file.getOriginalFilename(), mime));
@@ -72,7 +72,7 @@ public class MediaService {
     @Transactional
     public MediaAssetEntity storeGenerated(byte[] content, String mime, Long ownerUserId, Long babyId) {
         if (content == null || content.length == 0) {
-            throw BizException.badRequest("图片内容为空");
+            throw BizException.badRequestKey("error.imageEmpty");
         }
 
         // AI 服务未必回 mime，缺省按 PNG 处理：这是出图接口最常见的输出格式
@@ -95,10 +95,10 @@ public class MediaService {
     @Transactional(readOnly = true)
     public MediaAssetEntity requireOwned(Long mediaId, Long userId) {
         MediaAssetEntity asset = repository.findById(mediaId)
-                .orElseThrow(() -> BizException.notFound("媒体不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.mediaNotFound"));
 
         if (!userId.equals(asset.getOwnerUserId())) {
-            throw BizException.forbidden("无权引用该媒体");
+            throw BizException.forbiddenKey("error.mediaNotOwned");
         }
         return asset;
     }
@@ -106,7 +106,7 @@ public class MediaService {
     @Transactional(readOnly = true)
     public StoredMedia load(Long mediaId) {
         MediaAssetEntity asset = repository.findById(mediaId)
-                .orElseThrow(() -> BizException.notFound("媒体不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.mediaNotFound"));
         return new StoredMedia(storage.read(asset.getObjectKey()), asset.getMime(), asset.getKind());
     }
 
@@ -114,7 +114,7 @@ public class MediaService {
     public MediaAssetEntity requireByObjectKey(String objectKey) {
         // 键本身就是访问凭据，所以这里不再校验归属，只用来取 mime
         return repository.findByObjectKey(objectKey)
-                .orElseThrow(() -> BizException.notFound("媒体不存在"));
+                .orElseThrow(() -> BizException.notFoundKey("error.mediaNotFound"));
     }
 
     public byte[] readContent(String objectKey) {

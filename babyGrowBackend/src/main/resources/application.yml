@@ -5,6 +5,15 @@ spring:
   application:
     name: baby-grow-backend
 
+  # 界面文案的多语言资源（messages_zh / messages_en）。
+  # fallback-to-system-locale=false：拿不到语言时**显式回落中文**，不要跟随 JVM 默认——
+  # 容器里的 JVM locale 常常是 en，会让中文用户莫名看到英文。
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+    use-code-as-default-message: true
+
   # 本地开发时额外读同目录下的 .env（该文件不入库，见 .env.example）。
   # 生产用真实环境变量注入，不依赖此文件。
   config:
