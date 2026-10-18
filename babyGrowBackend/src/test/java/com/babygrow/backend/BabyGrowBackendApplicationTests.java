@@ -1,7 +1,15 @@
 package com.babygrow.backend;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import com.babygrow.backend.common.Messages;
+
+import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 只验证 bean 图能装配起来（安全链、JWT、JPA 仓储、异步执行器、配置绑定）。
@@ -28,8 +36,29 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 class BabyGrowBackendApplicationTests {
 
+    @Autowired
+    private Messages messages;
+
     @Test
     void contextLoads() {
         // 能启动即通过
+    }
+
+    /**
+     * 文案源必须真正装配上。
+     *
+     * <p>只测 bean 图不够：缺了默认 bundle 时 Boot 会注入一个空的
+     * DelegatingMessageSource，上下文照样能启动，但第一次取文案才炸。
+     */
+    @Test
+    void messageSourceResolvesBothLanguages() {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+        assertThat(messages.get("error.unauthorized"))
+                .isEqualTo("Not signed in, or your session has expired");
+
+        LocaleContextHolder.setLocale(Locale.SIMPLIFIED_CHINESE);
+        assertThat(messages.get("error.unauthorized")).isEqualTo("未登录或登录已过期");
+
+        LocaleContextHolder.resetLocaleContext();
     }
 }
