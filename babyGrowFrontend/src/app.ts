@@ -5,6 +5,7 @@ import './app.scss'
 import { initMockRoutes } from '@/mock'
 import { bootstrapApi } from '@/api/bootstrap'
 import { getConfig } from '@/api/config'
+import { loadAppFonts } from '@/utils/fonts'
 import { fetchMe } from '@/api/modules/auth'
 import { loadBabyHeader } from '@/store'
 
@@ -41,6 +42,9 @@ function launchedFromInviteLink(): boolean {
 async function start() {
   // 配置后端地址并静默登录；未配置后端时自动退回 mock
   await bootstrapApi()
+
+  // 字体与接口同域，地址要等 bootstrap 把 BASE_URL 写进配置后才能取
+  loadAppFonts()
 
   // mock 模式下没有「家庭」这个概念，强行跳引导页会把人赶出演示态。
   // 另外 /api/auth/me 也没有注册 mock 路由，那种情况下它会返回 code = -1。

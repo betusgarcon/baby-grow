@@ -177,8 +177,10 @@ module.exports = {
           'Microsoft YaHei',
           'sans-serif',
         ],
-        // 展示层。现在与正文同一套；将来若加载展示字体子集，只改这里。
+        // 展示层：只用于页面主标题。字体由 utils/fonts.ts 在启动时加载，
+        // 加载失败或缺少字形时逐字回落到系统字体。
         display: [
+          'ZCOOL QingKe HuangYou',
           '-apple-system',
           'BlinkMacSystemFont',
           'PingFang SC',

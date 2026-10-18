@@ -59,6 +59,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/health", "/actuator/health", "/api/auth/login").permitAll()
+                        // 字体文件由小程序 loadFontFace 拉取，不带 token，也不含业务数据
+                        .requestMatchers("/fonts/**").permitAll()
                         // 媒体读取不鉴权：小程序 <Image src> 不带 Authorization 头。
                         // 安全性由「对象键不可猜测」保证，详见 MediaController#read
                         .requestMatchers(HttpMethod.GET, "/api/media/**").permitAll()

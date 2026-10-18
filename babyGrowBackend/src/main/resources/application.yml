@@ -46,6 +46,16 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  # 静态字体（/fonts/**）。字体内容不会变，允许客户端长期缓存，
+  # 否则每次冷启动都要重新拉一遍中文展示字体。
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 365d
+          cache-public: true
+          immutable: true
+
 ai:
   service:
     url: ${AI_SERVICE_URL:http://localhost:8001}

@@ -84,7 +84,7 @@ export default function OnboardingPage() {
     <PageContainer header={<PageHeader title={t('onboarding.title')} />}>
       <View className="flex flex-col gap-5 pb-6">
         <View className="flex flex-col gap-2 px-1">
-          <Text className="text-page-title text-on-surface">{t('onboarding.heading')}</Text>
+          <Text className="text-page-title font-display text-on-surface">{t('onboarding.heading')}</Text>
           <Text className="text-sm leading-6 text-on-surface-variant">{t('onboarding.intro')}</Text>
         </View>
 

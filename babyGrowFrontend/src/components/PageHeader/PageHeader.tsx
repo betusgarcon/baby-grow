@@ -100,7 +100,7 @@ export default function PageHeader({
           ) : null}
           {leading}
           {!showCenteredTitle && title ? (
-            <Text className="text-page-title text-on-surface truncate">{title}</Text>
+            <Text className="text-page-title font-display text-on-surface truncate">{title}</Text>
           ) : null}
         </View>
 
@@ -132,7 +132,7 @@ export default function PageHeader({
             style={{ pointerEvents: 'none' }}
           >
             <Text
-              className="text-page-title text-on-surface truncate"
+              className="text-page-title font-display text-on-surface truncate"
               style={{ maxWidth: '56%' }}
             >
               {title}
