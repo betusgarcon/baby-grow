@@ -8,8 +8,9 @@ import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import { enterApp } from '@/utils/enterApp'
 import babyAvatar from '@/assets/images/baby-journey-img.jpg'
-import { invitedView, inviteRoleOptions, withBabyName } from '@/store/family'
+import { inviteRoleOptions } from '@/store/family'
 import { useAppState } from '@/store'
+import { t } from '@/i18n'
 import { acceptInvite, getInvitePreview, type InvitePreview } from '@/api/modules/family'
 
 /**
@@ -59,13 +60,14 @@ export default function FamilyInvitedViewPage() {
 
   // 名片上的名字优先用**邀请里的**宝宝名：受邀者本机还没有家庭，babyHeader.name 是空的，
   // 直接用它只会渲染成「宝宝」这种通用欢迎页，看不出是谁发的。
-  const babyName = preview?.babyName || babyHeader.name
-  const invitedTitle = withBabyName(invitedView.title, babyName)
-  const invitedBody = withBabyName(invitedView.body, babyName)
+  const babyName = preview?.babyName || babyHeader.name || t('common.babyFallback')
+  const invitedTitle = t('invited.passTitle', { name: babyName })
+  const invitedBody = t('invited.bodyWithName', { name: babyName })
 
-  const roleLabel = preview
-    ? inviteRoleOptions.find((option) => option.key === preview.role)?.title ?? preview.role
-    : ''
+  const roleOption = preview
+    ? inviteRoleOptions.find((option) => option.key === preview.role)
+    : undefined
+  const roleLabel = roleOption ? t(roleOption.titleKey) : preview?.role ?? ''
   const expired = preview?.expired === true
 
   const accept = async () => {
@@ -83,14 +85,14 @@ export default function FamilyInvitedViewPage() {
       const response = await acceptInvite(inviteCode)
       if (response.code !== 0) throw new Error(response.message)
 
-      Taro.showToast({ title: '已加入', icon: 'none' })
+      Taro.showToast({ title: t('common.joined'), icon: 'none' })
       await enterApp()
     } catch (error) {
       console.error('[invited] 接受邀请失败', error)
       // 把服务端的话原样带出来。口令无效 / 已过期 / 你已经有家庭了，是三种不同的原因，
       // 用一句笼统的「口令可能已失效」会把用户引到错误的排查方向。
       const message = error instanceof Error ? error.message : ''
-      Taro.showToast({ title: message || '加入失败，请稍后再试', icon: 'none' })
+      Taro.showToast({ title: message || t('common.joinFailed'), icon: 'none' })
     } finally {
       setAccepting(false)
     }
@@ -103,7 +105,7 @@ export default function FamilyInvitedViewPage() {
           // 受邀者是从分享卡片直接落进来的，栈里没有上一页，不该给返回键；
           // 预览是从家庭页压栈进来的，需要能退回去。
           showBack={!isInvitee}
-          title={isInvitee ? '邀请加入' : '长辈受邀界面'}
+          title={isInvitee ? t('invited.title') : t('invited.previewTitle')}
           right={
             isInvitee ? undefined : (
               <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
@@ -139,12 +141,12 @@ export default function FamilyInvitedViewPage() {
               </View>
 
               <View className="flex-1 flex flex-col gap-1">
-                <Text className="text-sm font-bold text-on-surface">{invitedView.badge}</Text>
+                <Text className="text-sm font-bold text-on-surface">{t('invited.badge')}</Text>
                 <Text className="text-caption text-on-surface-variant">{invitedBody}</Text>
               </View>
             </View>
 
-            <Text className="text-2xl font-bold text-on-surface text-center">{invitedView.badge}</Text>
+            <Text className="text-2xl font-bold text-on-surface text-center">{t('invited.badge')}</Text>
             <Text className="text-base text-on-surface-variant text-center">{invitedBody}</Text>
 
             {/* 邀请详情。这几行回答的是「这是谁的空间、给了我什么权限」——
@@ -153,7 +155,7 @@ export default function FamilyInvitedViewPage() {
               <View className="w-full flex flex-col gap-2 pt-1">
                 {preview.inviteeName ? (
                   <View className="flex items-center justify-between">
-                    <Text className="text-caption text-on-surface-variant">给你的称呼</Text>
+                    <Text className="text-caption text-on-surface-variant">{t('invited.reservedFor')}</Text>
                     <Text className="text-sm font-semibold text-on-surface">
                       {preview.inviteeName}
                     </Text>
@@ -161,7 +163,7 @@ export default function FamilyInvitedViewPage() {
                 ) : null}
 
                 <View className="flex items-center justify-between">
-                  <Text className="text-caption text-on-surface-variant">加入后的权限</Text>
+                  <Text className="text-caption text-on-surface-variant">{t('invited.accessLevel')}</Text>
                   <Text className="text-sm font-semibold text-on-surface">{roleLabel}</Text>
                 </View>
 
@@ -169,7 +171,7 @@ export default function FamilyInvitedViewPage() {
                     拿不到就整行不渲染，而不是显示一个占位。 */}
                 {preview.inviterName ? (
                   <View className="flex items-center justify-between">
-                    <Text className="text-caption text-on-surface-variant">邀请人</Text>
+                    <Text className="text-caption text-on-surface-variant">{t('invited.invitedBy')}</Text>
                     <Text className="text-sm font-semibold text-on-surface">
                       {preview.inviterName}
                     </Text>
@@ -184,7 +186,7 @@ export default function FamilyInvitedViewPage() {
           // 已经过期就别再给一个点了必然失败的按钮，直接把原因说清楚
           <View className="w-full box-border py-4 rounded-full bg-surface-container-high flex items-center justify-center">
             <Text className="text-base font-semibold text-on-surface-variant">
-              口令已过期，请让家人重新邀请
+              {t('invited.expired')}
             </Text>
           </View>
         ) : (
@@ -199,8 +201,8 @@ export default function FamilyInvitedViewPage() {
               {isInvitee
                 ? accepting
                   ? '加入中…'
-                  : invitedView.action
-                : '去邀请家人'}
+                  : t('invited.accept')
+                : t('invite.goInvite')}
             </Text>
           </View>
         )}
@@ -212,7 +214,7 @@ export default function FamilyInvitedViewPage() {
             className="text-sm text-on-surface-variant text-center"
             onClick={() => navigateToRoute('onboarding')}
           >
-            口令无效，或想自己创建一个空间
+            {t('invited.codeInvalidOrCreate')}
           </Text>
         ) : null}
       </View>

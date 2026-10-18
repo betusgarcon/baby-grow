@@ -5,10 +5,26 @@ import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import babyAvatar from '@/assets/images/baby-journey-img.jpg'
-import { posterContent, posterTemplates, privacyToggles } from '@/store/family'
+import { posterTemplates, privacyToggles } from '@/store/family'
+import { t } from '@/i18n'
 import { TONE_CLASS } from '../memories/memoriesData'
 import { useAppState } from '@/store'
 import { getPoster } from '@/api/modules/family'
+
+/**
+ * 海报拿不到后端内容时的兜底文案。
+ *
+ * 必须一眼看出是占位：此前这里带着「150g 的甜南瓜泥」「12kg 黄金线」这类编造的具体
+ * 数字和日期，接口一失败，用户看到的是一张**别人的**成长海报。
+ */
+const posterDefaults = () => ({
+  title: t('poster.defaultTitle'),
+  subtitle: 'GENIUS TRACK · MEMORY CAPSULE',
+  badge: t('poster.defaultBadge'),
+  heading: t('poster.defaultHeading'),
+  body: t('poster.defaultBody'),
+  meta: t('poster.defaultMeta'),
+})
 
 /** 三套画风模板的差异。之前换模板只改了 chip 的选中态，预览纹丝不动 */
 const TEMPLATE_STYLE: Record<string, { wrap: string; title: string; subtitle: string; card: string }> = {
@@ -35,12 +51,26 @@ const TEMPLATE_STYLE: Record<string, { wrap: string; title: string; subtitle: st
 export default function FamilyPosterPage() {
   // 记忆页勾选进来的那几条。为空时海报退回「最近一条记录」的单张形态
   const { posterMemories: selectedMemories } = useAppState()
-  const [template, setTemplate] = useState(posterTemplates[0].key)
+  const [template, setTemplate] = useState<string>(posterTemplates[0].key)
   const style = TEMPLATE_STYLE[template] ?? TEMPLATE_STYLE.warm
-  // 海报正文来自后端（按宝宝档案与最近一条记录推导）；拿不到时退回本地文案
-  const [poster, setPoster] = useState(posterContent)
-  const [templateOptions, setTemplateOptions] = useState(posterTemplates)
-  const [toggleOptions, setToggleOptions] = useState(privacyToggles)
+  // 海报正文来自后端（按宝宝档案与最近一条记录推导）；拿不到时退回本地占位文案
+  const [poster, setPoster] = useState(posterDefaults)
+  // 本地的模板/开关是「键」，这里在渲染期翻译成显示文案；后端若下发了同名结构则直接覆盖
+  const [templateOptions, setTemplateOptions] = useState<
+    Array<{ key: string; label: string; icon: string }>
+  >(() =>
+    posterTemplates.map((item) => ({ key: item.key, icon: item.icon, label: t(item.labelKey) })),
+  )
+  const [toggleOptions, setToggleOptions] = useState<
+    Array<{ key: string; label: string; note: string; defaultOn: boolean }>
+  >(() =>
+    privacyToggles.map((item) => ({
+      key: item.key,
+      label: t(item.labelKey),
+      note: t(item.noteKey),
+      defaultOn: item.defaultOn,
+    })),
+  )
   const [toggles, setToggles] = useState<Record<string, boolean>>(
     Object.fromEntries(privacyToggles.map((item) => [item.key, item.defaultOn])),
   )
@@ -80,7 +110,7 @@ export default function FamilyPosterPage() {
    */
   const saveToAlbum = () => {
     if (typeof Taro.createCanvasContext !== 'function') {
-      Taro.showToast({ title: '当前环境不支持导出海报', icon: 'none' })
+      Taro.showToast({ title: t('poster.unsupported'), icon: 'none' })
       return
     }
 
@@ -120,11 +150,11 @@ export default function FamilyPosterPage() {
         success: (result) => {
           Taro.saveImageToPhotosAlbum({
             filePath: result.tempFilePath,
-            success: () => Taro.showToast({ title: '已保存到相册', icon: 'none' }),
-            fail: () => Taro.showToast({ title: '保存失败，请检查相册权限', icon: 'none' }),
+            success: () => Taro.showToast({ title: t('poster.saved'), icon: 'none' }),
+            fail: () => Taro.showToast({ title: t('poster.saveFailed'), icon: 'none' }),
           })
         },
-        fail: () => Taro.showToast({ title: '海报导出失败', icon: 'none' }),
+        fail: () => Taro.showToast({ title: t('poster.exportFailed'), icon: 'none' }),
       })
     })
   }
@@ -132,7 +162,7 @@ export default function FamilyPosterPage() {
   // 头部原本右侧挂着一个「<三个点> Layout」的胶囊，但它没有任何点击行为，
   // 纯装饰却看着像能操作。去掉——版式选择正文里已经有一份了。
   return (
-    <PageContainer header={<PageHeader showBack title="Poster Preview" />}>
+    <PageContainer header={<PageHeader showBack title={t('poster.title')} />}>
       <View className="flex flex-col gap-5">
         {/* 海报预览。底色与内页留白按设计稿，照片位没有资源用浅底占位 */}
         <View className={`w-full box-border p-5 rounded-3xl flex flex-col items-center gap-4 ${style.wrap}`}>
@@ -196,7 +226,7 @@ export default function FamilyPosterPage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">选择画风模板</Text>
+          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('poster.styleTitle')}</Text>
 
           <View className="flex flex-wrap gap-2">
             {templateOptions.map((item) => {
@@ -221,7 +251,7 @@ export default function FamilyPosterPage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">隐私脱敏保护</Text>
+          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('poster.privacy')}</Text>
 
           <View className="flex gap-3">
             {toggleOptions.map((item) => {
@@ -257,7 +287,7 @@ export default function FamilyPosterPage() {
             onClick={saveToAlbum}
           >
             <Icon name="photo-gallery" className="w-5 h-5" />
-            <Text className="text-base font-semibold text-on-surface">保存到相册</Text>
+            <Text className="text-base font-semibold text-on-surface">{t('poster.saveToAlbum')}</Text>
           </View>
 
           {/* 必须用 openType="share" 才能拉起小程序的分享面板 */}
@@ -265,7 +295,7 @@ export default function FamilyPosterPage() {
             openType="share"
             className="share-button flex-1 py-4 rounded-full bg-tertiary flex items-center justify-center gap-2"
           >
-            <Text className="text-base font-semibold text-[#ffffff]">分享至微信</Text>
+            <Text className="text-base font-semibold text-[#ffffff]">{t('poster.shareToWechat')}</Text>
           </Button>
         </View>
       </View>

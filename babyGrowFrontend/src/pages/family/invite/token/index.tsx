@@ -8,8 +8,8 @@ import EmptyState from '@/components/EmptyState'
 import Icon from '@/components/Icon'
 import { navigateToRoute } from '@/utils/routes'
 import babyAvatar from '@/assets/images/baby-journey-img.jpg'
-import { inviteToken, withBabyName } from '@/store/family'
 import { useAppState, loadMembers } from '@/store'
+import { t } from '@/i18n'
 
 /**
  * 入场凭证页。
@@ -38,12 +38,14 @@ export default function FamilyInviteTokenPage() {
 
   const code = latestInvite?.inviteCode ?? ''
   const codeNote = latestInvite?.inviteExpiresAt
-    ? `一次性安全钥匙 · ${hoursUntil(latestInvite.inviteExpiresAt)}小时内有效`
-    : inviteToken.codeNote
+    ? t('invite.codeExpiry', { hours: hoursUntil(latestInvite.inviteExpiresAt) })
+    : t('invite.codeNote')
 
-  // 这几条文案会随分享卡片发到亲友那里，宝宝名不能是写死的「Leo」。
-  const inviteTitle = withBabyName(inviteToken.title, babyHeader.name)
-  const inviteBody = withBabyName(inviteToken.body, babyHeader.name)
+  // 这几条文案会随分享卡片发到亲友那里，宝宝名用占位符填，不写死。
+  const inviteTitle = t('invite.messageTitle')
+  const inviteBody = t('invite.messageBody', {
+    name: babyHeader.name || t('common.babyFallback'),
+  })
 
   // 分享出去的链接把口令带上，对方点进来就直接是那条邀请——
   // 否则要手工抄一串大小写混排的字符（口令用的是无歧义字母表，但仍然很容易抄错）。
@@ -65,26 +67,19 @@ export default function FamilyInviteTokenPage() {
 
   const copyToken = async () => {
     if (!code) {
-      Taro.showToast({ title: '还没有可用的邀请口令，请先邀请成员', icon: 'none' })
+      Taro.showToast({ title: t('invite.noCode'), icon: 'none' })
       return
     }
     await Taro.setClipboardData({ data: code })
-    Taro.showToast({ title: '口令已复制', icon: 'none' })
+    Taro.showToast({ title: t('invite.codeCopied'), icon: 'none' })
   }
 
   return (
     <PageContainer
       header={
-        <PageHeader
-          showBack
-          title="生成入场凭证"
-          right={
-            <View className="py-1 px-3 rounded-full bg-surface-container-high flex items-center gap-1">
-              <Text className="text-caption font-semibold text-on-surface">长辈视角</Text>
-              <Icon name="eye" className="w-4 h-4" />
-            </View>
-          }
-        />
+        // 这里原本也有一个「长辈视角」胶囊：没有 onClick，还会把居中的长标题挤到重叠。
+        // 与邀请设置页同样处理——预览入口放在内容区（见 family 页的「长辈视角」行）。
+        <PageHeader showBack title={t('invite.passTitle')} />
       }
     >
       <View className="flex flex-col gap-6">
@@ -100,9 +95,9 @@ export default function FamilyInviteTokenPage() {
             <View className="bg-card rounded-[24px]">
               <EmptyState
                 icon="family-active"
-                title="还没有待接受的邀请"
-                description="先邀请一位家人，这里会生成一个一次性口令给他。"
-                actionText="去邀请家人"
+                title={t('invite.noPending')}
+                description={t('invite.noPendingDesc')}
+                actionText={t('invite.goInvite')}
                 onAction={() => navigateToRoute('family-invite')}
               />
             </View>
@@ -112,7 +107,11 @@ export default function FamilyInviteTokenPage() {
         <View className="w-full box-border p-6 rounded-3xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center gap-5">
           <View className="py-1 px-4 rounded-full bg-secondary-container">
             <Text className="text-caption font-bold text-on-secondary-container">
-              {(latestInvite?.role ?? 'contributor').toUpperCase()}
+              {t(
+                (latestInvite?.role ?? 'contributor') === 'viewer'
+                  ? 'invite.roleViewer'
+                  : 'invite.roleContributor',
+              )}
             </Text>
           </View>
 
@@ -128,7 +127,7 @@ export default function FamilyInviteTokenPage() {
                 {latestInvite?.name ?? inviteTitle}
               </Text>
               <Text className="text-caption text-on-surface-variant">
-                {code || '暂无待接受的邀请'}
+                {code || t('invite.pendingEmpty')}
               </Text>
               <Text className="text-caption text-on-surface-variant">{codeNote}</Text>
             </View>
@@ -146,7 +145,7 @@ export default function FamilyInviteTokenPage() {
           <View className="w-5 h-5 rounded-full bg-[#1AAD19] flex items-center justify-center">
             <Icon name="check-light" className="w-3 h-3" />
           </View>
-          <Text className="text-base font-semibold text-[#ffffff]">微信直发时光卡片</Text>
+          <Text className="text-base font-semibold text-[#ffffff]">{t('invite.sendCard')}</Text>
         </Button>
 
         <View
@@ -156,7 +155,7 @@ export default function FamilyInviteTokenPage() {
           onClick={copyToken}
         >
           <Icon name="event-attachment" className="w-5 h-5" />
-          <Text className="text-base font-semibold text-on-surface">仅复制加密安全口令</Text>
+          <Text className="text-base font-semibold text-on-surface">{t('invite.copyCodeOnly')}</Text>
         </View>
         </AsyncSection>
       </View>

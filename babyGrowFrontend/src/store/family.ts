@@ -88,102 +88,71 @@ export const roleLabelOf = (role: FamilyRole) => {
 }
 
 /**
- * 把下面这批文案里写死的宝宝名换成真实名字。
+ * 分享高亮卡片。
  *
- * 为什么必须换：这些字符串会出现在**发给亲友的邀请消息**、受邀者的欢迎页和分享海报上。
- * 名字写死意味着每个用户都在替一个叫「Leo」的陌生孩子发邀请。
- *
- * 真实名字来自 /api/baby/profile（store 里的 babyHeader.name）。名字还没取到
- * （首帧、或接口失败）时退回中性称呼，而不是继续露出 Leo。
+ * 存的是**键**而不是字符串：这些都是模块级常量，在模块加载时就求值了；
+ * 直接存 `t()` 的结果不会随语言切换更新（reLaunch 也不会重新执行模块）。
  */
-export const withBabyName = (text: string, babyName?: string) =>
-  text.replace(/Leo/g, babyName?.trim() || '宝宝')
+export const shareHighlight = {
+  badgeKey: 'family.shareBadge',
+  titleKey: 'family.shareTitle',
+  subtitleKey: 'family.shareSubtitle',
+} as const
 
-export interface ShareHighlight {
-  badge: string
-  title: string
-  subtitle: string
-}
+/** 邀请成员时预设的亲友身份（键） */
+export const inviteePresets = [
+  'invite.preset.maternalGrandpa',
+  'invite.preset.maternalGrandma',
+  'invite.preset.paternalGrandpa',
+  'invite.preset.nanny',
+] as const
 
-export const shareHighlight: ShareHighlight = {
-  badge: 'AI CURATED',
-  title: "Leo's First Steps",
-  subtitle: 'Selected for sharing',
-}
-
-/** 邀请成员时预设的亲友身份 */
-export const inviteePresets = ['外公', '外婆', '爷爷', '育儿嫂']
-
-/** 入场凭证的内容。一次性钥匙由后端生成，这里先用 mock */
-export const inviteToken = {
-  code: 'LEO-938-201',
-  codeNote: '一次性安全钥匙 · 72小时内有效',
-  title: '亲爱的一家人，入驻时光圈！',
-  body: '哈啰！我是 Leo 👶。爸爸妈妈在我的专属时光手账中为您预留了专属席位，快来见证我的成长蜕变吧！',
-}
-
-/**
- * 受邀者视角的欢迎页文案。
- *
- * 原先还有一条 `inviter: 'Mom (You)'`，是编的——接受接口只回 familyId 与 role，
- * 没有任何邀请人信息，谁都显示不出来。已删除；要真的显示邀请人得先有一个
- * 「凭口令预览邀请」的接口。
- *
- * body 里原来的「口令已被自动感应激活」也不成立：口令在对方点下接受之前什么都不会发生，
- * 所以改成如实描述点击之后的结果。
+/*
+ * 入场凭证与受邀欢迎页的文案已移到 `i18n/messages.ts`（`invite.*` / `invited.*`）。
+ * 这里原本是 `inviteToken` 与 `invitedView` 两个模块级对象：模块加载时求值，
+ * 切换语言不会更新；而且 `invitedView` 里那条 `inviter: 'Mom (You)'` 是编的
+ * （接受接口只回 familyId/role，没有邀请人信息），已一并删除。
  */
-export const invitedView = {
-  title: "Leo's Space Pass",
-  badge: '亲爱的一家人，欢迎回家！',
-  body: '点击下方按钮即可加入，之后你就能在微信里随时查看 Leo 的每日成长。我们开始吧！',
-  action: '接受邀请，即刻加入空间',
-}
 
-/**
- * 长图海报的内容与可选项。
+/*
+ * 海报的兜底文案已移到 `i18n/messages.ts`（`poster.default*`）。
+ * 页面在渲染时用它，模块加载时不再固化一份。
  *
- * 这只是 `/api/family/poster` 拿不到时的**兜底**，页面正常情况下用的是后端按宝宝档案
- * 与最近一条记录推导出来的内容。
- *
- * 原先这份兜底里有一整套编造的细节：「今天干掉了 150g 的甜南瓜泥」「体重稳定增长在
- * 12kg 黄金线上」「2023.09.24 · 家属记录」，还带着写死的名字「Leo 的成长手账」。
- * 接口一失败，用户看到的是一张**别人的**成长海报，而且读起来像是自己孩子的数据。
- * 兜底文案必须一眼看出是占位，不能是具体数字和日期。
+ * 这里保留一条约束：兜底必须一眼看出是占位。此前它带着「150g 的甜南瓜泥」
+ * 「12kg 黄金线」「2023.09.24」这类编造的具体数字与日期，接口一失败，
+ * 用户看到的是一张**别人的**成长海报。
  */
-export const posterContent = {
-  title: '成长手账',
-  subtitle: 'GENIUS TRACK · MEMORY CAPSULE',
-  badge: '成长记录',
-  heading: '记录今天的小事',
-  body: '挑选几条记忆，生成一张可以分享的成长海报。',
-  meta: '由宝宝成长记录生成',
-}
 
 export const posterTemplates = [
-  { key: 'warm', label: '温馨手账', icon: 'edit' },
-  { key: 'magazine', label: '成长杂志', icon: 'photo-gallery' },
-  { key: 'timeline', label: '极简时光轴', icon: 'trend-up' },
-]
+  { key: 'warm', labelKey: 'poster.templateWarm', icon: 'edit' },
+  { key: 'magazine', labelKey: 'poster.templateMagazine', icon: 'photo-gallery' },
+  { key: 'timeline', labelKey: 'poster.templateTimeline', icon: 'trend-up' },
+] as const
 
 export const privacyToggles = [
-  { key: 'growth', label: '隐藏生长数据', note: '数字转换为可爱足迹', defaultOn: true },
-  { key: 'face', label: '智能眼镜贴纸', note: '一键防窥保护面部', defaultOn: false },
-]
+  { key: 'growth', labelKey: 'poster.privacyGrowth', noteKey: 'poster.privacyGrowthNote', defaultOn: true },
+  { key: 'face', labelKey: 'poster.privacyFace', noteKey: 'poster.privacyFaceNote', defaultOn: false },
+] as const
 
 /**
  * 邀请页的角色选项。文案与成员权限页不同——这里要讲清楚「谁适用」，
  * 权限页要讲清楚「拥有什么」，所以单独一份而不是复用。
+ *
+ * 存键不存文案：这是模块级常量，渲染时才翻译。
  */
-export const inviteRoleOptions: Array<{ key: FamilyRole; title: string; description: string }> = [
+export const inviteRoleOptions: Array<{
+  key: FamilyRole
+  titleKey: 'invite.roleContributor' | 'invite.roleViewer'
+  descriptionKey: 'invite.roleContributorDesc' | 'invite.roleViewerDesc'
+}> = [
   {
     key: 'contributor',
-    title: '共享协作者 (Contributor)',
-    description:
-      '推荐！外公、外婆适用。允许记录宝宝起居、发表成长寄语与点赞，无法管理其他成员。',
+    titleKey: 'invite.roleContributor',
+    descriptionKey: 'invite.roleContributorDesc',
   },
   {
     key: 'viewer',
-    title: '只读看护者 (Viewer)',
-    description: '保姆、朋友适用。仅允许查看照片、视频与成长数据，无写入及修改权限，保障私密性。',
+    titleKey: 'invite.roleViewer',
+    descriptionKey: 'invite.roleViewerDesc',
   },
 ]

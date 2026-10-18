@@ -14,7 +14,7 @@ import MemberRow from './components/MemberRow'
 import MemberPermissionSheet from './components/MemberPermissionSheet'
 import { useAppState, loadMembers, setMemberRole, removeMember } from '@/store'
 import { t } from '@/i18n'
-import { shareHighlight, withBabyName, type FamilyMember, type FamilyRole } from '@/store/family'
+import { shareHighlight, type FamilyMember, type FamilyRole } from '@/store/family'
 
 export default function FamilyHomePage() {
   // 成员来自 store：改权限、移出成员在离开页面后依然生效
@@ -167,13 +167,13 @@ export default function FamilyHomePage() {
             <View className="absolute left-0 right-0 bottom-0 p-5 flex flex-col gap-2">
               <View className="self-start py-1 px-3 rounded-full bg-surface-container-lowest flex items-center gap-1">
                 <Icon name="star" className="w-3.5 h-3.5" />
-                <Text className="text-caption font-bold text-on-surface">{shareHighlight.badge}</Text>
+                <Text className="text-caption font-bold text-on-surface">{t(shareHighlight.badgeKey)}</Text>
               </View>
 
               <Text className="text-2xl font-bold text-[#ffffff]">
-                {withBabyName(shareHighlight.title, babyHeader.name)}
+                {t(shareHighlight.titleKey, { name: babyHeader.name || t('common.babyFallback') })}
               </Text>
-              <Text className="text-sm text-[#ffffff]">{shareHighlight.subtitle}</Text>
+              <Text className="text-sm text-[#ffffff]">{t(shareHighlight.subtitleKey)}</Text>
             </View>
           </View>
 

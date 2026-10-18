@@ -6,6 +6,7 @@ import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
 import { navigateBack, navigateToRoute } from '@/utils/routes'
 import { addPendingMember } from '@/store'
+import { t } from '@/i18n'
 import { inviteePresets, inviteRoleOptions, type FamilyRole } from '@/store/family'
 
 export default function FamilyInvitePage() {
@@ -16,7 +17,7 @@ export default function FamilyInvitePage() {
     const name = nickname.trim()
 
     if (!name) {
-      Taro.showToast({ title: '请先填写称呼', icon: 'none' })
+      Taro.showToast({ title: t('invite.nameRequired'), icon: 'none' })
       return
     }
 
@@ -32,7 +33,7 @@ export default function FamilyInvitePage() {
         // 这里原先在 right 里挂了一个「长辈视角」胶囊。两个问题：把居中的长标题
         // 「成员加入设置」挤到重叠，而且它压根没有 onClick——点了没有任何反应。
         // 已把它移到内容区，做成真正可点的入口（见下方）。
-        <PageHeader showBack title="成员加入设置" />
+        <PageHeader showBack title={t('invite.settingsTitle')} />
       }
     >
       <View className="flex flex-col gap-6">
@@ -46,8 +47,8 @@ export default function FamilyInvitePage() {
               <Icon name="eye" className="w-5 h-5" />
             </View>
             <View className="flex flex-col">
-              <Text className="text-base font-bold text-on-surface">长辈视角</Text>
-              <Text className="text-caption text-on-surface-variant">预览受邀亲友看到的界面</Text>
+              <Text className="text-base font-bold text-on-surface">{t('family.elderView')}</Text>
+              <Text className="text-caption text-on-surface-variant">{t('family.elderViewDesc')}</Text>
             </View>
           </View>
 
@@ -55,37 +56,43 @@ export default function FamilyInvitePage() {
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">预设亲友身份</Text>
+          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('invite.presetRelation')}</Text>
 
           <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest flex flex-col gap-3">
             <Input
               className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-              placeholder="请填入称呼，如：外公、小姨…"
+              placeholder={t('invite.namePlaceholder')}
               placeholderClass="text-on-surface-variant"
               value={nickname}
               onInput={(event) => setNickname(event.detail.value)}
             />
 
             <View className="flex flex-wrap gap-2">
-              {inviteePresets.map((preset) => (
+              {inviteePresets.map((preset) => {
+                // preset 是文案键；存进 nickname 的必须是翻译后的称呼，
+                // 否则邀请记录里会写着一个键名。
+                const label = t(preset)
+
+                return (
                 <View
                   key={preset}
                   className={`py-2 px-4 rounded-full border ${
-                    nickname === preset
+                    nickname === label
                       ? 'bg-tertiary-fixed border-on-tertiary-container'
                       : 'bg-surface-container border-transparent'
                   }`}
-                  onClick={() => setNickname(preset)}
+                  onClick={() => setNickname(label)}
                 >
-                  <Text className="text-sm font-semibold text-on-surface">{preset}</Text>
+                  <Text className="text-sm font-semibold text-on-surface">{label}</Text>
                 </View>
-              ))}
+                )
+              })}
             </View>
           </View>
         </View>
 
         <View className="flex flex-col gap-3">
-          <Text className="text-sm font-semibold text-on-surface-variant px-1">分配空间权限</Text>
+          <Text className="text-sm font-semibold text-on-surface-variant px-1">{t('invite.accessLevel')}</Text>
 
           {inviteRoleOptions.map((option) => {
             const selected = option.key === role
@@ -106,8 +113,10 @@ export default function FamilyInvitePage() {
                 </View>
 
                 <View className="flex-1 flex flex-col gap-1">
-                  <Text className="text-base font-bold text-on-surface">{option.title}</Text>
-                  <Text className="text-caption text-on-surface-variant">{option.description}</Text>
+                  <Text className="text-base font-bold text-on-surface">{t(option.titleKey)}</Text>
+                  <Text className="text-caption text-on-surface-variant">
+                    {t(option.descriptionKey)}
+                  </Text>
                 </View>
               </View>
             )
@@ -119,14 +128,14 @@ export default function FamilyInvitePage() {
             className="flex-1 py-4 rounded-full bg-surface-container-high flex items-center justify-center"
             onClick={navigateBack}
           >
-            <Text className="text-base font-semibold text-on-surface">取消</Text>
+            <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
           </View>
 
           <View
             className="flex-1 py-4 rounded-full bg-secondary flex items-center justify-center gap-2"
             onClick={sendInvite}
           >
-            <Text className="text-base font-semibold text-[#ffffff]">邀请</Text>
+            <Text className="text-base font-semibold text-[#ffffff]">{t('family.invite')}</Text>
             <Icon name="chevron-right" className="w-2 h-3" />
           </View>
         </View>

@@ -36,6 +36,8 @@ export const messages = {
   'common.photoUpdated': ['头像已更新', 'Photo updated'],
   'common.photoReset': ['已恢复默认头像', 'Reverted to the default avatar'],
   'common.comingSoon': ['该页面待开发', 'This page is coming soon'],
+  /** 宝宝名字还没取到时的中性称呼（分享文案里用） */
+  'common.babyFallback': ['宝宝', 'Baby'],
 
   // ── 异步状态 ────────────────────────────────────────────
   'state.loadingFailed': ['加载失败', 'Failed to load'],
@@ -162,6 +164,9 @@ export const messages = {
   'family.inviteCodeCopied': ['邀请口令已复制', 'Invite code copied'],
   'family.elderView': ['长辈视角', 'Elder view'],
   'family.elderViewDesc': ['预览受邀亲友看到的界面', 'Preview what an invited family member sees'],
+  'family.shareBadge': ['AI 精选', 'AI CURATED'],
+  'family.shareTitle': ['{name} 的第一步', "{name}'s First Steps"],
+  'family.shareSubtitle': ['已选为分享内容', 'Selected for sharing'],
 
   // ── 邀请成员 / 入场凭证 / 受邀页 ──────────────────────────
   'invite.settingsTitle': ['成员加入设置', 'Invite Settings'],
@@ -203,6 +208,7 @@ export const messages = {
     "Hi! I'm {name} 👶. My parents saved a seat for you in my memory book — come watch me grow!",
   ],
   'invited.title': ['邀请加入', 'Join invitation'],
+  'invited.passTitle': ['{name} 的成长空间', "{name}'s Space Pass"],
   'invited.previewTitle': ['长辈受邀界面', 'Elder view'],
   'invited.badge': ['亲爱的一家人，欢迎回家！', 'Welcome home, family!'],
   'invited.bodyWithName': [
@@ -430,6 +436,7 @@ export const messages = {
 
   // ── 海报 ───────────────────────────────────────────────
   'poster.styleTitle': ['选择画风模板', 'Choose a style'],
+  'poster.title': ['成长海报', 'Poster Preview'],
   'poster.privacy': ['隐私脱敏保护', 'Privacy protection'],
   'poster.saveToAlbum': ['保存到相册', 'Save to album'],
   'poster.shareToWechat': ['分享至微信', 'Share to WeChat'],
@@ -445,6 +452,13 @@ export const messages = {
     'Pick a few memories to create a shareable growth poster.',
   ],
   'poster.defaultMeta': ['由宝宝成长记录生成', 'Generated from your baby’s records'],
+  'poster.templateWarm': ['温馨手账', 'Warm journal'],
+  'poster.templateMagazine': ['成长杂志', 'Growth magazine'],
+  'poster.templateTimeline': ['极简时光轴', 'Minimal timeline'],
+  'poster.privacyGrowth': ['隐藏生长数据', 'Hide growth data'],
+  'poster.privacyGrowthNote': ['数字转换为可爱足迹', 'Numbers become cute footprints'],
+  'poster.privacyFace': ['智能眼镜贴纸', 'Smart glasses sticker'],
+  'poster.privacyFaceNote': ['一键防窥保护面部', 'One tap to cover the face'],
 } as const
 
 export type MessageKey = keyof typeof messages
