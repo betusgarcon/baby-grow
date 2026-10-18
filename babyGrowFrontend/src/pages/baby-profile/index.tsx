@@ -17,6 +17,7 @@ import {
   restoreProfile,
 } from '@/store'
 import AsyncSection from '@/components/AsyncSection'
+import { t, getLanguage, setLanguage } from '@/i18n'
 import type { ProfileState } from '@/store'
 import {
   babyProfile,
@@ -122,7 +123,7 @@ export default function BabyProfilePage() {
     const value = draft?.value.trim()
 
     if (!label) {
-      Taro.showToast({ title: '请填写偏好名称', icon: 'none' })
+      Taro.showToast({ title: t('profile.preferenceNameRequired'), icon: 'none' })
       return
     }
 
@@ -180,7 +181,7 @@ export default function BabyProfilePage() {
   const save = () => {
     // 编辑期间的增删、换位、改名都只落在本地，到这里才提交一次
     commitProfile()
-    Taro.showToast({ title: '已保存', icon: 'none' })
+    Taro.showToast({ title: t('common.saved'), icon: 'none' })
     setProfileSnapshot(null)
     setMode('view')
     setEditingKey(null)
@@ -233,7 +234,7 @@ export default function BabyProfilePage() {
   }
 
   return (
-    <PageContainer header={<PageHeader showBack title="宝宝画像" />}>
+    <PageContainer header={<PageHeader showBack title={t('profile.title')} />}>
       <AsyncSection status={status.profile} onRetry={loadProfile} skeletonBlocks={4} skeletonHeight={96}>
         <View className="flex flex-col gap-4">
         <View className="flex flex-col items-center gap-3">
@@ -288,14 +289,14 @@ export default function BabyProfilePage() {
 
           {mode === 'view' && editingKey === null ? (
             <Text className="px-1 text-caption text-on-surface-variant">
-              长按任意一项可单独修改
+              {t('profile.longPressHint')}
             </Text>
           ) : null}
         </View>
 
         <View className="flex flex-col gap-3">
           <View className="flex items-center justify-between px-1 pt-2">
-            <Text className="text-xl font-semibold text-on-surface">Preferences</Text>
+            <Text className="text-xl font-semibold text-on-surface">{t('profile.preferences')}</Text>
             {/* 一条偏好都没有时不显示 Edit All：那种状态下唯一该做的动作是「添加」，
                 而「进入管理态」本身没有可管理的东西。有偏好时才需要它来做排序/编辑/删除。 */}
             {preferences.length > 0 ? (
@@ -303,7 +304,7 @@ export default function BabyProfilePage() {
                 className="text-sm font-semibold text-on-surface-variant"
                 onClick={() => (isManagingPreferences ? cancel() : beginEditing('preferences'))}
               >
-                {isManagingPreferences ? 'Done' : 'Edit All'}
+                {isManagingPreferences ? t('common.done') : t('profile.editAll')}
               </Text>
             ) : null}
           </View>
@@ -353,7 +354,7 @@ export default function BabyProfilePage() {
                 {/* 输入框给足高度，否则 hint 文字会被上下裁掉 */}
                 <Input
                   className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                  placeholder="偏好名称，如 Bath Time"
+                  placeholder={t('profile.preferenceNamePlaceholder')}
                   placeholderClass="text-on-surface-variant"
                   value={draft.label}
                   onInput={(event) =>
@@ -368,7 +369,7 @@ export default function BabyProfilePage() {
                 />
                 <Input
                   className="w-full box-border h-11 px-4 rounded-full bg-surface-container"
-                  placeholder="补充说明，可留空"
+                  placeholder={t('wishes.notePlaceholder')}
                   placeholderClass="text-on-surface-variant"
                   value={draft.value}
                   onInput={(event) =>
@@ -388,7 +389,7 @@ export default function BabyProfilePage() {
                     className="flex-1 py-3 rounded-full bg-surface-container-high flex items-center justify-center"
                     onClick={() => setDraft(null)}
                   >
-                    <Text className="text-base font-semibold text-on-surface">取消</Text>
+                    <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
                   </View>
 
                   <View
@@ -396,7 +397,7 @@ export default function BabyProfilePage() {
                     onClick={commitDraft}
                   >
                     <Text className="text-base font-semibold text-[#ffffff]">
-                      {draft.id ? '保存' : '添加'}
+                      {draft.id ? t('common.save') : t('common.add')}
                     </Text>
                   </View>
                 </View>
@@ -408,17 +409,64 @@ export default function BabyProfilePage() {
               >
                 <Icon name="add-circle" className="w-5 h-5" />
                 <Text className="text-base font-semibold text-on-surface-variant">
-                  Add Preference
+                  {t('profile.addPreference')}
                 </Text>
               </View>
             )
           ) : null}
         </View>
 
+        {/* 通用设置。语言切换只放在这里：它会 reLaunch 当前页，编辑态的草稿会丢，
+            所以不在编辑流程里提供。 */}
+        {!isEditing ? (
+          <View className="flex flex-col gap-3">
+            <Text className="px-1 pt-2 text-xl font-semibold text-on-surface">
+              {t('settings.title')}
+            </Text>
+
+            <View className="w-full box-border p-4 rounded-3xl bg-surface-container-lowest flex items-center gap-4">
+              <View className="w-10 h-10 shrink-0 rounded-full bg-surface-container-high flex items-center justify-center">
+                <Icon name="more" className="w-5 h-5" />
+              </View>
+
+              <View className="flex-1 flex flex-col gap-1">
+                <Text className="text-base font-semibold text-on-surface">
+                  {t('settings.language')}
+                </Text>
+                <Text className="text-caption text-on-surface-variant">
+                  {t('settings.switchHint')}
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex items-center gap-3">
+              {(['zh', 'en'] as const).map((language) => {
+                const active = getLanguage() === language
+
+                return (
+                  <View
+                    key={language}
+                    className={`flex-1 py-3 rounded-full flex items-center justify-center border-2 ${
+                      active
+                        ? 'bg-tertiary-fixed border-on-tertiary-container'
+                        : 'bg-surface-container border-transparent'
+                    }`}
+                    onClick={() => setLanguage(language)}
+                  >
+                    <Text className="text-base font-semibold text-on-surface">
+                      {t(language === 'zh' ? 'settings.languageZh' : 'settings.languageEn')}
+                    </Text>
+                  </View>
+                )
+              })}
+            </View>
+          </View>
+        ) : null}
+
         {isEditing ? (
           <View className="flex flex-col gap-3 pt-2">
             <PrimaryButton block onClick={save}>
-              Save Changes
+              {t('profile.saveChanges')}
             </PrimaryButton>
 
             {/* 取消要与页面底色区分开。此前它没有任何背景色、和页面一样，
@@ -427,7 +475,7 @@ export default function BabyProfilePage() {
               className="py-3 rounded-full bg-surface-container-high flex items-center justify-center"
               onClick={cancel}
             >
-              <Text className="text-base font-semibold text-on-surface">Cancel</Text>
+              <Text className="text-base font-semibold text-on-surface">{t('common.cancel')}</Text>
             </View>
           </View>
         ) : null}

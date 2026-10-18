@@ -1,6 +1,18 @@
 import { View, Text, Picker, Input } from '@tarojs/components'
 import Icon from '@/components/Icon'
-import type { ProfileInfoItem } from '@/store/profile'
+import { t, type MessageKey } from '@/i18n'
+import type { ProfileInfoItem, ProfileInfoKey } from '@/store/profile'
+
+/**
+ * 字段标签以 key 为准，**不用后端下发的 label**：后端返回的是写死的英文
+ * （Age / Gender / Constellation），它跟不了语言切换。
+ */
+const LABEL_KEYS: Record<ProfileInfoKey, MessageKey> = {
+  name: 'profile.name',
+  age: 'profile.age',
+  gender: 'profile.gender',
+  constellation: 'profile.constellation',
+}
 
 interface ProfileInfoCardProps {
   item: ProfileInfoItem
@@ -39,10 +51,14 @@ export default function ProfileInfoCard({
   // label，有值时仍按原设计只留取值。
   const hasValue = Boolean(item.value && item.value.trim())
 
+  const label = t(LABEL_KEYS[item.key])
+
   const valueNode = hasValue ? (
     <Text className="text-base font-semibold text-on-surface">{item.value}</Text>
   ) : (
-    <Text className="text-base text-on-surface-variant">{item.label}（未填写）</Text>
+    <Text className="text-base text-on-surface-variant">
+      {t('profile.valueUnset', { label })}
+    </Text>
   )
 
   return (
@@ -70,7 +86,7 @@ export default function ProfileInfoCard({
             type="text"
             maxlength={20}
             value={item.value}
-            placeholder="宝宝的名字"
+            placeholder={t('profile.namePlaceholder')}
             placeholderClass="text-on-surface-variant"
             onInput={(event) => onSelect?.(event.detail.value)}
             onBlur={() => onTextCommit?.()}

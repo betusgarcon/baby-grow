@@ -9,6 +9,7 @@ import Taro from '@tarojs/taro'
 import { API_CONFIG } from '../config'
 import { getToken } from '../token'
 import { UNAUTHORIZED_CODE, awaitAuthGate, tryReauthenticate } from '../request'
+import { getLanguage } from '@/i18n'
 
 export interface UploadResponse {
   mediaId: number
@@ -43,7 +44,11 @@ export async function uploadMedia(filePath: string, retriedAfterReauth = false):
     url: `${API_CONFIG.BASE_URL}/api/baby/media`,
     filePath,
     name: 'file',
-    header: token ? { Authorization: `Bearer ${token}` } : {},
+    // 这条路径绕过了 request()，语言头要单独补——否则上传失败的提示永远只会是中文
+    header: {
+      'Accept-Language': getLanguage(),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   })
 
   let body: RawEnvelope

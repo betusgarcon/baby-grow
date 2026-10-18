@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { View } from '@tarojs/components'
 import EmptyState from '@/components/EmptyState'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
+import { t } from '@/i18n'
 import type { LoadStatus } from '@/store'
 
 interface AsyncSectionProps {
@@ -51,9 +52,9 @@ export default function AsyncSection({
       <View className="pt-6">
         <EmptyState
           icon="event-medical"
-          title="加载失败"
-          description="没能取到数据，检查网络后可以重试。"
-          actionText="重试"
+          title={t('state.loadingFailed')}
+          description={t('state.loadingFailedDesc')}
+          actionText={t('common.retry')}
           onAction={onRetry}
         />
       </View>

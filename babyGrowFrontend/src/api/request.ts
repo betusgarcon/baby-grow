@@ -8,6 +8,7 @@
 import Taro from '@tarojs/taro'
 import { API_CONFIG, shouldUseMock } from './config'
 import { getToken } from './token'
+import { getLanguage } from '@/i18n'
 import type { ApiResponse } from '@/types/common'
 
 /** 请求方法 */
@@ -160,6 +161,9 @@ export async function request<T>(options: RequestOptions): Promise<ApiResponse<T
       data: query,
       header: {
         'Content-Type': 'application/json',
+        // 后端的错误提示、分析洞察、情绪选项等文案由服务端按这个头本地化。
+        // 缺省时后端一律按中文返回，所以老客户端不带它也不会变。
+        'Accept-Language': getLanguage(),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },

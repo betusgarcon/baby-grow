@@ -2,21 +2,24 @@ import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
 import Icon from '@/components/Icon'
 import RecordSheet from '@/components/RecordSheet'
+import { t, type MessageKey } from '@/i18n'
 
 interface BottomTabBarProps {
   activeKey: string
   onTabChange: (key: string) => void
 }
 
-// 1. 将 4 个 Tab 拆分为左右两组，为中间的悬浮按钮留出空间
+// 1. 将 4 个 Tab 拆分为左右两组，为中间的悬浮按钮留出空间。
+// 图标名由 key 派生（`${key}-active`），所以这里不再存 icon 字段——原先那几个
+// `auto_stories` / `analytics` 从未被读取，是死数据。
 const leftTabs = [
-  { key: 'journey', label: 'Journey', icon: 'auto_stories' },
-  { key: 'analysis', label: 'Analysis', icon: 'analytics' },
+  { key: 'journey', labelKey: 'tab.journey' as const },
+  { key: 'analysis', labelKey: 'tab.analysis' as const },
 ]
 
 const rightTabs = [
-  { key: 'wishes', label: 'Wishes', icon: 'auto_awesome' },
-  { key: 'family', label: 'Family', icon: 'group' },
+  { key: 'wishes', labelKey: 'tab.wishes' as const },
+  { key: 'family', labelKey: 'tab.family' as const },
 ]
 
 export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarProps) {
@@ -24,7 +27,7 @@ export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarPro
   const [recordOpen, setRecordOpen] = useState(false)
 
   // 渲染单个 Tab Item
-  const renderTab = (tab: { key: string; label: string }) => {
+  const renderTab = (tab: { key: string; labelKey: MessageKey }) => {
     const isActive = activeKey === tab.key
     // 动态拼接 icon 名称，比如 "journey-active" 或 "journey-inactive"
     const iconName = `${tab.key}-${isActive ? 'active' : 'inactive'}`
@@ -37,7 +40,7 @@ export default function BottomTabBar({ activeKey, onTabChange }: BottomTabBarPro
         onClick={() => onTabChange(tab.key)}
       >
         <Icon name={iconName} className="w-5 h-5" />
-        <Text className="text-xs">{tab.label}</Text>
+        <Text className="text-xs">{t(tab.labelKey)}</Text>
       </View>
     )
   }
