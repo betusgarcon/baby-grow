@@ -24,6 +24,7 @@ export const messages = {
   'common.saved': ['已保存', 'Saved'],
   'common.saving': ['保存中…', 'Saving…'],
   'common.loading': ['加载中…', 'Loading…'],
+  'common.loadMore': ['加载更多', 'Load more'],
   'common.create': ['新建', 'Create'],
   'common.joined': ['已加入', 'Joined'],
   'common.joining': ['加入中…', 'Joining…'],

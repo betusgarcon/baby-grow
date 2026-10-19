@@ -32,8 +32,6 @@ export interface Milestone {
   tags: MilestoneTag[]
 }
 
-const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
 /** 把 ISO 日期格式化成设计稿里的日期文案（按语言） */
 export const formatMilestoneDate = (isoDate: string) => {
   const [year, month, day] = isoDate.split('-').map(Number)
@@ -47,20 +45,16 @@ export const formatMilestoneDate = (isoDate: string) => {
 }
 
 /**
- * 月份的**显示**文案。筛选值仍是 MONTH_LABELS 里的英文短名——
- * 它是与 `milestoneMonth()` 比较的键，不能换成翻译后的文案。
+ * 月份的**显示**文案。筛选值是 '1'..'12' 这样的稳定数字，
+ * 显示时才翻译——不能把本地化文案当查询参数。
  */
 export const milestoneMonthLabel = (value: string) => {
   if (value === 'All') return t('milestones.all')
 
-  const index = MONTH_LABELS.indexOf(value)
+  const index = Number(value) - 1
 
-  return index >= 0 ? monthShortNames()[index] : value
+  return index >= 0 && index < 12 ? monthShortNames()[index] : value
 }
-
-export const milestoneMonth = (isoDate: string) => MONTH_LABELS[Number(isoDate.split('-')[1]) - 1]
-
-export const milestoneYear = (isoDate: string) => isoDate.split('-')[0]
 
 export interface PhotoMemory {
   tag: string
@@ -124,7 +118,7 @@ export const photoMemory: PhotoMemory = {
 }
 
 /** 筛选区的可选项 */
-export const monthOptions = ['All', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+export const monthOptions = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
 /**
  * 年份按当前年份生成，不能写死。

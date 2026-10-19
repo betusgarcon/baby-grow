@@ -3,7 +3,9 @@ package com.babygrow.backend.record;
 import com.babygrow.backend.access.FamilyAccessService;
 import com.babygrow.backend.analysis.RecordProjectionService;
 import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Cursor;
 import com.babygrow.backend.common.Messages;
+import com.babygrow.backend.common.PageResponse;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.RecordEntity;
 import com.babygrow.backend.domain.TimelineEntryEntity;
@@ -11,11 +13,19 @@ import com.babygrow.backend.record.dto.RecordDtos.TimelineAppendRequest;
 import com.babygrow.backend.record.dto.RecordDtos.TimelineEntryResponse;
 import com.babygrow.backend.repository.RecordRepository;
 import com.babygrow.backend.repository.TimelineEntryRepository;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 时间线的读写。
@@ -44,13 +54,84 @@ public class TimelineService {
         this.messages = messages;
     }
 
+    private static final Set<String> TIMELINE_FILTERS = Set.of("milestones", "photos", "health");
+
+    /**
+     * 时间线分页。月份与事件类型都在服务端过滤：若先分页再在前端筛，
+     * 第一页被筛空时用户会误以为「这个月没有记录」。
+     */
     @Transactional(readOnly = true)
-    public List<TimelineEntryResponse> list(Long userId) {
+    public PageResponse<TimelineEntryResponse> list(Long userId, String month, String filterKey,
+                                                    Integer limit, String cursor) {
         BabyEntity baby = accessService.requireBaby(userId);
-        return timelineRepository.findByBabyIdOrderByDateDescSortKeyDesc(baby.getId())
-                .stream()
-                .map(TimelineEntries::toResponse)
-                .toList();
+        int size = PageResponse.limit(limit);
+
+        LocalDate from = null;
+        LocalDate to = null;
+        if (month != null && !month.isBlank()) {
+            try {
+                YearMonth target = YearMonth.parse(month);
+                from = target.atDay(1);
+                to = target.atEndOfMonth();
+            } catch (Exception ex) {
+                throw BizException.badRequestKey("error.invalidMonth");
+            }
+        }
+
+        String normalizedFilter = null;
+        if (filterKey != null && !filterKey.isBlank() && !"all".equals(filterKey)) {
+            if (!TIMELINE_FILTERS.contains(filterKey)) {
+                throw BizException.badRequestKey("error.invalidFilter");
+            }
+            normalizedFilter = filterKey;
+        }
+
+        String[] parts = Cursor.decode(cursor, 3);
+        LocalDate cursorDate = null;
+        Long cursorSortKey = null;
+        Long cursorId = null;
+        if (parts != null) {
+            try {
+                cursorDate = LocalDate.parse(parts[0]);
+                cursorSortKey = Long.parseLong(parts[1]);
+                cursorId = Long.parseLong(parts[2]);
+            } catch (Exception ex) {
+                throw BizException.badRequestKey("error.invalidCursor");
+            }
+        }
+
+        final LocalDate rangeFrom = from;
+        final LocalDate rangeTo = to;
+        final String filter = normalizedFilter;
+        final LocalDate cursorDay = cursorDate;
+        final Long cursorSort = cursorSortKey;
+        final Long cursorPk = cursorId;
+        Specification<TimelineEntryEntity> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("babyId"), baby.getId()));
+            if (rangeFrom != null) predicates.add(cb.greaterThanOrEqualTo(root.get("date"), rangeFrom));
+            if (rangeTo != null) predicates.add(cb.lessThanOrEqualTo(root.get("date"), rangeTo));
+            if (filter != null) predicates.add(cb.equal(root.get("filterKey"), filter));
+            if (cursorDay != null) {
+                predicates.add(cb.or(
+                        cb.lessThan(root.get("date"), cursorDay),
+                        cb.and(cb.equal(root.get("date"), cursorDay),
+                                cb.lessThan(root.get("sortKey"), cursorSort)),
+                        cb.and(cb.equal(root.get("date"), cursorDay),
+                                cb.equal(root.get("sortKey"), cursorSort),
+                                cb.lessThan(root.get("id"), cursorPk))));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        List<TimelineEntryEntity> fetched = timelineRepository.findAll(spec,
+                PageRequest.of(0, size + 1, Sort.by(
+                        Sort.Order.desc("date"), Sort.Order.desc("sortKey"), Sort.Order.desc("id"))))
+                .getContent();
+
+        return PageResponse.of(fetched, size,
+                entity -> Cursor.encode(entity.getDate().toString(),
+                        String.valueOf(entity.getSortKey()), String.valueOf(entity.getId())),
+                TimelineEntries::toResponse);
     }
 
     /** 直接追加一条时间线（不经过 AI 识别的手工记录） */

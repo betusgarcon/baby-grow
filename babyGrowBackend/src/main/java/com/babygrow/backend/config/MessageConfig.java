@@ -1,9 +1,12 @@
 package com.babygrow.backend.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Locale;
 
@@ -22,6 +25,28 @@ import java.util.Locale;
  */
 @Configuration
 public class MessageConfig {
+
+    /**
+     * DispatcherServlet 会用 LocaleResolver 重写 LocaleContextHolder。
+     * 默认的 AcceptHeaderLocaleResolver 在请求没有 Accept-Language 时取
+     * {@code request.getLocale()}，也就是 JVM 默认语言——容器里通常是 en。
+     * 于是控制器抛出的错误会变成英文，而安全链里的 401 仍是中文。
+     * 这里让它与 LocaleFilter 使用同一套规则，缺省始终中文。
+     */
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new LocaleResolver() {
+            @Override
+            public Locale resolveLocale(HttpServletRequest request) {
+                return LocaleFilter.resolve(request.getHeader("Accept-Language"));
+            }
+
+            @Override
+            public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
+                // 语言只由请求头决定，不支持通过响应改变
+            }
+        };
+    }
 
     @Bean
     public MessageSource messageSource() {

@@ -2,6 +2,7 @@ package com.babygrow.backend.record;
 
 import com.babygrow.backend.ai.AiTaskService;
 import com.babygrow.backend.common.ApiResponse;
+import com.babygrow.backend.common.PageResponse;
 import com.babygrow.backend.record.dto.RecordDtos.AiTaskResponse;
 import com.babygrow.backend.record.dto.RecordDtos.CommitRequest;
 import com.babygrow.backend.record.dto.RecordDtos.RecognizeRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -51,8 +53,13 @@ public class RecordController {
     }
 
     @GetMapping("/timeline")
-    public ApiResponse<List<TimelineEntryResponse>> timeline(@AuthenticationPrincipal Long userId) {
-        return ApiResponse.ok(timelineService.list(userId));
+    public ApiResponse<PageResponse<TimelineEntryResponse>> timeline(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam(required = false) String month,
+            @RequestParam(required = false) String filter,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) String cursor) {
+        return ApiResponse.ok(timelineService.list(userId, month, filter, limit, cursor));
     }
 
     @PostMapping("/timeline")

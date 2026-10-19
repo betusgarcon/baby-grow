@@ -12,7 +12,17 @@ export interface ApiResponse<T> {
   message: string
 }
 
-/** 分页请求参数 */
+/**
+ * 游标分页响应。nextCursor 为空表示没有下一页；
+ * hasMore 单独给出来，避免前端靠 nextCursor 是否为空做隐式判断。
+ */
+export interface CursorPage<T> {
+  items: T[]
+  nextCursor: string | null
+  hasMore: boolean
+}
+
+/** 分页请求参数（旧 offset 风格，保留兼容） */
 export interface PaginationParams {
   page: number
   pageSize: number

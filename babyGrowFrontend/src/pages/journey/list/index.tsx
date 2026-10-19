@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { View, Text } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import EmptyState from '@/components/EmptyState'
-import type { SectionState } from '@/types/common'
 import EventFilterCard from './components/EventFilterCard'
 import TimelineEntry from './components/TimelineEntry'
-import { useAppState, loadTimeline } from '@/store'
 import { t } from '@/i18n'
 import AsyncSection from '@/components/AsyncSection'
 import { defaultMonth, groupTimelineByDate, type EventFilterKey } from '@/store/timeline'
+import { getTimeline } from '@/api/modules/timeline'
+import { usePaginatedList } from '@/hooks/usePaginatedList'
 
 const PAGE_BACKGROUND = 'bg-surface-container-lowest'
 
@@ -24,24 +24,17 @@ export default function JourneyListPage() {
   const [month, setMonth] = useState(defaultMonth)
   const [activeFilter, setActiveFilter] = useState<EventFilterKey>('all')
 
-  // 时间线来自 store：记录弹层保存的新条目会立刻出现在这里
-  const { timeline, status } = useAppState()
+  // 月份与事件类型都在服务端过滤，避免「先分页再筛选」漏掉后面的记录
+  const query = useMemo(
+    () => ({ month, filter: activeFilter, limit: 20 }),
+    [month, activeFilter],
+  )
+  const { items, status, isEmpty, hasMore, loadingMore, loadMore, retry } = usePaginatedList({
+    query,
+    fetchPage: (params, cursor) => getTimeline({ ...params, cursor }),
+  })
 
-  useEffect(() => {
-    loadTimeline()
-  }, [])
-
-  const visibleGroups = useMemo(() => {
-    const filtered =
-      activeFilter === 'all'
-        ? timeline
-        : timeline.filter((entry) => entry.filterKey === activeFilter)
-
-    return groupTimelineByDate(filtered)
-  }, [timeline, activeFilter])
-
-  // 空态由数据条件驱动：筛选后没有记录时是真实的空结果，不是少渲染一点。
-  const state: SectionState = visibleGroups.length > 0 ? 'content' : 'empty'
+  const visibleGroups = useMemo(() => groupTimelineByDate(items), [items])
 
   return (
     <PageContainer
@@ -57,12 +50,21 @@ export default function JourneyListPage() {
         />
 
         <AsyncSection
-          status={status.timeline}
-          onRetry={loadTimeline}
+          status={status}
+          isEmpty={isEmpty}
+          emptyState={
+            <EmptyState
+              icon="calendar"
+              title={t('list.empty')}
+              description={t('list.emptyDesc')}
+              actionText={t('list.showAll')}
+              onAction={() => setActiveFilter('all')}
+            />
+          }
+          onRetry={retry}
           skeletonBlocks={2}
           skeletonHeight={160}
         >
-        {state === 'content' ? (
           <View className="relative flex flex-col">
             {/* 时间线竖线。这是项目允许用 absolute 的场景之一（连线），
                 内容层用 relative 抬到它上面，标记再用同色描边把线断开。 */}
@@ -87,24 +89,21 @@ export default function JourneyListPage() {
               ))}
             </View>
           </View>
-        ) : (
-          <EmptyState
-            icon="calendar"
-            title={t('list.empty')}
-            description={t('list.emptyDesc')}
-            actionText={t('list.showAll')}
-            onAction={() => setActiveFilter('all')}
-          />
-        )}
 
-        {/*
-          数据是一次性取全的，没有分页可加载。此前这里摆了个「more」按钮，
-          点下去只弹一句「已加载全部」——按钮样式不变，等于给了个永远不会
-          起作用的假控件。没有更多就直接说出来，别让它看着还能点。
-        */}
-        {state === 'content' ? (
+        {status === 'ready' && !isEmpty ? (
           <View className="py-4 flex items-center justify-center">
-            <Text className="text-caption text-on-surface-variant">{t('list.allLoaded')}</Text>
+            {hasMore ? (
+              <View
+                className="px-6 py-3 rounded-full bg-surface-container-high active:opacity-70"
+                onClick={loadMore}
+              >
+                <Text className="text-caption text-on-surface">
+                  {loadingMore ? t('common.loading') : t('common.loadMore')}
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-caption text-on-surface-variant">{t('list.allLoaded')}</Text>
+            )}
           </View>
         ) : null}
         </AsyncSection>

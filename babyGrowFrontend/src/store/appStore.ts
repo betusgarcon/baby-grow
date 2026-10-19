@@ -224,7 +224,8 @@ const persist = (
 /* ---------------------------------------------------------------- 加载 */
 
 export const loadTimeline = () =>
-  load('timeline', getTimeline, (data) => appStore.set((p) => ({ ...p, timeline: data })))
+  load('timeline', () => getTimeline({ limit: 20 }), (page) =>
+    appStore.set((p) => ({ ...p, timeline: page.items })))
 
 export const loadProfile = () =>
   load('profile', getProfile, (data) => appStore.set((p) => ({ ...p, profile: data })))
@@ -262,7 +263,8 @@ export const loadVaccine = () =>
   load('vaccine', getVaccineDetail, (data) => appStore.set((p) => ({ ...p, vaccine: data })))
 
 export const loadMilestones = () =>
-  load('milestones', getMilestones, (data) => appStore.set((p) => ({ ...p, milestones: data })))
+  load('milestones', () => getMilestones({ limit: 20 }), (page) =>
+    appStore.set((p) => ({ ...p, milestones: page.items })))
 
 export const loadCalendarEvents = () =>
   load('calendar', getCalendarEvents, (data) =>
@@ -275,7 +277,8 @@ export const loadWeeklyInsight = () =>
   )
 
 export const loadMemories = () =>
-  load('memories', getMemories, (data) => appStore.set((p) => ({ ...p, memories: data })))
+  load('memories', () => getMemories({ limit: 20 }), (page) =>
+    appStore.set((p) => ({ ...p, memories: page.items })))
 
 /** 记忆页勾选后写这里，海报页据此渲染。纯本地状态，不涉及后端 */
 export const setPosterMemories = (items: MemoryItem[]) => {

@@ -46,8 +46,8 @@ public class MemoryEntity {
     @Column(name = "tone", nullable = false, length = 16)
     private String tone = "green";
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "tags")
+    /** JSON 数组的文本形式，例如 ["Milestone"]；只在应用层解析 */
+    @Column(name = "tags", columnDefinition = "TEXT")
     private String tags;
 
     @Column(name = "media", nullable = false, length = 16)

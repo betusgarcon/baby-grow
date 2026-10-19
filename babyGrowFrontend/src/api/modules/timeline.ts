@@ -7,9 +7,17 @@
 
 import { http } from '@/api/request'
 import type { JourneyEntry } from '@/store/timeline'
+import type { CursorPage } from '@/types/common'
 
-export function getTimeline() {
-  return http.get<JourneyEntry[]>('/api/baby/timeline')
+export interface TimelineQuery {
+  month?: string
+  filter?: string
+  limit?: number
+  cursor?: string | null
+}
+
+export function getTimeline(params: TimelineQuery = {}) {
+  return http.get<CursorPage<JourneyEntry>>('/api/baby/timeline', { ...params })
 }
 
 export function addTimelineEntry(entry: JourneyEntry) {

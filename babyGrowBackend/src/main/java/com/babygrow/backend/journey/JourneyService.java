@@ -1,7 +1,10 @@
 package com.babygrow.backend.journey;
 
 import com.babygrow.backend.access.FamilyAccessService;
+import com.babygrow.backend.common.BizException;
+import com.babygrow.backend.common.Cursor;
 import com.babygrow.backend.common.Messages;
+import com.babygrow.backend.common.PageResponse;
 import com.babygrow.backend.domain.BabyEntity;
 import com.babygrow.backend.domain.BabyMilestoneEntity;
 import com.babygrow.backend.domain.BabyVaccinationEntity;
@@ -22,6 +25,10 @@ import com.babygrow.backend.repository.FeedingRepository;
 import com.babygrow.backend.repository.GrowthMeasurementRepository;
 import com.babygrow.backend.repository.SleepSessionRepository;
 import org.springframework.context.i18n.LocaleContextHolder;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +36,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -85,13 +93,82 @@ public class JourneyService {
 
     // ── 里程碑列表 ──────────────────────────────────────────
 
+    /**
+     * 里程碑分页。年 / 月 / 关键词都在服务端过滤，前端只负责翻页。
+     */
     @Transactional(readOnly = true)
-    public List<MilestoneView> milestones(Long userId) {
+    public PageResponse<MilestoneView> milestones(Long userId, String year, String month,
+                                                  String keyword, Integer limit, String cursor) {
         BabyEntity baby = accessService.requireBaby(userId);
+        int size = PageResponse.limit(limit);
 
-        return milestoneRepository.findByBabyIdOrderByUnlockedAtDesc(baby.getId()).stream()
-                .map(this::toMilestoneView)
-                .toList();
+        Instant from = null;
+        Instant to = null;
+        if (year != null && !year.isBlank()) {
+            try {
+                int y = Integer.parseInt(year.trim());
+                int m = month == null || month.isBlank() || "All".equalsIgnoreCase(month)
+                        ? 0 : Integer.parseInt(month.trim());
+                ZoneId zone = ZoneId.systemDefault();
+                if (m >= 1 && m <= 12) {
+                    from = YearMonth.of(y, m).atDay(1).atStartOfDay(zone).toInstant();
+                    to = YearMonth.of(y, m).plusMonths(1).atDay(1).atStartOfDay(zone).toInstant();
+                } else {
+                    from = LocalDate.of(y, 1, 1).atStartOfDay(zone).toInstant();
+                    to = LocalDate.of(y + 1, 1, 1).atStartOfDay(zone).toInstant();
+                }
+            } catch (Exception ex) {
+                throw BizException.badRequestKey("error.invalidMonth");
+            }
+        }
+
+        String q = keyword == null || keyword.isBlank()
+                ? null : "%" + keyword.trim().toLowerCase(java.util.Locale.ROOT) + "%";
+
+        String[] parts = Cursor.decode(cursor, 2);
+        Instant cursorAt = null;
+        Long cursorId = null;
+        if (parts != null) {
+            try {
+                cursorAt = Instant.ofEpochMilli(Long.parseLong(parts[0]));
+                cursorId = Long.parseLong(parts[1]);
+            } catch (Exception ex) {
+                throw BizException.badRequestKey("error.invalidCursor");
+            }
+        }
+
+        final Instant rangeFrom = from;
+        final Instant rangeTo = to;
+        final String keywordPattern = q;
+        final Instant cursorInstant = cursorAt;
+        final Long cursorPk = cursorId;
+        Specification<BabyMilestoneEntity> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("babyId"), baby.getId()));
+            if (rangeFrom != null) predicates.add(cb.greaterThanOrEqualTo(root.get("unlockedAt"), rangeFrom));
+            if (rangeTo != null) predicates.add(cb.lessThan(root.get("unlockedAt"), rangeTo));
+            if (keywordPattern != null) {
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("title")), keywordPattern),
+                        cb.like(cb.lower(root.get("description")), keywordPattern)));
+            }
+            if (cursorInstant != null) {
+                predicates.add(cb.or(
+                        cb.lessThan(root.get("unlockedAt"), cursorInstant),
+                        cb.and(cb.equal(root.get("unlockedAt"), cursorInstant),
+                                cb.lessThan(root.get("id"), cursorPk))));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        List<BabyMilestoneEntity> fetched = milestoneRepository.findAll(spec,
+                PageRequest.of(0, size + 1,
+                        Sort.by(Sort.Order.desc("unlockedAt"), Sort.Order.desc("id"))))
+                .getContent();
+
+        return PageResponse.of(fetched, size,
+                entity -> Cursor.encode(String.valueOf(entity.getUnlockedAt().toEpochMilli()),
+                        String.valueOf(entity.getId())),
+                this::toMilestoneView);
     }
 
     private MilestoneView toMilestoneView(BabyMilestoneEntity milestone) {
