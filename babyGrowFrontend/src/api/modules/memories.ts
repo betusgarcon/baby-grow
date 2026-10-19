@@ -18,3 +18,17 @@ export interface MemoryQuery {
 export function getMemories(params: MemoryQuery = {}) {
   return http.get<CursorPage<MemoryItem>>('/api/family/memories', { ...params })
 }
+
+export interface MemoryCreateInput {
+  category: string
+  title: string
+  date: string
+  tone: string
+  tags: string[]
+  media: 'Media' | 'Text'
+  mediaId?: number | null
+}
+
+export function createMemory(input: MemoryCreateInput) {
+  return http.post<MemoryItem>('/api/family/memories', { ...input })
+}

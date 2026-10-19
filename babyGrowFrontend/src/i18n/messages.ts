@@ -516,6 +516,19 @@ export const messages = {
 
   // ── 记忆 ───────────────────────────────────────────────
   'memories.title': ['记忆', 'Memories'],
+  'memories.new': ['新建记忆', 'New memory'],
+  'memories.createTitle': ['记下这一刻', 'Capture this moment'],
+  'memories.fieldTitle': ['标题', 'Title'],
+  'memories.titlePlaceholder': ['例如：第一次去公园', 'e.g. First trip to the park'],
+  'memories.fieldPhoto': ['照片（可选）', 'Photo (optional)'],
+  'memories.addPhoto': ['添加照片', 'Add photo'],
+  'memories.removePhoto': ['移除照片', 'Remove photo'],
+  'memories.fieldCategory': ['分类', 'Category'],
+  'memories.fieldDate': ['日期', 'Date'],
+  'memories.save': ['保存记忆', 'Save memory'],
+  'memories.titleRequired': ['请填写记忆标题', 'Please enter a title'],
+  'memories.createdToast': ['记忆已保存', 'Memory saved'],
+  'memories.createFailedToast': ['保存失败，请稍后再试', "Couldn't save. Please try again."],
   'memories.searchPlaceholder': ['搜索记忆标题或分类…', 'Search memories…'],
   'memories.empty': ['没有找到记忆', 'No memories found'],
   'memories.emptyDesc': [

@@ -13,6 +13,7 @@ import { getMemories } from '@/api/modules/memories'
 import { usePaginatedList } from '@/hooks/usePaginatedList'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import MemoryFilterSheet from './components/MemoryFilterSheet'
+import MemoryCreateSheet from './components/MemoryCreateSheet'
 import {
   TONE_CLASS,
   defaultFilters,
@@ -27,6 +28,7 @@ export default function FamilyMemoriesPage() {
   const [filters, setFilters] = useState<Record<FilterKey, string>>(defaultFilters)
   const [draftFilters, setDraftFilters] = useState<Record<FilterKey, string>>(defaultFilters)
   const [filterOpen, setFilterOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
   /** 关键词搜索。此前入口是个放大镜、但页面上只有筛选、没有文本输入 */
   const [keyword, setKeyword] = useState('')
 
@@ -141,14 +143,22 @@ export default function FamilyMemoriesPage() {
           showBack
           title={t('memories.title')}
           right={
-            <View
-              className="w-9 h-9 flex items-center justify-center"
-              onClick={() => {
-                setDraftFilters(filters)
-                setFilterOpen(true)
-              }}
-            >
-              <Icon name="filter" className="w-5 h-5" />
+            <View className="flex items-center gap-1">
+              <View
+                className="w-9 h-9 flex items-center justify-center"
+                onClick={() => setCreateOpen(true)}
+              >
+                <Icon name="add-circle" className="w-5 h-5" />
+              </View>
+              <View
+                className="w-9 h-9 flex items-center justify-center"
+                onClick={() => {
+                  setDraftFilters(filters)
+                  setFilterOpen(true)
+                }}
+              >
+                <Icon name="filter" className="w-5 h-5" />
+              </View>
             </View>
           }
         />
@@ -202,6 +212,15 @@ export default function FamilyMemoriesPage() {
         ) : null}
         </AsyncSection>
       </View>
+
+      <MemoryCreateSheet
+        visible={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          setSelected([])
+          void retry()
+        }}
+      />
 
       {filterOpen ? (
         <MemoryFilterSheet
