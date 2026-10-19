@@ -17,6 +17,8 @@ export interface MemoryItem {
   date: string
   /** 稳定 ISO 日期，时间筛选只认它 */
   dateIso?: string
+  /** 记忆附件的展示地址；没有附件时为空 */
+  mediaUrl?: string | null
   tone: MemoryTone
   /** 供筛选面板匹配的分类标签，与卡片上展示的 category 不一定同名 */
   tags: string[]

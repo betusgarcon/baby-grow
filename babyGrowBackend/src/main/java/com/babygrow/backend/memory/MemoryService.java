@@ -6,9 +6,11 @@ import com.babygrow.backend.common.Cursor;
 import com.babygrow.backend.common.Messages;
 import com.babygrow.backend.common.PageResponse;
 import com.babygrow.backend.domain.FamilyMemberEntity;
+import com.babygrow.backend.domain.MediaAssetEntity;
 import com.babygrow.backend.domain.MemoryEntity;
 import com.babygrow.backend.memory.MemoryDtos.MemoryCreateRequest;
 import com.babygrow.backend.memory.MemoryDtos.MemoryView;
+import com.babygrow.backend.repository.MediaAssetRepository;
 import com.babygrow.backend.repository.MemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.Predicate;
@@ -49,15 +51,18 @@ public class MemoryService {
     private final MemoryRepository memoryRepository;
     private final ObjectMapper objectMapper;
     private final Messages messages;
+    private final MediaAssetRepository mediaRepository;
 
     public MemoryService(FamilyAccessService accessService,
                          MemoryRepository memoryRepository,
                          ObjectMapper objectMapper,
-                         Messages messages) {
+                         Messages messages,
+                         MediaAssetRepository mediaRepository) {
         this.accessService = accessService;
         this.memoryRepository = memoryRepository;
         this.objectMapper = objectMapper;
         this.messages = messages;
+        this.mediaRepository = mediaRepository;
     }
 
     /**
@@ -186,7 +191,18 @@ public class MemoryService {
                 memory.getMemoryDate().toString(),
                 memory.getTone(),
                 readTags(memory.getTags()),
-                memory.getMedia());
+                memory.getMedia(),
+                mediaUrl(memory.getMediaId()));
+    }
+
+    /** 记忆勾选进海报后要拼照片，所以下发展示地址；没有附件时为 null。 */
+    private String mediaUrl(Long mediaId) {
+        if (mediaId == null) {
+            return null;
+        }
+        return mediaRepository.findById(mediaId)
+                .map(MediaAssetEntity::getUrl)
+                .orElse(null);
     }
 
     private String displayDate(LocalDate date) {

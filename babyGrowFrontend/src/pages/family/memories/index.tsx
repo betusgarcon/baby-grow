@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Input } from '@tarojs/components'
+import { View, Text, Input, Image } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import AsyncSection from '@/components/AsyncSection'
@@ -49,9 +49,16 @@ export default function FamilyMemoriesPage() {
   })
 
   const toggleSelect = (id: string) => {
-    setSelected((previous) =>
-      previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id],
-    )
+    if (selected.includes(id)) {
+      setSelected((previous) => previous.filter((item) => item !== id))
+      return
+    }
+    // 海报是竖排卡片，超过 9 条画布会超出微信的绘制高度
+    if (selected.length >= 9) {
+      Taro.showToast({ title: t('memories.selectLimit'), icon: 'none' })
+      return
+    }
+    setSelected((previous) => [...previous, id])
   }
 
   const copyLink = async () => {
@@ -104,6 +111,9 @@ export default function FamilyMemoriesPage() {
       >
         {/* 没有真实照片资源，用分类同色系浅底占位，选择态仍然如实反映 */}
         <View className={`relative w-full h-40 rounded-3xl overflow-hidden ${tone.photo}`}>
+          {item.mediaUrl ? (
+            <Image src={item.mediaUrl} className="absolute inset-0 w-full h-full" mode="aspectFill" />
+          ) : null}
           <View
             className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center box-border ${
               isSelected ? 'bg-primary' : 'border-2 border-[#ffffff]'

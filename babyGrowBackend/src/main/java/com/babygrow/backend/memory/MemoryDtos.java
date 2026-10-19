@@ -20,7 +20,8 @@ public final class MemoryDtos {
                              String dateIso,
                              String tone,
                              List<String> tags,
-                             String media) {
+                             String media,
+                             String mediaUrl) {
     }
 
     /** 新建记忆。date 收 ISO 日期，tone/media 缺省时给保守值。 */

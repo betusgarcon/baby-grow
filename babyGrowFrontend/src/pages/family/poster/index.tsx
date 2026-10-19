@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Taro, { useShareAppMessage } from '@tarojs/taro'
-import { View, Text, Image, Button, Canvas } from '@tarojs/components'
+import { View, Text, Image, Canvas } from '@tarojs/components'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import Icon from '@/components/Icon'
@@ -11,6 +11,25 @@ import { memoryCategoryLabel } from '@/pages/family/memories/memoriesData'
 import { TONE_CLASS } from '../memories/memoriesData'
 import { useAppState } from '@/store'
 import { getPoster } from '@/api/modules/family'
+import {
+  composePoster,
+  redactGrowthText,
+  POSTER_CANVAS_ID,
+  POSTER_CANVAS_MAX_HEIGHT,
+  POSTER_CANVAS_WIDTH,
+  type PosterSpec,
+} from './posterCanvas'
+
+/** 预览里的墨镜贴纸。导出时由 Canvas 画同样的形状 */
+function FaceSticker() {
+  return (
+    <View className="absolute left-1/2 top-[30%] -translate-x-1/2 flex items-center">
+      <View className="w-10 h-6 rounded-full bg-[#1e1b17]/90" />
+      <View className="w-3 h-1 bg-[#1e1b17]/90" />
+      <View className="w-10 h-6 rounded-full bg-[#1e1b17]/90" />
+    </View>
+  )
+}
 
 /**
  * 海报拿不到后端内容时的兜底文案。
@@ -103,61 +122,123 @@ export default function FamilyPosterPage() {
     path: '/pages/family/poster/index',
   }))
 
-  /**
-   * 存相册：把海报的标题与正文用离屏画布合成成一张图再保存。
-   *
-   * 这是简化版排版，不是预览的像素级截图——真正的所见即所得要等后端出图。
-   * H5 端没有 createCanvasContext，会直接给提示而不是静默失败。
-   */
-  const saveToAlbum = () => {
-    if (typeof Taro.createCanvasContext !== 'function') {
-      Taro.showToast({ title: t('poster.unsupported'), icon: 'none' })
+  const [busy, setBusy] = useState(false)
+
+  const buildSpec = (): PosterSpec => ({
+    template,
+    title: poster.title,
+    subtitle: poster.subtitle,
+    heading: poster.heading,
+    body: poster.body,
+    meta: poster.meta,
+    badge: poster.badge,
+    memories: selectedMemories.slice(0, 9),
+    singleImage: babyAvatar,
+    hideGrowth: Boolean(toggles.growth),
+    faceSticker: Boolean(toggles.face),
+  })
+
+  const savePathToAlbum = (filePath: string) =>
+    new Promise<void>((resolve, reject) => {
+      Taro.saveImageToPhotosAlbum({
+        filePath,
+        success: () => resolve(),
+        fail: (error) => reject(new Error(error.errMsg || t('poster.saveFailed'))),
+      })
+    })
+
+  const handleAlbumError = async (error: unknown) => {
+    const message = error instanceof Error ? error.message : ''
+
+    // 相册权限被拒时给一个去设置的入口，而不是只弹一句失败
+    if (message.includes('auth deny') || message.includes('authorize')) {
+      const result = await Taro.showModal({
+        title: t('poster.saveFailed'),
+        content: t('poster.albumPermission'),
+        confirmText: t('poster.openSettings'),
+        cancelText: t('common.cancel'),
+      })
+      if (result.confirm) {
+        await Taro.openSetting()
+      }
       return
     }
 
-    const W = 300
-    const H = 400
-    const ctx = Taro.createCanvasContext('poster-canvas')
+    Taro.showToast({ title: message || t('poster.saveFailed'), icon: 'none' })
+  }
 
-    ctx.setFillStyle('#c9d4bd')
-    ctx.fillRect(0, 0, W, H)
+  /** 保存与分享共用同一次 Canvas 合成，保证导出内容与预览一致 */
+  const compose = async () => {
+    if (busy) return null
+    setBusy(true)
+    Taro.showLoading({ title: t('common.loading') })
 
-    ctx.setFillStyle('#ffffff')
-    ctx.setFontSize(20)
-    ctx.fillText(poster.title, 24, 52)
-
-    ctx.setFontSize(10)
-    ctx.fillText(poster.subtitle, 24, 72)
-
-    ctx.setFillStyle('#ffffff')
-    ctx.fillRect(16, 96, W - 32, H - 160)
-
-    ctx.setFillStyle('#1e1b17')
-    ctx.setFontSize(16)
-    ctx.fillText(poster.heading, 32, 236)
-
-    ctx.setFontSize(11)
-    poster.body.match(/.{1,16}/g)?.slice(0, 5).forEach((line, index) => {
-      ctx.fillText(line, 32, 262 + index * 18)
-    })
-
-    ctx.setFillStyle('#474741')
-    ctx.setFontSize(10)
-    ctx.fillText(poster.meta, 32, H - 60)
-
-    ctx.draw(false, () => {
-      Taro.canvasToTempFilePath({
-        canvasId: 'poster-canvas',
-        success: (result) => {
-          Taro.saveImageToPhotosAlbum({
-            filePath: result.tempFilePath,
-            success: () => Taro.showToast({ title: t('poster.saved'), icon: 'none' }),
-            fail: () => Taro.showToast({ title: t('poster.saveFailed'), icon: 'none' }),
-          })
-        },
-        fail: () => Taro.showToast({ title: t('poster.exportFailed'), icon: 'none' }),
+    try {
+      return await composePoster(buildSpec())
+    } catch (error) {
+      Taro.hideLoading()
+      setBusy(false)
+      Taro.showToast({
+        title: error instanceof Error ? error.message : t('poster.exportFailed'),
+        icon: 'none',
       })
+      return null
+    }
+  }
+
+  const saveToAlbum = async () => {
+    const filePath = await compose()
+    if (!filePath) return
+
+    try {
+      await savePathToAlbum(filePath)
+      Taro.hideLoading()
+      Taro.showToast({ title: t('poster.saved'), icon: 'none' })
+    } catch (error) {
+      Taro.hideLoading()
+      await handleAlbumError(error)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const sharePoster = async () => {
+    const filePath = await compose()
+    if (!filePath) return
+
+    const shareImageMenu = (
+      Taro as unknown as {
+        showShareImageMenu?: (options: { path: string; fail?: () => void }) => void
+      }
+    ).showShareImageMenu
+
+    if (!shareImageMenu) {
+      // 基础库不支持图片分享时，退回「保存到相册」，并说清楚发生了什么
+      try {
+        await savePathToAlbum(filePath)
+        Taro.hideLoading()
+        Taro.showToast({ title: t('poster.saved'), icon: 'none' })
+      } catch (error) {
+        Taro.hideLoading()
+        await handleAlbumError(error)
+      } finally {
+        setBusy(false)
+      }
+      return
+    }
+
+    shareImageMenu({
+      path: filePath,
+      fail: () => {
+        // 用户取消分享不算错误；只有真正失败才提示
+        Taro.hideLoading()
+        setBusy(false)
+      },
     })
+
+    // showShareImageMenu 没有 success 回调；关闭 loading 后由用户继续操作
+    Taro.hideLoading()
+    setBusy(false)
   }
 
   // 头部原本右侧挂着一个「<三个点> Layout」的胶囊，但它没有任何点击行为，
@@ -183,8 +264,17 @@ export default function FamilyPosterPage() {
               selectedMemories.map((memory) => (
                 <View
                   key={memory.id}
-                  className={`w-full box-border p-3 rounded-2xl flex flex-col gap-2 ${TONE_CLASS[memory.tone].photo}`}
+                  className={`w-full box-border p-3 rounded-2xl flex flex-col gap-2 ${
+                    memory.mediaUrl ? 'bg-surface-container-lowest' : TONE_CLASS[memory.tone].photo
+                  }`}
                 >
+                  {memory.mediaUrl ? (
+                    <View className="relative w-full h-40 rounded-2xl overflow-hidden bg-surface-container">
+                      <Image src={memory.mediaUrl} className="w-full h-full" mode="aspectFill" />
+                      {toggles.face ? <FaceSticker /> : null}
+                    </View>
+                  ) : null}
+
                   <View className="self-start py-0.5 px-2 rounded-full bg-card">
                     <Text className="text-caption font-semibold text-on-surface">{memoryCategoryLabel(memory.category)}</Text>
                   </View>
@@ -195,8 +285,9 @@ export default function FamilyPosterPage() {
               ))
             ) : (
               <>
-                <View className="w-full h-40 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
+                <View className="relative w-full h-40 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
                   <Image src={babyAvatar} className="w-full h-full" mode="aspectFill" />
+                  {toggles.face ? <FaceSticker /> : null}
                 </View>
 
                 <View className="self-start py-1 px-3 rounded-full bg-tertiary-fixed flex items-center gap-1">
@@ -207,7 +298,7 @@ export default function FamilyPosterPage() {
                 </View>
 
                 <Text className="text-page-title text-on-surface">{poster.heading}</Text>
-                <Text className="text-sm text-on-surface-variant">{poster.body}</Text>
+                <Text className="text-sm text-on-surface-variant">{toggles.growth ? redactGrowthText(poster.body) : poster.body}</Text>
               </>
             )}
 
@@ -284,28 +375,37 @@ export default function FamilyPosterPage() {
 
         <View className="flex items-center gap-3 pt-1">
           <View
-            className="flex-1 py-4 rounded-full bg-surface-container-high flex items-center justify-center gap-2"
+            className={`flex-1 py-4 rounded-full bg-surface-container-high flex items-center justify-center gap-2 ${
+              busy ? 'opacity-60' : 'active:opacity-80'
+            }`}
             onClick={saveToAlbum}
           >
             <Icon name="photo-gallery" className="w-5 h-5" />
             <Text className="text-card-title text-on-surface">{t('poster.saveToAlbum')}</Text>
           </View>
 
-          {/* 必须用 openType="share" 才能拉起小程序的分享面板 */}
-          <Button
-            openType="share"
-            className="share-button flex-1 py-4 rounded-full bg-tertiary flex items-center justify-center gap-2"
+          {/* 分享的是合成后的海报图片，不是页面卡片 */}
+          <View
+            className={`flex-1 py-4 rounded-full bg-tertiary flex items-center justify-center gap-2 ${
+              busy ? 'opacity-60' : 'active:opacity-80'
+            }`}
+            onClick={sharePoster}
           >
             <Text className="text-card-title text-[#ffffff]">{t('poster.shareToWechat')}</Text>
-          </Button>
+          </View>
         </View>
       </View>
 
       {/* 离屏画布：不参与布局，只用来合成要保存的那张图 */}
       <Canvas
-        canvasId="poster-canvas"
+        canvasId={POSTER_CANVAS_ID}
         className="fixed"
-        style={{ left: '-9999px', top: '0', width: '300px', height: '400px' }}
+        style={{
+          left: '-9999px',
+          top: '0',
+          width: `${POSTER_CANVAS_WIDTH}px`,
+          height: `${POSTER_CANVAS_MAX_HEIGHT}px`,
+        }}
       />
     </PageContainer>
   )
