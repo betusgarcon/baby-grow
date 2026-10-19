@@ -151,3 +151,6 @@ async def test_extractor_regression():
         print(f"  FAIL: {failure['id']} - {failure['reason']}")
 
     assert accuracy >= 0.85, f"Accuracy {accuracy:.1%} below 85%"
+
+
+pytestmark = pytest.mark.integration

@@ -48,15 +48,25 @@ class AiProxyApiTest extends IntegrationTestBase {
         String token = login();
         createFiveMonthFamily(token);
 
+        // 显式 Map：深层嵌套的 Map.of 会让 javac 在推断失败时打印巨大的类型而 OOM
+        Map<String, Object> milestone = new java.util.HashMap<>();
+        milestone.put("type", "运动");
+        milestone.put("event", "首次翻身");
+        milestone.put("is_first", true);
+
+        Map<String, Object> data = new java.util.HashMap<>();
+        data.put("milestones", List.of(milestone));
+
+        Map<String, Object> aiResponse = new java.util.HashMap<>();
+        aiResponse.put("status", "ok");
+        aiResponse.put("data", data);
+        aiResponse.put("raw_text", "今天第一次翻身");
+        aiResponse.put("confidence", 0.9);
+        aiResponse.put("model_name", "stub");
+        aiResponse.put("elapsed_ms", 12);
+
         when(aiClient.extractText(anyLong(), anyInt(), eq("今天第一次翻身")))
-                .thenReturn(Map.of(
-                        "status", "ok",
-                        "data", Map.of("milestones", List.of(Map.of(
-                                "type", "运动", "event", "首次翻身", "is_first", true))),
-                        "raw_text", "今天第一次翻身",
-                        "confidence", 0.9,
-                        "model_name", "stub",
-                        "elapsed_ms", 12));
+                .thenReturn(aiResponse);
 
         TestResponse response = post("/api/baby/records/extract",
                 Map.of("text", "今天第一次翻身"), token);
@@ -92,12 +102,19 @@ class AiProxyApiTest extends IntegrationTestBase {
         createFiveMonthFamily(token);
         long mediaId = upload(token, png()).data().path("mediaId").asLong();
 
+        Map<String, Object> mood = new java.util.HashMap<>();
+        mood.put("mood", "开心");
+        Map<String, Object> mediaData = new java.util.HashMap<>();
+        mediaData.put("mood", List.of(mood));
+
+        Map<String, Object> mediaResponse = new java.util.HashMap<>();
+        mediaResponse.put("status", "ok");
+        mediaResponse.put("data", mediaData);
+        mediaResponse.put("model_name", "stub");
+        mediaResponse.put("elapsed_ms", 5);
+
         when(aiClient.extractMedia(anyLong(), anyInt(), anyString(), any(), anyString(), any()))
-                .thenReturn(Map.of(
-                        "status", "ok",
-                        "data", Map.of("mood", List.of(Map.of("mood", "开心"))),
-                        "model_name", "stub",
-                        "elapsed_ms", 5));
+                .thenReturn(mediaResponse);
 
         TestResponse submitted = post("/api/baby/records/recognize",
                 Map.of("mediaId", mediaId, "sourceType", "IMAGE"), token);

@@ -38,6 +38,7 @@ dev = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = ["integration: requires local Ollama models"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 

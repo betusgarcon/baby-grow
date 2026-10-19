@@ -107,3 +107,6 @@ async def test_retrieval_regression():
         print(f"  FAIL: {failure['id']} - {'; '.join(failure['reasons'])}")
 
     assert accuracy >= 0.80, f"Retrieval accuracy {accuracy:.1%} below 80%"
+
+
+pytestmark = pytest.mark.integration

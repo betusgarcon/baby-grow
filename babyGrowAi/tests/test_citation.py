@@ -76,3 +76,6 @@ async def test_agent_source_refs():
         assert ref.document_id > 0
         assert ref.content
         assert ref.similarity >= 0.0
+
+
+pytestmark = pytest.mark.integration

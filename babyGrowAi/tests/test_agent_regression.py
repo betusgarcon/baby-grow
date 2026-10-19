@@ -118,3 +118,6 @@ async def test_agent_regression():
         print(f"  FAIL: {failure['id']} - {'; '.join(failure['reasons'])}")
 
     assert accuracy >= 0.75, f"Agent accuracy {accuracy:.1%} below 75%"
+
+
+pytestmark = pytest.mark.integration
