@@ -165,6 +165,13 @@ public class MemoryService {
         }
 
         Long babyId = accessService.findBabyId(me.getFamilyId()).orElse(null);
+        Long mediaId = requireOwnedMedia(request.mediaId(), userId);
+
+        // Set.of(...).contains(null) 会抛 NPE；两个可选字段都要先判空
+        String tone = request.tone() != null && TONES.contains(request.tone())
+                ? request.tone() : "green";
+        String media = request.media() != null && MEDIA_TYPES.contains(request.media())
+                ? request.media() : "Text";
 
         MemoryEntity memory = MemoryEntity.of(
                 me.getFamilyId(),
@@ -172,12 +179,30 @@ public class MemoryService {
                 request.category() == null || request.category().isBlank() ? "MOMENT" : request.category().trim(),
                 request.title().trim(),
                 parseDate(request.date()),
-                TONES.contains(request.tone()) ? request.tone() : "green",
+                tone,
                 writeTags(request.tags()),
-                MEDIA_TYPES.contains(request.media()) ? request.media() : "Text",
-                request.mediaId());
+                media,
+                mediaId);
 
         return toView(memoryRepository.save(memory));
+    }
+
+    /**
+     * 记忆附件必须属于当前用户。
+     *
+     * <p>mediaId 自增可猜；不校验的话，可以把别人上传的照片挂到自己的记忆里，
+     * 再通过列表接口拿到可公开读取的 URL——一次跨用户的隐私读取。
+     */
+    private Long requireOwnedMedia(Long mediaId, Long userId) {
+        if (mediaId == null) {
+            return null;
+        }
+        MediaAssetEntity asset = mediaRepository.findById(mediaId)
+                .orElseThrow(() -> BizException.badRequestKey("error.mediaNotFound"));
+        if (!userId.equals(asset.getOwnerUserId())) {
+            throw BizException.forbiddenKey("error.mediaNotOwned");
+        }
+        return mediaId;
     }
 
     /* ------------------------------------------------------------------ */

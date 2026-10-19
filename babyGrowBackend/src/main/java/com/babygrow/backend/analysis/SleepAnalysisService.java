@@ -38,7 +38,8 @@ public class SleepAnalysisService {
     private static final int HOURS = 24;
     private static final double COVERAGE_THRESHOLD = 0.5;
 
-    private static final List<Integer> DEFAULT_EVOLUTION_MONTHS = List.of(1, 6, 12);
+    /** 5 月龄以内按月给；更大的宝宝用有代表性的几个节点 */
+    private static final List<Integer> OLDER_EVOLUTION_MONTHS = List.of(1, 3, 6, 12);
 
     /**
      * 各月龄的睡眠时长参考（24 小时内）。
@@ -128,7 +129,8 @@ public class SleepAnalysisService {
     @Transactional(readOnly = true)
     public SleepEvolutionResponse evolution(Long userId, List<Integer> months) {
         BabyEntity baby = accessService.requireBaby(userId);
-        List<Integer> targets = months == null || months.isEmpty() ? DEFAULT_EVOLUTION_MONTHS : months;
+        List<Integer> targets = months == null || months.isEmpty()
+                ? defaultEvolutionMonths(baby) : months;
 
         List<SleepEvolutionRow> rows = new ArrayList<>();
         for (Integer target : targets) {
@@ -141,6 +143,18 @@ public class SleepAnalysisService {
                 : new Insight(messages.get("ui.sleep.evolution.title"), messages.get("ui.sleep.evolution.content"));
 
         return new SleepEvolutionResponse(rows, insight, !empty);
+    }
+
+    /**
+     * 默认演变月龄必须跟着宝宝年龄走。
+     * 原先固定 [1,6,12]：5 月龄的宝宝只有 1M 一行有数据，另外两行永远空白。
+     */
+    private List<Integer> defaultEvolutionMonths(BabyEntity baby) {
+        int age = AnalysisSupport.ageMonthsAt(baby.getBirthday(), Instant.now());
+        if (age <= 5) {
+            return java.util.stream.IntStream.rangeClosed(1, Math.max(age, 1)).boxed().toList();
+        }
+        return OLDER_EVOLUTION_MONTHS;
     }
 
     private SleepEvolutionRow evolutionRow(BabyEntity baby, int ageMonths) {
