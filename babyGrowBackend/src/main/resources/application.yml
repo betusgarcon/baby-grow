@@ -87,6 +87,12 @@ app:
     root: ${MEDIA_ROOT:./data/media}
     # 拼绝对 URL 用。小程序渲染图片需要绝对地址，生产必须改成真实域名
     public-base: ${MEDIA_PUBLIC_BASE:http://localhost:8080}
+  # 测试数据入口：默认关闭。只在本地/staging 显式打开；
+  # token 用于非 dev-mode 的部署（避免为了灌数据而打开免鉴权登录）。
+  dev-seed:
+    enabled: ${DEV_SEED_ENABLED:false}
+    token: ${DEV_SEED_TOKEN:}
+
   demo-data:
     # 演示数据：启动后给开发账号灌一套完整数据，让前端一打开就是满的。
     # 只有 auth.dev-mode 同时开启时才真正生效，生产不可能误灌。

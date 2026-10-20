@@ -1,6 +1,7 @@
 package com.babygrow.backend.api;
 
-import com.babygrow.backend.support.AnalysisDataFactory;
+import com.babygrow.backend.demo.DevSeedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.babygrow.backend.support.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,9 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RecordTimelineApiTest extends IntegrationTestBase {
+
+    @Autowired
+    private DevSeedService seedService;
 
     private Map<String, Object> fullRecord() {
         Map<String, Object> body = new HashMap<>();
@@ -92,7 +96,7 @@ class RecordTimelineApiTest extends IntegrationTestBase {
     void timelinePaginationAndFilters() {
         String token = login();
         long familyId = createFiveMonthFamily(token);
-        new AnalysisDataFactory(jdbc, babyId(familyId)).seedTimeline(12);
+        seedService.seedTimeline(babyId(familyId), 12);
 
         YearMonth month = YearMonth.now();
         TestResponse first = get("/api/baby/timeline?limit=5&month=" + month, token);

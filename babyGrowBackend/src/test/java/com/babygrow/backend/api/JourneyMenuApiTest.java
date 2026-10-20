@@ -1,6 +1,7 @@
 package com.babygrow.backend.api;
 
-import com.babygrow.backend.support.AnalysisDataFactory;
+import com.babygrow.backend.demo.DevSeedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.babygrow.backend.support.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
@@ -12,10 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JourneyMenuApiTest extends IntegrationTestBase {
 
+    @Autowired
+    private DevSeedService seedService;
+
     private String tokenWithData() {
         String token = login();
         long familyId = createFiveMonthFamily(token);
-        new AnalysisDataFactory(jdbc, babyId(familyId)).seedAll();
+        seedService.seedAnalysis(babyId(familyId), 150);
 
         put("/api/baby/vaccine", Map.of(
                 "title", "Vaccine: HepB",

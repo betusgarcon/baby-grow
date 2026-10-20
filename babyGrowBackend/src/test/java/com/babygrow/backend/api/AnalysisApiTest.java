@@ -1,6 +1,7 @@
 package com.babygrow.backend.api;
 
-import com.babygrow.backend.support.AnalysisDataFactory;
+import com.babygrow.backend.demo.DevSeedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.babygrow.backend.support.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AnalysisApiTest extends IntegrationTestBase {
 
+    @Autowired
+    private DevSeedService seedService;
+
     private String tokenWithFiveMonthsOfData() {
         String token = login();
         long familyId = createFiveMonthFamily(token);
@@ -25,7 +29,7 @@ class AnalysisApiTest extends IntegrationTestBase {
         put("/api/baby/profile-detail", Map.of(
                 "info", List.of(Map.of("key", "gender", "value", "Boy"))), token);
 
-        new AnalysisDataFactory(jdbc, id).seedAll();
+        seedService.seedAnalysis(id, 150);
         return token;
     }
 

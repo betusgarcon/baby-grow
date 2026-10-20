@@ -22,6 +22,7 @@
     "docker:logs": "docker compose logs -f",
     "type-check": "pnpm -r type-check",
     "i18n:check": "node scripts/check-i18n.mjs",
+    "seed:dev": "./scripts/seed-dev-data.sh",
     "lint": "pnpm -r lint"
   },
   "pnpm": {

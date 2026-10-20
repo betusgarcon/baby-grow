@@ -64,6 +64,8 @@ public abstract class IntegrationTestBase {
         registry.add("app.jwt.secret", () -> JWT_SECRET);
         registry.add("app.auth.dev-mode", () -> true);
         registry.add("app.demo-data.enabled", () -> false);
+        // 种子入口在测试里打开，方便验证「一键灌 5 月龄数据」
+        registry.add("app.dev-seed.enabled", () -> true);
         registry.add("app.media.root", () -> System.getProperty("java.io.tmpdir") + "/babygrow-it-media");
         registry.add("app.media.public-base", () -> "http://localhost");
     }

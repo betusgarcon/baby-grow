@@ -31,7 +31,16 @@ public class FamilyAccessService {
         this.babyRepository = babyRepository;
     }
 
+    /** 没有家庭时返回 null，供「可能还没有家庭」的入口使用 */
     @Transactional(readOnly = true)
+    public FamilyMemberEntity findActiveMembership(Long userId) {
+        return familyMemberRepository
+                .findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
+
     public FamilyMemberEntity requireMembership(Long userId) {
         return familyMemberRepository
                 .findByUserIdAndStatus(userId, FamilyMemberEntity.STATUS_ACTIVE)
